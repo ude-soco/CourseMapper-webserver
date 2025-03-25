@@ -1,5 +1,7 @@
-<div #cy id="cy" (window:resize)="onResize($event)"></div>
-<div id="Legends" style="text-align: left; margin-bottom: 15px">
+<div #cy id="cy" (window:resize)="onResize($event)" class="mb-2">
+  
+</div>
+<div id="Legends" class="mb-15" style="text-align: left;">
   <div *ngIf="showMaterialKg && isDraft">
     <span>
       <div class="legend-circle-main-concept"></div>
@@ -17,9 +19,9 @@
       <div class="legend-circle-irrelated"></div>
       Not relevant Concepts
     </span>
-  
    
   </div>
+
   <div *ngIf="showMaterialKg && !isDraft">
     <span>
       <div class="legend-circle-main-concept"></div>
@@ -38,9 +40,14 @@
       Not Related conecept
     </span>
   </div>
-  <button
-   (click)="deleteIrrelevant()"
-  pButton type="button"
-  label="Delete not relevant concepts"
-  *ngIf="this.irrelevantConcepts.length > 0 && showBulkDeletion"></button>
+
 </div>
+<button
+p-button
+(click)="deleteIrrelevant()"
+pButton type="button"
+label="Delete not relevant concepts"
+*ngIf="this.irrelevantConcepts.length > 0 && showBulkDeletion"
+class="mb-10"
+style="margin-top: 10px"
+></button>

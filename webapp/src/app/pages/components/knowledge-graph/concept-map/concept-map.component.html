@@ -6,11 +6,11 @@
   (window:resize)="onResize($event)"
   style="z-index: 99"
 >
-    <p-dialog
+  <p-dialog
     id="higherLevelsKG"
     [(visible)]="this.showMaterialKg"
     [blockScroll]="true"
-    [contentStyle]="{ 'overflow': 'hidden' }"
+    [contentStyle]="{ 'overflow-y': 'scroll' }"
     (onShow)="materialKgActivated = true"
     (onHide)="onSubmitCancel()"
     [style]="{
@@ -24,20 +24,21 @@
     [closable]="true"
     [showHeader]="false"
     maskStyleClass="dialogMask"
-    >
-    <button 
-    (click)="showMaterialKg = false" 
-    class="custom-close-btn"
   >
-    <i class="pi pi-times"></i>
-  </button>
+    <button (click)="showMaterialKg = false" class="custom-close-btn">
+      <i class="pi pi-times"></i>
+    </button>
     <span *ngIf="isDraft && !isLoading" class="title-text">
-      <b>Edit and finalize the knowledge Graph for '{{ this.currentMaterial?.name }}'</b>
+      <b
+        >Edit and finalize the knowledge Graph for '{{
+          this.currentMaterial?.name
+        }}'</b
+      >
     </span>
-    
+
     <span *ngIf="isDraft && !isLoading" class="subheading-text">
-      Right-click to edit or delete Main Concepts, or add new ones to the knowledge graph 
-      before publishing it for all users
+      Right-click to edit or delete Main Concepts, or add new ones to the
+      knowledge graph before publishing it for all users
     </span>
     <ng-container>
       <div style="position: relative" class="flex items-center justify-between">
@@ -120,14 +121,15 @@
                   ></p-progressSpinner>
                 </div>
               </div>
-              <p *ngIf="isLoading" style="margin-top: 20px; padding:10px;">
+              <p *ngIf="isLoading" style="margin-top: 20px; padding: 10px">
                 <b
-                  >The knowledge graph for the learning material '{{ this.currentMaterial?.name }}' is being created. 
-                  This might take some time depending on the content of the learning material. 
-                  Once the results are ready, they will be displayed here.</b
+                  >The knowledge graph for the learning material '{{
+                    this.currentMaterial?.name
+                  }}' is being created. This might take some time depending on
+                  the content of the learning material. Once the results are
+                  ready, they will be displayed here.</b
                 >
               </p>
-              
             </div>
             <div class="sidebarHidden" *ngIf="!isLoading && isNotGenerated">
               <div class="grid grid-cols-1 justify-items-center p-60">
@@ -158,19 +160,24 @@
               </app-graph>
             </div>
           </div>
-            <span  *ngIf="!editingConceptName && !isLoading" class="subheading-text">
-              Add/Edit a Main Concept and connect it to a related slide
-            </span>
+          <span
+            *ngIf="!editingConceptName && !isLoading"
+            class="subheading-text"
+          >
+            Add/Edit a Main Concept and connect it to a related slide
+          </span>
 
-            <span *ngIf="editingConceptName" class="subheading-text">
-              Editing concept {{ editingConceptName }}
-            </span>
-          <div *ngIf="isDraft" style="margin-top: 10px;">
-
+          <span *ngIf="editingConceptName" class="subheading-text">
+            Editing concept {{ editingConceptName }}
+          </span>
+          <div *ngIf="isDraft" style="margin-top: 10px">
             <div *ngIf="conceptMapData && !conceptInputsDisabled" class="mt-1">
-              <form [formGroup]="editConceptForm" class="flex flex-row items-start gap-6 w-full">
+              <form
+                [formGroup]="editConceptForm"
+                class="flex flex-row items-start gap-6 w-full"
+              >
                 <!-- Column 1: Main Concepts -->
-                <div class="flex flex-col gap-4 w-80">
+                <div class="flex flex-col gap-4 w-[40rem]">
                   <!-- Label with Info Icon for Main Concepts -->
                   <span class="flex items-center">
                     <span>Main Concepts</span>
@@ -209,7 +216,7 @@
                     </ng-template>
                   </p-autoComplete>
                 </div>
-            
+
                 <!-- Column 2: Slides -->
                 <div class="flex flex-col gap-4 w-[-webkit-fill-available]">
                   <!-- Label with Info Icon for Slides -->
@@ -236,8 +243,12 @@
                       <div class="flex flex-col w-full">
                         <p>
                           Slide preview
-                          <span *ngIf="docURL !== undefined">({{ currentPDFPage }})</span>
-                          <span *ngIf="docURL === undefined">(click eye icon)</span>
+                          <span *ngIf="docURL !== undefined"
+                            >({{ currentPDFPage }})</span
+                          >
+                          <span *ngIf="docURL === undefined"
+                            >(click eye icon)</span
+                          >
                         </p>
                         <pdf-viewer
                           [src]="docURL"
@@ -267,17 +278,24 @@
                             (change)="toggleSelectAll($event)"
                           />
                           <label for="selectAllSlidesCheckbox">
-                            {{ allSelected ? 'Deselect All Slides' : 'Select All Slides' }}
+                            {{
+                              allSelected
+                                ? "Deselect All Slides"
+                                : "Select All Slides"
+                            }}
                           </label>
                         </div>
                       </div>
                     </ng-template>
-            
+
                     <!-- Template for each Slide Item -->
                     <ng-template let-slide pTemplate="item">
                       <div
                         class="w-full flex flex-row items-center justify-between"
-                        [ngClass]="{'highlight-row': slide['value'] === currentPDFPage.toString()}"
+                        [ngClass]="{
+                          'highlight-row':
+                            slide['value'] === currentPDFPage.toString()
+                        }"
                       >
                         Slide {{ slide.label }}
                         <p-button
@@ -290,63 +308,70 @@
                     </ng-template>
                   </p-multiSelect>
                 </div>
-            
-                <!-- Column 3: Buttons -->
-<!-- Button Container: Single row with two sections -->
-<div class="flex flex-row items-center justify-between w-full  mt-4" style="padding: 30px">
 
-  <!-- Right-aligned group for Add/Update and Cancel buttons -->
-  <div class="flex flex-row gap-2">
-    <ng-container *ngIf="!editingConceptName">
-      <button
-        pButton
-        [ngStyle]="{ backgroundColor: '#0369A1' }"
-        type="button"
-        label="Add concept"
-        title="Add concept"
-        (click)="addConcept()"
-      ></button>
-      <button
-        pButton
-        [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
-        type="button"
-        label="Cancel"
-        title="Cancel"
-        (click)="cancelEditConcept()"
-      ></button>
-    </ng-container>
-    <ng-container *ngIf="editingConceptName">
-      <button
-        pButton
-        [ngStyle]="{ backgroundColor: '#0369A1' }"
-        type="button"
-        label="Update concept"
-        title="Update concept"
-        (click)="addConcept()"
-      ></button>
-      <button
-        pButton
-        [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
-        type="button"
-        label="Cancel"
-        title="Cancel"
-        (click)="cancelEditConcept()"
-      ></button>
-    </ng-container>
-    
-  </div>
-    <!-- Finalize button aligned to left -->
-    <button
-    pButton
-    [ngStyle]="{ backgroundColor: '#EA580C' }"
-    type="button"
-    pTooltip="When clicking on this button, the relative concept to this concept will be shown in the graph in addition to the top 3 categories of this concept"
-    label="Finalize"
-    title="Finalize"
-    (click)="expandAndPublish()"
-    style="text-align: left;"
-  ></button>
-</div>
+                <!-- Column 3: Buttons -->
+                <!-- Button Container: Single row with two sections -->
+                <div
+                  class="flex flex-row items-center justify-between w-full mt-4"
+                  style="padding: 30px"
+                >
+                  <!-- Right-aligned group for Add/Update and Cancel buttons -->
+                  <div class="flex flex-row gap-2">
+                    <ng-container *ngIf="!editingConceptName">
+                      <button
+                        pButton
+                        [ngStyle]="{ backgroundColor: '#0369A1' }"
+                        type="button"
+                        label="Add concept"
+                        title="Add concept"
+                        (click)="addConcept()"
+                      ></button>
+                      <button
+                        pButton
+                        [ngStyle]="{
+                          backgroundColor: '#EEEEEE',
+                          color: '#333333'
+                        }"
+                        type="button"
+                        label="Cancel"
+                        title="Cancel"
+                        (click)="cancelEditConcept()"
+                      ></button>
+                    </ng-container>
+                    <ng-container *ngIf="editingConceptName">
+                      <button
+                        pButton
+                        [ngStyle]="{ backgroundColor: '#0369A1' }"
+                        type="button"
+                        label="Update concept"
+                        title="Update concept"
+                        (click)="addConcept()"
+                      ></button>
+                      <button
+                        pButton
+                        [ngStyle]="{
+                          backgroundColor: '#EEEEEE',
+                          color: '#333333'
+                        }"
+                        type="button"
+                        label="Cancel"
+                        title="Cancel"
+                        (click)="cancelEditConcept()"
+                      ></button>
+                    </ng-container>
+                  </div>
+                  <!-- Finalize button aligned to left -->
+                  <button
+                    pButton
+                    [ngStyle]="{ backgroundColor: '#EA580C' }"
+                    type="button"
+                    pTooltip="When clicking on this button, the relative concept to this concept will be shown in the graph in addition to the top 3 categories of this concept"
+                    label="Finalize"
+                    title="Finalize"
+                    (click)="expandAndPublish()"
+                    style="text-align: left"
+                  ></button>
+                </div>
               </form>
             </div>
             <div *ngIf="conceptInputsDisabled">
@@ -872,8 +897,9 @@
                 "
               >
                 <div>
-                  The knowledge graph for this learning material has not been created yet. 
-                  Once it’s created, you can view the Main Concepts related to this slide here. 
+                  The knowledge graph for this learning material has not been
+                  created yet. Once it’s created, you can view the Main Concepts
+                  related to this slide here.
                 </div>
               </div>
               <div
