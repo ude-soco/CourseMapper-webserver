@@ -197,21 +197,21 @@
                     field="title"
                     styleClass="w-full"
                     inputStyleClass="w-full"
-                    (onSelect)="openLink($event.url)"
+                   
                   >
                     <!-- Template for Items in the Dropdown -->
                     <ng-template let-concept pTemplate="item">
                       <div class="flex justify-between items-center gap-2">
                         <span>{{ concept.title }}</span>
-                        <a
-                          [href]="concept.url"
-                          target="_blank"
-                          class="text-blue-500 hover:underline"
-                          pTooltip="Open article on Wikipedia"
-                          tooltipPosition="top"
-                        >
-                          <i class="pi pi-external-link"></i>
-                        </a>
+                        <button
+                        type="button"
+                        (mousedown)="openLink(concept.url, $event)"
+                        class="text-blue-500 hover:underline bg-transparent border-0 p-0"
+                        pTooltip="Open article on Wikipedia"
+                        tooltipPosition="top"
+                      >
+                        <i class="pi pi-external-link"></i>
+                      </button>
                       </div>
                     </ng-template>
                   </p-autoComplete>
