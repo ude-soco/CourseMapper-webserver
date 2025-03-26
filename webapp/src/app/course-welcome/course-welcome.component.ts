@@ -354,7 +354,7 @@ export class CourseWelcomeComponent implements OnInit {
                         //  this.selectedCourse.url+ '?t=' + new Date().getTime();
                          
                       this.selectedCourse={ ...res.foundCourse };
-                      //window.location.reload();
+                      window.location.reload();
                         
                     });
                 },
@@ -451,7 +451,7 @@ export class CourseWelcomeComponent implements OnInit {
     if (course.url) {
       //console.log('course.url getCourseImage', course.url);
       // If course.url is already a full URL, return it directly.
-      if (course.url.startsWith('http')) {
+      if (course.url.startsWith('http') || course.url.startsWith('https')) {
         
         return course.url 
        //return course.url 

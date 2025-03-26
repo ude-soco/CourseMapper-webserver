@@ -130,10 +130,13 @@ export const generateMboxAndMboxSha1Sum = (email) => {
   };
 };
 export const getRandomImageUrl = async (req) => {
-  const imagesDir = path.join(__dirname, '..', '..','public/uploads/randomImgs');
-  
+  const imagesDir = path.join(__dirname, '..', '..','public/randomImgs');
+  //console.log('imagesDir:', imagesDir);
+
   // Read the directory asynchronously
   const files = await fs.readdir(imagesDir);
+  //console.log('files:', files);
+
   // Filter only for image files (assuming they are all images)
   const imageFiles = files.filter(file => /\.(jpe?g|png|gif)$/i.test(file));
   
@@ -148,7 +151,7 @@ export const getRandomImageUrl = async (req) => {
   // Construct the URL for the image using the request object.
   // Assuming you are serving static files from: 
   // app.use("/api/public/uploads", express.static("public/uploads"));
-  return `${req.protocol}://${req.get('host')}/api/public/uploads/randomImgs/${randomImage}`;
+  return `${req.protocol}://${req.get('host')}/api/public/randomImgs/${randomImage}`;
 };
 
 module.exports = {

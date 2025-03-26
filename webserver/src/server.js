@@ -50,7 +50,7 @@ app.use(
     //24 * 60 * 60 * 1000
   })
 );
-app.use("/api/public/uploads", express.static("public/uploads"));
+app.use("/api/public", express.static("public"));
 addErrorHandling(app);
 
 

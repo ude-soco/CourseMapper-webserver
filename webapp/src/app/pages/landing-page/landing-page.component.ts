@@ -176,7 +176,7 @@ export class LandingPageComponent {
   getCourseImage(course: Course): string {
     if (course.url) {
       // If course.url is already a full URL, return it directly.
-      if (course.url.startsWith('http')) {
+      if (course.url.startsWith('http') || course.url.startsWith('https')) {
         return course.url;
       }
       // Otherwise, prepend the API_URL to form the complete URL.
