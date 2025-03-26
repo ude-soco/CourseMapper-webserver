@@ -2,6 +2,7 @@ const multer = require("multer");
 const fileExtension = require("file-extension");
 const fs = require("fs");
 const path = require("path");
+const util = require('util');
 
 const fileName = (req, file, cb) => {
   cb(
@@ -27,8 +28,31 @@ const pdfStorage = multer.diskStorage({
 //   // Build a new file name using only the course id and the file extension
 //   cb(null, `${courseId}.${fileExtension(file.originalname)}`);
 // };
+function getAllDirectories(dirPath, arrayOfDirs = []) {
+  try {
+    const files = fs.readdirSync(dirPath);
+    files.forEach(file => {
+      // Skip the "node_modules" directory (you can add more conditions if needed)
+      if (file === 'node_modules') return;
+      const fullPath = path.join(dirPath, file);
+      if (fs.statSync(fullPath).isDirectory()) {
+        arrayOfDirs.push(fullPath);
+        // Recursively search subdirectories
+        getAllDirectories(fullPath, arrayOfDirs);
+      }
+    });
+  } catch (err) {
+    console.error(`Error reading directory ${dirPath}:`, err.message);
+  }
+  return arrayOfDirs;
+}
 const imgStorage = multer.diskStorage({
   destination: (req, file, cb) => {
+    const projectRoot = process.cwd();
+    const allDirs = getAllDirectories(projectRoot);
+    console.log(util.inspect(allDirs, { maxArrayLength: null, depth: null }));
+//     const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'images');
+// console.log('Uploads directory absolute path:', uploadsDir);
     try {
       const dest = "public/uploads/images";
       console.log("Saving file to:", dest);

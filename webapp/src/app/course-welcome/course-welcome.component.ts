@@ -354,7 +354,7 @@ export class CourseWelcomeComponent implements OnInit {
                         //  this.selectedCourse.url+ '?t=' + new Date().getTime();
                          
                       this.selectedCourse={ ...res.foundCourse };
-                      window.location.reload();
+                      //window.location.reload();
                         
                     });
                 },
