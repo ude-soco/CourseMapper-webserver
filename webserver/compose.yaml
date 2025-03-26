@@ -46,6 +46,7 @@ services:
       REDIS_DATABASE: 0
       REDIS_PASSWORD: ""
     volumes:
+    - webserver-uploads-images:/app/public/uploads/images
     - webserver-uploads-pdfs:/app/public/uploads/pdfs
     - webserver-uploads-videos:/app/public/uploads/videos
     depends_on:
@@ -59,5 +60,6 @@ services:
 volumes:
   mongo:
   neo4j-data:
+  webserver-uploads-images:
   webserver-uploads-pdfs:
   webserver-uploads-videos:
