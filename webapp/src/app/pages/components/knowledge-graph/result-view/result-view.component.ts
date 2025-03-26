@@ -104,7 +104,7 @@ export class ResultViewComponent {
 
   paginatorPage: number = 0;
   paginatorRows: number = 10;
-  rowsPerPageOptions = [10, 20, 30];
+  rowsPerPageOptions = [10, 30, 50];
 
   constructor(
     private slideConceptservice: SlideConceptsService,

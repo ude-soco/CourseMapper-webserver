@@ -97,35 +97,6 @@
         </p-multiSelect>
       </div>
 
-      <!-- <div class="flex justify-center" id="search_concept_category_3">
-        <p-dropdown
-        *ngIf="croForm?.category === '3'" 
-        [options]="CROconceptsManually"
-        [(ngModel)]="cro_concept_selected"
-        optionLabel="name"
-        [filter]="true"
-        filterBy="name"
-        [showClear]="true"
-        placeholder="Search a Concept"
-        emptyFilterMessage="No Concept found"
-        (onChange)="setSelectManuallyOnChange($event)"
-        styleClass="select_manually"
-        [resetFilterOnHide]="true"
-      >
-          <ng-template pTemplate="selectedItem">
-              <div class="flex align-items-center gap-2" *ngIf="cro_concept_selected">
-                  <div>{{ cro_concept_selected.name }}</div>
-              </div>
-          </ng-template>
-          <ng-template let-cro_concept pTemplate="item">
-              <div class="flex align-items-center gap-2">
-                  <div class="my-auto"><p-checkbox [(ngModel)]="cro_concept.status" [binary]="true" inputId="binary"></p-checkbox></div>
-                  <div class="my-auto">{{ cro_concept.name }}</div>
-              </div>
-          </ng-template>
-        </p-dropdown>
-      </div> -->
-
       <!-- concept presentation -->
       <div  *ngFor="let cro of croForm?.concepts; index as i">
         <div class="min-w-fit flex flex-row justify-between h-10 text-[12px]" id="{{'concept_body_' + i}}" *ngIf="cro?.visible" >

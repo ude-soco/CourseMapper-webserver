@@ -84,7 +84,7 @@ def get_top_n_concepts(concepts: list, top_n=5):
     concepts_ = sorted(concepts, key=lambda x: x["weight"])
     return concepts_[:top_n]
 
-def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_embedding=False, understood_list=[], non_understood_list =[]):
+def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_embedding_status=False, understood_list=[], non_understood_list =[]):
     '''
         rec_params : {'user_id': str, 'mid': str, 'slide_id': int, 'category': str, 'concepts': list, 'recommendation_type': str, 'factor_weights': dict}
         status: dnu or u (PKG_BASED_KEYPHRASE_VARIANT |  PKG_BASED_DOCUMENT_VARIANT) | 
@@ -130,15 +130,11 @@ def save_and_get_concepts_modified(db: NeoDataBase, rec_params, top_n=5, user_em
 
 
         # update user embedding value (because weight value could be changed from the user)
-        if user_embedding:
+        if user_embedding_status:
             user_embedding = db.get_user_embedding_with_concept_modified(user_id=user_id, mid=rec_params["mid"], status=status)
             result["user_embedding"] = user_embedding
     
-    # result["concept_cids"]  = [concept["cid"] for concept in concepts]
-    # result["concept_names"] = [concept["name"] for concept in concepts]
-    # rec_params["concepts"] = concepts
     result["concepts"] = concepts
-    # result["rec_params"] = rec_params
     return result
 
 def normalize_factor_weights(factor_weights: dict=None, values: list=[], method_type = "l1", complete=True, sum_value=True): # List[float]

@@ -140,7 +140,7 @@ class ResourceRecommenderService:
 
         # Gather|Retrieve all resources crawled
         resources = self.db.retrieve_resources(concepts=rec_params["concepts"], embedding_values=True)
-        print("resources ", len(resources))
+        logger.info(f"len of resources {len(resources)}")
         
         # process with the recommendation algorithm selected
         if len(resources) > 0:
@@ -210,7 +210,7 @@ class ResourceRecommenderService:
             clu = rrh.save_and_get_concepts_modified(   db=self.db,
                                                         rec_params=rec_params, 
                                                         top_n=5, 
-                                                        user_embedding=True, 
+                                                        user_embedding_status=True, 
                                                         understood_list=body["understood_concept_ids"], 
                                                         non_understood_list=body["non_understood_concept_ids"]
                                                     )
@@ -232,7 +232,7 @@ class ResourceRecommenderService:
             clu = rrh.save_and_get_concepts_modified(   db=self.db,
                                                         rec_params=rec_params, 
                                                         top_n=len(slide_concepts_), 
-                                                        user_embedding=False, 
+                                                        user_embedding_status=False, 
                                                         understood_list=[], 
                                                         non_understood_list=[]
                                                     )

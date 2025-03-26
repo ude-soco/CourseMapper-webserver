@@ -3,6 +3,7 @@ import numpy as np
 import re
 import logging
 from log import LOG
+import json
 
 #set pythonHashSeed to zero to have same hashed value if same input has been given
 import os
@@ -1860,12 +1861,15 @@ class NeoDataBase:
                     '''
                         MATCH (r:Resource: Video)
                         WHERE r.rid = $rid
-                        SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
+                        SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding,
+                        r.keyphrases_infos = $keyphrases_infos
+                           
                     ''',
                     rid=node["rid"],
                     keyphrases=node["keyphrases"] if "keyphrases" in node else [],
-                    keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
-                    document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
+                    keyphrase_embedding=node["keyphrase_embedding"] if "keyphrase_embedding" in node else [],
+                    document_embedding=node["document_embedding"] if "document_embedding" in node else [],
+                    keyphrases_infos=node["keyphrases_infos"] if "keyphrases_infos" in node else ""
                 )
             else:
                 tx.run(
@@ -1897,14 +1901,15 @@ class NeoDataBase:
                     pub_time=node["publishTime"],
                     # similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
                     keyphrases=node["keyphrases"] if "keyphrases" in node else [],
-                    keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
-                    document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
+                    keyphrase_embedding=node["keyphrase_embedding"] if "keyphrase_embedding" in node else [],
+                    document_embedding=node["document_embedding"] if "document_embedding" in node else [],
                     helpful_count=node["helpful_count"] if "helpful_count" in node else 0,
                     not_helpful_count=node["not_helpful_count"] if "not_helpful_count" in node else 0,
                     saves_count=node["saves_count"] if "saves_count" in node else 0,
                     like_count=node["like_count"],
                     channel_title=node["channel_title"],
-                    updated_at=datetime.now().isoformat()
+                    updated_at=datetime.now().isoformat(),
+                    keyphrases_infos=node["keyphrases_infos"] if "keyphrases_infos" in node else ""
                 )
         except Exception as e:
             print(e)
@@ -1945,12 +1950,14 @@ class NeoDataBase:
                     '''
                         MATCH (r:Resource: Article)
                         WHERE r.rid = $rid
-                        SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding 
+                        SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding,
+                        r.keyphrases_infos = $keyphrases_infos
                     ''',
                     rid=node["rid"],
                     keyphrases=node["keyphrases"] if "keyphrases" in node else [],
-                    keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
-                    document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
+                    keyphrase_embedding=node["keyphrase_embedding"] if "keyphrase_embedding" in node else [],
+                    document_embedding=node["document_embedding"] if "document_embedding" in node else [],
+                    keyphrases_infos=node["keyphrases_infos"] if "keyphrases_infos" in node else ""
                 )
             else:
                 tx.run(
@@ -1973,12 +1980,13 @@ class NeoDataBase:
                     keyphrases=node["keyphrases"] if "keyphrases" in node else [],
                     text=node["text"],
                     # similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
-                    keyphrase_embedding=str(node["keyphrase_embedding"] if "keyphrase_embedding" in node else ""),
-                    document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
+                    keyphrase_embedding=node["keyphrase_embedding"] if "keyphrase_embedding" in node else [],
+                    document_embedding=node["document_embedding"] if "document_embedding" in node else [],
                     helpful_count=node["helpful_count"] if "helpful_count" in node else 0,
                     not_helpful_count=node["not_helpful_count"] if "not_helpful_count" in node else 0,
                     saves_count=node["saves_count"] if "saves_count" in node else 0,
-                    updated_at=datetime.now().isoformat()
+                    updated_at=datetime.now().isoformat(),
+                    keyphrases_infos=node["keyphrases_infos"] if "keyphrases_infos" in node else ""
                 )
         except Exception as e:
             print(e)
@@ -2131,7 +2139,7 @@ class NeoDataBase:
         if len(embeddings) == 0:
             tx.run(
                 '''
-                MATCH (u:User) WHERE u.uid=$user_id set u.embedding=$embedding
+                MATCH (u:User) WHERE u.uid=$user_id set u.embedding_resources=$embedding
                 ''',
                 user_id=user_id,
                 embedding=""
@@ -2159,6 +2167,38 @@ class NeoDataBase:
                 embedding=embedding
             )
             # logger.info("get user embedding")
+
+        # results = tx.run(
+        #     """MATCH p=(u)-[r:dnu]->(c) where u.uid=$uid and c.mid=$mid RETURN c.final_embedding as embedding, c.weight as weight""",
+        #     uid=user_id,
+        #     mid=mid)
+        # embeddings = list(results)
+
+        # sum_embeddings = 0
+        # sum_weights = 0
+        # # Convert string type to array type 'np.array'
+        # # Sum and average these concept embeddings to get user embedding
+        # for embedding in embeddings:
+        #     list1 = embedding["embedding"].split(',')
+        #     list2 = []
+        #     for j in list1:
+        #         list2.append(float(j))
+        #     arr = np.array(list2)
+        #     sum_embeddings = sum_embeddings + arr * embedding["weight"]
+        #     sum_weights = sum_weights + embedding["weight"]
+        # # The weighted average of final embeddings of all dnu concepts
+        # average = np.divide(sum_embeddings, sum_weights)
+        # embedding=','.join(str(i) for i in average)
+        
+        # tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
+        #     uid=user_id,
+        #     embedding=','.join(str(i) for i in average))
+        # logger.info("get user embedding")
+            
+        # embedding_original = tx.run("""MATCH (u:User) WHERE u.uid=$user_id RETURN u.embedding as embedding""",
+        #         user_id=user_id
+        # ).single()["embedding"]
+            
 
         return embedding
 
@@ -2394,6 +2434,10 @@ class NeoDataBase:
             resources_form: dict | list | found (update_detail_found => only update too old Resource)
             resources_updated_type: video | article
         '''
+        # if len(resources_dict["articles"]) > 0:
+        #     print("store_resources ->")
+        #     print(resources_dict["articles"][0])
+
 
         def get_resource_primary_key(resource: dict):
             return resource["rid"] if "rid" in resource else resource["id"]
@@ -2472,7 +2516,8 @@ class NeoDataBase:
                             a.updated_at as updated_at,
                             a.keyphrase_embedding as keyphrase_embedding,
                             a.document_embedding as document_embedding,
-                            a.saves_count as saves_count, b.cid as concept_cid
+                            a.saves_count as saves_count, b.cid as concept_cid,
+                            a.keyphrases_infos as keyphrases_infos
 
                 '''
         else:
@@ -2558,11 +2603,12 @@ class NeoDataBase:
                     "text": resource["text"],
                     "bookmarked_count": resource["bookmarked_count"],
                     "updated_at": resource["updated_at"],
-                    "keyphrase_embedding": resource["keyphrase_embedding"].strip("[]").replace("'", "").split(',') if "keyphrase_embedding" in resource and len(resource["keyphrase_embedding"]) > 5 else [],
-                    "document_embedding": resource["document_embedding"].strip("[]").replace("'", "").split(',') if "document_embedding" in resource and len(resource["document_embedding"]) > 5 else [],
+                    "keyphrase_embedding": resource["keyphrase_embedding"],
+                    "document_embedding": resource["document_embedding"],
                     "is_bookmarked_fill": resource["is_bookmarked_fill"] if "is_bookmarked_fill" in resource else False,
                     "saves_count": resource["saves_count"] if "saves_count" in resource else 0,
                     "concept_cid": resource["concept_cid"] if "concept_cid" in resource else 0,
+                    "keyphrases_infos": resource["keyphrases_infos"]
                 }
 
                 if "Video" in r["labels"]:
@@ -2710,7 +2756,7 @@ class NeoDataBase:
         with self.driver.session() as session:
             nodes = session.run(
                     '''
-                        MATCH p=(s: Slide)-[r: CONTAINS]->(c: Concept)
+                        MATCH p=(s: Slide)-[r: CONSISTS_OF]->(c: Concept)
                         WHERE s.sid = $slide_id AND c.type = "main_concept"
                         RETURN ID(c) as id, c.cid as cid, c.name as name,
                                 c.type AS type, c.weight AS weight, c.mid AS mid
@@ -2719,6 +2765,5 @@ class NeoDataBase:
                     slide_id=slide_id
                 ).data()
         return nodes
-    
-    
+
 # TODO Issue #640: do we need create_user_slide_relationships?
