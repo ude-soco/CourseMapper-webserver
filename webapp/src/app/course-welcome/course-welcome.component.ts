@@ -514,7 +514,7 @@ export class CourseWelcomeComponent implements OnInit {
       this.selectedCourse.description
     );
     const toolbarModule: any = this.editorInstance.getModule('toolbar');
-    if (toolbarModule && toolbarModule.container && toolbarModule.container.querySelector('.ql-image')) {
+    if (toolbarModule?.container?.querySelector('.ql-image')) {
       toolbarModule.addHandler('image', () => {
         this.customImageUpload(this.editorInstance);
       });
