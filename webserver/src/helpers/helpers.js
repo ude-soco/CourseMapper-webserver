@@ -131,11 +131,11 @@ export const generateMboxAndMboxSha1Sum = (email) => {
 };
 export const getRandomImageUrl = async (req) => {
   const imagesDir = path.join(__dirname, '..', '..','public/randomImgs');
-  //console.log('imagesDir:', imagesDir);
-
-  // Read the directory asynchronously
-  const files = await fs.readdir(imagesDir);
-  //console.log('files:', files);
+ export const getRandomImageUrl = async (req) => {
+   const imagesDir = path.join(__dirname, '..', '..','public/randomImgs');
+ 
+   // Read the directory asynchronously
+   const files = await fs.readdir(imagesDir);
 
   // Filter only for image files (assuming they are all images)
   const imageFiles = files.filter(file => /\.(jpe?g|png|gif)$/i.test(file));
