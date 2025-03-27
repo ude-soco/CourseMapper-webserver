@@ -538,7 +538,7 @@ export class CourseWelcomeComponent implements OnInit {
         //const imageUrl = res.imageUrl;
         const editor =this.editorInstance;
         const range = editor.getSelection(true);
-        let imageUrl= this.API_URL +'/public/uploads/images/' + file.name;
+        const imageUrl = `${this.API_URL}/public/uploads/images/${file.name}`;
         editor.insertEmbed(range.index, 'image', imageUrl);
         //console.log('Image uploaded:', imageUrl);
         editor.setSelection(range.index + 1);
