@@ -337,7 +337,7 @@ export class CourseWelcomeComponent implements OnInit {
                 type: this.chosenFile.type,
               });
 
-              let formData = new FormData();
+              const formData = new FormData();
               formData.append('file', resizedFile, newFileName);
               //this.materialService.deleteCourseImage(this.selectedCourse).subscribe(  (res) => {  });
 
