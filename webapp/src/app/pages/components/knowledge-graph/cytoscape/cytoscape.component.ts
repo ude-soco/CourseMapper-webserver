@@ -89,9 +89,8 @@ export class CytoscapeComponent {
       max: 1.5,
     };
   }
-  public irrelevantConcepts: string[] = []; // Define this property in your class
-   showBulkDeletion: boolean = true; // Define this property in your class
-
+  public irrelevantConcepts = []; // Define this property in your class
+  showBulkDeletion: boolean = true; // Define this property in your class
   public showAllStyle: cytoscape.Stylesheet[] = [
     {
       selector: 'node',
