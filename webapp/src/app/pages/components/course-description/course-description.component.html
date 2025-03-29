@@ -85,7 +85,7 @@
     <div>
       <strong class="text-lg font-medium font-roboto">Course Description</strong>
     </div>
-    <div class="w-full pb-5">
+    <!-- <div class="w-full pb-5">
       <div *ngIf="course_enroll.description.length === 0">
         No description provided
       </div>
@@ -93,6 +93,16 @@
         class="w-full"
         [innerHTML]="course_enroll.description"
       ></div>
+    </div> -->
+    <div>
+      <ng-container *ngIf="course_enroll.description  ; else noDescription">
+        <div class="ql-snow h-full overflow-auto">
+          <div class="ql-editor h-full" [innerHTML]="sanitizeDescription(course_enroll.description)"></div>
+        </div>
+      </ng-container>
+      <ng-template #noDescription>
+        <div>No description provided</div>
+      </ng-template>
     </div>
   </div>
 </div>
