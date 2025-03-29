@@ -116,11 +116,11 @@ export class ChannelbarComponent implements OnInit {
   selectedChannel: Channel;
   user = this.storageService.getUser();
   moderatorUserOptions: MenuItem[] = [
-    {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameCourse(),
-    },
+    // {
+    //   label: 'Rename',
+    //   icon: 'pi pi-refresh',
+    //   command: () => this.onRenameCourse(),
+    // },
 
     {
       label: 'Edit course',
@@ -261,7 +261,7 @@ export class ChannelbarComponent implements OnInit {
       //course name <p> has been changed to editable
 
       this.enterKey = false;
-      this.onRenameCourseConfirm(this.selectedId);
+      //this.onRenameCourseConfirm(this.selectedId);
     }
   }
 
@@ -282,15 +282,15 @@ export class ChannelbarComponent implements OnInit {
     });
   }
 
-  onRenameCourse() {
-    let selectedCurs = <HTMLInputElement>(
-      document.getElementById(`${this.selectedCourse._id}`)
-    );
-    this.selectedId = this.selectedCourse._id;
-    selectedCurs.contentEditable = 'true';
-    this.previousCourse = this.selectedCourse;
-    this.selectElementContents(selectedCurs);
-  }
+  // onRenameCourse() {
+  //   let selectedCurs = <HTMLInputElement>(
+  //     document.getElementById(`${this.selectedCourse._id}`)
+  //   );
+  //   this.selectedId = this.selectedCourse._id;
+  //   selectedCurs.contentEditable = 'true';
+  //   this.previousCourse = this.selectedCourse;
+  //   this.selectElementContents(selectedCurs);
+  // }
 
   //global edit for the course
   onEditCourse() {

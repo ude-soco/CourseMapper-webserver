@@ -406,7 +406,7 @@ export class CourseWelcomeComponent implements OnInit {
                       this.showInfo('Course display picture is updated');
                       setTimeout(() => {
                         window.location.reload();
-                      }, 50);
+                      }, 100);
                      
                       
                         
@@ -517,7 +517,7 @@ export class CourseWelcomeComponent implements OnInit {
     }
     // Return an empty string or a default image if needed.
     //return '/assets/img/courseCard.png';
-    return '';
+    return '/assets/img/courseCard.png';
   }
 
 
