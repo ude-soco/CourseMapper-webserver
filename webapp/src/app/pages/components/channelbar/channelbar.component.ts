@@ -295,7 +295,7 @@ export class ChannelbarComponent implements OnInit {
   //global edit for the course
   onEditCourse() {
     this.router.navigate(['/course', this.selectedCourse._id, 'welcome'], { queryParams: { edit: true } });
-
+    //this.router.navigate(['/course', this.selectedCourse._id, 'welcome']);
       }
 
   onRenameCourseConfirm(id) {
