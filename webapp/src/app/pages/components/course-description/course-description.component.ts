@@ -21,6 +21,7 @@ import { Socket } from 'ngx-socket-io';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { getShowNotificationsPanel } from 'src/app/state/app.reducer';
 import { environment } from 'src/environments/environment';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-course-description',
@@ -53,7 +54,8 @@ export class CourseDescriptionComponent {
     private messageService: MessageService,
     private route: ActivatedRoute,
     private socket: Socket,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private sanitizer: DomSanitizer,
   ) {}
   ngOnInit(): void {
     this.isloggedin = this.storageService.isLoggedIn();
@@ -90,6 +92,12 @@ export class CourseDescriptionComponent {
       }
     });
   }
+  sanitizeDescription(description: string): SafeHtml {
+    // console.log('Sanitizing description:', this.selectedCourse.description);
+     return  this.sanitizer.bypassSecurityTrustHtml(
+       description
+     );
+   }
   getName(firstName: string, lastName: string) {
     let Name = firstName + ' ' + lastName;
     return Name.split(' ')

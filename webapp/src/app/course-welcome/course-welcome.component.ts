@@ -101,9 +101,15 @@ export class CourseWelcomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('course-welcome.component.ts ngOnInit()');
     this.selectedCourse = this.courseService.getSelectedCourse();
+    this.sanitizeDescription(this.selectedCourse.description);
+   //this.Users = this.selectedCourse.users;
+    //console.log('users', this.Users);
+    console.log('selected course', this.selectedCourse);
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
+     
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
       if (this.selectedCourse.role === 'moderator') {
@@ -112,8 +118,9 @@ export class CourseWelcomeComponent implements OnInit {
 
         // Subscribe to query parameters to get the 'edit' value
         this.route.queryParams.subscribe((params) => {
+         
           this.editMode = params['edit'] === 'true'; // Set editMode to true if 'edit' is 'true'
-
+         
           if (this.editMode) {
             this.toggleEdit('name'); // Edit the course name
             this.toggleEdit('description'); // Edit the description of the course
@@ -133,11 +140,12 @@ export class CourseWelcomeComponent implements OnInit {
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
         this.Users = course.users;
+        
         // TODO: Bad implementation to get the moderator, i.e., course.users[0].userId
         this.buildCardInfo(course.users[0].userId, course);
       });
 
-      this.sanitizeDescription();
+      this.sanitizeDescription(this.courseDescription);
 
       if (this.selectedCourse.role === 'moderator') {
         this.moderator = true;
@@ -158,10 +166,13 @@ export class CourseWelcomeComponent implements OnInit {
     }
    
   }
-
-  sanitizeDescription(): void {
-    this.sanitizedDescription = this.sanitizer.bypassSecurityTrustHtml(
-      this.selectedCourse.description
+  get enrolledUsersCount(): number {
+    return Array.isArray(this.selectedCourse?.users) ? this.selectedCourse.users.length : 0;
+  }
+  sanitizeDescription(description: string): SafeHtml {
+   // console.log('Sanitizing description:', this.selectedCourse.description);
+    return  this.sanitizer.bypassSecurityTrustHtml(
+      description
     );
   }
 
@@ -209,8 +220,35 @@ export class CourseWelcomeComponent implements OnInit {
       }
     }, 0);
   }
-
+ //toggleEdit before landing on the page to set edit setting to false
   toggleEdit(field: 'name' | 'description' | 'image') {
+
+    this.isEditing = false;
+    // this.courseName = this.selectedCourse.name;
+    // this.courseDescription = this.selectedCourse.description;
+
+    if (field === 'name') {
+      this.isEditingName = false;
+    }
+    if (field === 'description') {
+      this.isEditingDescription = false;
+    }
+    if (field === 'image') 
+      // this.isEditingImage = true;
+      {this.isEditingImage = false;
+        setTimeout(() => {
+          this.openFileSelector();
+        }, 0);
+      } else {
+        // Already in editing mode, just open the file dialog
+        this.openFileSelector();
+      }
+      
+
+    // Copy current values to editable object
+  }
+  //toggleEdit_ after landing on the page to edit the course content
+  toggleEdit_(field: 'name' | 'description' | 'image') {
     this.isEditing = true;
     this.courseName = this.selectedCourse.name;
     this.courseDescription = this.selectedCourse.description;
@@ -237,6 +275,9 @@ export class CourseWelcomeComponent implements OnInit {
   }
 
   saveChanges() {
+   
+    // console.log('selectedCourse.name', this.courseName);
+    // console.log('selectedCourse', this.selectedCourse);
     // Apply changes from editableCourse to selectedCourse
     if (this.editorInstance) {
       this.courseDescription = this.editorInstance.root.innerHTML;
@@ -247,17 +288,25 @@ export class CourseWelcomeComponent implements OnInit {
       this.isEditingImage =
         false;
 
-    this.selectedCourse.name = this.courseName;
-    this.selectedCourse.description = this.courseDescription;
-
+    
+        this.selectedCourse = { ...this.selectedCourse, name: this.courseName, description: this.courseDescription };
+    //this.selectedCourse.name = this.courseName;
+    
+    //this.selectedCourse.description = this.courseDescription;
+   
     if (this.chosenFile) {
       let imageName = this.setCourseIamge(this.selectedCourse);
       this.selectedCourse.url = '/public/uploads/images/' + imageName;
       this.refreshImageTimestamp();
-    } else {
+    } 
+    else {
       this.courseService
         .updateCourse(this.selectedCourse)
-        .subscribe((res: any) => {});
+        .subscribe((res: any) => {
+          this.selectedCourse = {...res.foundCourse};
+         // this.sanitizeDescription( this.selectedCourse.description);
+          this.showInfo('Course details are updated successfully.');
+        });
     }
     // this.ngOnInit();
   }
@@ -337,7 +386,7 @@ export class CourseWelcomeComponent implements OnInit {
                 type: this.chosenFile.type,
               });
 
-              const formData = new FormData();
+              let formData = new FormData();
               formData.append('file', resizedFile, newFileName);
               //this.materialService.deleteCourseImage(this.selectedCourse).subscribe(  (res) => {  });
 
@@ -354,7 +403,12 @@ export class CourseWelcomeComponent implements OnInit {
                         //  this.selectedCourse.url+ '?t=' + new Date().getTime();
                          
                       this.selectedCourse={ ...res.foundCourse };
-                      window.location.reload();
+                      this.showInfo('Course display picture is updated');
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 100);
+                     
+                      
                         
                     });
                 },
@@ -463,7 +517,7 @@ export class CourseWelcomeComponent implements OnInit {
     }
     // Return an empty string or a default image if needed.
     //return '/assets/img/courseCard.png';
-    return '';
+    return '/assets/img/courseCard.png';
   }
 
 
@@ -514,7 +568,7 @@ export class CourseWelcomeComponent implements OnInit {
       this.selectedCourse.description
     );
     const toolbarModule: any = this.editorInstance.getModule('toolbar');
-    if (toolbarModule?.container?.querySelector('.ql-image')) {
+    if (toolbarModule && toolbarModule.container && toolbarModule.container.querySelector('.ql-image')) {
       toolbarModule.addHandler('image', () => {
         this.customImageUpload(this.editorInstance);
       });
@@ -532,15 +586,15 @@ export class CourseWelcomeComponent implements OnInit {
       const file = input.files[0];
       const formData = new FormData();
       formData.append('file', file);
-      //console.log('Image selected:', file);
+     
       // Call your upload service
       this.materialService.uploadFile(formData, 'img').subscribe((res: any) => {
         //const imageUrl = res.imageUrl;
         const editor =this.editorInstance;
         const range = editor.getSelection(true);
-        const imageUrl = `${this.API_URL}/public/uploads/images/${file.name}`;
+        let imageUrl= this.API_URL +'/public/uploads/images/' + file.name;
         editor.insertEmbed(range.index, 'image', imageUrl);
-        //console.log('Image uploaded:', imageUrl);
+        
         editor.setSelection(range.index + 1);
       }, error => {
        // console.error('Image upload failed', error);

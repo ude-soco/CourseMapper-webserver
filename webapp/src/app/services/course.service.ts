@@ -222,6 +222,7 @@ export class CourseService {
               const updatedCourse = courses.find((c) => c._id === course._id);
 
               if (updatedCourse) {
+                this.selectedCourse = { ...updatedCourse };
                 this.onSelectCourse.emit(updatedCourse);
               } else {
                 console.error('Updated course not found in courses list.');

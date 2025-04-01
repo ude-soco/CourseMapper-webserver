@@ -17,7 +17,7 @@
             *ngIf="moderator && !isEditingName"
             class="pi pi-pencil cursor-pointer ml-2 text-gray-500 text-xl"
             pTooltip="Edit course name"
-            (click)="toggleEdit('name')"
+            (click)="toggleEdit_('name')"
           ></i>
         </p>
       </div>
@@ -49,7 +49,7 @@
         <!-- Enrolled Users -->
         <div class="flex items-center">
           <i class="pi pi-users text-orange-600 mr-2 text-base"></i>
-          <span class="font-medium">{{ Users.length }} enrolled users</span>
+          <span class="font-medium">{{ enrolledUsersCount }} enrolled users</span>
         </div>
 
         <!-- Unenroll Button (if not moderator) -->
@@ -81,7 +81,7 @@
           class="pi pi-pencil absolute top-0 right-0 m-2 bg-gray-300 rounded-full p-3 text-4xl cursor-pointer "
           pTooltip="Edit course image"
           tooltipPosition="left" placeholder="Left"
-          (click)="toggleEdit('image')"
+          (click)="toggleEdit_('image')"
         ></i>
         <i
           *ngIf="moderator && !isEditingImage"
@@ -134,15 +134,15 @@
         *ngIf="moderator && !isEditingDescription"
         class="pi pi-pencil cursor-pointer ml-2 text-gray-500 text-xl"
         pTooltip="Edit course description"
-        (click)="toggleEdit('description')"
+        (click)="toggleEdit_('description')"
       ></i>
     </div>
 
     <div class="mt-1 h-[70vh]"> <!-- Adjust the height as needed -->
       <div *ngIf="!isEditingDescription">
-        <ng-container *ngIf="selectedCourse.description && selectedCourse.description.trim(); else noDescription">
+        <ng-container *ngIf="selectedCourse.description  ; else noDescription">
           <div class="ql-snow h-full overflow-auto">
-            <div class="ql-editor h-full" [innerHTML]="sanitizedDescription"></div>
+            <div class="ql-editor h-full" [innerHTML]="sanitizeDescription(selectedCourse.description)"></div>
           </div>
         </ng-container>
         <ng-template #noDescription>
