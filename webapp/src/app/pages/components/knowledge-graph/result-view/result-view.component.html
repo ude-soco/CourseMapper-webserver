@@ -91,33 +91,39 @@
                 <div class="flex flex-col text-sm">
                   <ng-template ngFor let-sort_factor [ngForOf]="factorSortingKeys" let-i="index">
                     <div class="flex flex-row space-x-2"
-                    [style.pointer-events]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key)  ? 'none' : 'auto'"
-                    [style.opacity]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 0.3 : 1"
-                    [style.cursor]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 'not-allowed' : 'pointer'"
-                    >
+                      [style.pointer-events]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key)  ? 'none' : 'auto'"
+                      [style.opacity]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 0.3 : 1"
+                      [style.cursor]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 'not-allowed' : 'pointer'">
+                      
                       <div>
                         <p-radioButton 
-                        [inputId]="sort_factor.key" 
-                        name="sort_factor" 
-                        value="{{ sort_factor.key }}" 
-                        [(ngModel)]="selectedFactorSortingKeys"
-                        (onClick)="sortResourcesByKeys(sort_factor, true, false)"
-                        ></p-radioButton>
+                          [inputId]="sort_factor.key" 
+                          name="sort_factor" 
+                          value="{{ sort_factor.key }}" 
+                          [(ngModel)]="selectedFactorSortingKeys"
+                          (onClick)="sortResourcesByKeys(sort_factor, true, false)">
+                        </p-radioButton>
                       </div>
-                      <div class="flex flex-row gap-2">
-                        <div class="my-auto"><label for="factor_radio">{{ sort_factor.name }}</label></div>
-                        <div class="flex flex-row space-x-2 pl-4 ml-6">
-                          <button (click)="sortResourcesByKeys(sort_factor, false, true)"
-                          class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1"
-                          >
-                            <div>
-                              <span>{{ sort_factor.orderText }}</span>
-                            </div>
-                          </button>
+                      
+                      <div class="flex-grow">
+                        <div class="flex flex-row justify-between items-center">
+                          <div class="mr-2">
+                            <label [for]="sort_factor.key">{{ sort_factor.name }}</label>
+                          </div>
+                          
+                          <div>
+                            <button (click)="sortResourcesByKeys(sort_factor, false, true)"
+                              class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1 px-3">
+                              {{ sort_factor.orderText }}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div style="height: 2rem;"><p-divider></p-divider></div>
+                    
+                    <div *ngIf="i !== factorSortingKeys.length - 1" style="height: 2rem;">
+                      <p-divider></p-divider>
+                    </div>
                   </ng-template>
                 </div>
               </ng-template>

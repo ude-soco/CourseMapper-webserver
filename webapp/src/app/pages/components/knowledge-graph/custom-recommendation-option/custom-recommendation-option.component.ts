@@ -141,6 +141,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.croForm["user_id"] = this.userId;
     this.croForm["mid"] = this.materialId;
     this.croForm["slide_id"] = this.slideId;
+    this.croService.setResultaTabValue("0");
 
     this.croService.isResultTabSelected$.subscribe(tabSelected => {
       if (tabSelected === '0') {

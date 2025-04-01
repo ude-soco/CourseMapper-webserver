@@ -2166,40 +2166,6 @@ class NeoDataBase:
                 user_id=user_id,
                 embedding=embedding
             )
-            # logger.info("get user embedding")
-
-        # results = tx.run(
-        #     """MATCH p=(u)-[r:dnu]->(c) where u.uid=$uid and c.mid=$mid RETURN c.final_embedding as embedding, c.weight as weight""",
-        #     uid=user_id,
-        #     mid=mid)
-        # embeddings = list(results)
-
-        # sum_embeddings = 0
-        # sum_weights = 0
-        # # Convert string type to array type 'np.array'
-        # # Sum and average these concept embeddings to get user embedding
-        # for embedding in embeddings:
-        #     list1 = embedding["embedding"].split(',')
-        #     list2 = []
-        #     for j in list1:
-        #         list2.append(float(j))
-        #     arr = np.array(list2)
-        #     sum_embeddings = sum_embeddings + arr * embedding["weight"]
-        #     sum_weights = sum_weights + embedding["weight"]
-        # # The weighted average of final embeddings of all dnu concepts
-        # average = np.divide(sum_embeddings, sum_weights)
-        # embedding=','.join(str(i) for i in average)
-        
-        # tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
-        #     uid=user_id,
-        #     embedding=','.join(str(i) for i in average))
-        # logger.info("get user embedding")
-            
-        # embedding_original = tx.run("""MATCH (u:User) WHERE u.uid=$user_id RETURN u.embedding as embedding""",
-        #         user_id=user_id
-        # ).single()["embedding"]
-            
-
         return embedding
 
     def user_rates_resources(self, rating: dict):

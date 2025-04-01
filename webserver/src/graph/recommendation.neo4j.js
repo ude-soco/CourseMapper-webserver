@@ -203,23 +203,27 @@ export async function filterUserResourcesSavedBy(data) {
     console.log("Filtering User Resources Saved");
 
     const result = { articles: [], videos: [] };
+    const userId = data.user_id;
+    const searchText = data.text || '';
+    const contentType = data.content_type === 'video' ? 'Video' : 'Article';
+
     let queryWhere = `
-        toLower(a.text) CONTAINS toLower($searchText) OR
-        ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower($searchText))
+        toLower(a.text) CONTAINS toLower('${searchText}') OR
+        ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower('${searchText}'))
     `;
 
     if (data.cids && data.cids.length > 0) {
         queryWhere = `
             c.cid IN $cids AND (
-                toLower(a.text) CONTAINS toLower($searchText) OR
-                ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower($searchText))
+                toLower(a.text) CONTAINS toLower('${searchText}') OR
+                ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower('${searchText}'))
             )
         `;
     }
 
     const query = `
         MATCH (c:Concept_modified)<-[m:HAS_MODIFIED]-(b:User)-[r:HAS_SAVED]->(a:Resource)
-        WHERE r.user_id = $userId AND $contentType IN LABELS(a) AND (${queryWhere})
+        WHERE r.user_id = '${userId}' AND '${contentType}' IN LABELS(a) AND (${queryWhere})
         RETURN DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
             a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date,
             a.author_image_url as author_image_url, a.author_name as author_name,
@@ -242,6 +246,8 @@ export async function filterUserResourcesSavedBy(data) {
         cids: data.cids || [],
         contentType: data.content_type === 'video' ? 'Video' : 'Article',
     };
+    console.warn("params", params)
+    console.warn(query)
     const queryResult = await graphDb.driver.executeQuery(query, params);
 
     const resources = queryResult.records.map(record => ({

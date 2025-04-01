@@ -66,8 +66,8 @@ export class ResultViewComponent {
 
   disabledSortingKeys = false;
   orderUpIcon = false;
-  orderDESC = "Top to botton"
-  orderASC = "Botton to top"
+  orderDESC = "Top to bottom"
+  orderASC = "Bottom to top"
   selectedFactorSortingKeys: any = null;
   factorSortingKeys = [
     { name: 'Most similar',key: "similarity_score", status: false, orderText: this.orderDESC },
