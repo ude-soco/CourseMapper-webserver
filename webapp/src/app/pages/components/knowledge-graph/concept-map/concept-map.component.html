@@ -275,6 +275,7 @@
                             id="selectAllSlidesCheckbox"
                             class="mr-2"
                             [checked]="allSelected"
+                            (click)="$event.stopPropagation()"
                             (change)="toggleSelectAll($event)"
                           />
                           <label for="selectAllSlidesCheckbox">
@@ -301,6 +302,7 @@
                         <p-button
                           icon="pi pi-eye"
                           pTooltip="Preview slide"
+                          (mousedown)="$event.stopPropagation()"
                           (click)="previewSlide($event, slide)"
                           styleClass="p-button-outlined"
                         ></p-button>

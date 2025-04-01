@@ -2104,6 +2104,8 @@ export class ConceptMapComponent {
 
   async previewSlide(event, slideId: Object) {
     this.docURL = `${this.cmEndpointURL}${this.currentMaterial?.url}${this.currentMaterial?._id}.pdf`;
+   console.log('docURL',this.docURL);
+    //this.pdfViewerService.setPDFURL(this.docURL);
     this.currentPDFPage = parseInt(slideId['value']);
     event.stopPropagation();
     return false;
