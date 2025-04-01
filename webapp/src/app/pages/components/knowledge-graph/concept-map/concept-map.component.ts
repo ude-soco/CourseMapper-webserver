@@ -215,7 +215,7 @@ export class ConceptMapComponent {
     },
     {
       label: 'Recommended Materials',
-      icon: 'pi pi-fw pi-youtube',
+      icon: 'pi pi-fw pi-book', //changed the youtube icon to address violation
       disabled: true,
       command: (e) => {
         this.mainConceptsTab = false;
