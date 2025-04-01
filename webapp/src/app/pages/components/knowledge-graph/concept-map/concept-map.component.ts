@@ -1982,16 +1982,26 @@ export class ConceptMapComponent {
     // Automatically publish drafts
     // Do not rearrange graph
     let conceptName = this.editConceptForm.value.conceptName;
+    let Slide = this.editConceptForm.value.conceptSlides;
     if (!conceptName) {
       this.messageService.add({
         key: 'server_response',
         severity: 'error',
-        summary: 'Concept name required',
-        detail: 'Please enter a concept name',
+        summary: 'Main Concept required',
+        detail: 'Please enter a Main Concept name',
       });
       return;
     }
-
+    
+    if (!Slide) {
+      this.messageService.add({
+        key: 'server_response',
+        severity: 'error',
+        summary: 'Slide selection required',
+        detail: 'Please select slide(s) relevant to this Main Concept',
+      });
+      return;
+    }
     if (typeof conceptName === 'string') {
       conceptName = conceptName.trim();
     } else {
