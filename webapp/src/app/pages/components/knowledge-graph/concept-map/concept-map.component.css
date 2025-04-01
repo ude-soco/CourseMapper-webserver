@@ -499,6 +499,7 @@
 .p-dialog-content {
 display: flex;
 flex-direction: column;
+
 }
 
 #materialKgControlPanel {
@@ -509,16 +510,15 @@ padding-right: 1rem;
 float: right;
 }
 
-::ng-deep .custom-close-btn {
+/* ::ng-deep .custom-close-btn {
 position: absolute;
-top: 10px;
-right: 15px;
+
 background: transparent;
 border: none;
 font-size: 22px;
 cursor: pointer;
 color: #666;
-}
+} */
 
 ::ng-deep .custom-close-btn:hover {
 color: #000;
@@ -561,7 +561,9 @@ height: 500px; /* Default height */
   justify-content: flex-end;
   margin-left: auto;
 }
-button {
-  height: 40px; /* Ensure uniform height */
-  padding: 8px 12px; /* Standardize padding */
-}
+
+/*button {
+  height: 40px; 
+  padding: 8px 12px; 
+  
+}*/
