@@ -1907,7 +1907,7 @@ export class ConceptMapComponent {
             key: 'server_response',
             severity: 'success',
             summary: 'Delete Concept',
-            detail: 'Concept deleted successfully',
+            detail: 'Main Concept(s) marked as not relevant deleted successfully.',
           });
         } catch (error) {
           console.error(error);
@@ -2032,7 +2032,7 @@ export class ConceptMapComponent {
           key: 'server_response',
           severity: 'success',
           summary: 'Edit Concept',
-          detail: `Main Concept '${conceptName}' edite successfully`,
+          detail: `Main Concept '${conceptName}' edit successfully`,
         });
       }
       else {
