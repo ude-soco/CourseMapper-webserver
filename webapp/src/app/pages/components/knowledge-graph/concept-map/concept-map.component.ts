@@ -2075,8 +2075,29 @@ export class ConceptMapComponent {
       this.conceptInputsDisabled = false;
     }
   }
-
-  async expandAndPublish() {
+  onexpandAndPublish() {
+    this.confirmationService.confirm({
+      message:
+        'This confirms that you have finished editing the knowledge graph. The knowledge graph will be expanded and published for all course users.<br><br>' +
+    '<strong>Note: Once finalized, the knowledge graph cannot be edited again.</strong><br><br>' +
+    'Do you wish to continue?',
+      header: 'Finalize Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: (e) => this.expandAndPublish(e),
+      reject: () => {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+      },
+    });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName(
+        'p-confirm-dialog-reject'
+      ) as HTMLCollectionOf<HTMLElement>;
+      for (var i = 0; i < rejectButton.length; i++) {
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
+  }
+  async expandAndPublish(e) {
     this.conceptInputsDisabled = true;
     try {
       await this.conceptMapService.expandAndPublishConceptMap(
