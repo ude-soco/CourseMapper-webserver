@@ -195,7 +195,7 @@ export async function createUserCourseRelationship(userId, courseId, engagementL
     const result = await session.executeWrite(async (tx) => {
       const response = await tx.run(
         `
-        MERGE (u:User {uid: $userId})
+        MERGE (u:User {uid: $userId, type: 'user'})
         MERGE (c:Course {cid: $courseId})
         MERGE (u)-[loe:ENGAGED_IN]->(c)
         ON CREATE SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()

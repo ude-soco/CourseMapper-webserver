@@ -18,6 +18,7 @@ scipy = "==1.11.0"
 pdfminer-six = "*"
 python-dotenv = "*"
 torch = "==2.2"
+"pdfminer.six" = "==20201018"
 
 [dev-packages]
 
