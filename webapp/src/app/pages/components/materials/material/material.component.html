@@ -276,6 +276,7 @@
           ></app-iconbutton>
         </ng-template>
         <p-dialog
+        *ngIf="material.type === 'pdf'"
         header="Create Knowledge Graph for Material"
         [modal]="true"
         [(visible)]="showDialog"
