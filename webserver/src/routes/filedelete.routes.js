@@ -18,4 +18,7 @@ module.exports = function (app) {
 
   // delete PDF file
   app.delete("/api/files/:name", controller.remove);
+  app.delete("/api/images/:name", controller.removeImg);
+
+
 };

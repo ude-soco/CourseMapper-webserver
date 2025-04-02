@@ -54,6 +54,8 @@ export class CytoscapeComponent {
   @Output() selectedNodeEvent: EventEmitter<object> = new EventEmitter();
   @Output() conceptDeleted?: EventEmitter<string> = new EventEmitter();
   @Output() editConcept?: EventEmitter<string> = new EventEmitter();
+  @Output() conceptDeletedBulk?: EventEmitter<string[]> = new EventEmitter();
+
 
   public cy: any;
 
@@ -62,6 +64,7 @@ export class CytoscapeComponent {
   public _elements: any;
   currentMaterial: any;
   courseId: string;
+  private selectedNodeElement: any;
   annotationsNodes: any[];
   propertiesNodes: any[];
   categoriesNodes: any[];
@@ -107,8 +110,9 @@ export class CytoscapeComponent {
       max: 1.5,
     };
   }
+  public irrelevantConcepts = []; // Define this property in your class
+  showBulkDeletion: boolean = true; // Define this property in your class
   public showAllStyle: cytoscape.Stylesheet[] = [
-    // the stylesheet for the graph
     {
       selector: 'node',
       style: {
@@ -128,30 +132,63 @@ export class CytoscapeComponent {
           let width = 75 * normalizedWeight + 25; // value between 25 and 100
           return width;
         },
-
-        'border-width': 'mapData(weight, 0, 1, 1, 3)',
+        // 'border-width': 'mapData(weight, 0, 1, 1, 3)',
+        'border-width': (ele) => {
+  if (ele.data().lastEdited === true) {
+    return 8;
+  } else {
+    // Replicate mapData(weight, 0, 1, 1, 3)
+    const weight = Number(ele.data().weight);
+    return 1 + 2 * weight;
+  }
+},
         'border-opacity': 0.5,
         'text-wrap': 'wrap',
-
         'background-fit': 'cover',
         content: 'data(name)',
         'text-halign': 'center',
         'text-valign': 'center',
         'text-outline-width': 0.2,
-        'background-color': function (elm) {
+        'border-color': (elm) => {
+          
+      return elm.data().lastEdited === true ? '#ffff00' : 'black';
+    },
+
+        'background-color': (elm) => {
+          // First, check if the node is marked as not relevant (red)
+  if (this.irrelevantConcepts.includes(elm.data().cid)) {
+    return '#FF0000';
+  }
+          
+          if (elm.data().isNew) return '#00cc00'; // Green color for new concepts
+          if (elm.data().isEditing) return '#cc9900'; // Green color for new concepts
+          // if (elm.data().lastEdited) return '#ff0000'; // Green color for new concepts
           if (elm.data().type === 'related_concept') return '#ce6f34';
           else if (elm.data().type === 'category') return '#FBC02D';
           else if (elm.data().type === 'course') return '#689F38';
           else if (elm.data().type === 'topic') return '#607D8B';
           else if (elm.data().type === 'channel') return '#9C27B0';
           else if (elm.data().type === 'material') return '#2196F3';
-          // "annotation // main concept"
-          else return '#2196F3';
+          else {
+            // Check if the element's cid is in irrelevantConcepts
+            if (this.irrelevantConcepts.includes(elm.data().cid)) {
+              return '#FF0000'; // Red color
+            } else {
+              return '#2196F3'; // Default color
+            }
+          }
         },
         color: '#000',
         'font-size': 16,
       },
     },
+    // {
+    //   selector: 'node[lastEdited]',
+    //   style: {
+    //     'border-color': '#ffff00',  // Yellow border
+    //     'border-width': 20          // Optional: adjust border width as desired
+    //   }
+    // },
     {
       selector: 'edge',
       style: {
@@ -205,6 +242,7 @@ export class CytoscapeComponent {
       },
     },
   ];
+
   public contextMenu = {
     menuRadius: function (ele) {
       return 100;
@@ -213,18 +251,33 @@ export class CytoscapeComponent {
     commands: [
       {
         content:
-          '<span style="font-size:15px;">Edit</span> <br> <i class="pi pi-file-edit" style="color:#689F38;"></i>',
+          '<span style="font-size:15px;">Edit</span> <br> <i class="pi pi-file-edit" style="color:#FFFF00;"></i>',
         select: (ele) => {
           this.editConcept?.emit(ele.data().cid);
         },
       },
       {
         content:
-          '<span style="font-size:15px;">Delete</span> <br> <i class="pi pi-trash" style="color:#D32F2F;"></i>',
+          '<span style="font-size:15px;">Revert back to relevant</span> <br> <i class="pi pi-undo" style="color:#0000FF;"></i>',
         select: (ele) => {
-          this.conceptDeleted?.emit(ele.data().cid);
+          this.toggleIrrelevantConcepts(ele.data().cid, false);
         },
       },
+      {
+        content:
+          '<span style="font-size:15px;">Mark as not relevant</span> <br> <i class="pi pi-credit-card" style="color:#FF0000;"></i>',
+        select: (ele) => {
+          this.toggleIrrelevantConcepts(ele.data().cid, true);
+        },
+      },
+
+      // {
+      //   content:
+      //     '<span style="font-size:15px;">Delete</span> <br> <i class="pi pi-trash" style="color:#D32F2F;"></i>',
+      //   select: (ele) => {
+      //     this.conceptDeleted?.emit(ele.data().cid);
+      //   },
+      // },
     ],
     fillColor: 'rgba(0, 0, 0, 0.75)', // the background colour of the menu
     activeFillColor: 'rgba(1, 105, 217, 0.75)', // the colour used to indicate the selected command
@@ -442,8 +495,14 @@ export class CytoscapeComponent {
         this.nodeSelected = false;
         if (eventTarget !== this.cy) {
           if (eventTarget.isNode()) {
+            // If there is a previously selected node, reset its border style.
+            if (this.selectedNodeElement) {
+              this.selectedNodeElement.style('border-color', '');
+              this.selectedNodeElement.style('border-width', '');
+            }
             console.log('weight: ' + eventTarget.data('weight'));
             prevNode = eventTarget.data().id;
+            
             selectedNode = {
               id: eventTarget.data('id'),
               cid: eventTarget.data('cid'),
@@ -452,6 +511,11 @@ export class CytoscapeComponent {
               abstract: eventTarget.data('abstract'),
               wikipedia: eventTarget.data('wikipedia'),
             };
+            
+            eventTarget.style('border-color', 'yellow');
+            eventTarget.style('border-width', '7px');
+            // Store the reference for later deselection
+          this.selectedNodeElement = eventTarget;
             children = eventTarget
               .connectedEdges()
               .targets()
@@ -479,6 +543,12 @@ export class CytoscapeComponent {
             }
           } else {
             prevNode = undefined;
+            // If a non-node is clicked, reset the selected node's border.
+          if (this.selectedNodeElement) {
+            this.selectedNodeElement.style('border-color', '');
+            this.selectedNodeElement.style('border-width', '');
+            this.selectedNodeElement = null;
+          }
           }
         }
         this.selectedNodeEvent.emit(selectedNode);
@@ -487,6 +557,7 @@ export class CytoscapeComponent {
       });
     }
   }
+  
   getAllDescendants(node: any) {
     var all = [];
     getDescendants(node);
@@ -521,5 +592,35 @@ export class CytoscapeComponent {
     } catch (error) {
       console.error('Error logging activity:', error);
     }
+  }
+
+  toggleIrrelevantConcepts(cid: string, add: boolean = true) {
+
+    //reset after bulk deletion
+    if (!this.showBulkDeletion) {
+      this.irrelevantConcepts = [];
+      this.showBulkDeletion = true;
+    }
+
+    if (add) {
+      // Check if the array already contains the element
+      if (!this.irrelevantConcepts.includes(cid)) {
+        this.irrelevantConcepts.push(cid);
+      }
+    } else {
+      // Remove the element if it exists
+      const index = this.irrelevantConcepts.indexOf(cid);
+      if (index > -1) {
+        this.irrelevantConcepts.splice(index, 1);
+      }
+    }
+
+
+
+  }
+
+  deleteIrrelevant() {
+    this.showBulkDeletion = false;
+    this.conceptDeletedBulk.emit(this.irrelevantConcepts);
   }
 }

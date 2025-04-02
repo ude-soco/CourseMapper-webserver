@@ -329,10 +329,10 @@ export class VideoMainAnnotationComponent
     // create an overlay element that covers the player element
     const overlay = document.createElement('div');
     overlay.style.position = 'absolute';
-    overlay.style.top = '0';
+    overlay.style.top = '50px';
     overlay.style.left = '0';
     overlay.style.width = '100%';
-    overlay.style.height = '94%';
+    overlay.style.height = '87%';
     overlay.style.background = 'transparent';
     overlay.style.pointerEvents = 'auto';
     overlay.className = 'selection-overlay';

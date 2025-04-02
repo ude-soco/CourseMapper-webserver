@@ -33,17 +33,13 @@ export class ConceptMapService {
     return response;
   }
 
-  async addConceptMapConcept(
-    courseId: string,
-    materialId: string,
-    conceptName: string,
-    slides: number[]
-  ): Promise<any> {
+  async addConceptMapConcept(courseId: string, materialId: string, conceptName: string, slides: number[], isNew:boolean, isEditing:boolean, lastEdited: boolean): Promise<any> {
     const response$ = this.http.post<any>(
       `${environment.API_URL}/courses/${courseId}/materials/${materialId}/concept-map/concepts`,
-      { conceptName, slides },
+      { conceptName, slides, isNew, isEditing, lastEdited },
       HTTPOptions
     );
+    
     const response = await lastValueFrom(response$);
     return response;
   }

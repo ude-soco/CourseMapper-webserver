@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { State } from '../pages/courses/state/course.reducer';
 import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
 import { Neo4jService } from './neo4j.service';
+import { Course } from '../models/Course';
 @Injectable({
   providedIn: 'root',
 })
@@ -97,11 +98,15 @@ export class MaterilasService {
       return this.http
         .post<any>(`${this.API_URL}/upload/video`, formData)
         .pipe(tap((res) => console.log(res)));
+    } else if (materialType == 'pdf') {
+      return this.http
+        .post<any>(`${this.API_URL}/upload/pdf`, formData)
+        .pipe(tap((res) => console.log(res)));
+    } else if (materialType == 'img') {
+      return this.http
+        .post<any>(`${this.API_URL}/upload/img`, formData)
+        .pipe(tap((res) => console.log('result from the image upload in the material service', res)));
     }
-
-    return this.http
-      .post<any>(`${this.API_URL}/upload/pdf`, formData)
-      .pipe(tap((res) => console.log(res)));
   }
 
   deleteMaterial(material: Material) {
@@ -127,6 +132,12 @@ export class MaterilasService {
           })
         );
     }
+  }
+  deleteCourseImage(course: Course): Observable<any> {
+    const fileName = course.url.split('/').pop();
+    // Assuming course.imageFileName is the full file name with extension
+    const url = `${this.API_URL}/images/${fileName}`;
+    return this.http.delete(url, { body: course });
   }
 
   renameMaterial(courseId: any, materialTD: Material, body: any) {

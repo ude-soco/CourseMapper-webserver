@@ -375,9 +375,13 @@ export const editMaterial = async (req, res, next) => {
   foundMaterial.name = materialName;
   foundMaterial.url = materialUrl;
   foundMaterial.type = materialType;
+  
   if (materialDesc) {
     foundMaterial.description = materialDesc;
   }
+
+  foundMaterial.showDialog = showDialog;
+  
   foundMaterial.updatedAt = Date.now();
   foundMaterial = await foundMaterial.save();
   /*  try {

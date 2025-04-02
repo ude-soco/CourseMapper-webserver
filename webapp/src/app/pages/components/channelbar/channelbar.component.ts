@@ -116,10 +116,36 @@ export class ChannelbarComponent implements OnInit {
   selectedChannel: Channel;
   user = this.storageService.getUser();
   moderatorUserOptions: MenuItem[] = [
+    // {
+    //   label: 'Rename',
+    //   icon: 'pi pi-refresh',
+    //   command: () => this.onRenameCourse(),
+    // },
+
     {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameCourse(),
+      label: 'Edit course',
+      icon: 'pi pi-pencil',
+      command: () => this.onEditCourse(),
+    },
+
+    {
+      label: 'Share course ',
+      icon: 'pi pi-copy',
+      title: 'Copy Course URL',
+      command: () =>
+        this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+    },
+    {
+      label: 'View course dashboard',
+      icon: 'pi pi-chart-bar',
+      styleClass: 'contextMenuButton',
+      command: () => this.onViewDashboardClicked(),
+    },
+
+    {
+      label: 'Notification Settings',
+      icon: 'pi pi-bell',
+      command: ($event) => this.onNotificationSettingsClicked($event),
     },
     {
       label: 'Delete',
@@ -255,7 +281,7 @@ export class ChannelbarComponent implements OnInit {
       //course name <p> has been changed to editable
 
       this.enterKey = false;
-      this.onRenameCourseConfirm(this.selectedId);
+      //this.onRenameCourseConfirm(this.selectedId);
     }
   }
 
@@ -276,15 +302,21 @@ export class ChannelbarComponent implements OnInit {
     });
   }
 
-  onRenameCourse() {
-    let selectedCurs = <HTMLInputElement>(
-      document.getElementById(`${this.selectedCourse._id}`)
-    );
-    this.selectedId = this.selectedCourse._id;
-    selectedCurs.contentEditable = 'true';
-    this.previousCourse = this.selectedCourse;
-    this.selectElementContents(selectedCurs);
-  }
+  // onRenameCourse() {
+  //   let selectedCurs = <HTMLInputElement>(
+  //     document.getElementById(`${this.selectedCourse._id}`)
+  //   );
+  //   this.selectedId = this.selectedCourse._id;
+  //   selectedCurs.contentEditable = 'true';
+  //   this.previousCourse = this.selectedCourse;
+  //   this.selectElementContents(selectedCurs);
+  // }
+
+  //global edit for the course
+  onEditCourse() {
+    this.router.navigate(['/course', this.selectedCourse._id, 'welcome'], { queryParams: { edit: true } });
+    //this.router.navigate(['/course', this.selectedCourse._id, 'welcome']);
+      }
 
   onRenameCourseConfirm(id) {
     const selectedCurs = <HTMLInputElement>document.getElementById(id);

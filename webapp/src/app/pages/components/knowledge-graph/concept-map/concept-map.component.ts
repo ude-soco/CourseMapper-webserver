@@ -4,7 +4,8 @@ import {
   Output,
   EventEmitter,
   ChangeDetectorRef,
-  Renderer2,
+  Renderer2, 
+  
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -31,6 +32,7 @@ import { Socket } from 'ngx-socket-io';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
+import { CytoscapeComponent } from '../cytoscape/cytoscape.component';
 interface topN {
   name: string;
   code: string;
@@ -42,6 +44,7 @@ interface topN {
   styleUrls: ['./concept-map.component.css'],
 })
 export class ConceptMapComponent {
+ 
   @Input() course?: Course;
   @Input() showConceptMap?: boolean;
   @Input() isCmLoading?: boolean;
@@ -150,6 +153,8 @@ export class ConceptMapComponent {
   materialKgActivated: boolean = false;
   courseIsEmpty?: boolean = undefined;
   recommendedConceptType = 'recommended_concept';
+  allSelected = false;
+
   tabs = [
     {
       label: 'Main Concepts',
@@ -216,7 +221,7 @@ export class ConceptMapComponent {
     },
     {
       label: 'Recommended Materials',
-      icon: 'pi pi-fw pi-youtube',
+      icon: 'pi pi-fw pi-book', //changed the youtube icon to address violation
       disabled: true,
       command: (e) => {
         this.mainConceptsTab = false;
@@ -254,6 +259,7 @@ export class ConceptMapComponent {
   currentPDFPage: number;
 
   private subscriptions: Subscription[] = [];
+  totalPages: any;
   constructor(
     private messageService: MessageService, //show toast messages
     private conceptMapService: ConceptMapService, //Build material KG
@@ -864,6 +870,7 @@ export class ConceptMapComponent {
           let kgNodes = [];
           let kgEdges = [];
           const materialNodes = await this.neo4jService.getMaterial(materialId);
+         
           this.materialSlides = await this.neo4jService.getMaterialSlides(
             materialId
           );
@@ -874,6 +881,13 @@ export class ConceptMapComponent {
               value: slideNumber,
             };
           });
+          this.totalPages = this.slideOptions.length;
+
+          if (this.currentPDFPage == undefined) {
+            this.docURL = `${this.cmEndpointURL}${this.currentMaterial?.url}${this.currentMaterial?._id}.pdf`;
+            this.currentPDFPage = 1;
+          }
+
           const materialEdges = await this.neo4jService.getMaterialEdges(
             materialId
           );
@@ -889,6 +903,9 @@ export class ConceptMapComponent {
               weight: data.weight,
               wikipedia: data.wikipedia,
               abstract: data.abstract,
+              isNew: data.isNew,
+              isEditing: data.isEditing,
+              lastEdited: data.lastEdited,
             };
             kgNodes.push(nodeEle);
           });
@@ -1550,6 +1567,7 @@ export class ConceptMapComponent {
             this.loading.emit(false);
           },
         });
+      //receive recommended concepts
     }
   }
   //prepare formData for [concepts & materials] recommenders
@@ -1947,6 +1965,7 @@ export class ConceptMapComponent {
       conceptName: { title: concept.data.name },
       conceptSlides: slideNumbers,
     });
+    
   }
 
   cancelEditConcept() {
@@ -1971,6 +1990,12 @@ export class ConceptMapComponent {
             conceptId
           );
           this.getConceptMapData();
+          this.messageService.add({
+            key: 'server_response',
+            severity: 'success',
+            summary: 'Delete Concept',
+            detail: 'Main Concept(s) marked as not relevant deleted successfully.',
+          });
         } catch (error) {
           console.error(error);
           this.messageService.add({
@@ -1984,21 +2009,86 @@ export class ConceptMapComponent {
     });
   }
 
+  deleteConceptsBulk(conceptIds: string[]) {
+
+    console.log('bulk deletion', conceptIds);
+
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete all the main concepts marked as not relevant?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: async () => {
+        try {
+          console.log('accepting');
+          // Use a loop to delete each concept asynchronously
+          for (const conceptId of conceptIds) {
+            console.log('deleting the concept', conceptId);
+            await this.conceptMapService.deleteConceptMapConcept(
+              this.currentMaterial!.courseId,
+              this.currentMaterial!._id,
+              conceptId
+            );
+          }
+
+          // After all deletions, refresh the data
+          this.getConceptMapData();
+          if (conceptIds.length===1){
+            this.messageService.add({
+              key: 'server_response',
+              severity: 'success',
+              summary: 'Delete Concept',
+              detail: `Main Concept deleted successfully`,
+            });
+          }
+          else{
+            this.messageService.add({
+              key: 'server_response',
+              severity: 'success',
+              summary: 'Batch Delete Concept',
+              detail: 'Concepts batch deleted successfully',
+            });
+          }
+    
+        } catch (error) {
+          console.error(error);
+          this.messageService.add({
+            key: 'server_response',
+            severity: 'error',
+            summary: 'Cannot remove concept(s)',
+            detail: error.error?.error?.toString() || 'Unknown error occurred.',
+          });
+        }
+      },
+    });
+  }
+
+
   async addConcept() {
+    console.log('add concept');
     // TODO
     // Automatically publish drafts
     // Do not rearrange graph
     let conceptName = this.editConceptForm.value.conceptName;
+    let Slide = this.editConceptForm.value.conceptSlides;
     if (!conceptName) {
       this.messageService.add({
         key: 'server_response',
         severity: 'error',
-        summary: 'Concept name required',
-        detail: 'Please enter a concept name',
+        summary: 'Main Concept required',
+        detail: 'Please enter a Main Concept name',
       });
       return;
     }
-
+    
+    if (!Slide) {
+      this.messageService.add({
+        key: 'server_response',
+        severity: 'error',
+        summary: 'Slide selection required',
+        detail: 'Please select slide(s) relevant to this Main Concept',
+      });
+      return;
+    }
     if (typeof conceptName === 'string') {
       conceptName = conceptName.trim();
     } else {
@@ -2008,20 +2098,51 @@ export class ConceptMapComponent {
 
     this.conceptInputsDisabled = true;
     try {
+
       if (this.editingConceptId) {
         await this.conceptMapService.deleteConceptMapConcept(
           this.currentMaterial!.courseId,
           this.currentMaterial!._id,
           this.editingConceptId
         );
+        await this.conceptMapService.addConceptMapConcept(
+          this.currentMaterial!.courseId,
+          this.currentMaterial!._id,
+          conceptName,
+          conceptSlides,
+          false,  // Not a new concept
+          true,    // Mark as edited
+          true   // lastEdited: new/edited node is flagged true
+        );
+        this.getConceptMapData();
+        this.messageService.add({
+          key: 'server_response',
+          severity: 'success',
+          summary: 'Edit Concept',
+          detail: `Main Concept '${conceptName}' edit successfully`,
+        });
       }
+      else {
       await this.conceptMapService.addConceptMapConcept(
         this.currentMaterial!.courseId,
         this.currentMaterial!._id,
         conceptName,
-        conceptSlides
+        conceptSlides,
+        true, // Mark this concept as new
+        false, // Not edited
+        true   // lastEdited: new/edited node is flagged true
       );
       this.getConceptMapData();
+      this.messageService.add({
+        key: 'server_response',
+        severity: 'success',
+        summary: 'Add Concept',
+        detail:`Main Concept '${conceptName}' added successfully`,
+      });
+    }
+    console.log('conceptName',conceptName);
+
+
       this.editConceptForm.setValue({
         conceptName: '',
         conceptSlides: '',
@@ -2036,12 +2157,34 @@ export class ConceptMapComponent {
         summary: 'Cannot add concept',
         detail: error.error.error.toString(),
       });
+
     } finally {
       this.conceptInputsDisabled = false;
     }
   }
-
-  async expandAndPublish() {
+  onexpandAndPublish() {
+    this.confirmationService.confirm({
+      message:
+        'This confirms that you have finished editing the knowledge graph. The knowledge graph will be expanded and published for all course users.<br><br>' +
+    '<strong>Note: Once finalized, the knowledge graph cannot be edited again.</strong><br><br>' +
+    'Do you wish to continue?',
+      header: 'Finalize Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: (e) => this.expandAndPublish(e),
+      reject: () => {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+      },
+    });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName(
+        'p-confirm-dialog-reject'
+      ) as HTMLCollectionOf<HTMLElement>;
+      for (var i = 0; i < rejectButton.length; i++) {
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
+  }
+  async expandAndPublish(e) {
     this.conceptInputsDisabled = true;
     try {
       await this.conceptMapService.expandAndPublishConceptMap(
@@ -2069,6 +2212,8 @@ export class ConceptMapComponent {
 
   async previewSlide(event, slideId: Object) {
     this.docURL = `${this.cmEndpointURL}${this.currentMaterial?.url}${this.currentMaterial?._id}.pdf`;
+   console.log('docURL',this.docURL);
+    //this.pdfViewerService.setPDFURL(this.docURL);
     this.currentPDFPage = parseInt(slideId['value']);
     event.stopPropagation();
     return false;
@@ -2135,4 +2280,28 @@ export class ConceptMapComponent {
       console.error('Error logging activity:', error);
     }
   }
+
+  toggleSelectAll(event: Event): void {
+    this.allSelected = (event.target as HTMLInputElement).checked;
+
+    if (this.allSelected) {
+      // Select all slides
+      const allSlides = this.materialSlides.records.map((slide) => slide.sid.split('_').pop());
+      this.editConceptForm.controls['conceptSlides'].setValue(allSlides);
+    } else {
+      // Deselect all slides
+      this.editConceptForm.controls['conceptSlides'].setValue([]);
+    }
+  }
+
+  pagechanging(e: any) {
+    this.currentPDFPage = e.page + 1; // Update the current page
+  }
+
+  openLink(url: string, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    window.open(url, '_blank');
+  }
+
 }
