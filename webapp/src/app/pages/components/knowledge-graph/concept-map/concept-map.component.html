@@ -8,6 +8,11 @@
 >
   <p-dialog
     id="higherLevelsKG"
+    [header]="
+    isDraft
+      ? ('Edit and finalize the knowledge Graph for \'' + this.currentMaterial?.name + '\'')
+      : ('Knowledge Graph for \'' + this.currentMaterial?.name + '\'')
+  "
     [(visible)]="this.showMaterialKg"
     [blockScroll]="true"
     [contentStyle]="{ 'overflow-y': 'scroll' }"
@@ -21,24 +26,23 @@
       margin: 0,
       'padding-top': '2rem',
     }"
-    [closable]="true"
-    [showHeader]="false"
+
     maskStyleClass="dialogMask"
   >
-  <button
+  <!-- <button
   (click)="showMaterialKg = false"
   class="absolute top-5 right-3 mt-2 mr-2 bg-transparent border-0 focus:outline-none rounded-full p-2 hover:bg-gray-100"
 >
   <i class="pi pi-times"></i>
-</button>
+</button> -->
 
-    <span *ngIf="isDraft && !isLoading" class="title-text">
+    <!-- <span *ngIf="isDraft && !isLoading" class="title-text">
       <b
         >Edit and finalize the knowledge Graph for '{{
           this.currentMaterial?.name
         }}'</b
       >
-    </span>
+    </span> -->
 
     <span *ngIf="isDraft && !isLoading" class="subheading-text">
       Right-click to edit or delete Main Concepts, or add new ones to the
