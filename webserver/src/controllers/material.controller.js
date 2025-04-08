@@ -330,6 +330,7 @@ export const editMaterial = async (req, res, next) => {
   const materialType = req.body.type;
   const userId = req.userId;
   const materialDesc = req.body.description;
+  const showDialog = req.body.showDialog;
   console.log("called");
   let course;
   try {
