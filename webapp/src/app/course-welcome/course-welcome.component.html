@@ -138,7 +138,7 @@
       ></i>
     </div>
 
-    <div class="mt-1 h-[70vh]"> <!-- Adjust the height as needed -->
+    <div class="mt-1"> <!-- Adjust the height as needed -->
       <div *ngIf="!isEditingDescription">
         <ng-container *ngIf="selectedCourse.description  ; else noDescription">
           <div class="ql-snow h-full overflow-auto">
@@ -150,7 +150,7 @@
         </ng-template>
       </div>
     
-      <div *ngIf="isEditingDescription" class="dynamic-editor h-full w-full overflow-hidden">
+      <div *ngIf="isEditingDescription" class="dynamic-editor-container">
         <input type="file" #fileInput accept="image/*" style="display: none;" (change)="onFileSelected($event)" />
         <p-editor
         

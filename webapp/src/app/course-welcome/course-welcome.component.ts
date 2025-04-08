@@ -45,7 +45,7 @@ import { MaterilasService } from '../services/materials.service';
   styleUrls: ['./course-welcome.component.css'],
   providers: [MessageService, ConfirmationService, DatePipe],
 })
-export class CourseWelcomeComponent implements OnInit {
+export class CourseWelcomeComponent implements OnInit, CanComponentDeactivate  {
   @ViewChild('fileUploader') fileUploader: any; // Type can be adjusted per PrimeNG version
   @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
   selectedCourse: Course = new CourseImp('', '');
@@ -63,6 +63,8 @@ export class CourseWelcomeComponent implements OnInit {
   private API_URL = environment.API_URL;
 
   showInfoError: ShowInfoError;
+  currentCourseId: string = this.route.snapshot.paramMap.get('id');
+
   isEditingName: boolean = false;
   isEditingDescription: boolean = false;
   isEditingImage: boolean = false;
@@ -99,9 +101,11 @@ export class CourseWelcomeComponent implements OnInit {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
   }
-
+  // hasUnsavedChanges(): boolean {
+  //   return this.isEditing || this.isEditingName || this.isEditingDescription || this.isEditingImage;
+  // }
   ngOnInit(): void {
-    console.log('course-welcome.component.ts ngOnInit()');
+    //console.log('course-welcome.component.ts ngOnInit()');
     this.selectedCourse = this.courseService.getSelectedCourse();
     this.sanitizeDescription(this.selectedCourse.description);
    //this.Users = this.selectedCourse.users;
@@ -109,10 +113,23 @@ export class CourseWelcomeComponent implements OnInit {
     console.log('selected course', this.selectedCourse);
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
+      // console.log("course._id", course._id);
+      // console.log("this.currentCourseId", this.currentCourseId);
+          // When a new course is selected, check for unsaved changes.
+    // if (course._id !== this.currentCourseId && this.hasUnsavedChanges()) {
+    //   // Inform the user and immediately exit the subscription handler.
+    //   alert('You have unsaved changes. Please save them before switching courses.');
+    //   // Optionally, if the URL has already updated, you might try reverting it:
+    //  // window.history.replaceState({}, '', `/course/${this.currentCourseId}/welcome`);
+    //   // Do not update the component's state.
+    //   return;
+    // }
      
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
-      if (this.selectedCourse.role === 'moderator') {
+      //this.currentCourseId = course._id;
+     // this.courseDescription = course.description;
+      if (this.selectedCourse.role === 'moderator' || this.selectedCourse.role === 'admin') {
         this.moderator = true;
         console.log('selected course', this.selectedCourse);
 
@@ -147,7 +164,7 @@ export class CourseWelcomeComponent implements OnInit {
 
       this.sanitizeDescription(this.courseDescription);
 
-      if (this.selectedCourse.role === 'moderator') {
+      if (this.selectedCourse.role === 'moderator' || this.selectedCourse.role === 'admin') {
         this.moderator = true;
       } else {
         this.moderator = false;
@@ -158,7 +175,7 @@ export class CourseWelcomeComponent implements OnInit {
         this.selectedCourse.users[0]?.userId,
         this.selectedCourse
       );
-      if (this.selectedCourse.role === 'moderator') {
+      if (this.selectedCourse.role === 'moderator'|| this.selectedCourse.role === 'admin') {
         this.moderator = true;
       } else {
         this.moderator = false;
@@ -166,6 +183,14 @@ export class CourseWelcomeComponent implements OnInit {
     }
    
   }
+  canDeactivate(): boolean {
+    if (this.isEditing || this.isEditingName || this.isEditingDescription || this.isEditingImage) {
+      alert('You have unsaved changes. Please save before navigating away.');
+      return false;
+    }
+    return true;
+  }
+
   get enrolledUsersCount(): number {
     return Array.isArray(this.selectedCourse?.users) ? this.selectedCourse.users.length : 0;
   }
@@ -633,4 +658,7 @@ export class CourseWelcomeComponent implements OnInit {
       };
     });
   }
+}
+export interface CanComponentDeactivate {
+  canDeactivate: () => boolean;
 }

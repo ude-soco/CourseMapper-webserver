@@ -20,3 +20,12 @@
     height: 200px;
     object-fit: cover; /* Optional: ensures the image covers the area without distortion */
   }
+
+  .dynamic-editor-container {
+    /* Allow the container to be resized manually */
+    resize: both;
+    overflow: auto;
+    min-height: 200px; /* Set a minimum height */
+    border: 1px solid #ccc; /* Optional: visual cue for resizing */
+    padding: 8px;
+  }
