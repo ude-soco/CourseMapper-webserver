@@ -8,9 +8,23 @@ const FollowAnnotation = db.followAnnotation;
 const Annotation = db.annotation;
 const BlockingNotifications = db.blockingNotifications;
 const Material = db.material;
+const Channel = db.channel;
+const Topic = db.topic;
+
 const {
   getNotificationSettingsWithFollowingAnnotations,
 } = require("../middlewares/Notifications/notifications");
+
+const findUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found!");
+  return user;
+};
+
+const handleError = (res, error, message) => {
+  console.error(error);
+  return res.status(500).send({ error: message });
+};
 
 export const getAllNotifications = async (req, res, next) => {
   const userId = req.userId;
@@ -68,12 +82,66 @@ export const getAllNotifications = async (req, res, next) => {
       .status(500)
       .send({ error: "Error finding blocking users", error });
   }
-
+  //console.log("Sending notifications to frontend:", notifications);
   return res
     .status(200)
     .send({ notifications, blockingUsers: blockingUsers.blockingUsers });
 };
 
+export const getAllNotificationsLog = async (req, res, next) => {
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  // Get all notifications for user by populating the activityId
+  let notifications;
+  try {
+    notifications = await UserNotification.find({
+      userId: new ObjectId(userId),
+    }).populate("activityId", [
+      "notificationInfo.userName",
+      "notificationInfo.userShortname",
+      "notificationInfo.courseName",
+      "notificationInfo.topicName",
+      "notificationInfo.channelName",
+      "notificationInfo.category",
+      "notificationInfo.materialType",
+      "notificationInfo.authorEmail",
+      "notificationInfo.annotationAuthorId",
+      "notificationInfo.replyAuthorId",
+      "notificationInfo.isFollowingAnnotation",
+      "notificationInfo.isDeletingAnnotation",
+      "notificationInfo.isDeletingMaterial",
+      "notificationInfo.isDeletingReply",
+      "notificationInfo.isDeletingChannel",
+      "notificationInfo.isDeletingTopic",
+      "statement.object.definition.extensions",
+      "statement.object.id",
+      "statement.object.definition.type",
+      "statement.object.definition.name.en-US",
+      "statement.actor.name",
+      "statement.actor.account.name",
+
+      "statement.verb.display.en-US",
+      "statement.result.extensions",
+      "statement.timestamp",
+    ]);
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error finding notifications", error });
+  }
+
+  req.locals = {
+    user: foundUser,
+    notifications: notifications,
+  };
+  next();
+};
 export const deleteAllNotifications = async (req, res, next) => {
   const userId = req.userId;
 
@@ -85,13 +153,19 @@ export const deleteAllNotifications = async (req, res, next) => {
       .status(500)
       .send({ error: "Error deleting notifications", error });
   }
-
   return res.status(200).send({ message: "Notifications deleted" });
 };
 
 export const markNotificationsAsRead = async (req, res, next) => {
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   try {
     //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
@@ -104,13 +178,36 @@ export const markNotificationsAsRead = async (req, res, next) => {
       .status(500)
       .send({ error: "Error updating notifications", error });
   }
+  let foundNotifications;
+  try {
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding Notification" });
+  }
 
-  return res.status(200).send({ message: "Notifications marked as read!" });
+  const response = { message: "Notification/s marked as read!" };
+
+  req.locals = {
+    user: foundUser,
+    notifications: foundNotifications,
+    response: response,
+  };
+  next();
+  //return res.status(200).send({ message: "Notifications marked as read!" });
 };
 
 export const markNotificationsAsUnread = async (req, res, next) => {
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   try {
     //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
@@ -123,13 +220,36 @@ export const markNotificationsAsUnread = async (req, res, next) => {
       .status(500)
       .send({ error: "Error updating notifications", error });
   }
+  let foundNotifications;
+  try {
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding Notification" });
+  }
 
-  return res.status(200).send({ message: "Notification/s marked as unread!" });
+  const response = { message: "Notification/s marked as unread!" };
+
+  req.locals = {
+    user: foundUser,
+    notifications: foundNotifications,
+    response: response,
+  };
+  next();
+  //return res.status(200).send({ message: "Notification/s marked as unread!" });
 };
 
 export const starNotification = async (req, res, next) => {
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   try {
     //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
@@ -142,13 +262,35 @@ export const starNotification = async (req, res, next) => {
       .status(500)
       .send({ error: "Error updating notifications", error });
   }
+  let foundNotifications;
+  try {
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding Notification" });
+  }
+  const response = { message: "Notification/s starred!" };
 
-  return res.status(200).send({ message: "Notification/s starred!" });
+  req.locals = {
+    user: foundUser,
+    notifications: foundNotifications,
+    response: response,
+  };
+  next();
+  //return res.status(200).send({ message: "Notification/s starred!" });
 };
 
 export const unstarNotification = async (req, res, next) => {
   //request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   try {
     //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
@@ -162,13 +304,45 @@ export const unstarNotification = async (req, res, next) => {
       .status(500)
       .send({ error: "Error updating notifications", error });
   }
+  let foundNotifications;
+  try {
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding Notification" });
+  }
 
-  return res.status(200).send({ message: "Notification/s unstarred!" });
+  const response = { message: "Notification/s starred!" };
+
+  req.locals = {
+    user: foundUser,
+    notifications: foundNotifications,
+    response: response,
+  };
+  next();
+  //return res.status(200).send({ message: "Notification/s unstarred!" });
 };
 
 //the below function deletes the rows from the userNotifications table
 export const removeNotification = async (req, res, next) => {
   const notificationIds = req.body.notificationIds;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  let foundNotifications;
+  try {
+    foundNotifications = await UserNotification.find({
+      _id: { $in: notificationIds },
+    });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding Notification" });
+  }
 
   try {
     await UserNotification.deleteMany({ _id: { $in: notificationIds } });
@@ -177,6 +351,14 @@ export const removeNotification = async (req, res, next) => {
       .status(500)
       .send({ error: "Error deleting notifications", error });
   }
+
+  const response = { message: "Notification/s removed!" };
+  req.locals = {
+    user: foundUser,
+    notifications: foundNotifications,
+    response: response,
+  };
+  next();
 };
 
 export const searchUsers = async (req, res, next) => {
@@ -210,6 +392,12 @@ export const searchUsers = async (req, res, next) => {
 export const followAnnotation = async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   //find the annotation with the ID first
   let annotation;
@@ -255,9 +443,10 @@ export const followAnnotation = async (req, res, next) => {
       startPage: annotation.location.startPage,
     }),
   });
-
+  let successResponse;
   try {
     followAnnotationToBeSaved = await followAnnotationToBeSaved.save();
+    successResponse = { message: "Followed the Annotation!" };
     /* res.status(200).json({ message: "Followed the Annotation!" }); */
   } catch (error) {
     res.status(500).json({ error: "Could not Follow the Annotation!" });
@@ -273,12 +462,25 @@ export const followAnnotation = async (req, res, next) => {
       .send({ message: "Error finding updated notification settings" });
   }
   if (req.locals) {
-    req.locals.response = notificationSettings[0];
+    (req.locals.user = foundUser),
+      (req.locals.response = notificationSettings[0]);
   } else {
     req.locals = {
+      user: foundUser,
+      annotation: annotation,
+      successResponse: successResponse,
       response: notificationSettings[0],
     };
   }
+  // if (req.locals) {
+  //   (req.locals.user = foundUser),
+  //     (req.locals.response = notificationSettings[0]);
+  // } else {
+  //   req.locals = {
+  //     user: foundUser,
+  //     response: notificationSettings[0],
+  //   };
+  // }
   next();
 
   //update the followingAnnotations array in the BlockingNotifications collection for the respective channel
@@ -326,8 +528,15 @@ export const followAnnotation = async (req, res, next) => {
 export const unfollowAnnotation = async (req, res, next) => {
   const annotationId = req.params.annotationId;
   const userId = req.userId;
-
+  let foundUser;
   let annotation;
+
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
   try {
     annotation = await Annotation.findById(annotationId);
   } catch (error) {
@@ -371,8 +580,13 @@ export const unfollowAnnotation = async (req, res, next) => {
       .status(500)
       .send({ message: "Error finding updated notification settings" });
   }
-
-  res.status(200).send(notificationSettings[0]);
+  req.locals = {
+    user: foundUser,
+    annotation: annotation,
+    response: notificationSettings[0],
+  };
+  next();
+  //res.status(200).send(notificationSettings[0]);
 };
 
 export const setMaterialNotificationSettings = async (req, res, next) => {
@@ -386,6 +600,24 @@ export const setMaterialNotificationSettings = async (req, res, next) => {
   const isCourseUpdateNotificationsEnabled =
     req.body.isCourseUpdateNotificationsEnabled;
   let updatedDocument;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
 
   //update the material in the Blocking Notification collection
   try {
@@ -428,14 +660,40 @@ export const setMaterialNotificationSettings = async (req, res, next) => {
       .status(500)
       .send({ message: "Error finding updated notification settings" });
   }
-
-  return res.status(200).json(notificationSettings[0]);
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    response: notificationSettings[0],
+    labelClicked: req.body.labelClicked,
+    key: req.body.key,
+  };
+  next();
+  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetMaterialNotificationSettings = async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const materialId = req.body.materialId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
 
   let blockingNotification;
   try {
@@ -501,8 +759,13 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
       .status(500)
       .send({ message: "Error finding updated notification settings" });
   }
-
-  return res.status(200).json(notificationSettings[0]);
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    response: notificationSettings[0],
+  };
+  next();
+  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const setChannelNotificationSettings = async (req, res, next) => {
@@ -517,6 +780,25 @@ export const setChannelNotificationSettings = async (req, res, next) => {
     req.body.isCourseUpdateNotificationsEnabled;
 
   let updatedDoc;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findById(channelId);
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
   //update the channel in the Blocking Notification collection
   try {
     updatedDoc = await BlockingNotifications.findOneAndUpdate(
@@ -571,14 +853,39 @@ export const setChannelNotificationSettings = async (req, res, next) => {
       .status(500)
       .send({ message: "Error finding updated notification settings" });
   }
-
-  return res.status(200).json(notificationSettings[0]);
+  req.locals = {
+    user: foundUser,
+    channel: foundChannel,
+    response: notificationSettings[0],
+    labelClicked: req.body.labelClicked,
+    key: req.body.key,
+  };
+  next();
+  //return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetChannelNotificationSettings = async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const channelId = req.body.channelId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findById(channelId);
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
 
   let blockingNotification;
   try {
@@ -662,7 +969,13 @@ export const unsetChannelNotificationSettings = async (req, res, next) => {
       .send({ message: "Error finding updated notification settings" });
   }
 
-  return res.status(200).json(notificationSettings[0]);
+  req.locals = {
+    user: foundUser,
+    channel: foundChannel,
+    response: notificationSettings[0],
+  };
+  next();
+  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const setTopicNotificationSettings = async (req, res, next) => {
@@ -676,6 +989,25 @@ export const setTopicNotificationSettings = async (req, res, next) => {
   const isCourseUpdateNotificationsEnabled =
     req.body.isCourseUpdateNotificationsEnabled;
   let updatedDoc;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findById(topicId);
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `Topic with id ${topicId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding topic" });
+  }
+
   try {
     updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
@@ -747,13 +1079,39 @@ export const setTopicNotificationSettings = async (req, res, next) => {
       .send({ message: "Error finding updated notification settings" });
   }
 
-  return res.status(200).json(notificationSettings[0]);
+  req.locals = {
+    user: foundUser,
+    topic: foundTopic,
+    response: notificationSettings[0],
+    labelClicked: req.body.labelClicked,
+    key: req.body.key,
+  };
+  next();
+  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetTopicNotificationSettings = async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
   const topicId = req.body.topicId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findById(topicId);
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `Topic with id ${topicId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding topic" });
+  }
 
   let blockingNotification;
   try {
@@ -844,7 +1202,13 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
       .send({ message: "Error finding updated notification settings" });
   }
 
-  return res.status(200).json(notificationSettings[0]);
+  req.locals = {
+    user: foundUser,
+    topic: foundTopic,
+    response: notificationSettings[0],
+  };
+  next();
+  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const setCourseNotificationSettings = async (req, res, next) => {
@@ -858,6 +1222,25 @@ export const setCourseNotificationSettings = async (req, res, next) => {
     req.body.isCourseUpdateNotificationsEnabled;
 
   let updatedDoc;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
   /*   try { */
   updatedDoc = await BlockingNotifications.findOneAndUpdate(
     {
@@ -924,7 +1307,15 @@ export const setCourseNotificationSettings = async (req, res, next) => {
       .send({ message: "Error finding updated notification settings" });
   }
 
-  return res.status(200).json(notificationSettings[0]);
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    response: notificationSettings[0],
+    labelClicked: req.body.labelClicked,
+    key: req.body.key,
+  };
+  next();
+  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetCourseNotificationSettings = async (req, res, next) => {
@@ -939,6 +1330,18 @@ export const unsetCourseNotificationSettings = async (req, res, next) => {
     });
   } catch (err) {
     return res.status(500).json({ error: "Error finding user" });
+  }
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
   }
 
   let updatedDoc;
@@ -1022,7 +1425,13 @@ export const unsetCourseNotificationSettings = async (req, res, next) => {
       .send({ message: "Error finding updated notification settings" });
   }
 
-  return res.status(200).json(notificationSettings[0]);
+  req.locals = {
+    user: user,
+    course: foundCourse,
+    response: notificationSettings[0],
+  };
+  next();
+  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const setGlobalNotificationSettings = async (req, res, next) => {
@@ -1033,7 +1442,12 @@ export const setGlobalNotificationSettings = async (req, res, next) => {
     req.body.isReplyAndMentionedNotificationsEnabled;
   const isCourseUpdateNotificationsEnabled =
     req.body.isCourseUpdateNotificationsEnabled;
-
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
   //First the user document will get updated, after that, all the Blocking Notification documents that have the userId = userId will get updated with the new values for the user's notification settings, and all the channels, topics, and materials that have not been overridden will also get the new values
 
   //update the user document
@@ -1120,7 +1534,14 @@ export const setGlobalNotificationSettings = async (req, res, next) => {
     return res.status(500).json({ error });
   }
 
-  return res.status(200).json(updatedUser);
+  req.locals = {
+    user: foundUser,
+    response: updatedUser,
+    key: req.body.key,
+    labelClicked: req.body.labelClicked,
+  };
+  next();
+  // return res.status(200).json(updatedUser);
 };
 
 export const getAllCourseNotificationSettings = async (req, res, next) => {
@@ -1194,7 +1615,14 @@ export const getAllCourseNotificationSettings = async (req, res, next) => {
 export const blockUser = async (req, res, next) => {
   const userId = req.userId;
   const userToBlockId = req.body.userToBlockId;
-  let user;
+  let blockedUser;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
   //Add the user to be blocked to the blocking list
   try {
     await User.findOneAndUpdate(
@@ -1208,7 +1636,7 @@ export const blockUser = async (req, res, next) => {
       }
     );
 
-    user = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       {
         _id: new ObjectId(userId),
       },
@@ -1240,14 +1668,42 @@ export const blockUser = async (req, res, next) => {
       .status(500)
       .send({ error: "Error finding blocking users", error });
   }
+  try {
+    blockedUser = await User.findById(userToBlockId, [
+      "_id",
+      "firstname",
+      "lastname",
+      "email",
+    ]);
+    if (!blockedUser) {
+      return res.status(404).send({ error: "Blocked user not found!" });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error processing block user request", details: error });
+  }
 
-  return res.status(200).json(blockingUsers.blockingUsers);
+  req.locals = {
+    user: foundUser,
+    blockedUser: blockedUser,
+    response: blockingUsers.blockingUsers,
+  };
+  next();
+  //return res.status(200).json(blockingUsers.blockingUsers);
 };
 
 export const unblockUser = async (req, res, next) => {
   const userId = req.userId;
   const userToUnblockId = req.body.userToUnblockId;
-  let user;
+  let blockedUser;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
   //Remove the user to be unblocked from the blocking list
   try {
     await User.findOneAndUpdate(
@@ -1261,7 +1717,7 @@ export const unblockUser = async (req, res, next) => {
       }
     );
 
-    user = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       {
         _id: userId,
       },
@@ -1293,8 +1749,30 @@ export const unblockUser = async (req, res, next) => {
       .status(500)
       .send({ error: "Error finding blocking users", error });
   }
+  try {
+    blockedUser = await User.findById(userToUnblockId, [
+      "_id",
+      "firstname",
+      "lastname",
+      "email",
+    ]);
+    if (!blockedUser) {
+      return res.status(404).send({ error: "Blocked user not found!" });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ error: "Error processing block user request", details: error });
+  }
 
-  return res.status(200).json(blockingUsers.blockingUsers);
+  req.locals = {
+    user: foundUser,
+    blockedUser: blockedUser,
+    response: blockingUsers.blockingUsers,
+  };
+  next();
+
+  //return res.status(200).json(blockingUsers.blockingUsers);
 };
 
 export const followAnnotationSuccess = async (req, res, next) => {

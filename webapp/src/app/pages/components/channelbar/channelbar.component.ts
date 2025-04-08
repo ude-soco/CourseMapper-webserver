@@ -152,6 +152,25 @@ export class ChannelbarComponent implements OnInit {
       icon: 'pi pi-times',
       command: () => this.onDeleteCourse(),
     },
+    {
+      label: 'Share course ',
+      icon: 'pi pi-copy',
+      title: 'Copy Course URL',
+      command: () => this.onShareCourse(),
+      // command: () =>
+      //   this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+    },
+    {
+      label: 'View course dashboard',
+      icon: 'pi pi-chart-bar',
+      styleClass: 'contextMenuButton',
+      command: () => this.onViewDashboardClicked(),
+    },
+    {
+      label: 'Notification Settings',
+      icon: 'pi pi-bell',
+      command: ($event) => this.onNotificationSettingsClicked($event),
+    },
   ];
 
   normalUserOptions: MenuItem[] = [
@@ -170,8 +189,9 @@ export class ChannelbarComponent implements OnInit {
       label: 'Share course ',
       icon: 'pi pi-copy',
       title: 'Copy Course URL',
-      command: () =>
-        this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+      // command: () =>
+      //   this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+      command: () => this.onShareCourse(),
     },
   ];
   /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */
@@ -504,6 +524,33 @@ export class ChannelbarComponent implements OnInit {
     }, 0);
   }
 
+  /**
+   * @function onShareCourse
+   * Triggered from the UI when the user clicks on "Share Course".
+   */
+  onShareCourse() {
+    this.courseService.shareCourse(this.selectedCourse).subscribe((res) => {
+      if ('success' in res) {
+        const courseUrl = res.courseUrl; // The URL from the backend response
+        navigator.clipboard.writeText(courseUrl).then(
+          () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: res.success,
+            });
+          },
+          (err) => {
+            this.showError('Failed to copy URL to clipboard.');
+            console.error('Clipboard error:', err);
+          }
+        );
+      } else {
+        this.showError(res?.errorMsg);
+      }
+    });
+  }
+
   preventEnterKey(e) {
     let confirmButton = document.getElementById('addChannelConfirm');
     if (e.keyCode === 13) {
@@ -520,11 +567,17 @@ export class ChannelbarComponent implements OnInit {
     // this.selectedToolEvent.emit('none');
     this.materialKgService.courseKgOrdered(this.selectedCourse);
   }
+  // onViewDashboardClicked(): void {
+  //   this.router.navigate([
+  //     'course',
+  //     this.courseService.getSelectedCourse()._id,
+  //     'dashboard',
+  //   ]);
+  // }
   onViewDashboardClicked(): void {
-    this.router.navigate([
-      'course',
-      this.courseService.getSelectedCourse()._id,
-      'dashboard',
-    ]);
+    const selectedCourseId = this.courseService.getSelectedCourse()._id;
+    this.router.navigate(['course', selectedCourseId, 'dashboard']);
+    // Call the logging endpoint
+    this.courseService.logAccessCourseDashboard(selectedCourseId).subscribe();
   }
 }

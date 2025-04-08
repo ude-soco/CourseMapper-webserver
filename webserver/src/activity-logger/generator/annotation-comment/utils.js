@@ -6,15 +6,15 @@ const createAnnotationCommentObject = (
   req,
   type,
   special = false,
-  mentioned = false,
+  mentioned = false
 ) => {
   let annotation = req.locals.annotation;
   let origin = req.get("origin");
   let activityType = mentioned
-    ? `${DOMAIN}/activityType/you`
+    ? `${DOMAIN}/activityType/user`
     : type === "comment"
-      ? "http://activitystrea.ms/schema/1.0/comment"
-      : `${DOMAIN}/activityType/${type}`;
+    ? "http://activitystrea.ms/schema/1.0/comment"
+    : `${DOMAIN}/activityType/${type}`;
   return {
     objectType: config.activity,
     id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/${type}/${annotation._id}`,

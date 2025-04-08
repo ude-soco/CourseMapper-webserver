@@ -30,6 +30,8 @@ import { getCurrentMaterial } from '../../materials/state/materials.reducer';
 import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { Socket } from 'ngx-socket-io';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
+
 import { CytoscapeComponent } from '../cytoscape/cytoscape.component';
 interface topN {
   name: string;
@@ -150,6 +152,7 @@ export class ConceptMapComponent {
   courseKgActivated: boolean = false;
   materialKgActivated: boolean = false;
   courseIsEmpty?: boolean = undefined;
+  recommendedConceptType = 'recommended_concept';
   allSelected = false;
 
   tabs = [
@@ -160,6 +163,7 @@ export class ConceptMapComponent {
         this.filteredMapData = null;
         this.mainConceptsTab = true;
         this.recommendedConceptsTab = false;
+        this.logUserViewedMainConcepts(); //Log the Activity User viewedMainConcepts
         setTimeout(() => {
           this.filteredMapData = tempMapData;
         }, 500);
@@ -192,6 +196,8 @@ export class ConceptMapComponent {
       command: (e) => {
         this.mainConceptsTab = false;
         this.recommendedConceptsTab = true;
+        //Log the Activity User viewedrecommendedConcepts
+        this.logUserViewedRecommendedConcepts();
         //if navigating from materials tab
         if (this.recommendedMaterialsTab) {
           this.recommendedMaterialsTab = false;
@@ -795,19 +801,24 @@ export class ConceptMapComponent {
     this.cyWidth = window.innerWidth * 0.9;
   }
 
+  //? This is responsible for setting the chip concept from the first section of the not understood concept list
   setChipConcept(concept: any): void {
     this.conceptFromChipObj = {
       id: concept.id,
       cid: concept.cid,
       name: concept.name,
       status: concept.status === 'understood' ? 'notUnderstood' : 'understood',
+      type: concept.type,
     };
   }
+  //? This is responsible for setting the chip concept from the second section of the not understood concept list
   setPreviousChipConcept(concept: any): void {
     this.previousConceptFromChipObj = {
       cid: concept.cid,
       name: concept.name,
+      type: concept.type,
     };
+    // console.log('setPreviousChipConcept(concept) concept', concept);
   }
 
   // show/hide lists of current slide concepts and\ or other slides concepts
@@ -1198,6 +1209,7 @@ export class ConceptMapComponent {
             let nodeObj = {
               cid: data.id.toString(),
               name: data.name,
+              type: data.type,
             };
             this.kgNodes.push(nodeObj);
           });
@@ -1211,6 +1223,12 @@ export class ConceptMapComponent {
               conceptObj = this.kgNodes.find(
                 (concept) => concept.cid.toString() === cid.toString()
               );
+              // console.log(
+              //   'this.previousConcepts.didNotUnderstandConceptsforEach((cid) => {',
+              //   this.previousConcepts.didNotUnderstandConcepts
+              // );
+              // console.log('kg Nodes', this.kgNodes);
+              // console.log('conceptObj', conceptObj);
               if (conceptObj) {
                 this.previousConceptsObj.push(conceptObj);
               }
@@ -1300,6 +1318,7 @@ export class ConceptMapComponent {
               name: nodeName,
               status: node.data.status,
               cid: nodeCid,
+              type: node.data.type,
             };
             this.allConceptsObj.push(nodeObj);
             if (node.data.status === 'notUnderstood') {
@@ -1326,6 +1345,8 @@ export class ConceptMapComponent {
           this.dataReceivedEvent.emit(this.conceptMapData);
           this.filteredMapData = this.conceptMapData;
           this.kgSlideResponseEmpty = false;
+
+          this.logUserViewedMainConcepts(); //Log the Activity User viewedMainConcepts
         } else {
           this.kgSlideResponseEmpty = true;
           console.log('No KG received for this slide!!');
@@ -1423,8 +1444,11 @@ export class ConceptMapComponent {
         )
         .subscribe({
           next: async (resultConcepts) => {
+            // Directly update the type of each concept in nodes
+            resultConcepts.nodes.forEach((node) => {
+              node.data.type = this.recommendedConceptType; // To log the activity correctly I have to consider the concepts under recommended concepts tab as recommended_concept.
+            });
             this.recommendedConcepts = resultConcepts;
-
             this.conceptMapRecommendedData = this.recommendedConcepts;
             this.filteredMapRecData = this.conceptMapRecommendedData;
             this.recommenderKnowledgeGraph = true;
@@ -1442,44 +1466,90 @@ export class ConceptMapComponent {
             this.kgTabs.kgTabsEnable();
             this.mainConceptsTab = false;
             this.recommendedConceptsTab = true;
+            //receive recommended concepts
+            //Log the activity User viewed all recommended concepts
+            this.logUserViewedRecommendedConcepts();
             // this.tabs[2].disabled = true;
             this.recommendedMaterialsTab = false;
             //////////////////////////call material-recommender/////////////////////////
             this.materialsRecommenderService
-              .getRecommendedMaterials(reqData)
+              .getRecommendedMaterials(reqData) //req data will be sent to the backend to search for materials based on not understood concepts
               .subscribe({
                 next: (result) => {
                   this.resultMaterials = result;
-
                   this.concepts1 = this.resultMaterials.concepts;
+                  // ! Here is the problem this.resultMaterials.concepts includes just cid, id, name, weight. We also nee the type of each concept for the logging.
+                  // Problem solved
                   this.concepts1.forEach((el, index, array) => {
-                    if (
-                      this.didNotUnderstandConceptsObj.some(
-                        (concept) => concept.id.toString() === el.id.toString()
-                      )
-                    ) {
+                    let matchedConcept = this.didNotUnderstandConceptsObj.find(
+                      (concept) => concept.id.toString() === el.id.toString()
+                    );
+
+                    if (matchedConcept) {
                       el.status = 'notUnderstood';
-                      array[index] = el;
-                    } else if (
-                      this.previousConceptsObj.some(
+                      el.type = matchedConcept.type; // Assigning type
+                    } else {
+                      matchedConcept = this.previousConceptsObj.find(
                         (concept) =>
                           concept.cid.toString() === el.cid.toString()
-                      )
-                    ) {
-                      el.status = 'notUnderstood';
-                      array[index] = el;
-                    } else if (
-                      this.understoodConceptsObj.some(
-                        (concept) => concept.id.toString() === el.id.toString()
-                      )
-                    ) {
-                      el.status = 'understood';
-                      array[index] = el;
-                    } else {
-                      el.status = 'unread';
-                      array[index] = el;
+                      );
+
+                      if (matchedConcept) {
+                        el.status = 'notUnderstood';
+                        el.type = matchedConcept.type; // Assigning type
+                      } else {
+                        matchedConcept = this.understoodConceptsObj.find(
+                          (concept) =>
+                            concept.id.toString() === el.id.toString()
+                        );
+
+                        if (matchedConcept) {
+                          el.status = 'understood';
+                          el.type = matchedConcept.type; // Assigning type
+                        } else {
+                          matchedConcept = this.newConceptsObj.find(
+                            (concept) =>
+                              concept.id.toString() === el.id.toString()
+                          );
+                          if (matchedConcept) {
+                            el.status = 'unread';
+                            el.type = matchedConcept.type; // Assigning type
+                          }
+                        }
+                      }
                     }
+
+                    array[index] = el; // Update the array element
                   });
+
+                  // this.concepts1.forEach((el, index, array) => {
+                  //   if (
+                  //     this.didNotUnderstandConceptsObj.some(
+                  //       (concept) => concept.id.toString() === el.id.toString()
+                  //     )
+                  //   ) {
+                  //     el.status = 'notUnderstood';
+                  //     array[index] = el;
+                  //   } else if (
+                  //     this.previousConceptsObj.some(
+                  //       (concept) =>
+                  //         concept.cid.toString() === el.cid.toString()
+                  //     )
+                  //   ) {
+                  //     el.status = 'notUnderstood';
+                  //     array[index] = el;
+                  //   } else if (
+                  //     this.understoodConceptsObj.some(
+                  //       (concept) => concept.id.toString() === el.id.toString()
+                  //     )
+                  //   ) {
+                  //     el.status = 'understood';
+                  //     array[index] = el;
+                  //   } else {
+                  //     el.status = 'unread';
+                  //     array[index] = el;
+                  //   }
+                  // });
 
                   this.resultMaterials = this.resultMaterials.nodes;
 
@@ -1797,14 +1867,31 @@ export class ConceptMapComponent {
   }
   selectedTopNodes(key) {
     this.selectedTopConcepts = key;
+    // if (this.showCourseKg && !this.showMaterialKg) {
+    //   const payload = {
+    //     key: key,
+    //     course: this.course
+    //   };
+    //   console.log('Payload: ', payload);
+    // } else if (this.showMaterialKg && !this.showCourseKg) {
+    //   const payload = {
+    //     key: key,
+    //     material: this.currentMaterial
+    //   };
+    //   console.log('Payload: ', payload);
+    // }
+
+    //this.conceptMapService.logFilterTopNConcepts(payload).subscribe();
   }
   updateSingleChecked(key): void {
     if (this.selectedFilterValues.find((item) => item === key)) {
       this.selectedFilterValues = this.selectedFilterValues.filter(
         (item) => item !== key
       );
+      this.logUserHidConcepts(key);
     } else {
       this.selectedFilterValues.push(key);
+      this.logUserUnhidConcepts(key);
     }
   }
   resetFilter() {}
@@ -2132,6 +2219,67 @@ export class ConceptMapComponent {
     return false;
   }
 
+  selectAllSlides() {
+    this.editConceptForm.controls['conceptSlides'].setValue(
+      this.materialSlides.records.map((slide) => slide.sid.split('_').pop())
+    );
+  }
+  async logUserViewedRecommendedConcepts() {
+    try {
+      const reqDataMaterial1 =
+        await this.getRecommendedMaterialsPerSlideMaterial();
+      const payload = {
+        ...reqDataMaterial1, // Include informations of the material
+        recommendedConcepts: this.recommendedConcepts, // Include recommended concepts
+      };
+      this.materialsRecommenderService
+        .getRecommendedConceptsLog(payload)
+        .subscribe();
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  }
+  async logUserViewedMainConcepts() {
+    try {
+      const reqDataMaterial1 =
+        await this.getRecommendedMaterialsPerSlideMaterial();
+      const payload = {
+        ...reqDataMaterial1, // Include informations of the material
+        mainConcepts: this.conceptMapData, // Include main concepts
+      };
+      this.slideConceptservice.logViewMainConcepts(payload).subscribe();
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  }
+  async logUserHidConcepts(key) {
+    try {
+      if (this.showMaterialKg && !this.showCourseKg) {
+        const payload = {
+          key: key,
+          materialId: this.currentMaterial._id,
+          courseId: this.currentMaterial.courseId,
+        };
+        this.conceptMapService.logHidConceptsMKG(payload).subscribe();
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  }
+  async logUserUnhidConcepts(key) {
+    try {
+      if (this.showMaterialKg && !this.showCourseKg) {
+        const payload = {
+          key: key,
+          materialId: this.currentMaterial._id,
+          courseId: this.currentMaterial.courseId,
+        };
+        this.conceptMapService.logUnhidConceptsMKG(payload).subscribe();
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  }
 
   toggleSelectAll(event: Event): void {
     this.allSelected = (event.target as HTMLInputElement).checked;

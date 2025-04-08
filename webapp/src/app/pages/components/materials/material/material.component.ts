@@ -347,6 +347,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     let objToSend = {
       materialId: this.materialIdOfMaterialMenuClicked,
       courseId: this.courseID,
+      labelClicked: labelClicked,
 
       [materialNotificationSettingLabels.annotations]:
         labelClicked === materialNotificationSettingLabels.annotations
@@ -971,6 +972,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       detail: detail,
     });
   }
+
   viewMaterialDashboardClicked() {
     this.router.navigate([
       'course',
@@ -981,6 +983,10 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.materialID,
       'dashboard',
     ]);
+    //Log the activity
+    this.materialService
+      .logAccessMaterialDashboard(this.materialID)
+      .subscribe();
   }
 
   setShowDialog() {

@@ -47,17 +47,19 @@ export class NotificationsService {
     private storageService: StorageService,
     private socket: Socket,
     private store: Store<State>
-  ) {
- }
+  ) {}
 
   public previousURL: string = null;
   public notificationToNavigateTo: Notification = null;
 
   //Todo: error handling
   /* .get<UserNotification[]>('assets/data.json') */
- 
+
   //this.socket.emit("join", "course:"+course._id);
 
+  getAllNotificationsLog(): Observable<any> {
+    return this.httpClient.get(`${environment.API_URL}/notifications/logs`);
+  }
   public getAllNotifications(): Observable<TransformedNotificationsWithBlockedUsers> {
     return this.httpClient
       .get<NotificationsWithBlockedUsers>(
@@ -94,98 +96,95 @@ export class NotificationsService {
             notifications: transformedNotifications,
             blockingUsers,
           };
-        }),
-
+        })
       );
   }
 
   public initialiseSocketConnection() {
-    
     const user = this.storageService.getUser();
     this.socket.on(user.id, (data: UserNotification[]) => {
-      try{
-      if (data[0].isDeletingCourse) {
-        this.store.dispatch(
-          NotificationActions.isDeletingCourse({
-            courseId: data[0].courseId,
-          })
-        );
-        return;
-      }
-
-      if (data[0].isDeletingAnnotation) {
-        this.store.dispatch(
-          NotificationActions.isDeletingAnnotation({
-            annotationId: data[0].annotationId,
-          })
-        );
-        return;
-      }
-      if (data[0].isDeletingReply) {
-        this.store.dispatch(
-          NotificationActions.isDeletingReply({
-            replyId: data[0].replyId,
-          })
-        );
-        return;
-      }
-      if (data[0].isDeletingMaterial) {
-        this.store.dispatch(
-          NotificationActions.isDeletingMaterial({
-            materialId: data[0].materialId,
-          })
-        );
-        this.store.dispatch(
-          CourseActions.updateFOllowingAnnotationsOnDeletion({
-            payload: {
-              isDeletingMaterial: true,
-              id: data[0].materialId,
-            },
-          })
-        );
-        return;
-      }
-      if (data[0].isDeletingTopic) {
-        this.store.dispatch(
-          NotificationActions.isDeletingTopic({
-            topicId: data[0].topicId,
-          })
-        );
-        return;
-      }
-      if (data[0].isDeletingChannel) {
-        this.store.dispatch(
-          NotificationActions.isDeletingChannel({
-            channelId: data[0].channelId,
-          })
-        );
-        return;
-      }
-      let notifications = data.map(this.transformNotification);
-      notifications = notifications.map((notification) => {
-        if (
-          (notification.annotationAuthorId === user.id &&
-            notification.object === 'annotation') ||
-          (notification.replyAuthorId === user.id &&
-            notification.object === 'reply')
-        ) {
-          notification.object = 'your ' + notification.object;
-          notification.extraMessage = `${notification.userShortname} ${notification.action} ${notification.object} ${notification.name} in ${notification.courseName}`;
-          return notification;
-        } else {
-          return notification;
+      try {
+        if (data[0].isDeletingCourse) {
+          this.store.dispatch(
+            NotificationActions.isDeletingCourse({
+              courseId: data[0].courseId,
+            })
+          );
+          return;
         }
-      });
 
-      notifications.forEach((notification) => {
-        this.store.dispatch(
-          NotificationActions.newNotificationArrived({ notification })
-        );
-      });
-    }
-    catch{
-      return; 
-    }
+        if (data[0].isDeletingAnnotation) {
+          this.store.dispatch(
+            NotificationActions.isDeletingAnnotation({
+              annotationId: data[0].annotationId,
+            })
+          );
+          return;
+        }
+        if (data[0].isDeletingReply) {
+          this.store.dispatch(
+            NotificationActions.isDeletingReply({
+              replyId: data[0].replyId,
+            })
+          );
+          return;
+        }
+        if (data[0].isDeletingMaterial) {
+          this.store.dispatch(
+            NotificationActions.isDeletingMaterial({
+              materialId: data[0].materialId,
+            })
+          );
+          this.store.dispatch(
+            CourseActions.updateFOllowingAnnotationsOnDeletion({
+              payload: {
+                isDeletingMaterial: true,
+                id: data[0].materialId,
+              },
+            })
+          );
+          return;
+        }
+        if (data[0].isDeletingTopic) {
+          this.store.dispatch(
+            NotificationActions.isDeletingTopic({
+              topicId: data[0].topicId,
+            })
+          );
+          return;
+        }
+        if (data[0].isDeletingChannel) {
+          this.store.dispatch(
+            NotificationActions.isDeletingChannel({
+              channelId: data[0].channelId,
+            })
+          );
+          return;
+        }
+        let notifications = data.map(this.transformNotification);
+        notifications = notifications.map((notification) => {
+          if (
+            (notification.annotationAuthorId === user.id &&
+              notification.object === 'annotation') ||
+            (notification.replyAuthorId === user.id &&
+              notification.object === 'reply')
+          ) {
+            notification.object = 'your ' + notification.object;
+            notification.extraMessage = `${notification.userShortname} ${notification.action} ${notification.object} ${notification.name} in ${notification.courseName}`;
+            return notification;
+          } else {
+            return notification;
+          }
+        });
+
+        notifications.forEach((notification) => {
+          this.store.dispatch(
+            NotificationActions.newNotificationArrived({ notification })
+          );
+        });
+      } catch {
+        return;
+      }
     });
   }
 
@@ -217,7 +216,10 @@ export class NotificationsService {
     );
   }
 
-  setGlobalNotificationSettings(settings: { [key: string]: boolean | string }) {
+  setGlobalNotificationSettings(settings: {
+    [key: string]: boolean | string;
+    labelClicked: string;
+  }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
       courseNotificationSettingLabels.annotations
     ] as boolean;
@@ -227,12 +229,15 @@ export class NotificationsService {
     let isCourseUpdateNotificationsEnabled: boolean = settings[
       courseNotificationSettingLabels.courseUpdates
     ] as boolean;
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
       isReplyAndMentionedNotificationsEnabled:
         isReplyAndMentionedNotificationsEnabled,
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<{ [key: string]: boolean }>(
@@ -244,6 +249,7 @@ export class NotificationsService {
   setCourseNotificationSettings(settings: {
     courseId: string;
     [key: string]: boolean | string;
+    labelClicked: string;
   }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
       courseNotificationSettingLabels.annotations
@@ -255,6 +261,7 @@ export class NotificationsService {
       courseNotificationSettingLabels.courseUpdates
     ] as boolean;
     let courseId = settings['courseId'];
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
@@ -262,6 +269,8 @@ export class NotificationsService {
         isReplyAndMentionedNotificationsEnabled,
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
       courseId: courseId,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<BlockingNotifications>(
@@ -285,6 +294,7 @@ export class NotificationsService {
   setTopicNotificationSettings(settings: {
     courseId: string;
     topicId: string;
+    labelClicked: string;
     [key: string]: boolean | string;
   }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
@@ -298,6 +308,7 @@ export class NotificationsService {
     ] as boolean;
     let courseId = settings['courseId'];
     let topicId = settings['topicId'];
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
@@ -306,6 +317,8 @@ export class NotificationsService {
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
       courseId: courseId,
       topicId: topicId,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<BlockingNotifications>(
@@ -334,6 +347,7 @@ export class NotificationsService {
   setChannelNotificationSettings(settings: {
     courseId: string;
     channelId: string;
+    labelClicked: string;
     [key: string]: boolean | string;
   }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
@@ -347,6 +361,7 @@ export class NotificationsService {
     ] as boolean;
     let courseId = settings['courseId'];
     let channelId = settings['channelId'];
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
@@ -355,6 +370,8 @@ export class NotificationsService {
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
       courseId: courseId,
       channelId,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<BlockingNotifications>(
@@ -383,6 +400,7 @@ export class NotificationsService {
   setMaterialNotificationSettings(settings: {
     courseId: string;
     materialId: string;
+    labelClicked: string;
     [key: string]: boolean | string;
   }) {
     let isAnnotationNotificationsEnabled: boolean = settings[
@@ -396,6 +414,7 @@ export class NotificationsService {
     ] as boolean;
     let courseId = settings['courseId'];
     let materialId = settings['materialId'];
+    let labelClicked = settings['labelClicked'];
 
     let objToSend = {
       isAnnotationNotificationsEnabled: isAnnotationNotificationsEnabled,
@@ -404,6 +423,8 @@ export class NotificationsService {
       isCourseUpdateNotificationsEnabled: isCourseUpdateNotificationsEnabled,
       courseId: courseId,
       materialId,
+      labelClicked: labelClicked,
+      key: settings[labelClicked],
     };
 
     return this.httpClient.put<BlockingNotifications>(
@@ -437,7 +458,6 @@ export class NotificationsService {
   }
 
   followAnnotation(annotationId: string) {
-  
     return this.httpClient.post<BlockingNotifications>(
       `${environment.API_URL}/notifications/followAnnotation/${annotationId}`,
       {}

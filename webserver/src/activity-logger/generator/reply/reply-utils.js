@@ -52,7 +52,7 @@ const createReplyResultObject = (req) => {
   let annotation = req.locals.annotation;
   return {
     extensions: {
-      [`${DOMAIN}/extensions/reply`]: {
+      [`${DOMAIN}/extensions/user`]: {
         location: annotation.location,
       },
     },

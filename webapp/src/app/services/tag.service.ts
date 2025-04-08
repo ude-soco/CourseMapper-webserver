@@ -14,21 +14,20 @@ import { StorageService } from './storage.service';
   providedIn: 'root',
 })
 export class TagService {
- 
-
-  constructor(private http: HttpClient,  public storageService: StorageService,) {}
-  
+  constructor(
+    private http: HttpClient,
+    public storageService: StorageService
+  ) {}
 
   getAllTagsForCurrentCourse(course: Course): Observable<Tag[]> {
-   if(this.storageService.isLoggedIn() === false){
+    if (this.storageService.isLoggedIn() === false) {
       return of([]);
-   }
+    }
     return this.http
       .get<Tag[]>(`${environment.API_URL}/courses/${course._id}/tags`)
       .pipe(
         tap((tags) => {}),
         catchError((error: HttpErrorResponse) => {
-
           if (error.status === 401) {
             // console.warn("User is not authenticated. Token expired or not provided.");
             return of([]); // Return empty array so app continues
@@ -64,6 +63,31 @@ export class TagService {
       `${environment.API_URL}/courses/${courseId}/tag/${encodeURIComponent(
         tagName
       )}/get-all-annotation-for-tag`
+    );
+  }
+
+  logSelectCourseTag(tag: Tag, courseId: string): Observable<any> {
+    return this.http.post(
+      `${environment.API_URL}/courses/${courseId}/tags/${tag._id}/log`,
+      { courseId }
+    );
+  }
+  logSelectTopicTag(tag: Tag, topicId: string): Observable<any> {
+    return this.http.post(
+      `${environment.API_URL}/topics/${topicId}/tags/${tag._id}/log`,
+      { topicId }
+    );
+  }
+  logSelectChannelTag(tag: Tag, channelId: string): Observable<any> {
+    return this.http.post(
+      `${environment.API_URL}/channels/${channelId}/tags/${tag._id}/log`,
+      { channelId }
+    );
+  }
+  logSelectMaterialTag(tag: Tag, materialId: string): Observable<any> {
+    return this.http.post(
+      `${environment.API_URL}/materials/${materialId}/tags/${tag._id}/log`,
+      { materialId }
     );
   }
 }
