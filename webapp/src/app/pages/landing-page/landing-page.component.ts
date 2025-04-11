@@ -90,11 +90,11 @@ console.log('Courses:', this.courses);
           this.Users = [];
 
           this.Users = course.users;
-
+          console.log(' this.Userss: ', this.Users); 
           let userModerator = this.Users.find(
             (user) => user.role.name === 'moderator'
           );
-
+  console.log(' userModerator: ', userModerator);
           this.buildCardInfo(userModerator.userId, course);
         }
       },
