@@ -1,11 +1,14 @@
+import { getCurrentPdfPage } from './../../annotations/pdf-annotation/state/annotation.reducer';
 import { Component, Input } from '@angular/core';
 import { VideoElementModel } from '../videos/models/video-element.model';
 import { ArticleElementModel } from '../articles/models/article-element.model';
 import { MenuItem } from 'primeng/api';
-// import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
+import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 import { Subscription } from 'rxjs';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
-
+import { Material } from 'src/app/models/Material';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/state/app.reducer';
 interface MaterialModel {
   name: string;
   code: string;
@@ -14,14 +17,15 @@ enum MaterialModels {
   MODEL_1 = '1',
   MODEL_2 = '2',
   MODEL_3 = '3',
-  MODEL_4 = '4'
+  MODEL_4 = '4',
 }
 @Component({
   selector: 'app-result-view',
   templateUrl: './result-view.component.html',
-  styleUrls: ['./result-view.component.css']
+  styleUrls: ['./result-view.component.css'],
 })
 export class ResultViewComponent {
+  currentPdfPage: number;
   private conceptFromChipObj: any = null;
   private didNotUnderstandConceptsObj: any[];
   private understoodConceptsObj: any[];
@@ -37,8 +41,13 @@ export class ResultViewComponent {
   concepts: any[] = [];
   recievedVideoResultIsEmpty = true;
   recievedArticleResultIsEmpty = true;
-
-  constructor(private slideConceptservice: SlideConceptsService) {
+  @Input() currentMaterial?: Material;
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
+  constructor(
+    private slideConceptservice: SlideConceptsService,
+    private materialsRecommenderService: MaterialsRecommenderService,
+    private store: Store<State>
+  ) {
     slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
       this.didNotUnderstandConceptsObj = res;
       this.didNotUnderstandConceptsObj.forEach((el) => {
@@ -56,6 +65,13 @@ export class ResultViewComponent {
         );
       });
     });
+
+    // Subscribe to get the current PDF page from store
+    this.subscriptions.add(
+      this.store.select(getCurrentPdfPage).subscribe((page) => {
+        this.currentPdfPage = page;
+      })
+    );
   }
   @Input()
   public concepts1: any[] = [];
@@ -108,7 +124,7 @@ export class ResultViewComponent {
             this.conceptFromChipObj
           );
         },
-      }
+      },
     ];
 
     this.chipMenuDNU = [
@@ -125,14 +141,16 @@ export class ResultViewComponent {
 
     this.loadResultForSelectedModel(MaterialModels.MODEL_1);
 
-    this.didNotUnderstandConceptsObj = this.slideConceptservice.commonDidNotUnderstandConcepts;
+    this.didNotUnderstandConceptsObj =
+      this.slideConceptservice.commonDidNotUnderstandConcepts;
     this.didNotUnderstandConceptsObj.forEach((el) => {
       this.allConceptsObj = this.allConceptsObj.map((e) =>
         e.id === el.id ? el : e
       );
     });
 
-    this.understoodConceptsObj = this.slideConceptservice.commonUnderstoodConcepts;
+    this.understoodConceptsObj =
+      this.slideConceptservice.commonUnderstoodConcepts;
     this.understoodConceptsObj.forEach((el) => {
       this.allConceptsObj = this.allConceptsObj.map((e) =>
         e.id === el.id ? el : e
@@ -160,7 +178,13 @@ export class ResultViewComponent {
       cid: concept.cid, // deal with cid instead of id 'AMR'
       name: concept.name,
       status: concept.status === 'understood' ? 'notUnderstood' : 'understood',
+      type: concept.type, // This is undefined because there were no type coming from the backend
     };
+
+    // console.log(
+    //   'Recommendation based on: mark as understood... concept',
+    //   concept
+    // );
   }
   loadResultForSelectedModel(key): void {
     this.results = [];
@@ -170,24 +194,24 @@ export class ResultViewComponent {
     if (key === '1') {
       this.results = this.results1;
       this.concepts = this.concepts1;
-      this.allConceptsObj = [... this.concepts1];
+      this.allConceptsObj = [...this.concepts1];
     } else if (key === '2') {
       this.results = this.results2;
       this.concepts = this.concepts1;
-      this.allConceptsObj = [... this.concepts1];
+      this.allConceptsObj = [...this.concepts1];
     } else if (key === '3') {
       this.results = this.results3;
       this.concepts = this.concepts2;
-      this.allConceptsObj = [... this.concepts2];
+      this.allConceptsObj = [...this.concepts2];
     } else if (key === '4') {
       this.results = this.results4;
       this.concepts = this.concepts2;
-      this.allConceptsObj = [... this.concepts2];
+      this.allConceptsObj = [...this.concepts2];
     } else {
       this.results = this.results1;
     }
 
-    try{
+    try {
       this.results.forEach((element: any) => {
         const e = element.data;
         if (e.labels.includes('Video')) {
@@ -202,27 +226,63 @@ export class ResultViewComponent {
 
       if (this.videos) {
         this.recievedVideoResultIsEmpty = false;
-      }else{
+        this.logUserViewedRecommendedVideos();
+      } else {
         this.recievedVideoResultIsEmpty = true;
       }
       if (this.articles) {
         this.recievedArticleResultIsEmpty = false;
-      }else{
+      } else {
         this.recievedArticleResultIsEmpty = true;
       }
-    }catch (e){
+    } catch (e) {
       console.log(e);
     }
 
     console.log('ResultViewComponent Videos', this.videos);
     console.log('ResultViewComponent Articles', this.articles);
-
   }
 
   tabChanged(tab) {
     // Pause videos (if any) when changing tabs
     document.querySelectorAll('iframe').forEach((iframe) => {
-      const result = iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
-    })
+      const result = iframe.contentWindow.postMessage(
+        '{"event":"command","func":"pauseVideo","args":""}',
+        '*'
+      );
+    });
+    if (tab === 0) {
+      this.logUserViewedRecommendedVideos();
+    } else if (tab === 1) {
+      this.logUserViewedRecommendedArticles();
+    }
+  }
+  async logUserViewedRecommendedVideos() {
+    try {
+      const data = {
+        materialId: this.currentMaterial!._id,
+        videos: this.videos,
+        materialPage: this.currentPdfPage,
+      };
+      if (!this.recievedVideoResultIsEmpty) {
+        await this.materialsRecommenderService.logViewRecommendedVideos(data);
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  }
+  async logUserViewedRecommendedArticles() {
+    try {
+      const data = {
+        materialId: this.currentMaterial!._id,
+        articles: this.articles,
+        materialPage: this.currentPdfPage,
+      };
+      if (!this.recievedArticleResultIsEmpty) {
+        await this.materialsRecommenderService.logViewRecommendedArticles(data);
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   }
 }

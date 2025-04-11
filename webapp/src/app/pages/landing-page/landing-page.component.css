@@ -123,7 +123,15 @@ margin: 1REM;
   border: 3px solid #fdfefe;
   
 }
+:host ::ng-deep .p-card .p-card-body {
+  padding: 0 !important;      /* Remove all default padding */
+  padding-left: 1.5rem !important; /* Add only left padding */
+}
 
+:host ::ng-deep .p-card .p-card-content {
+  padding-top: 2% !important;
+  padding-bottom: 3% !important;
+}
  /* p-card{
   display:block;
   width: 22rem;

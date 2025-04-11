@@ -16,6 +16,35 @@ import { createCommentObject } from "../comment/comment-utils";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+const createUserObject = (req) => {
+  let user = req.locals.user;
+  let annotation = req.locals.annotation;
+  let author = req.locals.annotation.author;
+  let origin = req.get("origin");
+  return {
+    objectType: config.activity, // Maybe it should  be "Agent"
+    id: `${origin}/activity/user/${user._id}/userToReply/${author.userId}`,
+    definition: {
+      type: `${DOMAIN}/activityType/user`,
+      name: {
+        [config.language]: author.name,
+      },
+      extensions: {
+        [`${DOMAIN}/extensions/user`]: {
+          id: author.userId,
+          authorName: author.name,
+          content: annotation.content,
+          annotation_id: annotation._id,
+          material_id: annotation.materialId,
+          channel_id: annotation.channelId,
+          topic_id: annotation.topicId,
+          course_id: annotation.courseId,
+        },
+      },
+    },
+  };
+};
+// Reply to annotation and reply to user will be logged at the same time
 export const generateReplyToAnnotationActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -27,7 +56,17 @@ export const generateReplyToAnnotationActivity = (req) => {
     context: createContext(),
   };
 };
-
+//
+export const generateReplyToUserActivity = (req) => {
+  const metadata = createMetadata();
+  return {
+    ...metadata,
+    actor: createUser(req),
+    verb: createVerb("http://id.tincanapi.com/verb/replied", "replied"),
+    object: createUserObject(req),
+    context: createContext(),
+  };
+};
 export const generateReplyToCommentActivity = (req) => {
   const metadata = createMetadata();
   return {
@@ -157,15 +196,15 @@ export const getNewMentionCreationStatement = (req) => {
     actor: createUser(req),
     verb: createVerb(`http://id.tincanapi.com/verb/mentioned`, "mentioned"),
     object: {
-      objectType: "User",
+      objectType: config.activity,
       definition: {
-        type: `${DOMAIN}/activityType/you`,
+        type: `${DOMAIN}/activityType/user`,
         name: {
-          [config.language]: `${reply.content.slice(0, 50)}${reply.content.length > 50 ? " ..." : ""}`,
+          [config.language]: req.locals.mentionedUser.name,
         },
         extensions: {
-          [`${DOMAIN}/extensions/reply`]: {
-            id: reply._id,
+          [`${DOMAIN}/extensions/user`]: {
+            replyId: reply._id,
             annotation_id: reply.annotationId,
             material_id: reply.materialId,
             channel_id: reply.channelId,
@@ -176,7 +215,7 @@ export const getNewMentionCreationStatement = (req) => {
         },
       },
     },
-    result: createReplyResultObject(req),
+    //result: createReplyResultObject(req),
     context: createContext(),
   };
 };

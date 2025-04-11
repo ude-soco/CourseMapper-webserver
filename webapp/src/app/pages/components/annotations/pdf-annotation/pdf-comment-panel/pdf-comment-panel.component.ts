@@ -54,6 +54,7 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private changeDetectorRef: ChangeDetectorRef,
     protected router: Router,
+    private annotationService: AnnotationService
   ) {
     this.store
       .select(getCurrentMaterial)
@@ -139,8 +140,6 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
-
     /* this.currentPage = 1; */
     this.showPDFAnnotations();
     /*    this.store
@@ -225,7 +224,6 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
   }
 
   showPDFAnnotations() {
-
     this.annotationOnCurrentPage = this.annotations.filter(
       (anno) =>
         this.currentPage >=
@@ -331,6 +329,22 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
         filteredAnnotations = intersectedArray;
       }
       this.annotationsToShow = filteredAnnotations;
+
+      // Extract Labels from searchFiltersForPDF
+      const selectedFilterLabels = this.searchFiltersForPDF
+        .flatMap((group) => group.items)
+        .filter((item) => filters.includes(item.value))
+        .map((item) => item.label);
+
+      const payload = {
+        filteredAnnotations: this.annotationsToShow,
+        filters: selectedFilterLabels, // filters represents the labels of the filters
+        materialId: this.selectedMaterial._id,
+        courseId: this.selectedMaterial.courseId,
+        currentPage: this.currentPage,
+      };
+
+      this.annotationService.filterAnnotations(payload).subscribe();
     } else {
       this.showPDFAnnotations();
     }
@@ -341,22 +355,22 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
     let allAnnotations = this.annotations;
     let annotationsToFilter: Annotation[] = [];
 
-    if (filters.includes(6)) {
-      this.annotationsToShow = this.annotations.filter(
-        (a) =>
-          (a.location as VideoAnnotationLocation).from <= this.currentTime &&
-          (a.location as VideoAnnotationLocation).to > this.currentTime
-      );
-      this.currentTimeSpanSelected = true;
-      return;
-    } else {
-      annotationsToFilter = allAnnotations;
-    }
-
     if (filters.length > 0) {
       let annotationPerTool: Annotation[];
       let annotationPerType: Annotation[];
       let sortedAnnotations: Annotation[];
+
+      if (filters.includes(6)) {
+        this.annotationsToShow = this.annotations.filter(
+          (a) =>
+            (a.location as VideoAnnotationLocation).from <= this.currentTime &&
+            (a.location as VideoAnnotationLocation).to > this.currentTime
+        );
+        this.currentTimeSpanSelected = true;
+        // return; //! Reason of commenting out: Do NOT return here! Let the execution continue.
+      } else {
+        annotationsToFilter = allAnnotations;
+      }
 
       if ([0, 1, 2].some((num) => filters.includes(num))) {
         annotationPerTool = this.filterVideoAnnotationsPerTool(
@@ -395,6 +409,21 @@ export class PdfCommentPanelComponent implements OnInit, OnDestroy {
         filteredAnnotations = intersectedArray;
       }
       this.annotationsToShow = filteredAnnotations;
+
+      // Extract Labels from searchFiltersForVideos
+      const selectedFilterLabels = this.searchFiltersForVideo
+        .flatMap((group) => group.items)
+        .filter((item) => filters.includes(item.value))
+        .map((item) => item.label);
+
+      const payload = {
+        filteredAnnotations: this.annotationsToShow,
+        filters: selectedFilterLabels, // filters represents the labels of the filters
+        materialId: this.selectedMaterial._id,
+        courseId: this.selectedMaterial.courseId,
+        currentTime: this.currentTime,
+      };
+      this.annotationService.filterAnnotations(payload).subscribe();
     } else {
       this.currentTimeSpanSelected = false;
       this.showVideoAnnotations();

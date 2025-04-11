@@ -18,6 +18,7 @@ RUN  npm run build &&\
 
 
 FROM base as runtime
+COPY public/randomImgs ./public/randomImgs
 COPY --from=build /app/dist .
 EXPOSE 8080
 CMD ["npm", "run", "server"]

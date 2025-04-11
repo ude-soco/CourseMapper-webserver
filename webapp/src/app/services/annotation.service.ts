@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import {  Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { Annotation } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
@@ -13,13 +13,16 @@ export class AnnotationService {
   constructor(private http: HttpClient) {}
 
   // public scrollToAnnotation: EventEmitter<string> = new EventEmitter<string>();
-  
+
   postAnnotation(
     annotation: Annotation,
     mentionedUsers: { userId: string; name: string; username: string }[]
   ): Observable<{ response: BlockingNotifications }> {
     // Make the HTTP post request
-    return this.http.post<{ response: BlockingNotifications }>(`${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`, { annotation, mentionedUsers });
+    return this.http.post<{ response: BlockingNotifications }>(
+      `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`,
+      { annotation, mentionedUsers }
+    );
   }
 
   getAllAnnotations(
@@ -28,6 +31,25 @@ export class AnnotationService {
   ): Observable<Annotation[]> {
     return this.http.get<Annotation[]>(
       `${environment.API_URL}/courses/${courseID}/materials/${materialId}/getAnnotations`
+    );
+  }
+  hideAnnotations(payload): Observable<string> {
+    return this.http.post<string>(
+      `${environment.API_URL}/courses/${payload.courseID}/materials/${payload.materialId}/hideAnnotations`,
+      payload
+    );
+  }
+
+  unhideAnnotations(payload): Observable<string> {
+    return this.http.post<string>(
+      `${environment.API_URL}/courses/${payload.courseID}/materials/${payload.materialId}/unhideAnnotations`,
+      payload
+    );
+  }
+  filterAnnotations(payload): Observable<string> {
+    return this.http.post<string>(
+      `${environment.API_URL}/courses/${payload.courseID}/materials/${payload.materialId}/filter-annotations`,
+      payload
     );
   }
 

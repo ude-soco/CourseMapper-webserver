@@ -59,7 +59,7 @@
 
 .material-full-name {
   cursor: pointer;
- 
+
 }
 
 .collapse-arrow {
@@ -88,4 +88,13 @@
 :host ::ng-deep .p-tabview .p-tabview-nav li {
   /* flex: 1 1 auto; Allows the tabs to shrink and grow */
   max-width: 100%; /* Ensure items do not overflow the container */
+}
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.button-container button {
+  width: 45%;
 }

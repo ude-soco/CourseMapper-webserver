@@ -149,12 +149,11 @@ export const newReply = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving annotation" });
   }
   let foundTags = replyContent
-                  .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
-                  .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
+    .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
+    .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
 
   let foundTagsSchema = [];
   if (foundTags.length !== 0) {
-
     // Ensure the tags are unique by converting to a Set and back to an array
     foundTags = [...new Set(foundTags)];
 
@@ -177,8 +176,11 @@ export const newReply = async (req, res, next) => {
     } catch (err) {
       return res.status(500).send({ error: "Error saving tags" });
     }
+    req.locals = req.locals || {}; // Ensure req.locals is initialized
+    req.locals.tags = foundTagsSchema; // Add tags to req.locals for logging
   }
   req.locals = {
+    ...req.locals,
     response: { id: newReply._id, success: `Reply added!` },
     annotation: foundAnnotation,
     reply: newReply,
@@ -190,6 +192,7 @@ export const newReply = async (req, res, next) => {
     isMentionedUsersPresent: mentionedUsers.length > 0,
     material: foundMaterial,
     isFollowingAnnotation: true,
+    mentionedUsers: mentionedUsers,
   };
   socketio
     .getIO()
@@ -375,15 +378,14 @@ export const editReply = async (req, res, next) => {
     return res.status(500).send({ error: "Error deleting tags" });
   }
   let foundTags = replyContent
-                  .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
-                  .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
-                  
+    .split(/\s+/) // Split on any whitespace (spaces, newlines, etc.)
+    .filter((v) => /^#[A-Za-z0-9]+$/.test(v)); // Check if it matches the hashtag pattern
+
   let foundTagsSchema = [];
   if (foundTags.length !== 0) {
-
     // Ensure the tags are unique by converting to a Set and back to an array
     foundTags = [...new Set(foundTags)];
-    
+
     foundTags.forEach((tag) => {
       let newTag = new Tag({
         name: tag,
