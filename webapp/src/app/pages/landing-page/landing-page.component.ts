@@ -85,7 +85,7 @@ export class LandingPageComponent {
     this.courseService.GetAllCourses().subscribe({
       next: (courses) => {
         this.courses = courses;
-
+console.log('Courses:', this.courses);
         for (var course of this.courses) {
           this.Users = [];
 
