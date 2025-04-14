@@ -1,3 +1,4 @@
+
 const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const User = db.user;
@@ -11,6 +12,8 @@ const Reply = db.reply;
 const Tag = db.tag;
 const Activity = db.activity;
 const BlockingNotifications = db.blockingNotifications;
+const fs = require('fs/promises');
+const path = require('path');
 
 const crypto = require("crypto");
 
@@ -126,8 +129,33 @@ export const generateMboxAndMboxSha1Sum = (email) => {
     mbox_sha1sum: hash.digest("hex"),
   };
 };
+export const getRandomImageUrl = async (req) => {
+  const imagesDir = path.join(__dirname, '..', '..','public/randomImgs');
+  //console.log('imagesDir:', imagesDir);
+
+  // Read the directory asynchronously
+  const files = await fs.readdir(imagesDir);
+  //console.log('files:', files);
+
+  // Filter only for image files (assuming they are all images)
+  const imageFiles = files.filter(file => /\.(jpe?g|png|gif)$/i.test(file));
+  
+  if (imageFiles.length === 0) {
+    throw new Error('No images found in the randomImgs folder.');
+  }
+  
+  // Pick a random image from the array
+  const randomIndex = Math.floor(Math.random() * imageFiles.length);
+  const randomImage = imageFiles[randomIndex];
+  
+  // Construct the URL for the image using the request object.
+  // Assuming you are serving static files from: 
+  // app.use("/api/public/uploads", express.static("public/uploads"));
+  return `${req.protocol}://${req.get('host')}/api/public/randomImgs/${randomImage}`;
+};
 
 module.exports = {
   initialiseNotificationSettings,
   generateMboxAndMboxSha1Sum,
+  getRandomImageUrl
 };

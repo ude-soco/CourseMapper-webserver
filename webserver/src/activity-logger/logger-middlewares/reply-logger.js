@@ -8,7 +8,17 @@ export const createReplyLogger = async (req, res, next) => {
       req.locals.annotation.tool
         ? replyActivityGenerator.generateReplyToAnnotationActivity(req)
         : replyActivityGenerator.generateReplyToCommentActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
+    );
+    next();
+  } catch (err) {
+    res.status(400).send({ error: "Error saving statement to mongo", err });
+  }
+};
+export const createReplyToUserLogger = async (req, res, next) => {
+  try {
+    req.locals.activity = await activityController.createActivity(
+      replyActivityGenerator.generateReplyToUserActivity(req)
     );
     next();
   } catch (err) {
@@ -20,7 +30,7 @@ export const deleteReplyLogger = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
       replyActivityGenerator.generateDeleteReplyActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -34,7 +44,7 @@ export const likeReplyLogger = async (req, res, next) => {
       req.locals.like
         ? replyActivityGenerator.generateLikeReplyActivity(req)
         : replyActivityGenerator.generateUnlikeReplyActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -48,7 +58,7 @@ export const dislikeReplyLogger = async (req, res, next) => {
       req.locals.dislike
         ? replyActivityGenerator.generateDislikeReplyActivity(req)
         : replyActivityGenerator.generateUndislikeReplyActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -61,7 +71,7 @@ export const editReplyLogger = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
       replyActivityGenerator.generateEditReplyActivity(req),
-      notifications.generateNotificationInfo(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -71,10 +81,14 @@ export const editReplyLogger = async (req, res, next) => {
 
 export const newMentionLogger = async (req, res, next) => {
   try {
-    req.locals.activity = await activityController.createActivity(
-      replyActivityGenerator.getNewMentionCreationStatement(req),
-      notifications.generateNotificationInfo(req),
-    );
+    let mentionedUsers = req.locals.mentionedUsers;
+    for (const mentionedUser of mentionedUsers) {
+      req.locals.mentionedUser = mentionedUser;
+      await activityController.createActivity(
+        replyActivityGenerator.getNewMentionCreationStatement(req)
+      );
+    }
+    notifications.generateNotificationInfo(req);
     next();
   } catch (err) {
     res.status(400).send({ error: "Error saving statement to mongo", err });

@@ -27,6 +27,7 @@ import { TopicDashboardComponent } from './pages/components/Dashboards/topic-das
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
+import { CanDeactivateService } from './services/can-deactivate.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -116,6 +117,7 @@ const routes: Routes = [
       {
         path: 'welcome',
         component: CourseWelcomeComponent,
+        canDeactivate: [CanDeactivateService],
       },
     ],
   },

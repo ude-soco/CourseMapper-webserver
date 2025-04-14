@@ -69,7 +69,9 @@ export class TopicChannelService {
   }
 
   logTopic(courseId: string, topicId: string): Observable<any> {
-    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/topics/${topicId}`)
+    return this.http.get<Course>(
+      `${this.API_URL}/courses/${courseId}/topics/${topicId}`
+    );
   }
   /**
    * @function addTopic
@@ -357,6 +359,21 @@ export class TopicChannelService {
   }
 
   logChannel(courseId: string, channelId: string): Observable<any> {
-    return this.http.get<Course>(`${this.API_URL}/courses/${courseId}/channels/${channelId}/log`)
+    return this.http.get<Course>(
+      `${this.API_URL}/courses/${courseId}/channels/${channelId}/log`
+    );
+  }
+  logAccessTopicDashboard(topicId: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/topics/${topicId}/log-dashboard`, {
+      topicId,
+    });
+  }
+  logAccessChannelDashboard(channelId: string): Observable<any> {
+    return this.http.post(
+      `${this.API_URL}/channels/${channelId}/log-dashboard`,
+      {
+        channelId,
+      }
+    );
   }
 }
