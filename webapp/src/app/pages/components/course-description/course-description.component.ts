@@ -192,9 +192,10 @@ export class CourseDescriptionComponent {
     const user = this.storageService.getUser(); // Assuming this returns user info
     const userId = user.id; // Get the user ID
     const courseId = this.course_enroll._id; // Get the course ID
+    const courseName = this.course_enroll.name; // Get the course ID
   
     // Call the Neo4j service to create the relationship
-    this.neo4jService.createUserCourseRelationship(userId, courseId).subscribe({
+    this.neo4jService.createUserCourseRelationship(userId, courseId, courseName).subscribe({
       next: () => {
         this.showInfo('User-course relationship created successfully!');
       },

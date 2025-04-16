@@ -227,20 +227,20 @@ export async function setRating(resourceId, concepts, userId, rating) {
 }
 
 
-export async function createUserCourseRelationship(userId, courseId, engagementLevel) {
+export async function createUserCourseRelationship(userId, courseId,courseName, engagementLevel) {
   const session = graphDb.driver.session();
   try {
     const result = await session.executeWrite(async (tx) => {
       const response = await tx.run(
         `
         MERGE (u:User {uid: $userId, type: 'user'})
-        MERGE (c:Course {cid: $courseId})
+        MERGE (c:Course {cid: $courseId, name: $courseName})
         MERGE (u)-[loe:ENGAGED_IN]->(c)
         ON CREATE SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
         ON MATCH SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
         RETURN u, c, loe
         `,
-        { userId, courseId, engagementLevel }
+        { userId, courseId,courseName, engagementLevel }
       );
       return recordsToObjects(response.records);
     });

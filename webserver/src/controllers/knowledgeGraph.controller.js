@@ -290,16 +290,18 @@ export const setRating = async (req, res) => {
 };
 
 export const createCourseNeo4j = async (req, res) => {
-  const { userId, courseId } = req.params; // Extract parameters from the URL
+  const { userId, courseId } = req.params;              // Still extracting from the URL path
+  const { courseName } = req.query;                     // Extract from query parameters
 
   try {
-    const result = await neo4j.createUserCourseRelationship(userId, courseId, 'low');
+    const result = await neo4j.createUserCourseRelationship(userId, courseId, courseName, 'low');
     return res.status(200).send({ success: true, data: result });
   } catch (err) {
     console.error("Failed to create user-course relationship:", err);
     return res.status(500).send({ success: false, error: err.message });
   }
 };
+
 
 
 export const deleteCourseNeo4j = async (req, res) => {

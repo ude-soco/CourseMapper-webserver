@@ -72,12 +72,18 @@ export class Neo4jService {
 //////
 
 
-  createUserCourseRelationship(userId: string, courseId: string): Observable<any> {
+  createUserCourseRelationship(userId: string, courseId: string, courseName: string): Observable<any> {
     return this.http.post<any>(
       `${environment.API_URL}/knowledge-graph/user/${userId}/course/${courseId}/create-relationship`,
-      {}
+      {},
+      {
+        params: {
+          courseName: courseName
+        }
+      }
     );
   }
+
   
 
   removeUserCourseRelationship(userId: string, courseId: string): Observable<any> {
