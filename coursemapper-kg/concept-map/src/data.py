@@ -1,12 +1,13 @@
 import re
 from typing import List, Callable
 from numpy import ndarray
+from typing import Optional
 
 def clean_id(id: str) -> str:
     return re.sub(r'[^a-zA-Z0-9_]', '_', id)
 
 class Node:
-    def __init__(self, id: str, name: str, uri: str, type: str, weight: float, wikipedia: str, text: str, is_draft: bool, embedding: ndarray | None = None, keyphrases: List[str] = [], embedding_model: str | None = None):
+    def __init__(self, id: str, name: str, uri: str, type: str, weight: float, wikipedia: str, text: str, is_draft: bool, isNew: bool, isEditing:bool, lastEdited: bool, embedding: ndarray | None = None, keyphrases: List[str] = [], embedding_model: str | None = None):
         self.id = clean_id(id)
         self.name = name
         self.uri = uri
@@ -15,9 +16,13 @@ class Node:
         self.wikipedia = wikipedia
         self.text = text
         self.is_draft = is_draft
+        self.isNew = isNew	
+        self.isEditing = isEditing
+        self.lastEdited = lastEdited
         self.embedding = embedding
         self.keyphrases = keyphrases
-        self.embedding_model = embedding_model
+        self.embedding_model = embedding_model 
+        
 
     @staticmethod
     def from_dict(data: dict):
@@ -30,9 +35,13 @@ class Node:
             data['wikipedia'],
             data['abstract'] if data['abstract'] else data['text'],
             data['is_draft'],
+            data['isNew'],
+            data['isEditing'],
+            data['lastEdited'],
             data['embedding'],
             data['keyphrases'],
             data['embedding_model'],
+            
         )
 
     def serialize(self):
@@ -45,6 +54,9 @@ class Node:
             "wikipedia": self.wikipedia,
             "abstract": self.text,
             "is_draft": self.is_draft,
+            "isNew": self.isNew,
+            "lastEdited": self.lastEdited,
+            "isEditing": self.isEditing,
             "keyphrases": self.keyphrases,
         }
 

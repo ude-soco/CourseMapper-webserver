@@ -25,6 +25,18 @@ const {
  * Get all courses controller
  *
  */
+
+// User identification for the logging system
+const findUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found!");
+  return user;
+};
+const handleError = (res, error, message) => {
+  console.error(error);
+  return res.status(500).send({ error: message });
+};
+
 export const getAllCourses = async (req, res) => {
   let courses;
   try {
@@ -47,6 +59,7 @@ export const getAllCourses = async (req, res) => {
       channels: c.channels,
       createdAt: c.createdAt,
       users: c.users,
+      url: c.url,
     };
     results.push(course);
   });
@@ -82,6 +95,7 @@ export const getMyCourses = async (req, res) => {
       channels: object?.courseId?.channels,
       createdAt: object?.courseId?.createdAt,
       users: object?.courseId?.users,
+      url: object?.courseId.url,
     };
     results.push(course);
   });
@@ -351,8 +365,18 @@ export const getCourse = async (req, res) => {
       .send({ message: "Error finding notification settings" });
   }
 
+    // Find the user within the course's users array
+    const currentUser = foundCourse.users.find((user) => user.userId.toString() === userId);
+
+    // Attach the found user's role to the course data
+    const courseWithUserRole = {
+      ...foundCourse.toObject(), // Convert the Mongoose document to a plain object
+      role: currentUser?.role.name || null, // Attach the role of the found user or null if not found
+    };
+  
+
   return res.status(200).send({
-    course: foundCourse,
+    course: courseWithUserRole,
     notificationSettings: notificationSettings[0],
   });
 
@@ -581,7 +605,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await BlockingNotifications.deleteMany({
       courseId: courseId,
-      userId: userId
+      userId: userId,
     });
   } catch (err) {
     return res
@@ -592,7 +616,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await FollowAnnotation.deleteMany({
       courseId: courseId,
-      userId: userId
+      userId: userId,
     });
   } catch (err) {
     return res.status(500).send({ error: "Error deleting follow annotations" });
@@ -601,7 +625,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await UserNotification.deleteMany({
       courseId: foundCourse._id,
-      userId: userId
+      userId: userId,
     });
   } catch (error) {
     return res.status(500).send({ error: "Error deleting user notification" });
@@ -626,6 +650,8 @@ export const withdrawCourse = async (req, res, next) => {
 export const newCourse = async (req, res, next) => {
   const courseName = req.body.name;
   const courseDesc = req.body.description;
+  const url = req.body.url;
+
   let shortName = req.body.shortname;
   const userId = req.userId;
 
@@ -671,6 +697,8 @@ export const newCourse = async (req, res, next) => {
     role: foundRole._id,
   };
   userList.push(newUser);
+  // Use the helper to get a random image URL
+ const imageUrl = await helpers.getRandomImageUrl(req);
   let course = new Course({
     name: courseName,
     shortName: shortName,
@@ -679,6 +707,7 @@ export const newCourse = async (req, res, next) => {
     createdAt: Date.now(),
     updatedAt: Date.now(),
     users: userList,
+    url: imageUrl,
   });
   let courseSaved;
   try {
@@ -908,10 +937,52 @@ export const deleteCourse = async (req, res, next) => {
 
   return next();
 };
+/**
+ * @function shareCourse
+ * Share a course controller
+ *
+ * @param {string} req.params.courseId The id of the course
+ */
+export const shareCourse = async (req, res, next) => {
+  const courseId = req.params.courseId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+  const frontendHost = req.body.frontendHost;
+  const courseUrl = `${frontendHost}/course-description/${courseId}`; // e.g., "https://example.com/course-description/123"
+
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    courseUrl: courseUrl,
+    success: `Course "${foundCourse.name}" shared successfully!`,
+  };
+  next();
+  // res.status(200).json({
+  //   success: `Course "${foundCourse.name}" shared successfully!`,
+  //   courseUrl: courseUrl, // Include the generated URL
+  // });
+};
 
 /**
  * @function editCourse
- * Delete a course controller
+ * edit a course controller
  *
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.body.name The edited name of the course
@@ -922,6 +993,7 @@ export const editCourse = async (req, res, next) => {
   const courseName = req.body.name;
   const courseDesc = req.body.description;
   const userId = req.userId;
+  const url = req.body.url;
 
   let foundCourse;
   try {
@@ -947,6 +1019,7 @@ export const editCourse = async (req, res, next) => {
   foundCourse.name = courseName;
   foundCourse.shortName = shortName;
   foundCourse.description = courseDesc;
+  foundCourse.url = url;
   foundCourse.updatedAt = Date.now();
   let foundUser;
   try {
@@ -962,11 +1035,51 @@ export const editCourse = async (req, res, next) => {
   }
 
   req.locals.response = {
-    success: `Course '${courseName}' has been updated successfully!`,
+    success: `Course '${courseName}' has been updated successfully!`,foundCourse
   };
   req.locals.user = foundUser;
   req.locals.newCourse = foundCourse;
   return next();
+};
+/**
+ * @function accessCourseDashboard
+ * access Course Dashboard
+ *
+ * @param {string} req.params.courseId The id of the course
+ *
+ */
+export const accessCourseDashboard = async (req, res, next) => {
+  const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res
+        .status(404)
+        .send({ error: `Course with id ${courseId} not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+  };
+
+  next();
 };
 
 /**
@@ -981,6 +1094,13 @@ export const editCourse = async (req, res, next) => {
  */
 export const newIndicator = async (req, res, next) => {
   const courseId = req.params.courseId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundCourse;
   try {
@@ -1010,10 +1130,17 @@ export const newIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving course" });
   }
 
-  return res.status(200).send({
-    success: `Indicator added successfully!`,
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
     indicator: indicator,
-  });
+    success: `Indicator added successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator added successfully!`,
+  //   indicator: indicator,
+  // });
 };
 
 /**
@@ -1026,6 +1153,13 @@ export const newIndicator = async (req, res, next) => {
 export const deleteIndicator = async (req, res, next) => {
   const courseId = req.params.courseId;
   const indicatorId = req.params.indicatorId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundCourse;
   try {
@@ -1045,6 +1179,17 @@ export const deleteIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding course" });
   }
 
+  // Find the indicator to delete
+  let deletedIndicator;
+  deletedIndicator = foundCourse.indicators.find(
+    (indicator) => indicator._id.toString() === indicatorId
+  );
+  if (!deletedIndicator) {
+    return res.status(404).send({
+      error: `Indicator with id ${indicatorId} not found in the course!`,
+    });
+  }
+
   foundCourse.indicators = foundCourse.indicators.filter(
     (indicator) => indicator._id.toString() !== indicatorId
   );
@@ -1054,10 +1199,16 @@ export const deleteIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving course" });
   }
-
-  return res.status(200).send({
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    indicator: deletedIndicator,
     success: `Indicator deleted successfully!`,
-  });
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator deleted successfully!`,
+  // });
 };
 
 /**
@@ -1068,6 +1219,13 @@ export const deleteIndicator = async (req, res, next) => {
  */
 export const getIndicators = async (req, res, next) => {
   const courseId = req.params.courseId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundCourse;
   try {
@@ -1082,7 +1240,6 @@ export const getIndicators = async (req, res, next) => {
   }
 
   const response = foundCourse.indicators ? foundCourse.indicators : [];
-
   return res.status(200).send(response);
 };
 
@@ -1098,8 +1255,15 @@ export const getIndicators = async (req, res, next) => {
 export const resizeIndicator = async (req, res, next) => {
   const courseId = req.params.courseId;
   const indicatorId = req.params.indicatorId;
-  const width = req.params.width;
-  const height = req.params.height;
+  const newWidth = req.params.width;
+  const newHeight = req.params.height;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundCourse;
   try {
@@ -1119,10 +1283,17 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding course" });
   }
 
+  let resizedIndicator;
+  let oldDimensions = {};
   foundCourse.indicators.forEach((indicator) => {
     if (indicator._id.toString() === indicatorId.toString()) {
-      indicator.width = width;
-      indicator.height = height;
+      oldDimensions = {
+        width: indicator.width,
+        height: indicator.height,
+      };
+      indicator.width = newWidth;
+      indicator.height = newHeight;
+      resizedIndicator = indicator;
     }
   });
 
@@ -1132,7 +1303,16 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving course" });
   }
 
-  return res.status(200).send();
+  req.locals = {
+    course: foundCourse,
+    indicator: resizedIndicator,
+    user: foundUser,
+    oldDimensions: oldDimensions,
+    newDimentions: { width: newWidth, height: newHeight },
+    success: `Indicator resized successfully!`,
+  };
+  next();
+  //return res.status(200).send();
 };
 
 /**
@@ -1147,6 +1327,13 @@ export const reorderIndicators = async (req, res, next) => {
   const courseId = req.params.courseId;
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundCourse;
   try {
@@ -1175,10 +1362,20 @@ export const reorderIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving course" });
   }
-  return res.status(200).send({
-    success: `Indicators updated successfully!`,
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    indicator: indicator,
+    oldIndex: oldIndex,
+    newIndex: newIndex,
     indicators: foundCourse.indicators,
-  });
+    success: `Indicators updated successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicators updated successfully!`,
+  //   indicators: foundCourse.indicators,
+  // });
 };
 
 export const getCourseTest = async (req, res) => {

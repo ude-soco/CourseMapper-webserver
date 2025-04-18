@@ -1,6 +1,21 @@
 const db = require("../models");
 const Tag = db.tag;
+const User = db.user;
+const Material = db.material;
+const Course = db.course;
+const Topic = db.topic;
+const Channel = db.channel;
 
+// User identification for the logging system
+const findUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found!");
+  return user;
+};
+const handleError = (res, error, message) => {
+  console.error(error);
+  return res.status(500).send({ error: message });
+};
 /**
  * @function courseTags
  * Get all tags of a course controller.
@@ -34,9 +49,7 @@ export const courseTags = async (req, res) => {
   newFoundTags.sort((a, b) =>
     a.count < b.count ? 1 : b.count < a.count ? -1 : 0
   );
-  return res.status(200).send(
-    newFoundTags,
-  );
+  return res.status(200).send(newFoundTags);
 };
 
 /**
@@ -72,9 +85,7 @@ export const topicTags = async (req, res) => {
   newFoundTags.sort((a, b) =>
     a.count < b.count ? 1 : b.count < a.count ? -1 : 0
   );
-  return res.status(200).send(
-    newFoundTags,
-  );
+  return res.status(200).send(newFoundTags);
 };
 
 /**
@@ -110,9 +121,7 @@ export const channelTags = async (req, res) => {
   newFoundTags.sort((a, b) =>
     a.count < b.count ? 1 : b.count < a.count ? -1 : 0
   );
-  return res.status(200).send(
-    newFoundTags,
-  );
+  return res.status(200).send(newFoundTags);
 };
 
 /**
@@ -148,7 +157,160 @@ export const materialTags = async (req, res) => {
   newFoundTags.sort((a, b) =>
     a.count < b.count ? 1 : b.count < a.count ? -1 : 0
   );
-  return res.status(200).send(
-    newFoundTags,
-  );
+  return res.status(200).send(newFoundTags);
+};
+export const selectCourseTag = async (req, res, next) => {
+  const tagId = req.params.tagId;
+  const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding course" });
+  }
+  let foundTag;
+  try {
+    foundTag = await Tag.findById(tagId);
+    if (!tagId) {
+      return res.status(404).send({ error: "Tag not found" });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding the tag" });
+  }
+  req.locals = {
+    tag: foundTag,
+    course: foundCourse,
+    user: foundUser,
+  };
+  next();
+};
+export const selectTopicTag = async (req, res, next) => {
+  //console.log(req);
+  const tagId = req.params.tagId;
+  const topicId = req.params.topicId;
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundTopic;
+  try {
+    foundTopic = await Topic.findById(topicId);
+    if (!foundTopic) {
+      return res.status(404).send({
+        error: `Topic with id ${topicId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding topic" });
+  }
+  let foundTag;
+  try {
+    foundTag = await Tag.findById(tagId);
+    if (!tagId) {
+      return res.status(404).send({ error: "Tag not found" });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding the tag" });
+  }
+  req.locals = {
+    tag: foundTag,
+    topic: foundTopic,
+    user: foundUser,
+  };
+  next();
+};
+export const selectChannelTag = async (req, res, next) => {
+  //console.log(req);
+  const tagId = req.params.tagId;
+  const channelId = req.params.channelId;
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findById(channelId);
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding channel" });
+  }
+  let foundTag;
+  try {
+    foundTag = await Tag.findById(tagId);
+    if (!tagId) {
+      return res.status(404).send({ error: "Tag not found" });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding the tag" });
+  }
+  req.locals = {
+    tag: foundTag,
+    channel: foundChannel,
+    user: foundUser,
+  };
+  next();
+};
+export const selectMaterialTag = async (req, res, next) => {
+  //console.log(req);
+  const tagId = req.params.tagId;
+  const materialId = req.params.materialId;
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  let foundTag;
+  try {
+    foundTag = await Tag.findById(tagId);
+    if (!tagId) {
+      return res.status(404).send({ error: "Tag not found" });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding the tag" });
+  }
+  req.locals = {
+    tag: foundTag,
+    material: foundMaterial,
+    user: foundUser,
+  };
+  next();
 };

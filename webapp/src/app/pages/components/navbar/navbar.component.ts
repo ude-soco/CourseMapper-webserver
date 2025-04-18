@@ -139,7 +139,11 @@ export class NavbarComponent implements OnInit {
     });
   }
 
+  // onViewPersonalDashboard(): void {
+  //   this.router.navigate(['user/dashboard']);
+  // }
   onViewPersonalDashboard(): void {
     this.router.navigate(['user/dashboard']);
+    this.userService.logAccessPersonalDashboard().subscribe();
   }
 }

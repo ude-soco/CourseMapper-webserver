@@ -8,28 +8,50 @@
 >
   <p-dialog
     id="higherLevelsKG"
-    header="{{ this.currentMaterial?.name }}{{
-      isDraft ? ' - Preview the educational knowledge graph' : ''
-    }}"
+    [header]="
+    isDraft
+      ? ('Edit and finalize the knowledge Graph for \'' + this.currentMaterial?.name + '\'')
+      : ('Knowledge Graph for \'' + this.currentMaterial?.name + '\'')
+  "
     [(visible)]="this.showMaterialKg"
     [blockScroll]="true"
+    [contentStyle]="{ 'overflow-y': 'scroll' }"
     (onShow)="materialKgActivated = true"
     (onHide)="onSubmitCancel()"
     [style]="{
       position: 'relative',
       top: '0px',
       width: '90%',
-      height: '90%',
-      padding: 0,
-      margin: 0
+      height: '100%',
+      margin: 0,
+      'padding-top': '2rem',
     }"
+
     maskStyleClass="dialogMask"
   >
-    <hr style="margin-bottom: 0.25rem" />
+  <!-- <button
+  (click)="showMaterialKg = false"
+  class="absolute top-5 right-3 mt-2 mr-2 bg-transparent border-0 focus:outline-none rounded-full p-2 hover:bg-gray-100"
+>
+  <i class="pi pi-times"></i>
+</button> -->
+
+    <!-- <span *ngIf="isDraft && !isLoading" class="title-text">
+      <b
+        >Edit and finalize the knowledge Graph for '{{
+          this.currentMaterial?.name
+        }}'</b
+      >
+    </span> -->
+
+    <span *ngIf="isDraft && !isLoading" class="subheading-text">
+      Right-click to edit or delete Main Concepts, or add new ones to the
+      knowledge graph before publishing it for all users
+    </span>
     <ng-container>
       <div style="position: relative" class="flex items-center justify-between">
         <span *ngIf="conceptMapData">
-          Top-N Main Concepts
+          View top-n Main Concepts
           <p-dropdown
             [options]="top_n_nodes"
             [(ngModel)]="selectedTopN"
@@ -38,10 +60,6 @@
             (onChange)="selectedTopNodes(selectedTopN)"
             icon="pi"
           ></p-dropdown>
-        </span>
-        <span *ngIf="isDraft">
-          You can edit/delete the Main Concepts (using right click) or add new
-          concepts to the knowledge graph before publishing it for all users
         </span>
         <div
           id="materialKgControlPanel"
@@ -111,11 +129,13 @@
                   ></p-progressSpinner>
                 </div>
               </div>
-              <p *ngIf="isLoading" style="margin-top: 20px">
+              <p *ngIf="isLoading" style="margin-top: 20px; padding: 10px">
                 <b
-                  >The Knowledge graph for
-                  {{ this.currentMaterial?.name }} material is being generated,
-                  just wait and the results will be displayed here</b
+                  >The knowledge graph for the learning material '{{
+                    this.currentMaterial?.name
+                  }}' is being created. This might take some time depending on
+                  the content of the learning material. Once the results are
+                  ready, they will be displayed here.</b
                 >
               </p>
             </div>
@@ -143,128 +163,226 @@
                 [isDraft]="isDraft"
                 (editConcept)="editConcept($event)"
                 (conceptDeleted)="deleteConcept($event)"
+                (conceptDeletedBulk)="deleteConceptsBulk($event)"
               >
               </app-graph>
             </div>
           </div>
-          <div *ngIf="isDraft">
-            <div
-              class="flex flex-row justify-between items-center"
-              *ngIf="conceptMapData && !conceptInputsDisabled"
-            >
-              <div
-                class="flex flex-col gap-4"
-                *ngIf="conceptMapData && !conceptInputsDisabled"
-              >
-                <p *ngIf="editingConceptName">
-                  Editing concept {{ editingConceptName }}
-                </p>
-                <form
-                  [formGroup]="editConceptForm"
-                  class="flex flex-row gap-2 items-center"
-                >
-                  <div class="p-float-label w-80">
-                    <p-autoComplete
-                      id="concept-name-input"
-                      formControlName="conceptName"
-                      [suggestions]="conceptSearchResults"
-                      (completeMethod)="searchConcepts($event)"
-                      field="title"
-                      styleClass="w-full"
-                      inputStyleClass="w-full"
-                    ></p-autoComplete>
-                    <label for="concept-name-input">Concept name</label>
-                  </div>
-                  <div class="w-80" style="width: 700px">
-                    <p-multiSelect
-                      id="concept-slides-input"
-                      [options]="slideOptions"
-                      formControlName="conceptSlides"
-                      defaultLabel="Slides"
-                      [filter]="false"
-                      filterPlaceholder="All slides"
-                      styleClass="w-full"
-                    >
-                      <ng-template let-slide pTemplate="filter">
-                        <div class="flex flex-col w-full">
-                          <p>
-                            Slide preview
-                            <span *ngIf="docURL !== undefined"
-                              >({{ currentPDFPage }})</span
-                            >
-                            <span *ngIf="docURL === undefined"
-                              >(click eye icon)</span
-                            >
-                          </p>
-                          <pdf-viewer
-                            [src]="docURL"
-                            [render-text]="true"
-                            [render-text-mode]="2"
-                            [fit-to-page]="true"
-                            [original-size]="true"
-                            [show-all]="false"
-                            [page]="currentPDFPage"
-                            style="width: 100%; height: 500px"
-                          >
-                          </pdf-viewer>
-                          <div class="flex justify-end">
-                            <p-button
-                              label="Select all slides"
-                              (click)="selectAllSlides()"
-                              styleClass="p-button-outlined"
-                            ></p-button>
-                          </div>
-                        </div>
-                      </ng-template>
-                      <ng-template let-slide pTemplate="item">
-                        <div
-                          class="w-full flex flex-row items-center justify-between"
-                        >
-                          Slide {{ slide.label }}
-                          <p-button
-                            icon="pi pi-eye"
-                            (mouseup)="previewSlide($event, slide)"
-                            (mousedown)="previewSlide($event, slide)"
-                            (click)="previewSlide($event, slide)"
-                            styleClass="p-button-outlined"
-                          ></p-button>
-                        </div>
-                      </ng-template>
-                    </p-multiSelect>
-                  </div>
+          <span
+            *ngIf="!editingConceptName && !isLoading && isDraft"
+            class="subheading-text"
+          >
+            Add/Edit a Main Concept and connect it to related slides
+          </span>
 
+          <span *ngIf="editingConceptName" class="subheading-text">
+            Editing concept {{ editingConceptName }}
+          </span>
+          <div *ngIf="isDraft" style="margin-top: 10px">
+            <div *ngIf="conceptMapData && !conceptInputsDisabled" class="mt-1">
+              <form
+                [formGroup]="editConceptForm"
+                class="flex flex-row items-start gap-6 w-full"
+              >
+                <!-- Column 1: Main Concepts -->
+                <div class="flex flex-col gap-4 w-[40rem]">
+                  <!-- Label with Info Icon for Main Concepts -->
+                  <span class="flex items-center">
+                    <span>Main Concepts</span>
+                    <i
+                      class="pi pi-info-circle ml-2 text-gray-500"
+                      pTooltip="Main Concepts are Wikipedia articles."
+                      tooltipPosition="top"
+                      style="cursor: pointer"
+                    ></i>
+                  </span>
+                  <p-autoComplete
+                    id="concept-name-input"
+                    formControlName="conceptName"
+                    placeholder="Add concept name"
+                    [suggestions]="conceptSearchResults"
+                    (completeMethod)="searchConcepts($event)"
+                    field="title"
+                    styleClass="w-full"
+                    inputStyleClass="w-full"
+                   
+                  >
+                    <!-- Template for Items in the Dropdown -->
+                    <ng-template let-concept pTemplate="item">
+                      <div class="flex justify-between items-center gap-2">
+                        <span>{{ concept.title }}</span>
+                        <button
+                        type="button"
+                        (mousedown)="openLink(concept.url, $event)"
+                        class="text-blue-500 hover:underline bg-transparent border-0 p-0"
+                        pTooltip="Open article on Wikipedia"
+                        tooltipPosition="top"
+                      >
+                        <i class="pi pi-external-link"></i>
+                      </button>
+                      </div>
+                    </ng-template>
+                  </p-autoComplete>
+                </div>
+
+                <!-- Column 2: Slides -->
+                <div class="flex flex-col gap-4 w-[-webkit-fill-available]">
+                  <!-- Label with Info Icon for Slides -->
+                  <span class="flex items-center">
+                    <span>Slides</span>
+                    <i
+                      class="pi pi-info-circle ml-2 text-gray-500"
+                      pTooltip="Select or preview slides to connect them to main concepts."
+                      tooltipPosition="top"
+                      style="cursor: pointer"
+                    ></i>
+                  </span>
+                  <p-multiSelect
+                    id="concept-slides-input"
+                    [options]="slideOptions"
+                    formControlName="conceptSlides"
+                    defaultLabel="Select slide"
+                    [filter]="false"
+                    filterPlaceholder="All slides"
+                    styleClass="w-full"
+                  >
+                    <!-- Template for Filter: PDF preview, paginator, checkbox -->
+                    <ng-template let-slide pTemplate="filter">
+                      <div class="flex flex-col w-full">
+                        <p>
+                          Slide preview
+                          <span *ngIf="docURL !== undefined"
+                            >({{ currentPDFPage }})</span
+                          >
+                          <span *ngIf="docURL === undefined"
+                            >(click eye icon)</span
+                          >
+                        </p>
+                        <pdf-viewer
+                          [src]="docURL"
+                          [render-text]="true"
+                          [render-text-mode]="2"
+                          [fit-to-page]="true"
+                          [original-size]="true"
+                          [show-all]="false"
+                          [page]="currentPDFPage"
+                          class="responsive-pdf-viewer"
+                        ></pdf-viewer>
+                        <p-paginator
+                          id="p_paginator"
+                          [rows]="1"
+                          [showJumpToPageDropdown]="true"
+                          [showPageLinks]="false"
+                          [totalRecords]="totalPages"
+                          [first]="currentPDFPage - 1"
+                          (onPageChange)="pagechanging($event)"
+                        ></p-paginator>
+                        <div class="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="selectAllSlidesCheckbox"
+                            class="mr-2"
+                            [checked]="allSelected"
+                            (click)="$event.stopPropagation()"
+                            (change)="toggleSelectAll($event)"
+                          />
+                          <label for="selectAllSlidesCheckbox">
+                            {{
+                              allSelected
+                                ? "Deselect All Slides"
+                                : "Select All Slides"
+                            }}
+                          </label>
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <!-- Template for each Slide Item -->
+                    <ng-template let-slide pTemplate="item">
+                      <div
+                        class="w-full flex flex-row items-center justify-between"
+                        [ngClass]="{
+                          'highlight-row':
+                            slide['value'] === currentPDFPage.toString()
+                        }"
+                      >
+                        Slide {{ slide.label }}
+                        <p-button
+                          icon="pi pi-eye"
+                          pTooltip="Preview slide"
+                          (mousedown)="$event.stopPropagation()"
+                          (click)="previewSlide($event, slide)"
+                          styleClass="p-button-outlined"
+                        ></p-button>
+                      </div>
+                    </ng-template>
+                  </p-multiSelect>
+                </div>
+
+                <!-- Column 3: Buttons -->
+                <!-- Button Container: Single row with two sections -->
+                <div
+                  class="flex flex-row items-center justify-between w-full mt-4"
+                  style="padding: 30px"
+                >
+                  <!-- Right-aligned group for Add/Update and Cancel buttons -->
+                  <div class="flex flex-row gap-2">
+                    <ng-container *ngIf="!editingConceptName">
+                      <button
+                        pButton
+                        [ngStyle]="{ backgroundColor: '#0369A1' }"
+                        type="button"
+                        label="Add concept"
+                        title="Add concept"
+                        (click)="addConcept()"
+                      ></button>
+                      <button
+                        pButton
+                        [ngStyle]="{
+                          backgroundColor: '#EEEEEE',
+                          color: '#333333'
+                        }"
+                        type="button"
+                        label="Cancel"
+                        title="Cancel"
+                        (click)="cancelEditConcept()"
+                      ></button>
+                    </ng-container>
+                    <ng-container *ngIf="editingConceptName">
+                      <button
+                        pButton
+                        [ngStyle]="{ backgroundColor: '#0369A1' }"
+                        type="button"
+                        label="Update concept"
+                        title="Update concept"
+                        (click)="addConcept()"
+                      ></button>
+                      <button
+                        pButton
+                        [ngStyle]="{
+                          backgroundColor: '#EEEEEE',
+                          color: '#333333'
+                        }"
+                        type="button"
+                        label="Cancel"
+                        title="Cancel"
+                        (click)="cancelEditConcept()"
+                      ></button>
+                    </ng-container>
+                  </div>
+                  <!-- Finalize button aligned to left -->
                   <button
-                    *ngIf="!editingConceptName"
                     pButton
+                    [ngStyle]="{ backgroundColor: '#EA580C' }"
                     type="button"
-                    label="Add concept"
-                    (click)="addConcept()"
+                    pTooltip="Clicking this button will connect the main concepts in this knowledge graph with their related concepts and categories from Wikipedia"
+                    label="Finalize"
+                    title="Finalize"
+                    (click)="onexpandAndPublish()"
+                    style="text-align: left"
                   ></button>
-                  <button
-                    *ngIf="editingConceptName"
-                    pButton
-                    type="button"
-                    label="Update concept"
-                    (click)="addConcept()"
-                  ></button>
-                  <button
-                    *ngIf="editingConceptName"
-                    pButton
-                    [ngStyle]="{ backgroundColor: '#EEEEEE', color: '#333333' }"
-                    type="button"
-                    label="Cancel edit"
-                    (click)="cancelEditConcept()"
-                  ></button>
-                </form>
-              </div>
-              <button
-                pButton
-                [ngStyle]="{ backgroundColor: '#EA580C' }"
-                type="button"
-                pTooltip="When clicking on this button, the relative cocept to this cocept will be shown in the graph in addition to the top 3 categories of this concept"
-                label="Expand and publish"
-                (click)="expandAndPublish()"
-              ></button>
+                </div>
+              </form>
             </div>
             <div *ngIf="conceptInputsDisabled">
               <p-progressSpinner
@@ -789,9 +907,9 @@
                 "
               >
                 <div>
-                  Please generate KG for the learning material first. Once its
-                  generated, you can view main concepts related to this slide
-                  here
+                  The knowledge graph for this learning material has not been
+                  created yet. Once it’s created, you can view the Main Concepts
+                  related to this slide here.
                 </div>
               </div>
               <div
@@ -894,6 +1012,7 @@
                   *ngIf="this.resultMaterials != null"
                   [concepts1]="concepts1"
                   [results1]="resultMaterials"
+                  [currentMaterial]="currentMaterial"
                 >
                 </app-result-view>
               </div>

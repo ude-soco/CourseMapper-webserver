@@ -61,6 +61,7 @@ export class GlobalLevelNotificationSettingsComponent {
   }): void {
     const labelClicked: string = notificationOption.label;
     let objToSend = {
+      labelClicked: labelClicked,
       [globalNotificationSettingsLabels.annotations]:
         labelClicked === globalNotificationSettingsLabels.annotations
           ? !this.checkBoxesGroup.value[
@@ -106,7 +107,7 @@ export class GlobalLevelNotificationSettingsComponent {
   ) {
     let objToSend = {
       courseId: notificationSettings.courseId,
-
+      labelClicked: settingClicked,
       [courseNotificationSettingLabels.annotations]:
         settingClicked === courseNotificationSettingLabels.annotations
           ? !notificationSettings['isAnnotationNotificationsEnabled']

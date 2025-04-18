@@ -243,6 +243,7 @@ export const setTopicNotificationSettings = createAction(
     settings: {
       courseId: string;
       topicId: string;
+      labelClicked: string;
       [key: string]: boolean | string;
     };
   }>()
@@ -295,6 +296,7 @@ export const setChannelNotificationSettings = createAction(
     settings: {
       courseId: string;
       channelId: string;
+      labelClicked: string;
       [key: string]: boolean | string;
     };
   }>()
@@ -347,6 +349,7 @@ export const setMaterialNotificationSettings = createAction(
     settings: {
       courseId: string;
       materialId: string;
+      labelClicked: string;
       [key: string]: boolean | string;
     };
   }>()
@@ -381,6 +384,7 @@ export const setCourseNotificationSettings = createAction(
   props<{
     settings: {
       courseId: string;
+      labelClicked: string;
       [key: string]: boolean | string;
     };
   }>()
