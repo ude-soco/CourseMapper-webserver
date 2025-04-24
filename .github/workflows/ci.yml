@@ -16,6 +16,12 @@ jobs:
       if: ${{ !(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
       run: echo "::notice::Not tagged, skipping branch check"
 
+    # Step added as a workaround for https://github.com/rickstaa/action-contains-tag/pull/18
+    # TODO: bump version of action-contains-tag and remove this workaround step after PR above is merged
+    - name: Work around action-contains-tag regression due to Git issue
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+      run: git config --global remote.origin.followRemoteHEAD never
+
     - name: Checkout repository
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       uses: actions/checkout@v4
