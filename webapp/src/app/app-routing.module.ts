@@ -27,7 +27,7 @@ import { TopicDashboardComponent } from './pages/components/Dashboards/topic-das
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
-import { PersonalKnowledgeGraphComponent } from './pages/components/knowledge-graph/personal-knowledge-graph/personal-knowledge-graph.component';
+import { PersonalKnowledgeGraphComponent } from './pages/components/knowledge-graph/user-kg/personal-knowledge-graph/personal-knowledge-graph.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },

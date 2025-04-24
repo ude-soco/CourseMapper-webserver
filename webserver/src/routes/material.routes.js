@@ -9,13 +9,19 @@ module.exports = function (app) {
     next();
   });
 
+  app.get(
+    "/api/material/redirection/personalKg/:materialId",
+    [authJwt.verifyToken],
+    controller.getMaterialById
+  );
+
   // Get details of material
   // Only enrolled users/admin
   app.get(
     "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.accessMaterialLogger,
+    logger.accessMaterialLogger
   );
 
   // Create a new material
@@ -27,7 +33,7 @@ module.exports = function (app) {
     logger.addMaterialLogger,
     notifications.updateBlockingNotificationsNewMaterial,
     notifications.materialCourseUpdateNotificationsUsers,
-    notifications.populateUserNotification,
+    notifications.populateUserNotification
   );
 
   // Delete a material
@@ -39,7 +45,7 @@ module.exports = function (app) {
     controller.deleteMaterial,
     logger.deleteMaterialLogger,
     notifications.materialCourseUpdateNotificationsUsers,
-    notifications.populateUserNotification,
+    notifications.populateUserNotification
   );
 
   // Edit a material
@@ -50,28 +56,28 @@ module.exports = function (app) {
     controller.editMaterial,
     logger.editMaterialLogger,
     notifications.materialCourseUpdateNotificationsUsers,
-    notifications.populateUserNotification,
+    notifications.populateUserNotification
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/play",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.playVideoLogger,
+    logger.playVideoLogger
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/pause",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.pauseVideoLogger,
+    logger.pauseVideoLogger
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/video/complete",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.completeVideoLogger,
+    logger.completeVideoLogger
   );
 
   app.get(
@@ -79,42 +85,42 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
     // knowledgeGraphController.readSlide,
-    logger.viewSlideLogger,
+    logger.viewSlideLogger
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/pdf/complete",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.completePDFLogger,
+    logger.completePDFLogger
   );
 
   app.post(
     "/api/courses/:courseId/materials/:materialId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newIndicator,
+    controller.newIndicator
   );
 
   app.delete(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteIndicator,
+    controller.deleteIndicator
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/indicator",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getIndicators,
+    controller.getIndicators
   );
 
   app.put(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.resizeIndicator,
+    controller.resizeIndicator
   );
   app.put(
     "/api/courses/:courseId/materials/:materialId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.reorderIndicators,
+    controller.reorderIndicators
   );
 };

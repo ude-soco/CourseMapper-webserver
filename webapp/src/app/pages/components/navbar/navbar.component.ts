@@ -76,7 +76,7 @@ export class NavbarComponent implements OnInit {
         command: () => this.onViewPersonalDashboard(),
       },
       {
-        label: 'Personal Knowledge Graph',
+        label: 'Personal Knowledge Graphs',
         icon: 'pi pi-sitemap',
         title: 'View your personal knowledge graph',
         command: () => this.onViewPersonalKnowledge(),

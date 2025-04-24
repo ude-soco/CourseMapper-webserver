@@ -1,0 +1,64 @@
+#cy {
+  height: 575px;
+  width: 100%;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  border: 1px solid #b3b3b3;
+  border-radius: 8px;
+  padding-bottom: 0;
+}
+#Legends {
+  height: 60px;
+  margin: 0;
+  padding: 0;
+}
+.legend-circle-user {
+  width: 1em;
+  height: 1em;
+  background: #a225d4;
+  border-radius: 50%;
+  display: inline-block;
+  font-weight: 300;
+}
+.legend-circle-dnu {
+  width: 1em;
+  height: 1em;
+  background: #cb2d2d;
+  border-radius: 50%;
+  display: inline-block;
+  font-weight: 300;
+}
+.legend-circle-u {
+  width: 1em;
+  height: 1em;
+  background: #23a138;
+  border-radius: 50%;
+  display: inline-block;
+  font-weight: 300;
+}
+.legend-circle-new {
+  width: 1em;
+  height: 1em;
+  background: #2196f3;
+  border-radius: 50%;
+  display: inline-block;
+  font-weight: 300;
+}
+.legend-circle-course {
+  width: 1em;
+  height: 1em;
+  background: #d49125;
+  border-radius: 50%;
+  display: inline-block;
+  font-weight: 300;
+}
+.legend-circle-related {
+  width: 1em;
+  height: 1em;
+  background: #ce6f34;
+  border-radius: 50%;
+  display: inline-block;
+  font-weight: 300;
+}

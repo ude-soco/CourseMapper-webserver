@@ -5,17 +5,17 @@ import { User } from '../models/User';
 @Injectable({
   providedIn: 'root',
 })
-export class UserKgOrderedService {
+export class EngagementKgOrderedService {
   constructor() {}
 
   private subject = new Subject<any>();
   public selectedUserService: User;
 
-  userKgOrdered(user) {
+  engagementKgOrdered(user) {
     this.subject.next(true);
     this.selectedUserService = user;
   }
-  generateUserKG(): Observable<any> {
+  generateEngagementKG(): Observable<any> {
     return this.subject.asObservable();
   }
 }

@@ -23,6 +23,10 @@ import { MessageService } from 'primeng/api';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 import { Subscription } from 'rxjs';
 import * as $ from 'jquery';
+import { Neo4jService } from 'src/app/services/neo4j.service';
+import { Store } from '@ngrx/store';
+import { State, getLoggedInUser } from 'src/app/state/app.reducer';
+import { User } from 'src/app/models/User';
 
 cytoscape.use(cxtmenu);
 cytoscape.use(dagre);
@@ -63,6 +67,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   public _elements: any;
   public allElements: any;
   public topElements: any;
+  private subscriptions: Subscription[] = [];
 
   layout: any;
 
@@ -80,6 +85,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   showMoreActivated: boolean;
   showLessActivated: boolean;
   chosenElements: any;
+  loggedInUser: User;
 
   constructor(
     private renderer: Renderer2,
@@ -87,8 +93,15 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
     private statusService: ConceptStatusService,
     private callRecommendationsService: CallRecommendationsService,
     private messageService: MessageService,
-    private materialsRecommenderService: MaterialsRecommenderService
+    private materialsRecommenderService: MaterialsRecommenderService,
+    private neo4jService: Neo4jService,
+    private store: Store<State>
   ) {
+    this.subscriptions.push(
+      this.store
+        .select(getLoggedInUser)
+        .subscribe((user) => (this.loggedInUser = user))
+    );
     this.layout = {
       name: 'spread',
       minDist: 70,
@@ -210,11 +223,11 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
       .subscribe(async () => {
         this.reqDataForm = this.callRecommendationsService.reqDataForm;
         console.log(this.reqDataForm);
-        this.materialsRecommenderService.getRecommendedConcepts(
-          this.reqDataForm
-        ).subscribe((result) => {
-          console.log(result)
-        })
+        this.materialsRecommenderService
+          .getRecommendedConcepts(this.reqDataForm)
+          .subscribe((result) => {
+            console.log(result);
+          });
         //receive recommended concepts
       });
   }
@@ -333,17 +346,18 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
     } else {
       this.disableRecommendationsButton = true;
     }
+    this.refreshNodeStatuses();
   }
   async ngOnChanges() {
     for (let index = 0; index < 2; index++) {
       this.init();
     }
   }
-  ngOnDestroy(){
-    this.moreThanFive= false;
-    this.showMoreActivated= false;
-    this.showLessActivated= false;
-    this.chosenElements= false;
+  ngOnDestroy() {
+    this.moreThanFive = false;
+    this.showMoreActivated = false;
+    this.showLessActivated = false;
+    this.chosenElements = false;
   }
   init() {
     setTimeout(() => {
@@ -392,6 +406,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
         if (this._elements !== undefined) {
           this.cy.ready(() => {
             this.render();
+            this.refreshNodeStatuses();
           });
         }
       }
@@ -604,5 +619,73 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
         this.render();
       });
     }
+  }
+
+  async refreshNodeStatuses() {
+    if (!this.elements || !this.elements.nodes) {
+      return;
+    }
+
+    const user = await this.neo4jService.getUser(this.loggedInUser.id);
+    const userId = user.records[0].u.identity;
+    console.log(userId);
+
+    // Get all relationships for this user from Neo4j
+    this.neo4jService
+      .getUserRelationships(userId)
+      .then((result) => {
+        console.log('Received relationships from Neo4j:', result);
+
+        const relationships = result.records || result;
+
+        if (!relationships) {
+          return;
+        }
+
+        // Update node statuses based on relationship types
+        this.elements.nodes.forEach((node) => {
+          // Skip user nodes
+          if (node.data.type === 'user') {
+            return;
+          }
+          const nodeId = parseInt(node.data.id, 10);
+          const relationships = Array.isArray(result.records)
+            ? result.records
+            : Array.isArray(result)
+            ? result
+            : [];
+          console.log(relationships);
+          const rel = relationships.find((r) => r.target === nodeId);
+          console.log(rel);
+          console.log(node.data);
+          if (rel) {
+            // Map Neo4j relationship type to slide KG status
+            if (rel.type === 'dnu') {
+              node.data.status = 'notUnderstood';
+              console.log(node);
+              this.slideConceptservice.updateDidNotUnderstandConcepts(
+                node.data
+              );
+            } else if (rel.type === 'u') {
+              node.data.status = 'understood';
+              this.slideConceptservice.updateUnderstoodConcepts(node.data);
+            }
+          } else {
+            node.data.status = 'unread';
+            this.slideConceptservice.updateNewConcepts(node.data);
+          }
+          /*if (node.data.isDeleted) {
+            node.data.status = 'unread'; // Default status
+          }*/
+        });
+
+        // Update the cytoscape graph with new statuses
+        if (this.cy) {
+          this.cy.style(this.showAllStyle);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching relationships from Neo4j:', error);
+      });
   }
 }

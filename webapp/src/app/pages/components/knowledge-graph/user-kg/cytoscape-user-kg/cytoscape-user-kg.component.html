@@ -1,0 +1,61 @@
+<div #cy id="cy" (window:resize)="onResize($event)"></div>
+<div id="Legends" style="text-align: left; margin-bottom: 15px">
+  <div *ngIf="showUserKg">
+    <span>
+      <div class="legend-circle-user"></div>
+      User
+    </span>
+    <span>
+      <div class="legend-circle-new"></div>
+      New Concept
+    </span>
+    <span>
+      <div class="legend-circle-u"></div>
+      Understood Concept
+    </span>
+    <span>
+      <div class="legend-circle-dnu"></div>
+      Not Understood Concept
+    </span>
+    <span>
+      <div class="legend-circle-related"></div>
+      Related Concept
+    </span>
+  </div>
+  <div *ngIf="showEngagementKg">
+    <span>
+      <div class="legend-circle-user"></div>
+      User
+    </span>
+    <span>
+      <div class="legend-circle-course"></div>
+      Course
+    </span>
+  </div>
+  <div *ngIf="showDNUEngagementKg">
+    <span>
+      <div class="legend-circle-user"></div>
+      User
+    </span>
+    <span>
+      <div class="legend-circle-new"></div>
+      New Concept
+    </span>
+    <span>
+      <div class="legend-circle-u"></div>
+      Understood Concept
+    </span>
+    <span>
+      <div class="legend-circle-dnu"></div>
+      Not Understood Concept
+    </span>
+    <span>
+      <div class="legend-circle-related"></div>
+      Related Concept
+    </span>
+    <span>
+      <div class="legend-circle-course"></div>
+      Course
+    </span>
+  </div>
+</div>

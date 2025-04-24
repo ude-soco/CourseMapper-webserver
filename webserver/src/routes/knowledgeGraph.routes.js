@@ -87,16 +87,15 @@ module.exports = function (app) {
 
   app.post(
     "/api/knowledge-graph/user/:userId/course/:courseId/create-relationship",
-    [authJwt.verifyToken], 
-    controller.createCourseNeo4j 
-  );
-  
-  app.delete(
-    "/api/knowledge-graph/user/:userId/course/:courseId/remove-relationship",
-    [authJwt.verifyToken], 
-    controller.deleteCourseNeo4j 
+    [authJwt.verifyToken],
+    controller.createCourseNeo4j
   );
 
+  app.delete(
+    "/api/knowledge-graph/user/:userId/course/:courseId/remove-relationship",
+    [authJwt.verifyToken],
+    controller.deleteCourseNeo4j
+  );
 
   app.post(
     "/api/courses/:courseId/materials/:materialId/concept-recommendation",
@@ -114,5 +113,83 @@ module.exports = function (app) {
     "/api/wikipedia/search",
     [authJwt.verifyToken],
     controller.searchWikipedia
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-user/:userId",
+    [authJwt.verifyToken],
+    controller.getUser
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-single-user/:userId",
+    [authJwt.verifyToken],
+    controller.getSingleUser
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-level-of-engagement/:userId",
+    [authJwt.verifyToken],
+    controller.getLevelOfEngagement
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-DNU-engagement/:userId",
+    [authJwt.verifyToken],
+    controller.getDNUEngagement
+  );
+
+  app.put(
+    "/api/knowledge-graph/update-relationship-u-dnu/:source/:target/:type",
+    [authJwt.verifyToken],
+    controller.updateConceptUDNU
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-concept-slide/:materialId/:conceptId",
+    [authJwt.verifyToken],
+    controller.getConceptSlide
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-user-relationships/:userId",
+    [authJwt.verifyToken],
+    controller.getUserRelationships
+  );
+
+  app.delete(
+    "/api/knowledge-graph/delete-relationship/:rid",
+    [authJwt.verifyToken],
+    controller.deleteRelationship
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-relationship/:targetId",
+    [authJwt.verifyToken],
+    controller.getRelationship
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-related-to/:courseId",
+    [authJwt.verifyToken],
+    controller.getRelatedTo
+  );
+
+  app.post(
+    "/api/knowledge-graph/renew-concept/:conceptId",
+    [authJwt.verifyToken],
+    controller.renewConcept
+  );
+
+  app.put(
+    "/api/knowledge-graph/add-courseId-to-material/:materialId",
+    [authJwt.verifyToken],
+    controller.addCourseIdToMaterial
+  );
+
+  app.post(
+    "/api/knowledge-graph/create-course-concept-relationship/:courseId",
+    [authJwt.verifyToken],
+    controller.createCourseHasConcepts
   );
 };

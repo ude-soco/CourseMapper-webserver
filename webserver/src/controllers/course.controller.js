@@ -353,15 +353,16 @@ export const getCourse = async (req, res) => {
       .send({ message: "Error finding notification settings" });
   }
 
-    // Find the user within the course's users array
-    const currentUser = foundCourse.users.find((user) => user.userId.toString() === userId);
+  // Find the user within the course's users array
+  const currentUser = foundCourse.users.find(
+    (user) => user.userId.toString() === userId
+  );
 
-    // Attach the found user's role to the course data
-    const courseWithUserRole = {
-      ...foundCourse.toObject(), // Convert the Mongoose document to a plain object
-      role: currentUser?.role.name || null, // Attach the role of the found user or null if not found
-    };
-  
+  // Attach the found user's role to the course data
+  const courseWithUserRole = {
+    ...foundCourse.toObject(), // Convert the Mongoose document to a plain object
+    role: currentUser?.role.name || null, // Attach the role of the found user or null if not found
+  };
 
   return res.status(200).send({
     course: courseWithUserRole,
@@ -593,7 +594,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await BlockingNotifications.deleteMany({
       courseId: courseId,
-      userId: userId
+      userId: userId,
     });
   } catch (err) {
     return res
@@ -604,7 +605,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await FollowAnnotation.deleteMany({
       courseId: courseId,
-      userId: userId
+      userId: userId,
     });
   } catch (err) {
     return res.status(500).send({ error: "Error deleting follow annotations" });
@@ -613,7 +614,7 @@ export const withdrawCourse = async (req, res, next) => {
   try {
     await UserNotification.deleteMany({
       courseId: foundCourse._id,
-      userId: userId
+      userId: userId,
     });
   } catch (error) {
     return res.status(500).send({ error: "Error deleting user notification" });

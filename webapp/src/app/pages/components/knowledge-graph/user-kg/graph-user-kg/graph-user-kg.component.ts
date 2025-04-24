@@ -1,5 +1,5 @@
-import { Neo4jService } from 'src/app/services/neo4j.service';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Neo4jService } from 'src/app/services/neo4j.service';
 import { MessageService } from 'primeng/api';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { ConceptMapService } from 'src/app/services/concept-map-service.service';
@@ -7,17 +7,17 @@ import { ConceptStatusService } from 'src/app/services/concept-status.service';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { Store } from '@ngrx/store';
 import { State, getLoggedInUser } from 'src/app/state/app.reducer';
-import { getCurrentMaterial } from '../../materials/state/materials.reducer';
+import { getCurrentMaterial } from '../../../materials/state/materials.reducer';
 import { environment } from 'src/environments/environment';
 import { User } from 'src/app/models/User';
 import { Material } from 'src/app/models/Material';
 
 @Component({
-  selector: 'app-graph',
-  templateUrl: './graph.component.html',
-  styleUrls: ['./graph.component.css'],
+  selector: 'app-graph-user-kg',
+  templateUrl: './graph-user-kg.component.html',
+  styleUrls: ['./graph-user-kg.component.css'],
 })
-export class GraphComponent {
+export class GraphUserKgComponent {
   @Input() conceptMapData?: any;
   @Input() conceptMapRecData?: any;
   @Input() selectedFilterValues?: string[];
@@ -26,6 +26,7 @@ export class GraphComponent {
   @Input() materialKnowledgeGraph: boolean;
   @Input() slideKnowledgeGraph: boolean;
   @Input() userKnowledgeGraph: boolean;
+  @Input() engagementKnowledgeGraph: boolean;
   @Input() recommenderKnowledgeGraph: boolean;
   @Input() cyHeight: any;
   @Input() cyWidth: any;
@@ -33,12 +34,19 @@ export class GraphComponent {
   @Input() showCourseKg: boolean;
   @Input() showUserKg: boolean;
   @Input() isDraft: boolean;
+  @Input() showEngagementKg: boolean;
+  @Input() showDNUEngagementKg: boolean;
+  @Input() dnuengagementKnowledgeGraph: boolean;
+  @Input() showDNU: boolean;
+  @Input() showU: boolean;
 
   @Output() editConcept: EventEmitter<string> = new EventEmitter();
   @Output() conceptDeleted: EventEmitter<string> = new EventEmitter();
   @Output() conceptDeletedBulk: EventEmitter<string[]> = new EventEmitter();
   @Output() slideNumber = new EventEmitter<number>();
   @Output() sendMaterialId = new EventEmitter<string>();
+  @Output() sendCourseId = new EventEmitter<string>();
+  @Output() courseLanding = new EventEmitter<string>();
 
   node_id: string | undefined;
   node_cid: string | undefined;
@@ -47,6 +55,7 @@ export class GraphComponent {
   node_abstract: string | undefined;
   node_wikipedia: string | undefined;
   node_mid: string | undefined;
+  node_level: number | undefined;
 
   loggedInUser: User;
   selectedMaterial: Material;
@@ -155,6 +164,7 @@ export class GraphComponent {
       this.node_abstract = event.abstract;
       this.node_mid = event.mid;
       this.node_wikipedia = event.wikipedia;
+      this.node_level = event.abstract;
       this.showConceptAbstract = true;
       console.log('Setting node properties:', {
         id: this.node_id,
@@ -308,6 +318,7 @@ export class GraphComponent {
         this.node_cid
       );
       this.sendMaterialId.emit(this.node_mid);
+      this.sendCourseId.emit(this.node_cid);
       if (record) {
         this.closeAbstractPanel();
         console.log(record);
@@ -318,5 +329,9 @@ export class GraphComponent {
     } catch (error) {
       console.log('Error finding slide', error);
     }
+  }
+
+  courseRedirect() {
+    this.courseLanding.emit(this.node_cid);
   }
 }

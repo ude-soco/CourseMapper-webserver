@@ -21,6 +21,7 @@ import { MaterialsRecommenderService } from 'src/app/services/materials-recommen
 import { Neo4jService } from 'src/app/services/neo4j.service';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { SlideKgOrderedService } from 'src/app/services/slide-kg-ordered.service';
+import { UserKgOrderedService } from 'src/app/services/user-kg-ordered.service';
 import { TopicChannelService } from 'src/app/services/topic-channel.service';
 import { UserConceptsService } from 'src/app/services/user-concepts.service';
 import { State, getLoggedInUser } from 'src/app/state/app.reducer';
@@ -29,6 +30,7 @@ import { getCurrentMaterial } from '../../materials/state/materials.reducer';
 import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { Socket } from 'ngx-socket-io';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MaterilasService } from 'src/app/services/materials.service';
 
 interface topN {
   name: string;
@@ -42,6 +44,7 @@ interface topN {
 })
 export class ConceptMapComponent {
   @Input() course?: Course;
+  @Input() user?: User;
   @Input() showConceptMap?: boolean;
   @Input() isCmLoading?: boolean;
   @Output() cmShownEvent: EventEmitter<boolean> = new EventEmitter();
@@ -105,6 +108,7 @@ export class ConceptMapComponent {
   showMaterialKg = false;
   showCourseKg = false;
   showSlideKg = false;
+  showUserKg = false;
   kgTabsActivated = false;
   recommendedConcepts = null;
   recommendedMaterials = null;
@@ -147,8 +151,11 @@ export class ConceptMapComponent {
   kgTitle: string;
   courseKgActivated: boolean = false;
   materialKgActivated: boolean = false;
+  userKgActivated: boolean = false;
   courseIsEmpty?: boolean = undefined;
   allSelected = false;
+  materialIdRedirection: string;
+  redirectionMaterial: Material;
 
   tabs = [
     {
@@ -260,6 +267,7 @@ export class ConceptMapComponent {
     private slideKgGenerator: SlideKgOrderedService, //Get informed when user asked for Slide KG
     private kgTabs: KgTabsActivationService, //Enable KG tabs once recommendations arrived
     private slideConceptservice: SlideConceptsService, //Change concepts' status on slide_KG [new, understood, did not understand]
+    private userKgGenerator: UserKgOrderedService,
     private neo4jService: Neo4jService, // communicate to neo4j server
     private userConceptsService: UserConceptsService, //get current user concepts: all previousely marked as [understood, did not understand]
     private topicChannelService: TopicChannelService, // gets channels' detail
@@ -267,7 +275,8 @@ export class ConceptMapComponent {
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef, // avoids errors when property changed after being checked
     private store: Store<State>,
-    private socket: Socket
+    private socket: Socket,
+    private materialsService: MaterilasService
   ) {
     // get current user
     this.subscriptions.push(
@@ -298,6 +307,7 @@ export class ConceptMapComponent {
         this.showSlideKg = true;
         this.showMaterialKg = false;
         this.showCourseKg = false;
+        this.showUserKg = false;
 
         this.kgNodes = null;
         this.recommendedConcepts = null;
@@ -563,6 +573,32 @@ export class ConceptMapComponent {
         }
       })
     );
+    this.subscriptions.push(
+      this.userKgGenerator.generateUserKG().subscribe(() => {
+        this.conceptMapData = null;
+        this.filteredMapData = null;
+
+        setTimeout(() => {
+          //reset dropdown value
+          this.selectedTopN = null;
+          this.selectedTopNodes(15);
+          //reset checkboxes values
+          this.selectedOption = this.selectedCheckOptions.slice(0, 1);
+          this.docURL = undefined;
+          //activate users kg & ensure that other views are deactivated
+          this.showUserKg = true;
+          this.showMaterialKg = false;
+          this.showCourseKg = false;
+          this.showSlideKg = false;
+          this.isNotGenerated = undefined;
+          this.conceptInputsDisabled = false;
+          setTimeout(() => {
+            this.getConceptMapData();
+            this.cancelEditConcept();
+          }, 10);
+        }, 0);
+      })
+    ); // show user kg
 
     this.top_n_nodes = [
       { name: '15', code: '15' },
@@ -1151,6 +1187,134 @@ export class ConceptMapComponent {
           this.loading.emit(false);
         }
       } catch {}
+    } else if (this.showUserKg) {
+      var startTime = performance.now();
+      this.isNotGenerated = false;
+      try {
+        let kgNodes = [];
+        let kgEdges = [];
+        const userNode = await this.neo4jService.getUser(this.userid); // add user with no r or c
+        console.log(userNode);
+        if (userNode.records.length !== 0) {
+          let data = userNode.records;
+          var userNodeEle = {
+            id: data[0].u.identity.toString(),
+            uid: data[0].u.properties.uid,
+            type: data[0].u.properties.type,
+            name: data[0].u.labels[0],
+          };
+          kgNodes.push(userNodeEle);
+          userNode.records.forEach((data) => {
+            var conceptNodeEle = {
+              id: data.c.identity.toString(),
+              name: data.c.properties.name,
+              cid: data.c.properties.cid,
+              uri: data.c.properties.uri,
+              type: data.c.properties.type,
+              mid: data.c.properties.mid,
+              weight: data.c.properties.weight,
+              wikipedia: data.c.properties.wikipedia,
+              abstract: data.c.properties.abstract,
+            };
+            kgNodes.push(conceptNodeEle);
+          });
+          userNode.records.forEach((data) => {
+            var edgeEle = {
+              type: data.r.type,
+              id: data.r.identity.toString(),
+              source: data.r.start,
+              target: data.r.end,
+            };
+            kgEdges.push(edgeEle);
+          });
+        } else {
+          const singleUserNode = await this.neo4jService.getSingleUser(
+            this.userid
+          );
+          console.log(singleUserNode);
+          let data = singleUserNode.records;
+          var userNodeEle = {
+            id: data[0].u.identity.toString(),
+            uid: data[0].u.properties.uid,
+            type: data[0].u.properties.type,
+            name: data[0].u.labels[0],
+          };
+          kgNodes.push(userNodeEle);
+        }
+        const nodes = [];
+        const edges = [];
+        kgNodes.forEach((data) => {
+          let node = { data };
+          nodes.push(node);
+        });
+        kgEdges.forEach((data) => {
+          let edge = { data };
+          edges.push(edge);
+        });
+        let userKgMeta = {
+          nodes: nodes,
+          edges: edges,
+        };
+        console.log('conceptMapMaterial', userKgMeta);
+        console.log('concepMapMaterialNode', userKgMeta.nodes);
+        this.conceptMapMaterial = userKgMeta;
+        this.conceptMapData = userKgMeta;
+
+        //filter edges with no weights, or/and slide's edges
+        // the edges aren't filtered completely from the first iteration, so it will keep checking until all have been filtered
+        var counter = 1;
+        while (counter) {
+          var counter = 0;
+          this.conceptMapData.edges.forEach((edge, index) => {
+            if (edge.data.weight === null) {
+              this.conceptMapData.edges.splice(index, 1);
+              counter++;
+            }
+          });
+        }
+        /*
+        //extract node's weight & filter undefined weights
+        let weightsArray = [];
+        this.conceptMapData.nodes.forEach((node) => {
+          if (node.data.weight) {
+            weightsArray.push(node.data.weight);
+          }
+        });
+
+        //get min & max weight
+        var maxWeight = Math.max(...weightsArray).toString();
+        var minWeight = Math.min(...weightsArray).toString();
+
+        //assign min & max weights to each node to be normalized later
+        this.conceptMapData.nodes.forEach((node) => {
+          node.data.maxWeight = maxWeight;
+          node.data.minWeight = minWeight;
+        });*/
+
+        this.selectedFilterValues = ['main_concept'];
+        this.filteredMapData = this.conceptMapData;
+        this.dataReceivedEvent.emit(this.conceptMapData);
+        this.isLoading = false;
+        this.loading.emit(false);
+        /*if (this.conceptMapData) {
+          let matKgControlPanel = document.getElementById(
+            'materialKgControlPanel'
+          );
+          this.renderer.removeClass(matKgControlPanel, 'noContentRecieved');
+          matKgControlPanel.style.float = 'right';
+        }*/
+        var endTime = performance.now();
+        console.log(
+          `Call to show User_KG took ${endTime - startTime} milliseconds`
+        );
+      } catch (error) {
+        if (error?.status === 404 || error?.status === 403) {
+          this.isNotGenerated = true;
+        }
+        console.error('Error constructing kg', error);
+        this.isLoading = false;
+        this.loading.emit(false);
+      }
     }
   }
   async getConceptMapDataCurrentSlide() {
@@ -1220,6 +1384,7 @@ export class ConceptMapComponent {
           // list of current slide_KG nodes
           let slideKgNodes = [];
           const slideNodes = await this.neo4jService.getSlide(slideId);
+          console.log(slideNodes);
           slideNodes.records.forEach((data) => {
             let conceptName = this.capitalizeWords(data.name);
             let nodeEle = {
@@ -1231,6 +1396,7 @@ export class ConceptMapComponent {
               weight: data.weight,
               wikipedia: data.wikipedia,
               abstract: data.abstract,
+              isDeleted: data.isDeleted,
             };
             slideKgNodes.push(nodeEle);
           });
@@ -1732,6 +1898,7 @@ export class ConceptMapComponent {
     }
 
     this.courseKgActivated = false;
+    this.userKgActivated = false;
     this.materialKgActivated = false;
     this.updateUserConcepts = false;
     this.cmShownEvent.emit(false);
@@ -1910,11 +2077,11 @@ export class ConceptMapComponent {
   }
 
   deleteConceptsBulk(conceptIds: string[]) {
-
     console.log('bulk deletion', conceptIds);
 
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete all the main concepts marked as not relevant?',
+      message:
+        'Are you sure you want to delete all the main concepts marked as not relevant?',
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: async () => {
@@ -1944,7 +2111,6 @@ export class ConceptMapComponent {
       },
     });
   }
-
 
   async addConcept() {
     // TODO
@@ -2036,13 +2202,14 @@ export class ConceptMapComponent {
     return false;
   }
 
-
   toggleSelectAll(event: Event): void {
     this.allSelected = (event.target as HTMLInputElement).checked;
 
     if (this.allSelected) {
       // Select all slides
-      const allSlides = this.materialSlides.records.map((slide) => slide.sid.split('_').pop());
+      const allSlides = this.materialSlides.records.map((slide) =>
+        slide.sid.split('_').pop()
+      );
       this.editConceptForm.controls['conceptSlides'].setValue(allSlides);
     } else {
       // Deselect all slides
@@ -2058,4 +2225,40 @@ export class ConceptMapComponent {
     window.open(url, '_blank');
   }
 
+  receiveMaterial(materialId: string) {
+    this.materialIdRedirection = materialId;
+  }
+
+  async redirectSlide(slideNumber: number) {
+    console.log('Navigating to slide:', slideNumber);
+    console.log(this.materialIdRedirection);
+
+    await this.materialsService
+      .getMaterialById(this.materialIdRedirection)
+      .subscribe({
+        next: (selectedMaterial) => {
+          console.log('Selected Material:', selectedMaterial);
+          this.redirectionMaterial = selectedMaterial;
+          this.kgCurrentPage = slideNumber;
+
+          this.currentPDFPage = slideNumber;
+
+          console.log(this.redirectionMaterial.url);
+          if (this.docURL) {
+            console.log(`Navigating in PDF to page ${slideNumber}`);
+          } else {
+            this.docURL = `${this.cmEndpointURL}${this.redirectionMaterial.url}${this.materialIdRedirection}.pdf`;
+          }
+          console.log(this.docURL);
+          this.docURL = this.docURL.split('#')[0] + `#page=${slideNumber}`;
+          window.location.href = this.docURL;
+        },
+        error: (err) => {
+          console.error('Error fetching material:', err);
+        },
+      });
+    // console.log(selectedMaterial);
+    // Update the current page in the concept map
+    // console.log(this.currentMaterial?.url, this.currentMaterial?._id);
+  }
 }

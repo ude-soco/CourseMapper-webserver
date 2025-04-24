@@ -75,6 +75,12 @@ export class MaterilasService {
       );
   }
 
+  getMaterialById(materialId: string): any {
+    return this.http.get<Material>(
+      `${this.API_URL}/material/redirection/personalKg/${materialId}`
+    );
+  }
+
   logMaterial(courseId: string, materialId: string): Observable<any> {
     return this.http.get<CreateMaterial>(
       `${this.API_URL}/courses/${courseId}/materials/${materialId}`
@@ -93,7 +99,14 @@ export class MaterilasService {
     } else if (materialType == 'img') {
       return this.http
         .post<any>(`${this.API_URL}/upload/img`, formData)
-        .pipe(tap((res) => console.log('result from the image upload in the material service', res)));
+        .pipe(
+          tap((res) =>
+            console.log(
+              'result from the image upload in the material service',
+              res
+            )
+          )
+        );
     }
   }
 

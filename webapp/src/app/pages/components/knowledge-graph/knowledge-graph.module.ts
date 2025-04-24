@@ -42,8 +42,11 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { PaginatorModule } from 'primeng/paginator';
-import { PersonalKnowledgeGraphComponent } from './personal-knowledge-graph/personal-knowledge-graph.component';
-
+import { PersonalKnowledgeGraphComponent } from './user-kg/personal-knowledge-graph/personal-knowledge-graph.component';
+import { SharedComponentsModule } from 'src/app/components/shared-components.module';
+import { CytoscapeUserKgComponent } from './user-kg/cytoscape-user-kg/cytoscape-user-kg.component';
+import { ConceptMapUserKgComponent } from './user-kg/concept-map-user-kg/concept-map-user-kg.component';
+import { GraphUserKgComponent } from './user-kg/graph-user-kg/graph-user-kg.component';
 @NgModule({
   declarations: [
     ConceptMapComponent,
@@ -65,6 +68,9 @@ import { PersonalKnowledgeGraphComponent } from './personal-knowledge-graph/pers
     LinkifyPipe,
     SafeHtmlPipe,
     PersonalKnowledgeGraphComponent,
+    CytoscapeUserKgComponent,
+    ConceptMapUserKgComponent,
+    GraphUserKgComponent,
   ],
   imports: [
     InputTextModule,
@@ -91,6 +97,7 @@ import { PersonalKnowledgeGraphComponent } from './personal-knowledge-graph/pers
     MultiSelectModule,
     PdfViewerModule,
     PaginatorModule,
+    SharedComponentsModule,
   ],
   exports: [
     ConceptMapComponent,

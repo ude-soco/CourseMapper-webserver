@@ -10,6 +10,20 @@ const Course = db.course;
 
 const neo4j = require("../graph/neo4j");
 
+export const getMaterialById = async (req, res, next) => {
+  const materialId = req.params.materialId;
+  try {
+    const selectedMaterial = await Material.findById(materialId);
+    if (selectedMaterial) {
+      return res.status(200).send(selectedMaterial);
+    } else {
+      return res.status(404).send({ error: "Cannot find material" });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+};
+
 /**
  * @function getMaterial
  * Get details of a material controller
@@ -171,13 +185,13 @@ export const newMaterial = async (req, res, next) => {
  */
 export const deleteMaterial = async (req, res, next) => {
   let materialId = req.params.materialId;
-  console.log("materialId", materialId)
+  console.log("materialId", materialId);
   let courseId = req.params.courseId;
   const userId = req.userId;
   let course;
   try {
     course = await Course.findById(courseId);
-    console.log("course", course)
+    console.log("course", course);
   } catch (err) {
     return res.status(500).send({ error: "Error finding course" });
   }
@@ -196,7 +210,7 @@ export const deleteMaterial = async (req, res, next) => {
   let foundMaterial;
   try {
     foundMaterial = await Material.findById(materialId);
-    console.log("foundMaterial", foundMaterial)
+    console.log("foundMaterial", foundMaterial);
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
@@ -284,7 +298,7 @@ export const editMaterial = async (req, res, next) => {
   const userId = req.userId;
   const materialDesc = req.body.description;
   const showDialog = req.body.showDialog;
-console.log("called")
+  console.log("called");
   let course;
   try {
     course = await Course.findById(courseId);
@@ -329,13 +343,13 @@ console.log("called")
   foundMaterial.name = materialName;
   foundMaterial.url = materialUrl;
   foundMaterial.type = materialType;
-  
+
   if (materialDesc) {
     foundMaterial.description = materialDesc;
   }
 
   foundMaterial.showDialog = showDialog;
-  
+
   foundMaterial.updatedAt = Date.now();
   foundMaterial = await foundMaterial.save();
   /*  try {
@@ -465,7 +479,7 @@ export const getIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  
+
   const response = foundMaterial.indicators ? foundMaterial.indicators : [];
   return res.status(200).send(response);
 };
@@ -488,13 +502,13 @@ export const resizeIndicator = async (req, res, next) => {
   let foundMaterial;
   try {
     foundMaterial = await Material.findOne({ "indicators._id": indicatorId });
-    if (! foundMaterial) {
+    if (!foundMaterial) {
       return res.status(404).send({
         error: `indicator with id ${indicatorId} doesn't exist!`,
       });
     }
 
-    if ( foundMaterial._id.toString() !== materialId) {
+    if (foundMaterial._id.toString() !== materialId) {
       return res.status(404).send({
         error: `indicator with id ${indicatorId} doesn't belong to material with id ${materialId}!`,
       });
@@ -509,15 +523,14 @@ export const resizeIndicator = async (req, res, next) => {
       indicator.height = height;
     }
   });
-  
+
   try {
     foundMaterial.save();
   } catch (err) {
     return res.status(500).send({ error: "Error saving material" });
   }
   return res.status(200).send();
-
-}
+};
 
 /**
  * @function reorderIndicators
@@ -564,5 +577,4 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
     indicators: foundMaterial.indicators,
   });
-
-}
+};
