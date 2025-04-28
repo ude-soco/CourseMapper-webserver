@@ -70,6 +70,7 @@ export class CytoscapeUserKgComponent {
   annotationsNodes: any[];
   propertiesNodes: any[];
   relatedNodes: any[];
+  categoryNodes: any[];
   userEdges: any[];
   nodeSelected: boolean;
   didNotUnderstandObj = []; //concepts that user marked as did not understand
@@ -116,8 +117,8 @@ export class CytoscapeUserKgComponent {
       quality: 'proof',
       randomize: false,
       // Increase spacing between nodes
-      nodeRepulsion: 10000,
-      idealEdgeLength: 150,
+      nodeRepulsion: 15000,
+      idealEdgeLength: 200,
       edgeElasticity: 0.6,
       // Tiered positioning
       nodeDimensionsIncludeLabels: true,
@@ -269,7 +270,11 @@ export class CytoscapeUserKgComponent {
     {
       selector: 'edge',
       style: {
-        content: 'data(type)',
+        content: (elm) => {
+          if (elm.data().type !== 'ENGAGED_IN') return elm.data().type;
+          else
+            return elm.data().type + ' ' + '(LEVEL= ' + elm.data().level + ')';
+        },
         'curve-style': 'bezier',
         width: '2px',
         'target-arrow-shape': 'triangle',
@@ -535,6 +540,7 @@ export class CytoscapeUserKgComponent {
     let topXNodes = userNode.concat(topConcepts);
     if (this.showUserKg || this.showDNUEngagementKg) {
       topXNodes = topXNodes.concat(this.relatedNodes);
+      topXNodes = topXNodes.concat(this.categoryNodes);
     }
 
     const nodeIds = new Set();
@@ -562,6 +568,7 @@ export class CytoscapeUserKgComponent {
         console.log('Nodes in elemenets', this.elements.nodes);
         console.log('First Node:', this.elements.nodes[0]);
         console.log('First Node Data:', this.elements.nodes[0]?.data);
+
         /*this.elements.edges = this.elements.edges.filter(
         (edge) => !edge.data.isDeleted
       );
@@ -576,6 +583,9 @@ export class CytoscapeUserKgComponent {
         );
         this.relatedNodes = this.elements.nodes.filter(
           (n) => n.data.type === 'related_concept'
+        );
+        this.categoryNodes = this.elements.nodes.filter(
+          (n) => n.data.type === 'category'
         );
         this.userEdges = this.elements.edges;
         //this.userEdges = this.elements.edges.filter((n) => n.data.type === 'u');
@@ -615,7 +625,10 @@ export class CytoscapeUserKgComponent {
             }
             if (this.showDNU) {
               let nodesToHide = nodes.filter(function (e: any) {
-                return e.data.type === 'related_concept';
+                return (
+                  e.data.type === 'related_concept' ||
+                  e.data.type === 'category'
+                );
               });
               let edgesToHide = this.userEdges.filter(function (e: any) {
                 return e.data.type === 'u';
@@ -638,7 +651,10 @@ export class CytoscapeUserKgComponent {
               }
             } else if (this.showU) {
               let nodesToHide = nodes.filter(function (e: any) {
-                return e.data.type === 'related_concept';
+                return (
+                  e.data.type === 'related_concept' ||
+                  e.data.type === 'category'
+                );
               });
               let edgesToHide = this.userEdges.filter(function (e: any) {
                 return e.data.type === 'dnu';
@@ -661,7 +677,10 @@ export class CytoscapeUserKgComponent {
               }
             } else {
               let nodesToHide = nodes.filter(function (e: any) {
-                return e.data.type === 'related_concept';
+                return (
+                  e.data.type === 'related_concept' ||
+                  e.data.type === 'category'
+                );
               });
 
               for (var i = 0; i < nodesToHide.length; i++) {
@@ -776,7 +795,12 @@ export class CytoscapeUserKgComponent {
         this.relatedNodes = this.elements.nodes.filter(
           (n) => n.data.type === 'related_concept'
         );
+        this.categoryNodes = this.elements.nodes.filter(
+          (n) => n.data.type === 'category'
+        );
         this.userEdges = this.elements.edges;
+        console.log(this.userEdges);
+
         //this.userEdges = this.elements.edges.filter((n) => n.data.type === 'u');
         //this.userEdges = this.elements.edges.filter((n) => n.data.type === 'dnu');
 
@@ -813,7 +837,10 @@ export class CytoscapeUserKgComponent {
             }
             if (this.showDNU) {
               let nodesToHide = nodes.filter(function (e: any) {
-                return e.data.type === 'related_concept';
+                return (
+                  e.data.type === 'related_concept' ||
+                  e.data.type === 'category'
+                );
               });
               let edgesToHide = this.userEdges.filter(function (e: any) {
                 return e.data.type === 'u';
@@ -836,7 +863,10 @@ export class CytoscapeUserKgComponent {
               }
             } else if (this.showU) {
               let nodesToHide = nodes.filter(function (e: any) {
-                return e.data.type === 'related_concept';
+                return (
+                  e.data.type === 'related_concept' ||
+                  e.data.type === 'category'
+                );
               });
               let edgesToHide = this.userEdges.filter(function (e: any) {
                 return e.data.type === 'dnu';
@@ -859,7 +889,10 @@ export class CytoscapeUserKgComponent {
               }
             } else {
               let nodesToHide = nodes.filter(function (e: any) {
-                return e.data.type === 'related_concept';
+                return (
+                  e.data.type === 'related_concept' ||
+                  e.data.type === 'category'
+                );
               });
 
               for (var i = 0; i < nodesToHide.length; i++) {
@@ -1154,6 +1187,11 @@ export class CytoscapeUserKgComponent {
 
             this.cy
               .nodes()
+              .filter((n) => n.data('type') === 'category')
+              .style('display', 'none');
+
+            this.cy
+              .nodes()
               .filter((n) => n.data('type') === 'main_concept')
               .style('display', 'none');
 
@@ -1260,12 +1298,20 @@ export class CytoscapeUserKgComponent {
             connectedCourses.style('display', 'element');
 
             connectedEdges
-              .filter((edge) => edge.data('type') === 'RELATED_TO')
+              .filter(
+                (edge) =>
+                  edge.data('type') === 'RELATED_TO' ||
+                  edge.data('type') === 'HAS_CATEGORY'
+              )
               .style('display', 'element');
 
             const relatedConceptNodes = this.cy
               .nodes()
-              .filter((n) => n.data('type') === 'related_concept');
+              .filter(
+                (n) =>
+                  n.data('type') === 'related_concept' ||
+                  n.data('type') === 'category'
+              );
             const relevantRelatedConcepts = relatedConceptNodes.filter(
               (node) => {
                 // Check if there's a path between main concept and this related concept
@@ -1404,7 +1450,7 @@ export class CytoscapeUserKgComponent {
               div.classList.add('popper-div');
 
               div.innerHTML =
-                'Right click and hold to show options || Left click to show related concepts';
+                'Right click and hold to show options || Left click to show related concepts and categories';
 
               div.style.zIndex = '9999';
               div.style.background = '#a0a0a0';

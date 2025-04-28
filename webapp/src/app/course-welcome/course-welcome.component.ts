@@ -457,6 +457,7 @@ export class CourseWelcomeComponent implements OnInit {
               });
             },
           });
+        this.neo4jService.deleteHasConcept(course._id);
         // this.router.navigate(['course-description', course._id]);
         setTimeout(() => {
           this.router.navigate(['course-description', course._id]);

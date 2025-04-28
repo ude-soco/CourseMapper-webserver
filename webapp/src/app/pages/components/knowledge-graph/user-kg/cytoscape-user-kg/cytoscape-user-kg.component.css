@@ -62,3 +62,11 @@
   display: inline-block;
   font-weight: 300;
 }
+.legend-circle-category {
+  width: 1em;
+  height: 1em;
+  background: #fbc02d;
+  border-radius: 50%;
+  display: inline-block;
+  font-weight: 300;
+}

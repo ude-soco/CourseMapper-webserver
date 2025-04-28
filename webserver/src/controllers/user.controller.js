@@ -270,7 +270,6 @@ export const getAllUsers = async (req, res) => {
   return res.status(200).send(results);
 };
 
-
 export const getUser = async (req, res) => {
   let userId = req.params.userId;
 
@@ -279,7 +278,7 @@ export const getUser = async (req, res) => {
   let my_object = {};
   try {
     foundUser = await User.findById(userId).populate("courses", "-__v");
-    
+
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -288,21 +287,19 @@ export const getUser = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding user" });
   }
-  my_object.firstname =foundUser.firstname;
-  my_object.lastname =foundUser.lastname;
+  my_object.firstname = foundUser.firstname;
+  my_object.lastname = foundUser.lastname;
   results.push(my_object);
   return res.status(200).send(my_object);
 };
 
 export const getUserConcepts = async (req, res) => {
-
-  let userId =  req.params.userId;
+  let userId = req.params.userId;
 
   let foundUser;
   let results;
   try {
-    foundUser = await User.findOne({ _id: userId })
-    .populate("courses", "-__v");
+    foundUser = await User.findOne({ _id: userId }).populate("courses", "-__v");
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -311,23 +308,27 @@ export const getUserConcepts = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  results={
+  results = {
     understoodConcepts: foundUser.understoodConcepts,
     didNotUnderstandConcepts: foundUser.didNotUnderstandConcepts,
-  }
+  };
   return res.status(200).send(results);
 };
 
 export async function updateUserConcepts(props) {
-  let userId= props.body.userId
-  let foundUser
-  const updatedDocument={$set: {
-    understoodConcepts: props.body.understoodConcepts,
-    didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
-  },}
+  let userId = props.body.userId;
+  let foundUser;
+  const updatedDocument = {
+    $set: {
+      understoodConcepts: props.body.understoodConcepts,
+      didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
+    },
+  };
   try {
-    foundUser = await User.findOne({ _id: props.body.userId })
-    .populate("courses", "-__v");
+    foundUser = await User.findOne({ _id: props.body.userId }).populate(
+      "courses",
+      "-__v"
+    );
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,

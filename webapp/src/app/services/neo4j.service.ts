@@ -51,10 +51,26 @@ export class Neo4jService {
     );
   }
 
+  async getHasConcept(targetId: string): Promise<Neo4jResult> {
+    return lastValueFrom(
+      this.http.get<Neo4jResult>(
+        `${environment.API_URL}/knowledge-graph/get-has-concept/${targetId}`
+      )
+    );
+  }
+
   async getRelatedTo(courseId: string): Promise<Neo4jResult> {
     return lastValueFrom(
       this.http.get<Neo4jResult>(
         `${environment.API_URL}/knowledge-graph/get-related-to/${courseId}`
+      )
+    );
+  }
+
+  async getHasCategory(conceptId: string): Promise<Neo4jResult> {
+    return lastValueFrom(
+      this.http.get<Neo4jResult>(
+        `${environment.API_URL}/knowledge-graph/get-has-category/${conceptId}`
       )
     );
   }
@@ -194,6 +210,22 @@ export class Neo4jService {
     return lastValueFrom(
       this.http.delete<Neo4jResult>(
         `${environment.API_URL}/knowledge-graph/delete-relationship/${rid}`
+      )
+    );
+  }
+
+  async deleteHasConcept(courseId: string): Promise<Neo4jResult> {
+    return lastValueFrom(
+      this.http.delete<Neo4jResult>(
+        `${environment.API_URL}/knowledge-graph/delete-has-concept/${courseId}`
+      )
+    );
+  }
+
+  async deleteCourse(cid: string): Promise<Neo4jResult> {
+    return lastValueFrom(
+      this.http.delete<Neo4jResult>(
+        `${environment.API_URL}/knowledge-graph/delete-course/${cid}`
       )
     );
   }

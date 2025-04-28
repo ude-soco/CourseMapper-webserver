@@ -113,6 +113,17 @@ export const deleteMaterial = async (req, res, next) => {
   }
 };
 
+export const deleteCourse = async (req, res, next) => {
+  const courseId = req.params.courseId;
+
+  try {
+    await neo4j.deleteCourse(courseId);
+    return next();
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
 export const getMaterialSlides = async (req, res) => {
   const materialId = req.params.materialId;
 
@@ -540,6 +551,16 @@ export const deleteRelationship = async (req, res) => {
   }
 };
 
+export const deleteHasConcept = async (req, res) => {
+  const { courseId } = req.params;
+  try {
+    const records = await neo4j.deleteHasConcept(courseId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
 export const renewConcept = async (req, res) => {
   const { conceptId } = req.params;
   try {
@@ -560,10 +581,30 @@ export const getRelationship = async (req, res) => {
   }
 };
 
+export const getHasConcept = async (req, res) => {
+  const { targetId } = req.params;
+  try {
+    const records = await neo4j.getHasConcept(targetId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
 export const getRelatedTo = async (req, res) => {
   const { courseId } = req.params;
   try {
     const records = await neo4j.getRelatedTo(courseId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getHasCategory = async (req, res) => {
+  const { conceptId } = req.params;
+  try {
+    const records = await neo4j.getHasCategory(conceptId);
     return res.status(200).send({ records });
   } catch (err) {
     return res.status(500).send({ error: err.message });

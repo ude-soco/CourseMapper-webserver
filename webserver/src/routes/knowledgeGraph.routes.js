@@ -97,6 +97,12 @@ module.exports = function (app) {
     controller.deleteCourseNeo4j
   );
 
+  app.delete(
+    "/api/knowledge-graph/delete-course/:courseId",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.deleteCourse
+  );
+
   app.post(
     "/api/courses/:courseId/materials/:materialId/concept-recommendation",
     [authJwt.verifyToken, authJwt.isEnrolled],
@@ -163,6 +169,12 @@ module.exports = function (app) {
     controller.deleteRelationship
   );
 
+  app.delete(
+    "/api/knowledge-graph/delete-has-concept/:courseId",
+    [authJwt.verifyToken],
+    controller.deleteHasConcept
+  );
+
   app.get(
     "/api/knowledge-graph/get-relationship/:targetId",
     [authJwt.verifyToken],
@@ -170,9 +182,21 @@ module.exports = function (app) {
   );
 
   app.get(
+    "/api/knowledge-graph/get-has-concept/:targetId",
+    [authJwt.verifyToken],
+    controller.getHasConcept
+  );
+
+  app.get(
     "/api/knowledge-graph/get-related-to/:courseId",
     [authJwt.verifyToken],
     controller.getRelatedTo
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-has-category/:conceptId",
+    [authJwt.verifyToken],
+    controller.getHasCategory
   );
 
   app.post(

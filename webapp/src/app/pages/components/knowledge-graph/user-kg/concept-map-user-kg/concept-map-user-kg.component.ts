@@ -9,7 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import { Subscription, lastValueFrom } from 'rxjs';
+import { Subscription, lastValueFrom, single } from 'rxjs';
 import { Channel } from 'src/app/models/Channel';
 import { Course } from 'src/app/models/Course';
 import { Material } from 'src/app/models/Material';
@@ -714,8 +714,14 @@ export class ConceptMapUserKgComponent {
         let kgNodes = [];
         let kgEdges = [];
         const userNode = await this.neo4jService.getUser(this.userid); // add user with no r or c
+        const singleUserNode = await this.neo4jService.getSingleUser(
+          this.userid
+        );
+        const courseNode = await this.neo4jService.getLevelofEngagement(
+          this.userid
+        ); // to check if user is enrolled in courses
         console.log(userNode);
-        if (userNode.records.length !== 0) {
+        if (userNode.records.length !== 0 && courseNode.records.length !== 0) {
           let data = userNode.records;
           var userNodeEle = {
             id: data[0].u.identity.toString(),
@@ -739,12 +745,22 @@ export class ConceptMapUserKgComponent {
             };
             kgNodes.push(conceptNodeEle);
           });
+          for (let i = kgNodes.length - 1; i >= 1; i--) {
+            // make sure user is enrolled in course
+            const hasConcept = await this.neo4jService.getHasConcept(
+              kgNodes[i].id
+            );
+            //console.log(hasConcept);
+            if (hasConcept.records.length === 0) {
+              kgNodes.splice(i, 1);
+            }
+          }
           userNode.records.forEach((data) => {
             var edgeEle = {
               type: data.r.type,
               id: data.r.identity.toString(),
-              source: data.r.start,
-              target: data.r.end,
+              source: data.r.start.toString(),
+              target: data.r.end.toString(),
             };
             kgEdges.push(edgeEle);
           });
@@ -768,8 +784,8 @@ export class ConceptMapUserKgComponent {
                   var relatedEdgeEle = {
                     type: data.r.type,
                     id: data.r.identity.toString(),
-                    source: data.r.start,
-                    target: data.r.end,
+                    source: data.r.start.toString(),
+                    target: data.r.end.toString(),
                   };
                   kgEdges.push(relatedEdgeEle);
                 }
@@ -790,10 +806,49 @@ export class ConceptMapUserKgComponent {
               });
             }
           });
-        } else {
-          const singleUserNode = await this.neo4jService.getSingleUser(
-            this.userid
-          );
+          const categories = [];
+          for (const data of kgNodes) {
+            if (data.type === 'main_concept') {
+              try {
+                categories.push(
+                  await this.neo4jService.getHasCategory(data.cid)
+                );
+              } catch (error) {
+                console.error('Error getting category concepts:', error);
+              }
+            }
+          }
+          console.log(categories);
+          categories.forEach((result) => {
+            if (result.records && result.records.length > 0) {
+              result.records.forEach((data) => {
+                if (data.r) {
+                  var categoryEdgeEle = {
+                    type: data.r.type,
+                    id: data.r.identity.toString(),
+                    source: data.r.start.toString(),
+                    target: data.r.end.toString(),
+                  };
+                  kgEdges.push(categoryEdgeEle);
+                }
+                if (data.target) {
+                  var categoryConceptEle = {
+                    id: data.target.identity.toString(),
+                    name: data.target.properties.name,
+                    cid: data.target.properties.cid,
+                    uri: data.target.properties.uri,
+                    type: data.target.properties.type,
+                    mid: data.target.properties.mid,
+                    weight: data.target.properties.weight,
+                    wikipedia: data.target.properties.wikipedia,
+                    abstract: data.target.properties.abstract,
+                  };
+                  kgNodes.push(categoryConceptEle);
+                }
+              });
+            }
+          });
+        } else if (singleUserNode.records.length !== 0) {
           console.log(singleUserNode);
           let data = singleUserNode.records;
           var userNodeEle = {
@@ -803,6 +858,8 @@ export class ConceptMapUserKgComponent {
             name: data[0].u.labels[0],
           };
           kgNodes.push(userNodeEle);
+        } else {
+          this.noUserNodeMessage();
         }
         const nodes = [];
         const edges = [];
@@ -1017,9 +1074,11 @@ export class ConceptMapUserKgComponent {
         let kgNodes = [];
         let kgEdges = [];
         const userNode = await this.neo4jService.getDNUEngagement(this.userid);
-
+        const courseNode = await this.neo4jService.getLevelofEngagement(
+          this.userid
+        ); // to check if user is enrolled in courses
         console.log(userNode);
-        if (userNode.records.length !== 0) {
+        if (userNode.records.length !== 0 && courseNode.records.length !== 0) {
           let data = userNode.records;
           var userNodeEle = {
             id: data[0].u.identity.toString(),
@@ -1050,6 +1109,29 @@ export class ConceptMapUserKgComponent {
             };
             kgNodes.push(targetNodeEle);
           });
+          const mainConceptNodes = kgNodes.filter(
+            (node) => node.type === 'main_concept'
+          );
+          for (let i = mainConceptNodes.length - 1; i >= 1; i--) {
+            // make sure user is enrolled in course
+            const hasConcept = await this.neo4jService.getHasConcept(
+              mainConceptNodes[i].id
+            );
+            //console.log(hasConcept);
+            if (hasConcept.records.length === 0) {
+              // Find this node's index in the original kgNodes array
+              const indexInKgNodes = kgNodes.findIndex(
+                (node) =>
+                  node.id === mainConceptNodes[i].id &&
+                  node.type === 'main_concept'
+              );
+
+              // If found, remove it from kgNodes
+              if (indexInKgNodes !== -1) {
+                kgNodes.splice(indexInKgNodes, 1);
+              }
+            }
+          }
           for (const data of userNode.records) {
             if (data.target.properties.mid) {
               try {
@@ -1065,8 +1147,8 @@ export class ConceptMapUserKgComponent {
             var edgeEle = {
               type: data.r.type,
               id: data.r.identity.toString(),
-              source: data.r.start,
-              target: data.r.end,
+              source: data.r.start.toString(),
+              target: data.r.end.toString(),
               level: data.r.properties.level,
             };
             kgEdges.push(edgeEle);
@@ -1093,8 +1175,8 @@ export class ConceptMapUserKgComponent {
                   var courseEdgeEle = {
                     type: data.r.type,
                     id: data.r.identity.toString(),
-                    source: data.r.start,
-                    target: data.r.end,
+                    source: data.r.start.toString(),
+                    target: data.r.end.toString(),
                     level:
                       data.r.properties && data.r.properties.level
                         ? data.r.properties.level
@@ -1125,8 +1207,8 @@ export class ConceptMapUserKgComponent {
                   var relatedEdgeEle = {
                     type: data.r.type,
                     id: data.r.identity.toString(),
-                    source: data.r.start,
-                    target: data.r.end,
+                    source: data.r.start.toString(),
+                    target: data.r.end.toString(),
                   };
                   kgEdges.push(relatedEdgeEle);
                 }
@@ -1143,6 +1225,48 @@ export class ConceptMapUserKgComponent {
                     abstract: data.target.properties.abstract,
                   };
                   kgNodes.push(relatedConceptEle);
+                }
+              });
+            }
+          });
+          const categories = [];
+          for (const data of kgNodes) {
+            if (data.type === 'main_concept') {
+              try {
+                categories.push(
+                  await this.neo4jService.getHasCategory(data.cid)
+                );
+              } catch (error) {
+                console.error('Error getting category concepts:', error);
+              }
+            }
+          }
+          console.log(categories);
+          categories.forEach((result) => {
+            if (result.records && result.records.length > 0) {
+              result.records.forEach((data) => {
+                if (data.r) {
+                  var categoryEdgeEle = {
+                    type: data.r.type,
+                    id: data.r.identity.toString(),
+                    source: data.r.start.toString(),
+                    target: data.r.end.toString(),
+                  };
+                  kgEdges.push(categoryEdgeEle);
+                }
+                if (data.target) {
+                  var categoryConceptEle = {
+                    id: data.target.identity.toString(),
+                    name: data.target.properties.name,
+                    cid: data.target.properties.cid,
+                    uri: data.target.properties.uri,
+                    type: data.target.properties.type,
+                    mid: data.target.properties.mid,
+                    weight: data.target.properties.weight,
+                    wikipedia: data.target.properties.wikipedia,
+                    abstract: data.target.properties.abstract,
+                  };
+                  kgNodes.push(categoryConceptEle);
                 }
               });
             }
@@ -1605,5 +1729,16 @@ export class ConceptMapUserKgComponent {
     console.log(courseLanding);
     this.docURL = `/course/${courseLanding}/welcome`;
     this.router.navigateByUrl(this.docURL);
+  }
+
+  noUserNodeMessage() {
+    this.messageService.add({
+      key: 'noUserNode',
+      severity: 'info',
+      summary: 'User is not enrolled in any course',
+      detail:
+        'No Personal Knowledge Graph could be generated because user has not enrolled in any courses yet',
+      sticky: true,
+    });
   }
 }

@@ -118,6 +118,14 @@ export async function deleteMaterial(materialId) {
   return recordsToObjects(records);
 }
 
+export async function deleteCourse(courseId) {
+  const { records, summary, keys } = await graphDb.driver.executeQuery(
+    "MATCH (c:Course) WHERE c.cid = $cid DETACH DELETE c",
+    { cid: courseId }
+  );
+  return recordsToObjects(records);
+}
+
 export async function getMaterialEdges(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
     "MATCH p=(a)-[r]->(b) WHERE TYPE(r) <> 'CONTAINS' AND a.mid = $mid AND b.mid = $mid RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight",
@@ -390,6 +398,21 @@ export async function deleteRelationship(rid) {
   }
 }
 
+export async function deleteHasConcept(courseId) {
+  try {
+    const { records, summary, keys } = await graphDb.driver.executeQuery(
+      `MATCH (course:Course {cid: $courseId})-[r:HAS_CONCEPT]->()
+      DELETE r`,
+      { courseId }
+    );
+    console.log("Neo4j records:", records);
+    return recordsToObjects(records);
+  } catch (error) {
+    console.error("Neo4j query error:", error);
+    return [];
+  }
+}
+
 export async function renewConcept(conceptId) {
   try {
     const { records, summary, keys } = await graphDb.driver.executeQuery(
@@ -427,6 +450,20 @@ export async function getRelatedTo(courseId) {
     const { records, summary, keys } = await graphDb.driver.executeQuery(
       `MATCH (c:Concept)-[r:RELATED_TO]->(target) WHERE c.cid = $cid  RETURN c, r, target`,
       { cid: courseId }
+    );
+    console.log("Neo4j records:", records);
+    return recordsToObjects(records);
+  } catch (error) {
+    console.error("Neo4j query error:", error);
+    return [];
+  }
+}
+
+export async function getHasCategory(conceptId) {
+  try {
+    const { records, summary, keys } = await graphDb.driver.executeQuery(
+      `MATCH (c:Concept)-[r:HAS_CATEGORY]->(target) WHERE c.cid = $cid  RETURN c, r, target`,
+      { cid: conceptId }
     );
     console.log("Neo4j records:", records);
     return recordsToObjects(records);
@@ -487,6 +524,22 @@ export async function createCourseHasConcepts(courseId) {
     throw error;
   } finally {
     await session.close();
+  }
+}
+
+export async function getHasConcept(targetId) {
+  try {
+    const { records, summary, keys } = await graphDb.driver.executeQuery(
+      `MATCH (source)-[r:HAS_CONCEPT]->(target)
+      WHERE ID(target) = $targetId
+      RETURN source, r, target`,
+      { targetId: parseInt(targetId, 10) }
+    );
+    console.log("Neo4j records:", records);
+    return recordsToObjects(records);
+  } catch (error) {
+    console.error("Neo4j query error:", error);
+    return [];
   }
 }
 
