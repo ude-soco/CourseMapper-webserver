@@ -871,76 +871,72 @@ class NeoDataBase:
         logger.info("get or create resources relationships")
         resources = []
         relationships = []
-        session = self.driver.session()
-        tx = session.begin_transaction()
+        with self.driver.session() as session:
+            try:
+                if len(wikipedia_articles) != 0:
+                    for index, resource in wikipedia_articles.iterrows():
+                        rid = resource['id']
+                        weight = _truncate(resource[recommendation_type] if recommendation_type in resource.index else 0)
+                        logger.info("Wikipedia Resource '%s" % rid)
 
-        try:
-            if len(wikipedia_articles) != 0:
-                for index, resource in wikipedia_articles.iterrows():
-                    rid = resource['id']
-                    weight = _truncate(resource[recommendation_type] if recommendation_type in resource.index else 0)
-                    logger.info("Wikipedia Resource '%s" % rid)
+                        if not self.resource_exists(rid):
+                            logger.info("Could not find resource '%s" % rid)
+                            create_wikipedia_resource(session, resource, recommendation_type)
+                            for cid in concept_ids:
+                                if not exist_resource_to_concept_relationship(session, rid, cid, "CONTAINS"):
+                                    create_resource_to_concept_relationships(session, rid, cid, "CONTAINS", weight)
+                                else:
+                                    self.edit_resource_to_concept_relationship(rid=rid, cid=cid, weight=weight,
+                                                                               relation_type="CONTAINS")
+                        else:
+                            edit_resource(session, resource, recommendation_type)
+                            for cid in concept_ids:
+                                if not exist_resource_to_concept_relationship(session, rid, cid, "CONTAINS"):
+                                    create_resource_to_concept_relationships(session, rid, cid, "CONTAINS", weight=weight)
+                                else:
+                                    self.edit_resource_to_concept_relationship(rid=rid, cid=cid, weight=weight,
+                                                                               relation_type="CONTAINS")
+                if len(youtube_videos) != 0:
+                    for index, resource in youtube_videos.iterrows():
+                        rid = resource['id']
+                        weight = _truncate(resource[recommendation_type] if recommendation_type in resource.index else 0)
+                        logger.info("Youtube Resource '%s" % rid)
 
-                    if not self.resource_exists(rid):
-                        logger.info("Could not find resource '%s" % rid)
-                        create_wikipedia_resource(tx, resource, recommendation_type)
-                        for cid in concept_ids:
-                            if not exist_resource_to_concept_relationship(tx, rid, cid, "CONTAINS"):
-                                create_resource_to_concept_relationships(tx, rid, cid, "CONTAINS", weight)
-                            else:
-                                self.edit_resource_to_concept_relationship(rid=rid, cid=cid, weight=weight,
-                                                                           relation_type="CONTAINS")
-                    else:
-                        edit_resource(tx, resource, recommendation_type)
-                        for cid in concept_ids:
-                            if not exist_resource_to_concept_relationship(tx, rid, cid, "CONTAINS"):
-                                create_resource_to_concept_relationships(tx, rid, cid, "CONTAINS", weight=weight)
-                            else:
-                                self.edit_resource_to_concept_relationship(rid=rid, cid=cid, weight=weight,
-                                                                           relation_type="CONTAINS")
-            if len(youtube_videos) != 0:
-                for index, resource in youtube_videos.iterrows():
-                    rid = resource['id']
-                    weight = _truncate(resource[recommendation_type] if recommendation_type in resource.index else 0)
-                    logger.info("Youtube Resource '%s" % rid)
+                        if not self.resource_exists(rid):
+                            logger.info("Could not find resource '%s" % rid)
+                            create_video_resource(session, resource, recommendation_type)
+                            for cid in concept_ids:
+                                if not exist_resource_to_concept_relationship(session, rid, cid, "CONTAINS"):
+                                    create_resource_to_concept_relationships(session, rid, cid, "CONTAINS", weight=weight)
+                                else:
+                                    self.edit_resource_to_concept_relationship(rid=rid, cid=cid, weight=weight,
+                                                                               relation_type="CONTAINS")
+                        else:
+                            edit_resource(session, resource, recommendation_type)
+                            for cid in concept_ids:
+                                if not exist_resource_to_concept_relationship(session, rid, cid, "CONTAINS"):
+                                    create_resource_to_concept_relationships(session, rid, cid, "CONTAINS", weight=weight)
+                                else:
+                                    self.edit_resource_to_concept_relationship(rid=rid, cid=cid, weight=weight,
+                                                                               relation_type="CONTAINS")
 
-                    if not self.resource_exists(rid):
-                        logger.info("Could not find resource '%s" % rid)
-                        create_video_resource(tx, resource, recommendation_type)
-                        for cid in concept_ids:
-                            if not exist_resource_to_concept_relationship(tx, rid, cid, "CONTAINS"):
-                                create_resource_to_concept_relationships(tx, rid, cid, "CONTAINS", weight=weight)
-                            else:
-                                self.edit_resource_to_concept_relationship(rid=rid, cid=cid, weight=weight,
-                                                                           relation_type="CONTAINS")
-                    else:
-                        edit_resource(tx, resource, recommendation_type)
-                        for cid in concept_ids:
-                            if not exist_resource_to_concept_relationship(tx, rid, cid, "CONTAINS"):
-                                create_resource_to_concept_relationships(tx, rid, cid, "CONTAINS", weight=weight)
-                            else:
-                                self.edit_resource_to_concept_relationship(rid=rid, cid=cid, weight=weight,
-                                                                           relation_type="CONTAINS")
+                user_to_concept_relationships = retrieve_user_to_concept_relationships(session, user_id)
+                relationships.extend([r for r in user_to_concept_relationships if r not in relationships])
 
-            user_to_concept_relationships = retrieve_user_to_concept_relationships(tx, user_id)
-            relationships.extend([r for r in user_to_concept_relationships if r not in relationships])
+                for cid in concept_ids:
+                    resource = retrieve_concept_resources(session, material_id, cid)
+                    # logger.info(resource)
+                    relationship = retrieve_resource_to_concept_relationships(session, cid)
+                    # logger.info(relationship)
+                    resources.extend([r for r in resource if r not in resources])
+                    relationships.extend([r for r in relationship if r not in relationships])
 
-            for cid in concept_ids:
-                resource = retrieve_concept_resources(tx, material_id, cid)
-                # logger.info(resource)
-                relationship = retrieve_resource_to_concept_relationships(tx, cid)
-                # logger.info(relationship)
-                resources.extend([r for r in resource if r not in resources])
-                relationships.extend([r for r in relationship if r not in relationships])
+            except Exception as e:
+                logger.error("Failure retrieving or creating Resources - %s" % e)
+                self.close()
+                resources = []
+                relationships = []
 
-            tx.commit()
-        except Exception as e:
-            logger.error("Failure retrieving or creating Resources - %s" % e)
-            tx.rollback()
-            session.close()
-            self.close()
-            resources = []
-            relationships = []
         return resources, relationships
 
     def get_concept_resources(self, concept_id, user_id):
