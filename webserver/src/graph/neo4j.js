@@ -236,8 +236,8 @@ export async function createUserCourseRelationship(userId, courseId,courseName, 
         MERGE (u:User {uid: $userId, type: 'user'})
         MERGE (c:Course {cid: $courseId, name: $courseName})
         MERGE (u)-[loe:ENGAGED_IN]->(c)
-        ON CREATE SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
-        ON MATCH SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = timestamp()
+        ON CREATE SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = datetime()
+        ON MATCH SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = datetime()
         RETURN u, c, loe
         `,
         { userId, courseId,courseName, engagementLevel }

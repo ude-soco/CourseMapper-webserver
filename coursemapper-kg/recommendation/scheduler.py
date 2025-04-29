@@ -16,8 +16,8 @@ def scheduled_job():
 
 if __name__ == '__main__':
     scheduler = BlockingScheduler()
-    # Schedule the job to run every day at 2 AM
-    scheduler.add_job(scheduled_job, 'cron', hour=1, minute=30)
+    # Schedule the job to run every day at 1:30 AM
+    scheduler.add_job(scheduled_job, 'cron', hour=2, minute=00, misfire_grace_time=3600 ) # Allow the job to run within 1 hour if missed)
     print("Scheduler started. Waiting for scheduled jobs...")
     try:
         scheduler.start()
