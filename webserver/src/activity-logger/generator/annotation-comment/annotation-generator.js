@@ -141,13 +141,14 @@ export const generateCreateAnnotationActivity = (req) => {
     verb = "added";
     verbURI = "http://activitystrea.ms/schema/1.0/add";
   }
+  let formattedType = formatActivityType(req.locals.annotation.type);
 
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb(verbURI, verb),
     object: createAnnotationObject(req),
-    //result: createAnnotationCommentMaterialResultObject(req, "annotation"), // Confision related to annotation and comment, perhaps comment needs to be removed
+    result: createAnnotationCommentResultObject(req, formattedType), // Confision related to annotation and comment, perhaps comment needs to be removed
     context: createContext(),
   };
 };
@@ -312,6 +313,7 @@ export const generateAddMentionStatement = (req) => {
     verb: createVerb("http://id.tincanapi.com/verb/mentioned", "mentioned"),
     object: {
       objectType: config.activity,
+      id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/mention/${req.locals.mentionedUser.userId}`,
       definition: {
         type: `${DOMAIN}/activityType/user`,
         name: {
@@ -319,7 +321,7 @@ export const generateAddMentionStatement = (req) => {
         },
         extensions: {
           [`${DOMAIN}/extensions/user`]: {
-            annotationId: annotation._id,
+            id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
             topic_id: annotation.topicId,
@@ -329,7 +331,7 @@ export const generateAddMentionStatement = (req) => {
         },
       },
     },
-    //result: createAnnotationCommentResultObject(req, "annotation"),
+    // result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };
 };

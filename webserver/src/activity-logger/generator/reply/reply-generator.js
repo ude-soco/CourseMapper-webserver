@@ -17,6 +17,7 @@ import { createCommentObject } from "../comment/comment-utils";
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
 const createUserObject = (req) => {
+  console.log("req.locals: ", req.locals);
   let user = req.locals.user;
   let annotation = req.locals.annotation;
   let author = req.locals.annotation.author;
@@ -33,12 +34,19 @@ const createUserObject = (req) => {
         [`${DOMAIN}/extensions/user`]: {
           id: author.userId,
           authorName: author.name,
-          content: annotation.content,
-          annotation_id: annotation._id,
-          material_id: annotation.materialId,
-          channel_id: annotation.channelId,
-          topic_id: annotation.topicId,
-          course_id: annotation.courseId,
+          // content: annotation.content,
+          // annotation_id: annotation._id,
+          // material_id: annotation.materialId,
+          // channel_id: annotation.channelId,
+          // topic_id: annotation.topicId,
+          // course_id: annotation.courseId,
+          replyId: reply._id,
+          annotation_id: reply.annotationId,
+          material_id: reply.materialId,
+          channel_id: reply.channelId,
+          topic_id: reply.topicId,
+          course_id: reply.courseId,
+          content: reply.content,
         },
       },
     },
@@ -64,6 +72,7 @@ export const generateReplyToUserActivity = (req) => {
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/replied", "replied"),
     object: createUserObject(req),
+    result: createReplyAnnotationResultObject(req),
     context: createContext(),
   };
 };

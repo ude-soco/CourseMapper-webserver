@@ -122,10 +122,11 @@ export const addMentionLogger = async (req, res, next) => {
       for (const mentionedUser of mentionedUsers) {
         req.locals.mentionedUser = mentionedUser; // Add the individual user to req.locals
         await activityController.createActivity(
-          annotationActivityGenerator.generateAddMentionStatement(req)
+          annotationActivityGenerator.generateAddMentionStatement(req),
+          notifications.generateNotificationInfo(req)
         );
       }
-      notifications.generateNotificationInfo(req), next();
+      next();
     } catch (err) {
       res.status(400).send({ error: "Error saving statement to mongo", err });
     }
