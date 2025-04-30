@@ -84,19 +84,31 @@ export class LandingPageComponent {
   getAllCourses() {
     this.courseService.GetAllCourses().subscribe({
       next: (courses) => {
-        this.courses = courses;
 
+         
+        this.courses = courses;
+console.log('Courses:', this.courses);
         for (var course of this.courses) {
+          try{
+
           this.Users = [];
 
           this.Users = course.users;
-
           let userModerator = this.Users.find(
             (user) => user.role.name === 'moderator'
           );
-
+      if (!userModerator) {
+        throw new Error(`Moderator not found for course with id ${course.id}`);
+      }
           this.buildCardInfo(userModerator.userId, course);
         }
+       catch (error) {
+        
+        console.log('Error:', error);  
+      continue
+     }
+
+    }
       },
     });
     if (this.courseTriggered == false) {
