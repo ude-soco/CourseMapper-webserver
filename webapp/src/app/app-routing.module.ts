@@ -28,6 +28,7 @@ import { CourseDashboardComponent } from './pages/components/Dashboards/course-d
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
 import { PersonalKnowledgeGraphComponent } from './pages/components/knowledge-graph/user-kg/personal-knowledge-graph/personal-knowledge-graph.component';
+import { CanDeactivateService } from './services/can-deactivate.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -123,6 +124,7 @@ const routes: Routes = [
       {
         path: 'welcome',
         component: CourseWelcomeComponent,
+        canDeactivate: [CanDeactivateService],
       },
     ],
   },

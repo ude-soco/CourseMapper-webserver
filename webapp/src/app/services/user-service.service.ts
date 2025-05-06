@@ -79,7 +79,7 @@ export class UserServiceService {
     // this.loggedIn.next(false); // Set loggedIn state to false
     this.setlastTimeCourseMapperOpened().subscribe();
 
-     return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
+    return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions);
     // return this.http.post(AUTH_API_2 + 'signout', {}, HTTPOptions).pipe(
     //   tap(() => {
     //     // Clean up storage and notify the navbar component
@@ -104,5 +104,8 @@ export class UserServiceService {
     return this.http.get<{ lastTimeCourseMapperOpened: string }>(
       `${this.API_URL}/user/lastTimeCourseMapperOpened`
     );
+  }
+  logAccessPersonalDashboard(): Observable<any> {
+    return this.http.post(`${this.API_URL}/user/log-dashboard`, {});
   }
 }

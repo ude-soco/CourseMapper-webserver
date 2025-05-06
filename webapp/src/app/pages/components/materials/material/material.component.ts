@@ -50,6 +50,8 @@ import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as VideoActions from '../../annotations/video-annotation/state/video.action';
 import { IntervalService } from 'src/app/services/interval.service';
 import { Neo4jService } from 'src/app/services/neo4j.service';
+import { switchMap } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-material',
@@ -345,6 +347,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     let objToSend = {
       materialId: this.materialIdOfMaterialMenuClicked,
       courseId: this.courseID,
+      labelClicked: labelClicked,
 
       [materialNotificationSettingLabels.annotations]:
         labelClicked === materialNotificationSettingLabels.annotations
@@ -694,6 +697,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
                 // Keep the material tab open by maintaining tabIndex
                 this.tabIndex = index + 1; // Since tabIndex starts from 1, add 1 to the index
+                
 
                 return updatedMaterial; // Return the updated material
               }
@@ -799,6 +803,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
 
                   // Keep the material tab open by maintaining tabIndex
                   this.tabIndex = index + 1; // Since tabIndex starts from 1, add 1 to the index
+          
+
 
                   return updatedMaterial; // Return the updated material
                 }
@@ -966,6 +972,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       detail: detail,
     });
   }
+
   viewMaterialDashboardClicked() {
     this.router.navigate([
       'course',
@@ -976,6 +983,10 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.materialID,
       'dashboard',
     ]);
+    //Log the activity
+    this.materialService
+      .logAccessMaterialDashboard(this.materialID)
+      .subscribe();
   }
 
   setShowDialog() {
@@ -995,35 +1006,39 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     } else this.showDialog = false;
   }
 
-  handleDontShow(showConfirmMessage = true) {
-    let body = {
-      name: this.selectedMaterial.name,
-      description: this.selectedMaterial.description, //keep description value
-      courseId: this.selectedMaterial.courseId,
-      materialId: this.selectedMaterial._id,
-      url: this.selectedMaterial.url,
-      type: this.selectedMaterial.type,
-      showDialog: false,
+  handleDontShow(showConfirmMessage = true): void {
+    // Prepare an updated material object with showDialog set to false.
+    const updatedMaterial = {
+      ...this.selectedMaterial,
+      showDialog: false
     };
-
+  
+    // Update the material, then refresh the channel data.
     this.materialService
-      .renameMaterial(
-        this.selectedMaterial.courseId,
-        this.selectedMaterial,
-        body
+      .renameMaterial(this.selectedMaterial.courseId, this.selectedMaterial, updatedMaterial)
+      .pipe(
+        // Once the update completes, fetch the updated channel.
+        switchMap(() =>
+          this.topicChannelService.getChannel(this.selectedMaterial.courseId, this.selectedChannel._id)
+        )
       )
-      .subscribe((reponse) => {
-        this.topicChannelService
-        .getChannel(this.selectedMaterial.courseId, this.selectedChannel._id)
-        .subscribe((foundChannel) => {
+      .subscribe(
+        (foundChannel) => {
+          // Update the local state with the new materials data.
           this.materials = foundChannel.materials;
           this.selectedMaterial = this.materials[this.tabIndex];
-        });
-
-        if (showConfirmMessage)
-          this.showInfo('Dialog will not be shown again');
-      });
-
+          this.tabIndex += 1;
+          
+          if (showConfirmMessage) {
+            this.showInfo('Dialog will not be shown again');
+          }
+        },
+        (error) => {
+          console.error('Error updating material or fetching channel data', error);
+        }
+      );
+  
+    // Immediately close the dialog.
     this.showDialog = false;
   }
 

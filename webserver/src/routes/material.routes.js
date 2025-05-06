@@ -96,15 +96,24 @@ module.exports = function (app) {
   );
 
   app.post(
+    "/api/materials/:materialId/log-dashboard",
+    [authJwt.verifyToken],
+    controller.accessMaterialDashboard,
+    logger.accessMaterialDashboardLogger
+  );
+
+  app.post(
     "/api/courses/:courseId/materials/:materialId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newIndicator
+    controller.newIndicator,
+    logger.newMaterialIndicatorLogger
   );
 
   app.delete(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteIndicator
+    controller.deleteIndicator,
+    logger.deleteMaterialIndicatorLogger
   );
 
   app.get(
@@ -116,11 +125,19 @@ module.exports = function (app) {
   app.put(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.resizeIndicator
+    controller.resizeIndicator,
+    logger.resizeMaterialIndicatorLogger
   );
   app.put(
     "/api/courses/:courseId/materials/:materialId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.reorderIndicators
+    controller.reorderIndicators,
+    logger.reorderMaterialIndicatorLogger
+  );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/pdf-zoom",
+    [authJwt.verifyToken],
+    controller.zoomPDF,
+    logger.zoomPDFLogger
   );
 };

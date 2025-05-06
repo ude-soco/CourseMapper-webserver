@@ -16,12 +16,16 @@ import spread from 'cytoscape-spread';
 import avsdf from 'cytoscape-avsdf';
 import cxtmenu from 'cytoscape-cxtmenu';
 import popper from 'cytoscape-popper';
+import { Store } from '@ngrx/store';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { ConceptStatusService } from 'src/app/services/concept-status.service';
 import { CallRecommendationsService } from 'src/app/services/call-recommendations.service';
 import { MessageService } from 'primeng/api';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
+import { getCurrentMaterial } from '../../materials/state/materials.reducer';
+import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { Subscription } from 'rxjs';
+import { State } from 'src/app/state/app.reducer';
 import * as $ from 'jquery';
 import { Neo4jService } from 'src/app/services/neo4j.service';
 import { Store } from '@ngrx/store';
@@ -59,7 +63,9 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   allConceptsObj = []; //all concepts of the current slide
   disableRecommendationsButton = true;
   reqDataForm: any;
-
+  currentMaterial: any;
+  currentPdfPage: number;
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
   public cy: any;
 
   public selectedTriggered: boolean = false;
@@ -230,6 +236,21 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
           });
         //receive recommended concepts
       });
+    // Subscribe to get material Data from store
+    this.subscriptions.add(
+      this.store.select(getCurrentMaterial).subscribe((material) => {
+        if (material) {
+          this.currentMaterial = material;
+        }
+      })
+    );
+
+    // Subscribe to get the current PDF page from store
+    this.subscriptions.add(
+      this.store.select(getCurrentPdfPage).subscribe((page) => {
+        this.currentPdfPage = page;
+      })
+    );
   }
 
   public showAllStyle: cytoscape.Stylesheet[] = [
@@ -446,6 +467,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
                 node.data.selected = 's';
               }
             });
+            const payload = {
+              materialId: this.currentMaterial._id,
+              courseId: this.currentMaterial.courseId,
+              currentPage: this.currentPdfPage,
+              concept: selectedNode, // Include the selected node
+            };
+            this.slideConceptservice.logViewConcept(payload).subscribe(); // "User viewed a main concept under the main concepts tab "
           } else {
             this.elements.nodes.map((node) => {
               node.data.selected = 'u';
@@ -525,11 +553,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
           const selectedId = eventTarget.data('id').toString();
           const selectedCid = eventTarget.data('cid');
           const selectedName = eventTarget.data('name').toString();
+          const selectedType = eventTarget.data('type').toString();
           const notUnderstandEle = {
             id: selectedId,
             cid: selectedCid,
             name: selectedName,
             status: 'notUnderstood',
+            type: selectedType,
           };
           this.slideConceptservice.updateDidNotUnderstandConcepts(
             notUnderstandEle
@@ -546,11 +576,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
           const selectedId = eventTarget.data('id').toString();
           const selectedCid = eventTarget.data('cid');
           const selectedName = eventTarget.data('name').toString();
+          const selectedType = eventTarget.data('type').toString();
           const understoodEle = {
             id: selectedId,
             cid: selectedCid,
             name: selectedName,
             status: 'understood',
+            type: selectedType,
           };
           this.slideConceptservice.updateUnderstoodConcepts(understoodEle);
           eventTarget._private.data.understoodTriggered = false;
@@ -564,11 +596,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
           const selectedId = eventTarget.data('id').toString();
           const selectedCid = eventTarget.data('cid');
           const selectedName = eventTarget.data('name').toString();
+          const selectedType = eventTarget.data('type').toString();
           const newConceptEle = {
             id: selectedId,
             cid: selectedCid,
             name: selectedName,
             status: 'unread',
+            type: selectedType,
           };
           this.slideConceptservice.updateNewConcepts(newConceptEle);
           eventTarget._private.data.unReadTriggered = false;
@@ -598,6 +632,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
         this.render();
       });
     }
+    const payload = {
+      materialId: this.currentMaterial._id,
+      courseId: this.currentMaterial.courseId,
+      currentPage: this.currentPdfPage,
+      mainConcepts: this._elements, // Include main concepts
+    };
+    this.slideConceptservice.logViewMoreConcepts(payload).subscribe();
   }
   showLessElements() {
     let cy_container = this.renderer.selectRootElement('#cySlide');
@@ -619,6 +660,13 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
         this.render();
       });
     }
+    const payload = {
+      materialId: this.currentMaterial._id,
+      courseId: this.currentMaterial.courseId,
+      currentPage: this.currentPdfPage,
+      mainConcepts: this._elements, // Include main concepts
+    };
+    this.slideConceptservice.logViewLessConcepts(payload).subscribe();
   }
 
   async refreshNodeStatuses() {

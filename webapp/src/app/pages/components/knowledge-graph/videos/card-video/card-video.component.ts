@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {VideoElementModel} from '../models/video-element.model';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { VideoElementModel } from '../models/video-element.model';
+import { Material } from 'src/app/models/Material';
 
 @Component({
   selector: 'app-card-video',
   templateUrl: './card-video.component.html',
-  styleUrls: ['./card-video.component.css']
+  styleUrls: ['./card-video.component.css'],
 })
 export class CardVideoComponent {
   constructor() {}
@@ -19,6 +20,7 @@ export class CardVideoComponent {
   public notUnderstoodConcepts: string[];
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Output() onWatchVideo: EventEmitter<any> = new EventEmitter();
+  @Input() currentMaterial?: Material;
 
   ngOnInit(): void {}
   public readVideo(videoElement: any): void {

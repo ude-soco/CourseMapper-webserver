@@ -118,11 +118,11 @@ export class ChannelbarComponent implements OnInit {
   selectedChannel: Channel;
   user = this.storageService.getUser();
   moderatorUserOptions: MenuItem[] = [
-    {
-      label: 'Rename',
-      icon: 'pi pi-refresh',
-      command: () => this.onRenameCourse(),
-    },
+    // {
+    //   label: 'Rename',
+    //   icon: 'pi pi-refresh',
+    //   command: () => this.onRenameCourse(),
+    // },
 
     {
       label: 'Edit course',
@@ -154,6 +154,25 @@ export class ChannelbarComponent implements OnInit {
       icon: 'pi pi-times',
       command: () => this.onDeleteCourse(),
     },
+    {
+      label: 'Share course ',
+      icon: 'pi pi-copy',
+      title: 'Copy Course URL',
+      command: () => this.onShareCourse(),
+      // command: () =>
+      //   this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+    },
+    {
+      label: 'View course dashboard',
+      icon: 'pi pi-chart-bar',
+      styleClass: 'contextMenuButton',
+      command: () => this.onViewDashboardClicked(),
+    },
+    {
+      label: 'Notification Settings',
+      icon: 'pi pi-bell',
+      command: ($event) => this.onNotificationSettingsClicked($event),
+    },
   ];
 
   normalUserOptions: MenuItem[] = [
@@ -172,8 +191,9 @@ export class ChannelbarComponent implements OnInit {
       label: 'Share course ',
       icon: 'pi pi-copy',
       title: 'Copy Course URL',
-      command: () =>
-        this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+      // command: () =>
+      //   this.copyCourseId(this.selectedCourse._id, this.selectedCourse.name),
+      command: () => this.onShareCourse(),
     },
   ];
   /*   @ViewChild('notificationSettingsPanel') notificationSettingsPanel: any; */
@@ -263,7 +283,7 @@ export class ChannelbarComponent implements OnInit {
       //course name <p> has been changed to editable
 
       this.enterKey = false;
-      this.onRenameCourseConfirm(this.selectedId);
+      //this.onRenameCourseConfirm(this.selectedId);
     }
   }
 
@@ -285,22 +305,21 @@ export class ChannelbarComponent implements OnInit {
     this.neo4jservice.deleteCourse(this.selectedCourse._id);
   }
 
-  onRenameCourse() {
-    let selectedCurs = <HTMLInputElement>(
-      document.getElementById(`${this.selectedCourse._id}`)
-    );
-    this.selectedId = this.selectedCourse._id;
-    selectedCurs.contentEditable = 'true';
-    this.previousCourse = this.selectedCourse;
-    this.selectElementContents(selectedCurs);
-  }
+  // onRenameCourse() {
+  //   let selectedCurs = <HTMLInputElement>(
+  //     document.getElementById(`${this.selectedCourse._id}`)
+  //   );
+  //   this.selectedId = this.selectedCourse._id;
+  //   selectedCurs.contentEditable = 'true';
+  //   this.previousCourse = this.selectedCourse;
+  //   this.selectElementContents(selectedCurs);
+  // }
 
   //global edit for the course
   onEditCourse() {
-    this.router.navigate(['/course', this.selectedCourse._id, 'welcome'], {
-      queryParams: { edit: true },
-    });
-  }
+    this.router.navigate(['/course', this.selectedCourse._id, 'welcome'], { queryParams: { edit: true } });
+    //this.router.navigate(['/course', this.selectedCourse._id, 'welcome']);
+      }
 
   onRenameCourseConfirm(id) {
     const selectedCurs = <HTMLInputElement>document.getElementById(id);
@@ -508,6 +527,33 @@ export class ChannelbarComponent implements OnInit {
     }, 0);
   }
 
+  /**
+   * @function onShareCourse
+   * Triggered from the UI when the user clicks on "Share Course".
+   */
+  onShareCourse() {
+    this.courseService.shareCourse(this.selectedCourse).subscribe((res) => {
+      if ('success' in res) {
+        const courseUrl = res.courseUrl; // The URL from the backend response
+        navigator.clipboard.writeText(courseUrl).then(
+          () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: res.success,
+            });
+          },
+          (err) => {
+            this.showError('Failed to copy URL to clipboard.');
+            console.error('Clipboard error:', err);
+          }
+        );
+      } else {
+        this.showError(res?.errorMsg);
+      }
+    });
+  }
+
   preventEnterKey(e) {
     let confirmButton = document.getElementById('addChannelConfirm');
     if (e.keyCode === 13) {
@@ -524,11 +570,17 @@ export class ChannelbarComponent implements OnInit {
     // this.selectedToolEvent.emit('none');
     this.materialKgService.courseKgOrdered(this.selectedCourse);
   }
+  // onViewDashboardClicked(): void {
+  //   this.router.navigate([
+  //     'course',
+  //     this.courseService.getSelectedCourse()._id,
+  //     'dashboard',
+  //   ]);
+  // }
   onViewDashboardClicked(): void {
-    this.router.navigate([
-      'course',
-      this.courseService.getSelectedCourse()._id,
-      'dashboard',
-    ]);
+    const selectedCourseId = this.courseService.getSelectedCourse()._id;
+    this.router.navigate(['course', selectedCourseId, 'dashboard']);
+    // Call the logging endpoint
+    this.courseService.logAccessCourseDashboard(selectedCourseId).subscribe();
   }
 }

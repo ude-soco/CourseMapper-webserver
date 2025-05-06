@@ -1,9 +1,12 @@
 import {
+  ChangeDetectorRef,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
   Renderer2,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Observable } from 'rxjs';
@@ -11,9 +14,9 @@ import { Course } from '../models/Course';
 import { CourseImp } from '../models/CourseImp';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CourseService } from '../services/course.service';
-import { Neo4jService } from 'src/app/services/neo4j.service';
+import { Neo4jService } from 'src/app/services/neo4j.service'; 
 import { StorageService } from 'src/app/services/storage.service';
-import { Store } from '@ngrx/store';
+import { Store, on } from '@ngrx/store';
 import {
   getCourseSelected,
   getShowPopupMessage,
@@ -36,7 +39,7 @@ import { Socket } from 'ngx-socket-io';
 import { environment } from 'src/environments/environment';
 import Quill from 'quill';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Console } from 'console';
+
 import { MaterilasService } from '../services/materials.service';
 @Component({
   selector: 'app-course-welcome',
@@ -44,7 +47,9 @@ import { MaterilasService } from '../services/materials.service';
   styleUrls: ['./course-welcome.component.css'],
   providers: [MessageService, ConfirmationService, DatePipe],
 })
-export class CourseWelcomeComponent implements OnInit {
+export class CourseWelcomeComponent implements OnInit, CanComponentDeactivate  {
+  @ViewChild('fileUploader') fileUploader: any; // Type can be adjusted per PrimeNG version
+  @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
   selectedCourse: Course = new CourseImp('', '');
   courseSelected$: Observable<boolean>;
   channelSelected$: Observable<boolean>;
@@ -60,17 +65,21 @@ export class CourseWelcomeComponent implements OnInit {
   private API_URL = environment.API_URL;
 
   showInfoError: ShowInfoError;
+  currentCourseId: string = this.route.snapshot.paramMap.get('id');
+
   isEditingName: boolean = false;
   isEditingDescription: boolean = false;
   isEditingImage: boolean = false;
   isEditing: boolean = false;
 
+  editorInstance: any;
   courseName: string = '';
   courseDescription: string = '';
   sanitizedDescription: SafeHtml;
 
   selectedFileName: string = ''; // Holds the name of the uploaded file
   chosenFile = null;
+  reloadComponent = true;
   private imageTimestamp: number = new Date().getTime();
 
   public editMode: boolean = false;
@@ -90,26 +99,49 @@ export class CourseWelcomeComponent implements OnInit {
     private socket: Socket,
     private sanitizer: DomSanitizer,
     private materialService: MaterilasService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cd: ChangeDetectorRef
   ) {
     this.courseSelected$ = store.select(getCourseSelected);
     this.channelSelected$ = this.store.select(getChannelSelected);
   }
-
+  // hasUnsavedChanges(): boolean {
+  //   return this.isEditing || this.isEditingName || this.isEditingDescription || this.isEditingImage;
+  // }
   ngOnInit(): void {
+    //console.log('course-welcome.component.ts ngOnInit()');
     this.selectedCourse = this.courseService.getSelectedCourse();
+    this.sanitizeDescription(this.selectedCourse.description);
+   //this.Users = this.selectedCourse.users;
+    //console.log('users', this.Users);
+    console.log('selected course', this.selectedCourse);
     this.Users = [];
     this.courseService.onSelectCourse.subscribe((course) => {
+      // console.log("course._id", course._id);
+      // console.log("this.currentCourseId", this.currentCourseId);
+          // When a new course is selected, check for unsaved changes.
+    // if (course._id !== this.currentCourseId && this.hasUnsavedChanges()) {
+    //   // Inform the user and immediately exit the subscription handler.
+    //   alert('You have unsaved changes. Please save them before switching courses.');
+    //   // Optionally, if the URL has already updated, you might try reverting it:
+    //  // window.history.replaceState({}, '', `/course/${this.currentCourseId}/welcome`);
+    //   // Do not update the component's state.
+    //   return;
+    // }
+     
       this.selectedCourse = course;
       this.selectedCourseId = course._id;
-      if (this.selectedCourse.role === 'moderator') {
+      //this.currentCourseId = course._id;
+     // this.courseDescription = course.description;
+      if (this.selectedCourse.role === 'moderator' || this.selectedCourse.role === 'admin') {
         this.moderator = true;
         console.log('selected course', this.selectedCourse);
 
         // Subscribe to query parameters to get the 'edit' value
         this.route.queryParams.subscribe((params) => {
+         
           this.editMode = params['edit'] === 'true'; // Set editMode to true if 'edit' is 'true'
-
+         
           if (this.editMode) {
             this.toggleEdit('name'); // Edit the course name
             this.toggleEdit('description'); // Edit the description of the course
@@ -129,13 +161,14 @@ export class CourseWelcomeComponent implements OnInit {
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
         this.Users = course.users;
+        
         // TODO: Bad implementation to get the moderator, i.e., course.users[0].userId
         this.buildCardInfo(course.users[0].userId, course);
       });
 
-      this.sanitizeDescription();
+      this.sanitizeDescription(this.courseDescription);
 
-      if (this.selectedCourse.role === 'moderator') {
+      if (this.selectedCourse.role === 'moderator' || this.selectedCourse.role === 'admin') {
         this.moderator = true;
       } else {
         this.moderator = false;
@@ -146,17 +179,29 @@ export class CourseWelcomeComponent implements OnInit {
         this.selectedCourse.users[0]?.userId,
         this.selectedCourse
       );
-      if (this.selectedCourse.role === 'moderator') {
+      if (this.selectedCourse.role === 'moderator'|| this.selectedCourse.role === 'admin') {
         this.moderator = true;
       } else {
         this.moderator = false;
       }
     }
+   
+  }
+  canDeactivate(): boolean {
+    if (this.isEditing || this.isEditingName || this.isEditingDescription || this.isEditingImage) {
+      alert('You have unsaved changes. Please save before navigating away.');
+      return false;
+    }
+    return true;
   }
 
-  sanitizeDescription(): void {
-    this.sanitizedDescription = this.sanitizer.bypassSecurityTrustHtml(
-      this.selectedCourse.description
+  get enrolledUsersCount(): number {
+    return Array.isArray(this.selectedCourse?.users) ? this.selectedCourse.users.length : 0;
+  }
+  sanitizeDescription(description: string): SafeHtml {
+   // console.log('Sanitizing description:', this.selectedCourse.description);
+    return  this.sanitizer.bypassSecurityTrustHtml(
+      description
     );
   }
 
@@ -204,8 +249,35 @@ export class CourseWelcomeComponent implements OnInit {
       }
     }, 0);
   }
-
+ //toggleEdit before landing on the page to set edit setting to false
   toggleEdit(field: 'name' | 'description' | 'image') {
+
+    this.isEditing = false;
+    // this.courseName = this.selectedCourse.name;
+    // this.courseDescription = this.selectedCourse.description;
+
+    if (field === 'name') {
+      this.isEditingName = false;
+    }
+    if (field === 'description') {
+      this.isEditingDescription = false;
+    }
+    if (field === 'image') 
+      // this.isEditingImage = true;
+      {this.isEditingImage = false;
+        setTimeout(() => {
+          this.openFileSelector();
+        }, 0);
+      } else {
+        // Already in editing mode, just open the file dialog
+        this.openFileSelector();
+      }
+      
+
+    // Copy current values to editable object
+  }
+  //toggleEdit_ after landing on the page to edit the course content
+  toggleEdit_(field: 'name' | 'description' | 'image') {
     this.isEditing = true;
     this.courseName = this.selectedCourse.name;
     this.courseDescription = this.selectedCourse.description;
@@ -216,29 +288,54 @@ export class CourseWelcomeComponent implements OnInit {
     if (field === 'description') {
       this.isEditingDescription = true;
     }
-    if (field === 'image') this.isEditingImage = true;
+    if (field === 'image') 
+      // this.isEditingImage = true;
+      {this.isEditingImage = true;
+        setTimeout(() => {
+          this.openFileSelector();
+        }, 0);
+      } else {
+        // Already in editing mode, just open the file dialog
+        this.openFileSelector();
+      }
+      
 
     // Copy current values to editable object
   }
 
   saveChanges() {
+   
+    // console.log('selectedCourse.name', this.courseName);
+    // console.log('selectedCourse', this.selectedCourse);
     // Apply changes from editableCourse to selectedCourse
+    if (this.editorInstance) {
+      this.courseDescription = this.editorInstance.root.innerHTML;
+    }
     this.isEditing =
       this.isEditingName =
       this.isEditingDescription =
       this.isEditingImage =
         false;
 
-    this.selectedCourse.name = this.courseName;
-    this.selectedCourse.description = this.courseDescription;
-
+    
+        this.selectedCourse = { ...this.selectedCourse, name: this.courseName, description: this.courseDescription };
+    //this.selectedCourse.name = this.courseName;
+    
+    //this.selectedCourse.description = this.courseDescription;
+   
     if (this.chosenFile) {
       let imageName = this.setCourseIamge(this.selectedCourse);
-      this.selectedCourse.url = '/public/uploads/pdfs/' + imageName;
-    } else {
+      this.selectedCourse.url = '/public/uploads/images/' + imageName;
+      this.refreshImageTimestamp();
+    } 
+    else {
       this.courseService
         .updateCourse(this.selectedCourse)
-        .subscribe((res: any) => {});
+        .subscribe((res: any) => {
+          this.selectedCourse = {...res.foundCourse};
+         // this.sanitizeDescription( this.selectedCourse.description);
+          this.showInfo('Course details are updated successfully.');
+        });
     }
     // this.ngOnInit();
   }
@@ -320,21 +417,36 @@ export class CourseWelcomeComponent implements OnInit {
 
               let formData = new FormData();
               formData.append('file', resizedFile, newFileName);
+              //this.materialService.deleteCourseImage(this.selectedCourse).subscribe(  (res) => {  });
 
               this.materialService.uploadFile(formData, 'img').subscribe(
                 (res) => {
-                  console.log('response from image upload', res);
+                  //console.log('response from image upload', res);
                   // Update the course image URL in the database
                   this.courseService
                     .updateCourse(this.selectedCourse)
                     .subscribe((res: any) => {
-                      this.refreshImageTimestamp();
+                      //console.log('Updated course: from service', res.foundCourse);
+                     
+                         
+                        //  this.selectedCourse.url+ '?t=' + new Date().getTime();
+                         
+                      this.selectedCourse={ ...res.foundCourse };
+                      this.showInfo('Course display picture is updated');
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 100);
+                     
+                      
+                        
                     });
                 },
                 (er) => {
                   console.log(er);
                 }
               );
+           
+
             }
           }, this.chosenFile.type);
         };
@@ -350,9 +462,43 @@ export class CourseWelcomeComponent implements OnInit {
     }
   }
 
+  onDeleteImg() {
+    this.confirmationService.confirm({
+      message:
+        'Do you want to delete this image"',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: (e) => this.deleteImg(e),
+      reject: () => {
+        // this.informUser('info', 'Cancelled', 'Deletion cancelled')
+      },
+    });
+    setTimeout(() => {
+      const rejectButton = document.getElementsByClassName(
+        'p-confirm-dialog-reject'
+      ) as HTMLCollectionOf<HTMLElement>;
+      for (var i = 0; i < rejectButton.length; i++) {
+        this.renderer.addClass(rejectButton[i], 'p-button-outlined');
+      }
+    }, 0);
+  }
+  deleteImg(e){
+   // this.selectedCourse.url = null;
+    this.materialService.deleteCourseImage(this.selectedCourse).subscribe(  (res) => { 
+      this.selectedCourse.url = res.course.url; 
+    this.courseService
+    .updateCourse(this.selectedCourse)
+    .subscribe((res: any) => {
+      
+      this.refreshImageTimestamp();
+    });
+  });
+    //return '/assets/img/courseCard.png';
+  }
   // Handle file removal
   onFileRemove(event: any): void {
     this.selectedFileName = '';
+    
     //this.currentImage = this.defaultImage;
     this.chosenFile = null;
     this.showInfo('Image removed successfully');
@@ -386,18 +532,54 @@ export class CourseWelcomeComponent implements OnInit {
 
   getCourseImage(course: Course): string {
     if (course.url) {
-      return `${this.API_URL}${course.url.replace(/\\/g, '/')}?t=${
-        this.imageTimestamp
-      }`;
+      //console.log('course.url getCourseImage', course.url);
+      // If course.url is already a full URL, return it directly.
+      if (course.url.startsWith('http') || course.url.startsWith('https')) {
+        
+        return course.url 
+       //return course.url 
+      }
+      // Otherwise, prepend the API_URL to form the complete URL.
+      
+
+      return this.API_URL + course.url.replace(/\\/g, '/');
+    }
+    // Return an empty string or a default image if needed.
+    //return '/assets/img/courseCard.png';
+    return '/assets/img/courseCard.png';
+  }
+
+
+  openFileSelector(): void {
+    if (this.fileUploader && this.fileUploader.inputFile) {
+      this.fileUploader.inputFile.nativeElement.click();
     } else {
-      return '/assets/img/courseDefaultImage.png';
+      const inputEl = this.fileUploader?.el?.nativeElement.querySelector('input[type="file"]');
+      if (inputEl) {
+        inputEl.click();
+      } else {
+        console.error('File input element not found.');
+      }
     }
   }
-
   refreshImageTimestamp(): void {
+    //this.selectedCourse.url = `${this.selectedCourse.url}?t=${new Date().getTime()}`;
     this.imageTimestamp = new Date().getTime();
-  }
 
+  }
+  // refreshImageTimestamp(timestamp: number) {
+  //   if (this.selectedCourse && this.selectedCourse.url) {
+  //     const originalUrl = this.selectedCourse.url.split('?')[0];
+  
+  //     this.selectedCourse.url = ''; // Temporarily clear URL
+  
+  //     setTimeout(() => {
+  //       this.selectedCourse.url = `${originalUrl}?t=${timestamp}`;
+  //     }, 0);
+  //   } else {
+  //     console.error('selectedCourse or url is undefined:', this.selectedCourse);
+  //   }
+  // }
   getName(firstName: string, lastName: string) {
     let Name = firstName + ' ' + lastName;
     return Name.split(' ')
@@ -409,15 +591,45 @@ export class CourseWelcomeComponent implements OnInit {
 
   onEditorInit(event: any): void {
     // Access the TinyMCE editor instance
-    const editorInstance = event.editor as Quill;
+    this.editorInstance = event.editor as Quill;
 
-    editorInstance.clipboard.dangerouslyPasteHTML(
+    this.editorInstance.clipboard.dangerouslyPasteHTML(
       this.selectedCourse.description
     );
-
+    const toolbarModule: any = this.editorInstance.getModule('toolbar');
+    if (toolbarModule && toolbarModule.container && toolbarModule.container.querySelector('.ql-image')) {
+      toolbarModule.addHandler('image', () => {
+        this.customImageUpload(this.editorInstance);
+      });
+    }
+                
     this.courseDescription = this.selectedCourse.description;
   }
 
+  customImageUpload(editor: Quill): void {
+    this.fileInput.nativeElement.click();
+  }
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+     
+      // Call your upload service
+      this.materialService.uploadFile(formData, 'img').subscribe((res: any) => {
+        //const imageUrl = res.imageUrl;
+        const editor =this.editorInstance;
+        const range = editor.getSelection(true);
+        let imageUrl= this.API_URL +'/public/uploads/images/' + file.name;
+        editor.insertEmbed(range.index, 'image', imageUrl);
+        
+        editor.setSelection(range.index + 1);
+      }, error => {
+       // console.error('Image upload failed', error);
+      });
+    }
+  }
   unEnrolleCourse(course: Course) {
     this.courseService.WithdrawFromCourse(course).subscribe((res) => {
       const user = this.storageService.getUser(); // Assuming this returns user info
@@ -470,4 +682,7 @@ export class CourseWelcomeComponent implements OnInit {
       };
     });
   }
+}
+export interface CanComponentDeactivate {
+  canDeactivate: () => boolean;
 }

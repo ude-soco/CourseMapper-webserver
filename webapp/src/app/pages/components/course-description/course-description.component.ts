@@ -22,6 +22,7 @@ import { Socket } from 'ngx-socket-io';
 import { NotificationsService } from 'src/app/services/notifications.service';
 import { getShowNotificationsPanel } from 'src/app/state/app.reducer';
 import { environment } from 'src/environments/environment';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-course-description',
@@ -55,7 +56,8 @@ export class CourseDescriptionComponent {
     private messageService: MessageService,
     private route: ActivatedRoute,
     private socket: Socket,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private sanitizer: DomSanitizer,
   ) {}
   ngOnInit(): void {
     this.isloggedin = this.storageService.isLoggedIn();
@@ -92,6 +94,12 @@ export class CourseDescriptionComponent {
       }
     });
   }
+  sanitizeDescription(description: string): SafeHtml {
+    // console.log('Sanitizing description:', this.selectedCourse.description);
+     return  this.sanitizer.bypassSecurityTrustHtml(
+       description
+     );
+   }
   getName(firstName: string, lastName: string) {
     let Name = firstName + ' ' + lastName;
     return Name.split(' ')
@@ -184,9 +192,10 @@ export class CourseDescriptionComponent {
     const user = this.storageService.getUser(); // Assuming this returns user info
     const userId = user.id; // Get the user ID
     const courseId = this.course_enroll._id; // Get the course ID
+    const courseName = this.course_enroll.name; // Get the course ID
   
     // Call the Neo4j service to create the relationship
-    this.neo4jService.createUserCourseRelationship(userId, courseId).subscribe({
+    this.neo4jService.createUserCourseRelationship(userId, courseId, courseName).subscribe({
       next: () => {
         this.showInfo('User-course relationship created successfully!');
       },
@@ -224,10 +233,21 @@ export class CourseDescriptionComponent {
 
   getCourseImage(course: Course): string {
     if (course.url) {
+      //console.log('course.url getCourseImage', course.url);
+      // If course.url is already a full URL, return it directly.
+      if (course.url.startsWith('http') || course.url.startsWith('https')) {
+        
+        return course.url 
+       //return course.url 
+      }
+      // Otherwise, prepend the API_URL to form the complete URL.
+      
+
       return this.API_URL + course.url.replace(/\\/g, '/');
-    } else {
-      return '/assets/img/courseDefaultImage.png';
     }
+    // Return an empty string or a default image if needed.
+    //return '/assets/img/courseCard.png';
+    return '/assets/img/courseCard.png';
   }
 
   editCourseName() {

@@ -16,7 +16,12 @@ import avsdf from 'cytoscape-avsdf';
 import cxtmenu from 'cytoscape-cxtmenu';
 import popper from 'cytoscape-popper';
 import { ConceptStatusService } from 'src/app/services/concept-status.service';
+import { ConceptMapService } from 'src/app/services/concept-map-service.service';
+import { getCurrentMaterial } from '../../materials/state/materials.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 import { Subscription } from 'rxjs';
+import { State } from 'src/app/state/app.reducer';
+import { Store } from '@ngrx/store';
 
 cytoscape.use(cxtmenu);
 cytoscape.use(dagre);
@@ -57,18 +62,34 @@ export class CytoscapeComponent {
   public selectedTriggered: boolean = false;
 
   public _elements: any;
-
+  currentMaterial: any;
+  courseId: string;
+  private selectedNodeElement: any;
   annotationsNodes: any[];
   propertiesNodes: any[];
   categoriesNodes: any[];
   nodeSelected: boolean;
 
   abstractStatusSubscription: Subscription;
-
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
   constructor(
     private renderer: Renderer2,
-    private abstractStatus: ConceptStatusService
+    private abstractStatus: ConceptStatusService,
+    private conceptMapService: ConceptMapService,
+    private store: Store<State>
   ) {
+    // Subscribe to get material Data from store
+    this.subscriptions.add(
+      this.store.select(getCurrentMaterial).subscribe((material) => {
+        if (material) {
+          this.currentMaterial = material;
+        }
+      })
+    );
+    // Subscribe to get the current courseId
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      this.courseId = courseId;
+    });
     this.abstractStatusSubscription = abstractStatus
       .abstractStatusObserver()
       .subscribe(() => {
@@ -89,9 +110,8 @@ export class CytoscapeComponent {
       max: 1.5,
     };
   }
-  public irrelevantConcepts: string[] = []; // Define this property in your class
+  public irrelevantConcepts = []; // Define this property in your class
   showBulkDeletion: boolean = true; // Define this property in your class
-
   public showAllStyle: cytoscape.Stylesheet[] = [
     {
       selector: 'node',
@@ -112,7 +132,16 @@ export class CytoscapeComponent {
           let width = 75 * normalizedWeight + 25; // value between 25 and 100
           return width;
         },
-        'border-width': 'mapData(weight, 0, 1, 1, 3)',
+        // 'border-width': 'mapData(weight, 0, 1, 1, 3)',
+        'border-width': (ele) => {
+  if (ele.data().lastEdited === true) {
+    return 8;
+  } else {
+    // Replicate mapData(weight, 0, 1, 1, 3)
+    const weight = Number(ele.data().weight);
+    return 1 + 2 * weight;
+  }
+},
         'border-opacity': 0.5,
         'text-wrap': 'wrap',
         'background-fit': 'cover',
@@ -120,7 +149,20 @@ export class CytoscapeComponent {
         'text-halign': 'center',
         'text-valign': 'center',
         'text-outline-width': 0.2,
+        'border-color': (elm) => {
+          
+      return elm.data().lastEdited === true ? '#ffff00' : 'black';
+    },
+
         'background-color': (elm) => {
+          // First, check if the node is marked as not relevant (red)
+  if (this.irrelevantConcepts.includes(elm.data().cid)) {
+    return '#FF0000';
+  }
+          
+          if (elm.data().isNew) return '#00cc00'; // Green color for new concepts
+          if (elm.data().isEditing) return '#cc9900'; // Green color for new concepts
+          // if (elm.data().lastEdited) return '#ff0000'; // Green color for new concepts
           if (elm.data().type === 'related_concept') return '#ce6f34';
           else if (elm.data().type === 'category') return '#FBC02D';
           else if (elm.data().type === 'course') return '#689F38';
@@ -140,6 +182,13 @@ export class CytoscapeComponent {
         'font-size': 16,
       },
     },
+    // {
+    //   selector: 'node[lastEdited]',
+    //   style: {
+    //     'border-color': '#ffff00',  // Yellow border
+    //     'border-width': 20          // Optional: adjust border width as desired
+    //   }
+    // },
     {
       selector: 'edge',
       style: {
@@ -428,7 +477,6 @@ export class CytoscapeComponent {
       // document.getElementById('cy').style.height=575+'px'
     }
     this.nodeSelected = false;
-
     console.log(this.showCourseKg);
     console.log(this.showMaterialKg);
     console.log(this.showUserKg);
@@ -448,8 +496,14 @@ export class CytoscapeComponent {
         this.nodeSelected = false;
         if (eventTarget !== this.cy) {
           if (eventTarget.isNode()) {
+            // If there is a previously selected node, reset its border style.
+            if (this.selectedNodeElement) {
+              this.selectedNodeElement.style('border-color', '');
+              this.selectedNodeElement.style('border-width', '');
+            }
             console.log('weight: ' + eventTarget.data('weight'));
             prevNode = eventTarget.data().id;
+            
             selectedNode = {
               id: eventTarget.data('id'),
               cid: eventTarget.data('cid'),
@@ -458,6 +512,11 @@ export class CytoscapeComponent {
               abstract: eventTarget.data('abstract'),
               wikipedia: eventTarget.data('wikipedia'),
             };
+            
+            eventTarget.style('border-color', 'yellow');
+            eventTarget.style('border-width', '7px');
+            // Store the reference for later deselection
+          this.selectedNodeElement = eventTarget;
             children = eventTarget
               .connectedEdges()
               .targets()
@@ -485,13 +544,21 @@ export class CytoscapeComponent {
             }
           } else {
             prevNode = undefined;
+            // If a non-node is clicked, reset the selected node's border.
+          if (this.selectedNodeElement) {
+            this.selectedNodeElement.style('border-color', '');
+            this.selectedNodeElement.style('border-width', '');
+            this.selectedNodeElement = null;
+          }
           }
         }
         this.selectedNodeEvent.emit(selectedNode);
+        this.logUserViewedConcept(selectedNode);
         selectedNode = undefined;
       });
     }
   }
+  
   getAllDescendants(node: any) {
     var all = [];
     getDescendants(node);
@@ -506,6 +573,26 @@ export class CytoscapeComponent {
       }
     }
     return all;
+  }
+  async logUserViewedConcept(selectedNode) {
+    try {
+      if (this.showCourseKg && !this.showMaterialKg) {
+        const payload = {
+          concept: selectedNode,
+          courseId: this.courseId,
+        };
+        this.conceptMapService.logViewConceptCKG(payload).subscribe();
+      } else if (this.showMaterialKg && !this.showCourseKg) {
+        const payload = {
+          concept: selectedNode,
+          courseId: this.courseId,
+          materialId: this.currentMaterial._id,
+        };
+        this.conceptMapService.logViewConceptMKG(payload).subscribe();
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   }
 
   toggleIrrelevantConcepts(cid: string, add: boolean = true) {

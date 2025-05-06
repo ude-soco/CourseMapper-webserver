@@ -6,10 +6,22 @@ const db = require("../models");
 const User = db.user;
 const Role = db.role;
 const Material = db.material;
+const Course = db.course;
 
 const neo4j = require("../graph/neo4j");
 const redis = require("../graph/redis");
 // TODO Issue #640: Use better file names
+
+// User identification for the logging system
+const findUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found!");
+  return user;
+};
+const handleError = (res, error, message) => {
+  console.error(error);
+  return res.status(500).send({ error: message });
+};
 
 async function checkIsModerator(req) {
   if (!req.userId || (!req.params.courseId && !req.params.materialId)) {
@@ -63,15 +75,44 @@ export const checkSlide = async (req, res) => {
   }
 };
 
-export const getSlide = async (req, res) => {
+export const getSlide = async (req, res, next) => {
   const slideId = req.params.slideId;
+  const userId = req.userId;
+  const materialId = slideId.split("_slide_")[0]; // Extract materialId
+  let materialPage = slideId.split("_slide_")[1]; // Extract materialPage
+  let foundUser;
+  let foundMaterial;
+  let records;
 
   try {
-    const records = await neo4j.getSlide(slideId);
-    return res.status(200).send({ records });
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  try {
+    records = await neo4j.getSlide(slideId);
+    // return res.status(200).send({ records });
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: materialPage,
+    records: records,
+  };
+  next();
 };
 
 export const checkMaterial = async (req, res) => {
@@ -88,18 +129,45 @@ export const checkMaterial = async (req, res) => {
   }
 };
 
-export const getMaterial = async (req, res) => {
+export const getMaterial = async (req, res, next) => {
   const materialId = req.params.materialId;
+  const userId = req.userId;
+  let records;
+  let foundUser;
+  let foundMaterial;
+
+  if (!(await isAuthorized(req))) {
+    return res.status(403).send({ error: "Unauthorized" });
+  }
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   try {
-    if (!(await isAuthorized(req))) {
-      return res.status(403).send({ error: "Unauthorized" });
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
     }
-    const records = await neo4j.getMaterial(materialId);
-    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  try {
+    records = await neo4j.getMaterial(materialId);
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    records: records,
+  };
+  next();
 };
 
 export const deleteMaterial = async (req, res, next) => {
@@ -157,23 +225,66 @@ export const getMaterialConceptIds = async (req, res) => {
   }
 };
 
-export const getHigherLevelsNodesAndEdges = async (req, res) => {
+export const getHigherLevelsNodesAndEdges = async (req, res, next) => {
   let materialIds = req.query.material_ids;
+  const userId = req.userId;
+  let materials;
+  let records;
+  let foundUser;
+  let foundCourse;
+  let foundMaterial;
+  let courseId;
+
   if (materialIds.constructor !== Array) {
     materialIds = [materialIds];
   }
 
   try {
-    const materials = await neo4j.checkMaterials(materialIds);
-    if (materials.length === 0) {
-      return res.status(404).send();
-    }
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
-    const records = await neo4j.getHigherLevelsNodesAndEdges(materialIds);
-    return res.status(200).send(records);
+  // Material Ids could be an array of materials
+  if (materialIds.length !== 0) {
+    try {
+      foundMaterial = await Material.findById(materialIds[0]); // I just need a material Object to extract the courseId
+      if (!foundMaterial) {
+        return res.status(404).send({
+          error: `Material with id ${materialIds[0]} doesn't exist!`,
+        });
+      }
+    } catch (err) {
+      return res.status(500).send({ error: "Error finding material" });
+    }
+    courseId = foundMaterial.courseId;
+    try {
+      foundCourse = await Course.findById(courseId);
+      if (!foundCourse) {
+        return res.status(404).send({
+          error: `Course with id ${courseId} doesn't exist!`,
+        });
+      }
+    } catch (err) {
+      return res.status(500).send({ error: err });
+    }
+  }
+
+  try {
+    materials = await neo4j.checkMaterials(materialIds);
+    records = await neo4j.getHigherLevelsNodesAndEdges(materialIds);
+    //return res.status(200).send(records);
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    materials: materials,
+    records: records,
+  };
+
+  next();
 };
 
 export const setRating = async (req, res) => {
@@ -181,7 +292,6 @@ export const setRating = async (req, res) => {
   const concepts = req.body.concepts;
   const userId = req.userId;
   const rating = req.body.rating;
-
   try {
     const result = await neo4j.setRating(resourceId, concepts, userId, rating);
     return res.status(200).send(result);
@@ -191,12 +301,14 @@ export const setRating = async (req, res) => {
 };
 
 export const createCourseNeo4j = async (req, res) => {
-  const { userId, courseId } = req.params; // Extract parameters from the URL
+  const { userId, courseId } = req.params;              // Still extracting from the URL path
+  const { courseName } = req.query;                     // Extract from query parameters
 
   try {
     const result = await neo4j.createUserCourseRelationship(
       userId,
       courseId,
+      courseName,
       "low"
     );
     return res.status(200).send({ success: true, data: result });
@@ -302,24 +414,28 @@ export const addConcept = async (req, res) => {
   const materialId = req.params.materialId;
   const conceptName = req.body.conceptName;
   const slides = req.body.slides;
+  const isNew = req.body.isNew;
+  const isEditing = req.body.isEditing;
+  const lastEdited = req.body.lastEdited;
+  console.log("isNew", isNew);
+  console.log("slides", slides);
 
-  await redis.addJob(
-    "modify-graph",
-    {
-      action: "add-concept",
-      materialId,
-      conceptName,
-      slides,
-    },
-    undefined,
-    (result) => {
-      if (res.headersSent) {
-        return;
-      }
-      if (result.error) {
-        return res.status(500).send(result);
-      }
-      return res.status(200).send(result.result);
+  await redis.addJob('modify-graph', {
+    action: 'add-concept',
+    materialId,
+    conceptName,
+    slides,
+    isNew,
+    isEditing,
+    lastEdited,
+  }, undefined, (result) => {
+    if (res.headersSent) {
+      return;
+    }
+    if (result.error) {
+      return res.status(500).send(result);
+    }
+    return res.status(200).send(result.result);
     }
   );
 };
@@ -472,6 +588,133 @@ export const getUser = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
+}
+export const viewFullWikipediaArticle = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    articleTitle: req.body.title,
+    articleId: req.body.resourceId,
+    articleDescription: req.body.abstract,
+    material: foundMaterial,
+    materialPage: req.body.materialPage,
+  };
+
+  next();
+};
+export const expandedArticleAbstract = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    articleTitle: req.body.title,
+    articleId: req.body.resourceId,
+    articleDescription: req.body.abstract,
+    material: foundMaterial,
+    materialPage: req.body.materialPage,
+  };
+
+  next();
+};
+export const collapsedArticleAbstract = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    articleTitle: req.body.title,
+    articleId: req.body.resourceId,
+    articleDescription: req.body.abstract,
+    material: foundMaterial,
+    materialPage: req.body.materialPage,
+  };
+  next();
+};
+
+export const rateArticle = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    articleId: req.body.resourceId,
+    articleTitle: req.body.title,
+    articleAbstract: req.body.description,
+    concepts: req.body.concepts,
+    material: foundMaterial,
+    materialPage: req.body.materialPage,
+  };
+
+  next();
+
 };
 
 export const getSingleUser = async (req, res) => {
@@ -660,3 +903,655 @@ export const getUser = async (req, res) => {
     return res.status(500).send({ error: err.message });
   }
 };*/
+
+export const rateVideo = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    videoId: req.body.resourceId,
+    videoTitle: req.body.title,
+    videoDescription: req.body.description,
+    concepts: req.body.concepts,
+    material: foundMaterial,
+    materialPage: req.body.materialPage,
+  };
+  next();
+};
+export const viewedAllMainConcepts = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    courseId: req.body.courseId,
+    materialId: req.body.materialId,
+    materialName: req.body.materialName,
+    materialPage: req.body.materialPage,
+    materialURL: req.body.materialURL,
+    newConcepts: req.body.newConcepts,
+    nonUnderstoodConcepts: req.body.nonUnderstoodConcepts,
+    slideId: req.body.slideId,
+    understoodConcepts: req.body.understoodConcepts,
+    mainConcepts: req.body.mainConcepts.nodes,
+  };
+
+  next();
+};
+export const viewedMoreConcepts = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: req.body.currentPage,
+    mainConcepts: req.body.mainConcepts.nodes,
+  };
+
+  next();
+};
+export const viewedLessConcepts = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: req.body.currentPage,
+    mainConcepts: req.body.mainConcepts.nodes,
+  };
+
+  next();
+};
+export const viewedConcept = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: req.body.currentPage,
+    concept: req.body.concept,
+  };
+
+  next();
+};
+export const viewedConceptCourseKG = async (req, res, next) => {
+  const userId = req.userId;
+  const concept = req.body.concept;
+  const courseId = req.body.courseId;
+  let foundUser;
+  let foundCourse;
+
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    concept: concept,
+  };
+
+  next();
+};
+export const viewedConceptMaterialKG = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  const concept = req.body.concept;
+  let foundUser;
+  let foundMaterial;
+
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    concept: concept,
+  };
+
+  next();
+};
+export const viewedExplanationConcept = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: req.body.currentPage,
+    key: req.body.key,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
+    concept_roads: req.body.node_roads,
+    concept_reason: req.body.node_reason,
+  };
+
+  next();
+};
+export const viewedFullArticleRecommendedConcept = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: req.body.currentPage,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
+  };
+
+  next();
+};
+export const viewedFullArticleMainConcept = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    materialPage: req.body.currentPage,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
+    concept_wikipedia: req.body.node_wikipedia,
+  };
+
+  next();
+};
+export const viewedFullArticleMaterialKG = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
+    concept_wikipedia: req.body.node_wikipedia,
+  };
+
+  next();
+};
+export const viewedFullArticleCourseKG = async (req, res, next) => {
+  const userId = req.userId;
+  const courseId = req.body.courseId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundCourse;
+  try {
+    foundCourse = await Course.findById(courseId);
+    if (!foundCourse) {
+      return res.status(404).send({
+        error: `Course with id ${courseId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+
+  req.locals = {
+    user: foundUser,
+    course: foundCourse,
+    concept_id: req.body.node_id,
+    concept_cid: req.body.node_cid,
+    concept_name: req.body.node_name,
+    concept_type: req.body.node_type,
+    concept_abstract: req.body.node_abstract,
+    concept_wikipedia: req.body.node_wikipedia,
+  };
+
+  next();
+};
+
+export const viewedAllRecommendedVideos = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  const videos = req.body.videos;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    videos: videos,
+    materialPage: req.body.materialPage,
+  };
+
+  next();
+};
+
+export const viewedAllRecommendedArticles = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  const articles = req.body.articles;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    articles: articles,
+    materialPage: req.body.materialPage,
+  };
+
+  next();
+};
+export const viewedAllRecommendedConcepts = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    courseId: req.body.courseId,
+    materialId: req.body.materialId,
+    materialName: req.body.materialName,
+    materialPage: req.body.materialPage,
+    materialURL: req.body.materialURL,
+    newConcepts: req.body.newConcepts,
+    nonUnderstoodConcepts: req.body.nonUnderstoodConcepts,
+    slideId: req.body.slideId,
+    understoodConcepts: req.body.understoodConcepts,
+    recommendedConcepts: req.body.recommendedConcepts.nodes,
+  };
+
+  next();
+};
+export const markConceptAsNew = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundMaterial;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    concept: req.body.concept,
+    materialPage: req.body.currentPdfPage,
+  };
+
+  next();
+};
+export const markConceptAsUnderstood = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundMaterial;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    concept: req.body.concept,
+    materialPage: req.body.currentPdfPage,
+  };
+  next();
+};
+export const markConceptAsNotUnderstood = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  let foundMaterial;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    concept: req.body.concept,
+    materialPage: req.body.currentPdfPage,
+  };
+
+  next();
+};
+export const hidConceptsMaterialKG = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  const key = req.body.key;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    key: key,
+  };
+
+  next();
+};
+export const unhidConceptsMaterialKG = async (req, res, next) => {
+  const userId = req.userId;
+  const materialId = req.body.materialId;
+  const key = req.body.key;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    key: key,
+  };
+
+  next();
+};

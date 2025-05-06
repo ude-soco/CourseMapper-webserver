@@ -19,26 +19,23 @@ print(Config.MONGO_DB_URI)
 print(Config.MONGO_DB_NAME)
 mydb = myclient[Config.MONGO_DB_NAME]
 
-collection = mydb["activities"]
-activities = collection.find({})
-listOfStudentActivityDict = dp.processActivities(collection)
+listOfStudentActivityDict = dp.processActivities(mydb)
 stdProfiling.createProfiles(listOfStudentActivityDict)
 
-# Define mapping from cluster label to engagement level
-cluster_to_engagement = {0: "low", 2: "medium", 1: "high"}
 
 
 def exportStudentClusters():
     # Load the dataset
     df = pd.read_csv('activitiesProductionOrig.csv')  # Ensure this file path is correct
-
-    noToFeatures = ['totalSessions', "videosStarted","videosPauses","pdfStarted"]
     
     # Select relevant features for clustering
-    features = [ 'totalEnrollments', 'totalActivities', 
-                'totalAnnotations', 'totalLikesOnAnnotations', 
-                'totalAccesses', 'videosStarted', 'videosPauses', 
-                'pdfStarted', 'pdfCompleted', 'slidesViewed']
+
+    
+    features = [ 'totalActivities', 'totalAddedAnnotations','totalAnnotationsReplied' , 'totalAnnotationsFollowed' ,'totalLikesOnAnnotations', 'totalDislikesOnAnnotations',
+             'totalAccesses', 'totalDashboardAccesses', 'totalUserMentionedRepliedActivities', 'videosStarted','videosCompleted', 'videosPauses', 'timeSpentOnVideos', 'pdfStarted', 'pdfCompleted', 'slidesViewed', 'slidesNotUnderstood', 'totalAddedTags','totalTagViewed', "totalKnowledgeGraphAccesses",
+             "totalKnowledgeGraphConcept/WikiViewed", "totalRecommendedConcept/WikiViewed","totalRecommendedConceptViewedVisualExplanation","totalRecommendedConceptViewedTextualExplanation", "totalRecommendedMaterialViewed", "totalSlideKnowledgeGraphMarkedUnderstood", "totalSlideKnowledgeGraphMarkedNotUnderstood", "totalSlideKnowledgeGraphMarkedAsNew", "recommendedConceptsMarkedUnderstood",
+             "recommendedConceptsMarkedNotUnderstood", "recommendedConceptsMarkedMarkedAsNew", "totalRecommendedMaterialMarkedHelpful", "totalRecommendedMaterialMarkedNotHelpful"
+             ]
     
     # Get unique course IDs
     unique_courses = df['course_id'].unique()
@@ -81,10 +78,10 @@ def exportStudentClusters():
     ###final_df['engagement_level'] = final_df['cluster'].map(cluster_to_engagement)
 
     # Select only relevant columns
-    columns_to_export = ['stdUsername', 'course_id', 'totalEnrollments', 'totalActivities', 
-                         'totalAnnotations', 'totalLikesOnAnnotations', 'totalAccesses', 
-                         'videosStarted', 'videosPauses', 'pdfStarted', 'pdfCompleted', 
-                         'slidesViewed', 'cluster', 'engagement_level']
+    columns_to_export = ['stdUsername', 'course_id',  'totalActivities', 'totalAddedAnnotations','totalAnnotationsReplied' , 'totalAnnotationsFollowed' ,'totalLikesOnAnnotations', 'totalDislikesOnAnnotations',
+             'totalAccesses', 'totalDashboardAccesses', 'totalUserMentionedRepliedActivities', 'videosStarted','videosCompleted', 'videosPauses', 'timeSpentOnVideos', 'pdfStarted', 'pdfCompleted', 'slidesViewed', 'slidesNotUnderstood', 'totalAddedTags','totalTagViewed', "totalKnowledgeGraphAccesses",
+             "totalKnowledgeGraphConcept/WikiViewed", "totalRecommendedConcept/WikiViewed", "totalRecommendedMaterialViewed", "totalSlideKnowledgeGraphMarkedUnderstood", "totalSlideKnowledgeGraphMarkedNotUnderstood", "totalSlideKnowledgeGraphMarkedAsNew", "recommendedConceptsMarkedUnderstood",
+             "recommendedConceptsMarkedNotUnderstood", "recommendedConceptsMarkedMarkedAsNew", "totalRecommendedMaterialMarkedHelpful", "totalRecommendedMaterialMarkedNotHelpful", 'cluster', 'engagement_level']
     
     # Save everything in **one** CSV file
     final_df[columns_to_export].to_csv('student_clusters_all_courses.csv', index=False)
@@ -113,7 +110,7 @@ def update_engagement_status(driver, user_id, course_id, new_level):
             lambda tx: tx.run(
                 """
                 MATCH (u:User {uid: $userId})-[r:ENGAGED_IN]->(c:Course {cid: $courseId})
-                SET r.level = $newLevel, r.timestamp = timestamp()
+                SET r.level = $newLevel, r.timestamp = datetime()
                 RETURN u, c, r
                 """,
                 userId=user_id, courseId=course_id, newLevel=new_level

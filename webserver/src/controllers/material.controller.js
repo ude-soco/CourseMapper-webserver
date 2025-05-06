@@ -31,6 +31,18 @@ export const getMaterialById = async (req, res, next) => {
  * @param {string} req.params.materialId The id of the material
  * @param {string} req.params.courseId The id of the course
  */
+
+// User identification for the logging system
+const findUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found!");
+  return user;
+};
+const handleError = (res, error, message) => {
+  console.error(error);
+  return res.status(500).send({ error: message });
+};
+
 export const getMaterial = async (req, res, next) => {
   const materialId = req.params.materialId;
   const courseId = req.params.courseId;
@@ -73,6 +85,47 @@ export const getMaterial = async (req, res, next) => {
 };
 
 /**
+ * @function accessMaterialDashboard
+ * access material Dashboard
+ *
+ * @param {string} req.params.materialId The id of the material
+ *
+ */
+export const accessMaterialDashboard = async (req, res, next) => {
+  const materialId = req.params.materialId;
+  const userId = req.userId;
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res
+        .status(404)
+        .send({ error: `Material with id ${materialId} not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+  };
+
+  next();
+};
+
+/**
  * @function newMaterial
  * Add a new material to a channel controller
  *
@@ -87,11 +140,18 @@ export const getMaterial = async (req, res, next) => {
 export const newMaterial = async (req, res, next) => {
   const courseId = req.params.courseId;
   const channelId = req.params.channelId;
-  const materialType = req.body.type;
-  const materialName = req.body.name;
-  const materialUrl = req.body.url;
-  const materialDesc = req.body.description;
+  // const materialType = req.body.type;
+  // const materialName = req.body.name;
+  // const materialUrl = req.body.url;
+  // const materialDesc = req.body.description;
   const userId = req.userId;
+  const {
+    type: materialType,
+    name: materialName,
+    url: materialUrl,
+    description: materialDesc,
+    videoType,
+  } = req.body;
 
   let course;
   try {
@@ -127,7 +187,6 @@ export const newMaterial = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding channel" });
   }
-
   let material = new Material({
     type: materialType,
     name: materialName,
@@ -139,6 +198,7 @@ export const newMaterial = async (req, res, next) => {
     userId: req.userId,
     createdAt: Date.now(),
     updatedAt: Date.now(),
+    ...(materialType === "video" && { videoType }), //Only if the materialType is video
   });
 
   let savedMaterial;
@@ -172,6 +232,7 @@ export const newMaterial = async (req, res, next) => {
     materialType,
     course,
     channel: foundChannel,
+    ...(materialType === "video" && { videoType }),
   };
   next();
 };
@@ -185,13 +246,11 @@ export const newMaterial = async (req, res, next) => {
  */
 export const deleteMaterial = async (req, res, next) => {
   let materialId = req.params.materialId;
-  console.log("materialId", materialId);
   let courseId = req.params.courseId;
   const userId = req.userId;
   let course;
   try {
     course = await Course.findById(courseId);
-    console.log("course", course);
   } catch (err) {
     return res.status(500).send({ error: "Error finding course" });
   }
@@ -210,7 +269,6 @@ export const deleteMaterial = async (req, res, next) => {
   let foundMaterial;
   try {
     foundMaterial = await Material.findById(materialId);
-    console.log("foundMaterial", foundMaterial);
     if (!foundMaterial) {
       return res.status(404).send({
         error: `Material with id ${materialId} doesn't exist!`,
@@ -384,6 +442,13 @@ export const editMaterial = async (req, res, next) => {
 
 export const newIndicator = async (req, res, next) => {
   const materialId = req.params.materialId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundMaterial;
   try {
@@ -411,10 +476,17 @@ export const newIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving material" });
   }
 
-  return res.status(200).send({
-    success: `Indicator added successfully!`,
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
     indicator: indicator,
-  });
+    success: `Indicator added successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator added successfully!`,
+  //   indicator: indicator,
+  // });
 };
 
 /**
@@ -427,6 +499,14 @@ export const newIndicator = async (req, res, next) => {
 export const deleteIndicator = async (req, res, next) => {
   const materialId = req.params.materialId;
   const indicatorId = req.params.indicatorId;
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundMaterial;
   try {
@@ -445,6 +525,18 @@ export const deleteIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding material" });
   }
 
+  // Find the indicator to delete
+  let deletedIndicator;
+  deletedIndicator = foundMaterial.indicators.find(
+    (indicator) => indicator._id.toString() === indicatorId
+  );
+
+  if (!deletedIndicator) {
+    return res.status(404).send({
+      error: `Indicator with id ${indicatorId} not found in the material!`,
+    });
+  }
+
   foundMaterial.indicators = foundMaterial.indicators.filter(
     (indicator) => indicator._id.toString() !== indicatorId
   );
@@ -454,9 +546,17 @@ export const deleteIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving material" });
   }
-  return res.status(200).send({
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    indicator: deletedIndicator,
     success: `Indicator deleted successfully!`,
-  });
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator deleted successfully!`,
+  // });
 };
 
 /**
@@ -467,6 +567,14 @@ export const deleteIndicator = async (req, res, next) => {
  */
 export const getIndicators = async (req, res, next) => {
   const materialId = req.params.materialId;
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundMaterial;
   try {
@@ -496,9 +604,16 @@ export const getIndicators = async (req, res, next) => {
 export const resizeIndicator = async (req, res, next) => {
   const materialId = req.params.materialId;
   const indicatorId = req.params.indicatorId;
-  const width = req.params.width;
-  const height = req.params.height;
+  const newWidth = req.params.width;
+  const newHeight = req.params.height;
+  const userId = req.userId;
 
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
   let foundMaterial;
   try {
     foundMaterial = await Material.findOne({ "indicators._id": indicatorId });
@@ -516,11 +631,17 @@ export const resizeIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding material" });
   }
-
+  let resizedIndicator;
+  let oldDimensions = {};
   foundMaterial.indicators.forEach((indicator) => {
     if (indicator._id.toString() === indicatorId.toString()) {
-      indicator.width = width;
-      indicator.height = height;
+      oldDimensions = {
+        width: indicator.width,
+        height: indicator.height,
+      };
+      indicator.width = newWidth;
+      indicator.height = newHeight;
+      resizedIndicator = indicator;
     }
   });
 
@@ -529,7 +650,17 @@ export const resizeIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving material" });
   }
-  return res.status(200).send();
+
+  req.locals = {
+    material: foundMaterial,
+    indicator: resizedIndicator,
+    user: foundUser,
+    oldDimensions: oldDimensions,
+    newDimentions: { width: newWidth, height: newHeight },
+    success: `Indicator resized successfully!`,
+  };
+  next();
+  // return res.status(200).send();
 };
 
 /**
@@ -544,7 +675,14 @@ export const reorderIndicators = async (req, res, next) => {
   const materialId = req.params.materialId;
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
+  const userId = req.userId;
 
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
   let foundMaterial;
   try {
     foundMaterial = await Material.findById(materialId);
@@ -573,8 +711,58 @@ export const reorderIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving material" });
   }
-  return res.status(200).send({
-    success: `Indicators updated successfully!`,
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    indicator: indicator,
+    oldIndex: oldIndex,
+    newIndex: newIndex,
     indicators: foundMaterial.indicators,
-  });
+    success: `Indicators updated successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicators updated successfully!`,
+  //   indicators: foundMaterial.indicators,
+  // });
+};
+
+export const zoomPDF = async (req, res, next) => {
+  const materialId = req.body.payload.materialId;
+  const buttonId = req.body.payload.buttonId;
+  const oldZoom = req.body.payload.oldZoom;
+  const newZoom = req.body.payload.newZoom;
+  const userId = req.userId;
+
+  let foundMaterial;
+  try {
+    foundMaterial = await Material.findById(materialId);
+    if (!foundMaterial) {
+      return res.status(404).send({
+        error: `Material with id ${materialId} doesn't exist!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    material: foundMaterial,
+    buttonId: buttonId,
+    oldZoom: oldZoom,
+    newZoom: newZoom,
+  };
+
+  next();
 };

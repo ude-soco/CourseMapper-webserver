@@ -91,52 +91,13 @@ export class AddCourseComponent implements OnInit {
     return validExtensions.includes(fileExtension);
   }
 
-  fetchAndUploadRandomImage(course: Course): string {
-    const randomImgUrl = 'https://picsum.photos/536/354';
-    const newFileName = `${course._id}.jpg`;
-    course.url = '/public/uploads/pdfs/' + newFileName;
-
-    // Fetch the random image as a Blob
-    fetch(randomImgUrl)
-      .then((response) => response.blob())
-      .then((blob) => {
-        // Create a new file name with the course ID
-
-        // Prepare the FormData for upload
-        let formData = new FormData();
-        formData.append('file', blob, newFileName);
-
-        // Upload the random image
-        this.materialService.uploadFile(formData, 'img').subscribe(
-          (res) => {
-            if (res.message === 'Image uploaded successfully!') {
-              this.showInfo('Random image successfully added!');
-
-              this.courseService
-                .updateCourse(course)
-                .subscribe((res: any) => {});
-            }
-          },
-          (error) => {
-            console.error(error);
-            this.showError('Failed to upload the random image.');
-          }
-        );
-      })
-      .catch((error) => {
-        console.error('Error fetching random image:', error);
-        this.showError('Failed to fetch random image.');
-      });
-
-    return newFileName;
-  }
 
   setCourseIamge(course: Course): string {
     if (this.chosenFile) {
       // Resize the image to the fixed dimensions (536x354) before uploading
       const fileExtension = this.selectedFileName.split('.').pop(); // Extract file extension
       const newFileName = `${course._id}.${fileExtension}`; // Create new file name
-      course.url = '/public/uploads/pdfs/' + newFileName;
+      course.url = '/public/uploads/images/' + newFileName;
 
       //console.log('Resizing and uploading file with the name: ' + newFileName);
 

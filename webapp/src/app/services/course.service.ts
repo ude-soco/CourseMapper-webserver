@@ -47,6 +47,11 @@ export class CourseService {
   getSelectedCourse(): Course {
     return this.selectedCourse;
   }
+  logAccessCourseDashboard(courseId: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/courses/${courseId}/log-dashboard`, {
+      courseId,
+    });
+  }
 
   /**
    * @function selectCourse
@@ -170,6 +175,31 @@ export class CourseService {
         })
       );
   }
+  /**
+   * @function shareCourse
+   * Sends a request to the backend to log the share activity
+   *
+   * @param {Course} courseTS The course to share
+   */
+  shareCourse(courseTS: Course) {
+    return this.http
+      .post<any>(`${this.API_URL}/courses/${courseTS._id}/share`, {
+        courseName: courseTS.name,
+        courseId: courseTS._id,
+        frontendHost: window.location.origin,
+      })
+      .pipe(
+        catchError((errResponse, sourceObservable) => {
+          if (errResponse.status === 404) {
+            return of({ errorMsg: errResponse.error.error });
+          } else {
+            return of({
+              errorMsg: 'Error in connection: Please reload the application',
+            });
+          }
+        })
+      );
+  }
 
   /**
    * @function removeCourse
@@ -222,6 +252,7 @@ export class CourseService {
               const updatedCourse = courses.find((c) => c._id === course._id);
 
               if (updatedCourse) {
+                this.selectedCourse = { ...updatedCourse };
                 this.onSelectCourse.emit(updatedCourse);
               } else {
                 console.error('Updated course not found in courses list.');

@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { State } from '../pages/courses/state/course.reducer';
 import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
 import { Neo4jService } from './neo4j.service';
+import { Course } from '../models/Course';
 @Injectable({
   providedIn: 'root',
 })
@@ -38,15 +39,26 @@ export class MaterilasService {
   }
 
   addMaterial(material: CreateMaterial): any {
+    const payload: any = {
+      type: material.type,
+      url: material.url,
+      name: material.name,
+      description: material.description,
+    };
+    // Add videoType to payload, when the materialType is video
+    if (material.type === 'video' && material.videoType) {
+      payload.videoType = material.videoType;
+    }
     return this.http
       .post<any>(
         `${this.API_URL}/courses/${material.courseId}/channels/${material.channelId}/material`,
-        {
-          type: material.type,
-          url: material.url,
-          name: material.name,
-          description: material.description,
-        }
+        payload
+        // {
+        //   type: material.type,
+        //   url: material.url,
+        //   name: material.name,
+        //   description: material.description,
+        // }
       )
       .pipe(
         catchError((err) => {
@@ -134,6 +146,12 @@ export class MaterilasService {
         );
     }
   }
+  deleteCourseImage(course: Course): Observable<any> {
+    const fileName = course.url.split('/').pop();
+    // Assuming course.imageFileName is the full file name with extension
+    const url = `${this.API_URL}/images/${fileName}`;
+    return this.http.delete(url, { body: course });
+  }
 
   renameMaterial(courseId: any, materialTD: Material, body: any) {
     return this.http
@@ -146,5 +164,21 @@ export class MaterilasService {
           return of({ errorMsg: err.error.error });
         })
       );
+  }
+  logAccessMaterialDashboard(materialId: string): Observable<any> {
+    return this.http.post(
+      `${this.API_URL}/materials/${materialId}/log-dashboard`,
+      {
+        materialId,
+      }
+    );
+  }
+  logZoomPDF(payload): Observable<string> {
+    return this.http.post<string>(
+      `${this.API_URL}/courses/${payload.courseId}/materials/${payload.materialId}/pdf-zoom`,
+      {
+        payload,
+      }
+    );
   }
 }

@@ -27,13 +27,17 @@
       <div class="cursor-pointer overscroll-y-auto h-1/2 flex flex-wrap">
         <div *ngFor="let course of userArray" (click)="onSelectCourse(course)">
           <p-card styleClass="p-card-shadow" class="course-card">
-            <hr style="margin-bottom: 0.75rem; margin-top: 0%" />
+            <hr  class="mt-0 mb-3" />
             <ng-template pTemplate="header">
-              <img alt="Card" src="{{ this.getCourseImage(course) }}" />
+              <img 
+      alt="Card" 
+      [src]="this.getCourseImage(course)" 
+      class="w-[300px] h-[200px] object-cover" 
+    />
             </ng-template>
 
             <ng-template pTemplate="content-center" style="float: left">
-              <div class="w-full h-14 mb-3 flex items-start">
+              <div class="w-full h-14 mb-3 flex items-center">
                 <p-avatar
                   label="{{ course.shortName }}"
                   shape="circle"
