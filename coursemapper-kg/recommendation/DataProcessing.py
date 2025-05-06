@@ -139,6 +139,8 @@ studentActivitiesDict2 =  {
                     "totalRecommendedConcept/WikiViewed": 0000,
                     "totalRecommendedConceptViewed": 0000,
                     "totalRecommendedWikiArticleViewed": 0000,
+                    "totalRecommendedConceptViewedVisualExplanation": 0000,
+                    "totalRecommendedConceptViewedTextualExplanation": 0000,
                     "recommendedMaterial": {
                         "totalRecommendedMaterialViewed": 0000,
                         "recommendedArticleViewed":0000,
