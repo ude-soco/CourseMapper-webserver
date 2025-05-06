@@ -80,11 +80,11 @@ export class GraphComponent {
     private store: Store<State>,
     private neo4jService: Neo4jService
   ) {
-    this.subscriptions.push(
-      this.store
-        .select(getLoggedInUser)
-        .subscribe((user) => (this.loggedInUser = user))
-    );
+    // this.subscriptions.push(
+    //   this.store
+    //     .select(getLoggedInUser)
+    //     .subscribe((user) => (this.loggedInUser = user))
+    // );
     this.newConceptsSubscription = slideConceptservice.newConcepts.subscribe(
       (res) => {
         this.newConceptsObj = res;

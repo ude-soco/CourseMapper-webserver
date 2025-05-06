@@ -25,10 +25,8 @@ import { MaterialsRecommenderService } from 'src/app/services/materials-recommen
 import { getCurrentMaterial } from '../../materials/state/materials.reducer';
 import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { Subscription } from 'rxjs';
-import { State } from 'src/app/state/app.reducer';
 import * as $ from 'jquery';
 import { Neo4jService } from 'src/app/services/neo4j.service';
-import { Store } from '@ngrx/store';
 import { State, getLoggedInUser } from 'src/app/state/app.reducer';
 import { User } from 'src/app/models/User';
 
@@ -73,7 +71,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   public _elements: any;
   public allElements: any;
   public topElements: any;
-  private subscriptions: Subscription[] = [];
+  private subscription: Subscription[] = [];
 
   layout: any;
 
@@ -103,7 +101,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
     private neo4jService: Neo4jService,
     private store: Store<State>
   ) {
-    this.subscriptions.push(
+    this.subscription.push(
       this.store
         .select(getLoggedInUser)
         .subscribe((user) => (this.loggedInUser = user))
