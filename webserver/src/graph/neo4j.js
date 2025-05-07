@@ -123,7 +123,6 @@ export async function getMaterial(materialId) {
   return recordsToObjects(records);
 }
 
-
 export async function getMaterialSlides(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
     "MATCH (c:Slide) WHERE c.mid = $mid RETURN LABELS(c) as labels,ID(c) AS id, c.cid as cid, c.sid as sid",
@@ -171,7 +170,9 @@ export async function getMaterialConceptIds(materialId) {
     )
     RETURN c.cid AS id, c.name AS name, c.isNew AS isNew, c.isEditing AS isEditing, c.lastEdited AS lastEdited, c.type as type
   `;
-  const { records, summary, keys } = await graphDb.driver.executeQuery(query, { mid: materialId });
+  const { records, summary, keys } = await graphDb.driver.executeQuery(query, {
+    mid: materialId,
+  });
   return recordsToObjects(records);
 }
 
@@ -340,11 +341,16 @@ const getCourseNameById = async (courseId) => {
   }
 };
 
-export async function createUserCourseRelationship(userId, courseId,courseName, engagementLevel) {
+export async function createUserCourseRelationship(
+  userId,
+  courseId,
+  courseName,
+  engagementLevel
+) {
   const session = graphDb.driver.session();
   try {
     // Get the course name first
-    const courseName = await getCourseNameById(courseId);
+    // const courseName = await getCourseNameById(courseId);
 
     const result = await session.executeWrite(async (tx) => {
       const response = await tx.run(
@@ -356,7 +362,7 @@ export async function createUserCourseRelationship(userId, courseId,courseName, 
         ON MATCH SET loe.level = $engagementLevel, loe.status = 'enrolled', loe.timestamp = datetime()
         RETURN u, c, loe
         `,
-        { userId, courseId,courseName, engagementLevel }
+        { userId, courseId, courseName, engagementLevel }
       );
       return recordsToObjects(response.records);
     });
