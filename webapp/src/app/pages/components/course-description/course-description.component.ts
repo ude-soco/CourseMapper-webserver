@@ -197,10 +197,10 @@ export class CourseDescriptionComponent {
     // Call the Neo4j service to create the relationship
     this.neo4jService.createUserCourseRelationship(userId, courseId, courseName).subscribe({
       next: () => {
-        this.showInfo('User-course relationship created successfully!');
+        console.log('User-course relationship created successfully!');
       },
       error: (err) => {
-        this.showError('Failed to create user-course relationship.');
+        
         console.error(err);
       },
     });
