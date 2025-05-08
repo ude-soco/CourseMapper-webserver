@@ -17,7 +17,7 @@ RUN  --mount=type=cache,target=/app/node_modules/.cache,rw \
 
 
 
-FROM nginxinc/nginx-unprivileged:1.27.4-alpine
+FROM nginxinc/nginx-unprivileged:1.27.5-alpine
 
 USER root
 WORKDIR /usr/share/nginx/html
