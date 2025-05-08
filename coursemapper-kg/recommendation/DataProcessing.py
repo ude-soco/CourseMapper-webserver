@@ -372,28 +372,28 @@ def processActivities(mydb):
                     if splittedThisActivityStringArray[2] == 'note':
                         listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['totalAddedAnnotations']+=1
                         listOfStudentActivityDict2[index]['activitiesProfile']['annotations']["totalNoteTypeAnnotations"]+= 1
-                        if splittedThisActivityStringArray[3] == 'comment':
+                        if splittedThisActivityStringArray[3] == 'annotation':
                             listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['comment']["noteTypeCommentsOnMaterial"]+= 1
 
  
                     elif splittedThisActivityStringArray[2] == 'question':
                         listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['totalAddedAnnotations']+=1
                         listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['totalQuestionTypeAnnotations'] += 1
-                        if splittedThisActivityStringArray[3] == 'comment':
+                        if splittedThisActivityStringArray[3] == 'annotation':
                             listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['comment']["questionTypeCommentsOnMaterial"]+= 1
  
                     elif splittedThisActivityStringArray[2] == 'external-resource':
                         listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['totalAddedAnnotations']+=1
                         listOfStudentActivityDict2[index]['activitiesProfile']['annotations']["totalExternalResourceTypeAnnotations"]+= 1
-                        if splittedThisActivityStringArray[3] == 'comment':
+                        if splittedThisActivityStringArray[3] == 'annotation':
                             listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['comment']["externalResourceTypeCommentsOnMaterial"]+= 1
 
                     elif splittedThisActivityStringArray[2] == 'tag':
                         listOfStudentActivityDict2[index]['activitiesProfile']['tag']['totalAddedTags'] += 1
 
-                    if splittedThisActivityStringArray[3] == 'pinpoint':
+                    if splittedThisActivityStringArray[3] == 'pin':
                         listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['annotationTools']["pinpointToolOnMaterial"]+= 1
-                    elif splittedThisActivityStringArray[3] == 'draw':
+                    elif splittedThisActivityStringArray[3] == 'drawing':
                         listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['annotationTools']["drawToolOnMaterial"]+= 1
                     elif splittedThisActivityStringArray[3] == 'highlight':
                         listOfStudentActivityDict2[index]['activitiesProfile']['annotations']['annotationTools']["highlightToolOnMaterial"]+= 1
@@ -547,20 +547,26 @@ def processActivities(mydb):
  
                        
                         if  splittedThisActivityStringArray[3] == 'understood':
+                            listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['totalSlideKnowledgeGraphMarked'] += 1
                             listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['totalSlideKnowledgeGraphMarkedUnderstood'] += 1
                         elif  splittedThisActivityStringArray[3] == 'new':
+                            listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['totalSlideKnowledgeGraphMarked'] += 1
                             listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['totalSlideKnowledgeGraphMarkedAsNew'] += 1
                         elif  splittedThisActivityStringArray[3] + splittedThisActivityStringArray[4]  == 'notunderstood':
+                            listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['totalSlideKnowledgeGraphMarked'] += 1
                             listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['totalSlideKnowledgeGraphMarkedNotUnderstood'] += 1
                    
                     elif splittedThisActivityStringArray[4]  == 'slide-kg-recommended-concept' or splittedThisActivityStringArray[5]  == 'slide-kg-recommended-concept':
  
                        
                         if  splittedThisActivityStringArray[3] == 'understood':
+                            listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['totalRecommendedConceptsMarked'] += 1
                             listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['recommendedConceptsMarkedUnderstood'] += 1
                         elif  splittedThisActivityStringArray[3] == 'new':
+                            listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['totalRecommendedConceptsMarked'] += 1
                             listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['recommendedConceptsMarkedMarkedAsNew'] += 1
                         elif  splittedThisActivityStringArray[3] + splittedThisActivityStringArray[4]  == 'notunderstood':
+                            listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['totalRecommendedConceptsMarked'] += 1
                             listOfStudentActivityDict2[index]['activitiesProfile']['knowledgeGraph']['slideKnowledgeGraphMarked']['recommendedConceptsMarkedNotUnderstood'] += 1
                    
                     elif 'marked as helpful' in activity:
