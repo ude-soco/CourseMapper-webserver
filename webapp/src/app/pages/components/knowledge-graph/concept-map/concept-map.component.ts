@@ -716,6 +716,8 @@ export class ConceptMapComponent {
       conceptName: new FormControl(null),
       conceptSlides: new FormControl(null),
     });
+
+    window.addEventListener('resize', this.setResponsiveWidthKnowledgeGraph);
   }
 
   ngAfterViewChecked() {
@@ -854,7 +856,9 @@ export class ConceptMapComponent {
       } else {
         this.slideKgWidth = slideKgDialogDiv.offsetWidth;
       }
-      knowledgeGraph.style.width = this.slideKgWidth + 'px';
+      // knowledgeGraph.style.width = this.slideKgWidth + 'px';
+      this.setResponsiveWidthKnowledgeGraph(knowledgeGraph);
+
     }, 2);
   }
   // hide sidebar
@@ -867,6 +871,11 @@ export class ConceptMapComponent {
       knowledgeGraph.style.marginLeft = 0 + 'rem';
       knowledgeGraph.style.width = slideKgDialogDiv.offsetWidth + 'px';
     }, 2);
+  }
+  
+  setResponsiveWidthKnowledgeGraph(knowledgeGraph) {
+    const vw = window.innerWidth;
+    knowledgeGraph.style.width = '75%';
   }
 
   async getConceptMapData() {
