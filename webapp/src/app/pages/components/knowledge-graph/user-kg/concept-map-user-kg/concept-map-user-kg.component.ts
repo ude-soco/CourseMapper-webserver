@@ -1738,7 +1738,7 @@ export class ConceptMapUserKgComponent {
       summary: 'User is not enrolled in any course',
       detail:
         'No Personal Knowledge Graph could be generated because user has not enrolled in any courses yet',
-      sticky: true,
+      life: 5000,
     });
   }
 }
