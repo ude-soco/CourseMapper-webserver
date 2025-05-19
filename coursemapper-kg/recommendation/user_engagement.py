@@ -19,12 +19,11 @@ print(Config.MONGO_DB_URI)
 print(Config.MONGO_DB_NAME)
 mydb = myclient[Config.MONGO_DB_NAME]
 
-listOfStudentActivityDict = dp.processActivities(mydb)
-stdProfiling.createProfiles(listOfStudentActivityDict)
-
-
 
 def exportStudentClusters():
+
+    listOfStudentActivityDict = dp.processActivities(mydb)
+    stdProfiling.createProfiles(listOfStudentActivityDict)
     # Load the dataset
     df = pd.read_csv('activitiesProductionOrig.csv')  # Ensure this file path is correct
     
@@ -107,10 +106,12 @@ def update_engagement_status(driver, user_id, course_id, new_level):
     """
     with driver.session() as session:
         session.write_transaction(
-            lambda tx: tx.run(
+          lambda tx: tx.run(
                 """
-                MATCH (u:User {uid: $userId})-[r:ENGAGED_IN]->(c:Course {cid: $courseId})
-                SET r.level = $newLevel, r.timestamp = datetime()
+                MERGE (u:User {uid: $userId})
+                MERGE (c:Course {cid: $courseId})
+                MERGE (u)-[r:ENGAGED_IN]->(c)
+                SET r.level = $newLevel, r.status = 'enrolled', r.timestamp = datetime()
                 RETURN u, c, r
                 """,
                 userId=user_id, courseId=course_id, newLevel=new_level
