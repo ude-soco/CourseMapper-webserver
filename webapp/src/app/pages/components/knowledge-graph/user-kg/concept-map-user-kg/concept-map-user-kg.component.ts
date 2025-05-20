@@ -652,6 +652,24 @@ export class ConceptMapUserKgComponent {
       this.changeDetectorRef.detectChanges();
     }
     this.cyWidth = window.innerWidth * 0.9;
+    if (this.showUserKg || this.showEngagementKg || this.showDNUEngagementKg) {
+      // this.cyWidth = window.innerWidth * 0.9 - 270;
+      this.cyHeight = window.innerHeight * 0.9 - 270;
+      const container = document.querySelector(
+        '.knowledge-graph-container'
+      ) as HTMLElement;
+      if (!container) return;
+      container.style.width = '120%';
+      container.style.maxWidth = '120%';
+
+      const header = document.querySelector('.kg-header') as HTMLElement;
+      if (header) {
+        header.style.width = '120%';
+        header.style.maxWidth = '120%';
+      }
+      this.stopCheck = true;
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   setChipConcept(concept: any): void {
