@@ -625,6 +625,7 @@ export class CytoscapeUserKgComponent {
                 .targets()
                 .style('display', 'none');
             }
+            // filter by dnu
             if (this.showDNU) {
               let nodesToHide = nodes.filter(function (e: any) {
                 return (
@@ -651,6 +652,7 @@ export class CytoscapeUserKgComponent {
                   .$(`#${edgesToHide[i].data.target}`)
                   .style('display', 'none');
               }
+              // filter by u
             } else if (this.showU) {
               let nodesToHide = nodes.filter(function (e: any) {
                 return (
@@ -954,6 +956,7 @@ export class CytoscapeUserKgComponent {
         const connectedConcepts = userNode.connectedEdges().targets();
 
         // If showDNU is true, only show concepts connected by non-'u' edges
+        // prevent resetting filter
         if (this.showDNU) {
           connectedConcepts
             .filter((node) => {
@@ -1516,6 +1519,7 @@ export class CytoscapeUserKgComponent {
           }
         }
       });
+      // right clicking a node
       this.cy.on('cxttapend', async (event: any) => {
         var eventTarget = event.target;
         if (

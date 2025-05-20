@@ -34,6 +34,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MaterilasService } from 'src/app/services/materials.service';
 import { EngagementKgOrderedService } from 'src/app/services/engagement-kg-ordered.service';
 import { DNUEngagementKgOrderedService } from 'src/app/services/dnu-engagement-kg-ordered.service';
+import { UserServiceService } from 'src/app/services/user-service.service';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 
 interface topN {
@@ -77,6 +78,7 @@ export class ConceptMapUserKgComponent {
   showConcepts?: boolean; // to show concepts if retrieved
   username: any; //to assign current userName
   userid: any; //to assign current userID
+  userFullName: any;
   userEmail: any; //to assign current userEmail
   allConceptsObj = []; //all KG_concaptes
   understoodConceptsObj = []; //object that gets updated on node's status changed
@@ -289,7 +291,8 @@ export class ConceptMapUserKgComponent {
     private socket: Socket,
     private materialsService: MaterilasService,
     private dnuengagementKgGenerator: DNUEngagementKgOrderedService,
-    private router: Router
+    private router: Router,
+    private userService: UserServiceService
   ) {
     // get current user
     this.subscriptions.push(
@@ -478,6 +481,16 @@ export class ConceptMapUserKgComponent {
       this.userid = this.loggedInUser.id;
       this.username = this.loggedInUser.username;
       this.userEmail = this.loggedInUser.email;
+    }
+    if (this.userid) {
+      this.userService.GetUserName(this.userid).subscribe({
+        next: (userData) => {
+          this.userFullName = userData.firstname + ' ' + userData.lastname;
+        },
+        error: (error) => {
+          console.error('Error fetching user data:', error);
+        },
+      });
     }
     this.chipMenu = [
       {
@@ -739,13 +752,14 @@ export class ConceptMapUserKgComponent {
           this.userid
         ); // to check if user is enrolled in courses
         console.log(userNode);
+        // console.log(this.userFullName);
         if (userNode.records.length !== 0 && courseNode.records.length !== 0) {
           let data = userNode.records;
           var userNodeEle = {
             id: data[0].u.identity.toString(),
             uid: data[0].u.properties.uid,
             type: data[0].u.properties.type,
-            name: data[0].u.labels[0],
+            name: this.userFullName,
           };
           kgNodes.push(userNodeEle);
           userNode.records.forEach((data) => {
@@ -873,7 +887,7 @@ export class ConceptMapUserKgComponent {
             id: data[0].u.identity.toString(),
             uid: data[0].u.properties.uid,
             type: data[0].u.properties.type,
-            name: data[0].u.labels[0],
+            name: this.userFullName,
           };
           kgNodes.push(userNodeEle);
         } else {
@@ -971,7 +985,7 @@ export class ConceptMapUserKgComponent {
             id: data[0].u.identity.toString(),
             uid: data[0].u.properties.uid,
             type: data[0].u.properties.type,
-            name: data[0].u.labels[0],
+            name: this.userFullName,
           };
           kgNodes.push(userNodeEle);
           userNode.records.forEach((data) => {
@@ -1005,7 +1019,7 @@ export class ConceptMapUserKgComponent {
             id: data[0].u.identity.toString(),
             uid: data[0].u.properties.uid,
             type: data[0].u.properties.type,
-            name: data[0].u.labels[0],
+            name: this.userFullName,
           };
           kgNodes.push(userNodeEle);
         }
@@ -1102,7 +1116,7 @@ export class ConceptMapUserKgComponent {
             id: data[0].u.identity.toString(),
             uid: data[0].u.properties.uid,
             type: data[0].u.properties.type,
-            name: data[0].u.labels[0],
+            name: this.userFullName,
           };
           kgNodes.push(userNodeEle);
           userNode.records.forEach(async (data) => {
@@ -1299,7 +1313,7 @@ export class ConceptMapUserKgComponent {
             id: data[0].u.identity.toString(),
             uid: data[0].u.properties.uid,
             type: data[0].u.properties.type,
-            name: data[0].u.labels[0],
+            name: this.userFullName,
           };
           kgNodes.push(userNodeEle);
         }

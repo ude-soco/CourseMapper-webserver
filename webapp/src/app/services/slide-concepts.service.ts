@@ -162,6 +162,7 @@ export class SlideConceptsService {
     this.understoodConcepts.next(list);
   }
   updateUnderstoodConcepts(concept: any) {
+    console.log(this.currentMaterial);
     if (
       this.commonUnderstoodConcepts.some(
         (e) => e.cid.toString() === concept.cid.toString()
