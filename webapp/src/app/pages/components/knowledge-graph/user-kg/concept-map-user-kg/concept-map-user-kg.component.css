@@ -518,10 +518,18 @@
   width: 100%;
   height: 500px; /* Default height */
 }
-
-@media (max-height: 1024px) {
-  /* For screens 16 inches (~1024px height) and smaller */
-  .responsive-pdf-viewer {
-    height: 330px;
-  }
+.kg-header {
+  width: 120% !important;
+  max-width: 120% !important;
+}
+hr {
+  width: 120% !important;
+}
+.flex.items-center.justify-between {
+  width: 120% !important;
+  max-width: 120% !important;
+}
+.knowledge-graph-container {
+  width: 120% !important;
+  max-width: 120% !important;
 }

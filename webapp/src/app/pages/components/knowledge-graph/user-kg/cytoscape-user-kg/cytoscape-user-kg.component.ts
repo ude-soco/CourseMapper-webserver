@@ -426,6 +426,8 @@ export class CytoscapeUserKgComponent {
     } else {
       document.getElementById('cy').style.width = 100 + '%';
     }
+    let cyContainer = document.getElementById('cy');
+    cyContainer.style.width = '120%';
   }
 
   updateEdgeType = async function (nodeId: string, type: string) {
