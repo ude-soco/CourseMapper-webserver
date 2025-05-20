@@ -672,66 +672,113 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
       return;
     }
 
-    const user = await this.neo4jService.getUser(this.loggedInUser.id);
-    const userId = user.records[0].u.identity;
-    console.log(userId);
+    try {
+      const user = await this.neo4jService.getUser(this.loggedInUser.id);
 
-    // Get all relationships for this user from Neo4j
-    this.neo4jService
-      .getUserRelationships(userId)
-      .then((result) => {
-        console.log('Received relationships from Neo4j:', result);
+      // Check if user exists in Neo4j
+      if (!user || !user.records || user.records.length === 0) {
+        console.log('No user node found in Neo4j');
 
-        const relationships = result.records || result;
-
-        if (!relationships) {
-          return;
-        }
-
-        // Update node statuses based on relationship types
+        // If no user node, set all concepts to 'unread'
         this.elements.nodes.forEach((node) => {
-          // Skip user nodes
-          if (node.data.type === 'user') {
-            return;
-          }
-          const nodeId = parseInt(node.data.id, 10);
-          const relationships = Array.isArray(result.records)
-            ? result.records
-            : Array.isArray(result)
-            ? result
-            : [];
-          console.log(relationships);
-          const rel = relationships.find((r) => r.target === nodeId);
-          console.log(rel);
-          console.log(node.data);
-          if (rel) {
-            // Map Neo4j relationship type to slide KG status
-            if (rel.type === 'dnu') {
-              node.data.status = 'notUnderstood';
-              console.log(node);
-              this.slideConceptservice.updateDidNotUnderstandConcepts(
-                node.data
-              );
-            } else if (rel.type === 'u') {
-              node.data.status = 'understood';
-              this.slideConceptservice.updateUnderstoodConcepts(node.data);
-            }
-          } else {
+          if (node.data.type !== 'user') {
             node.data.status = 'unread';
             this.slideConceptservice.updateNewConcepts(node.data);
           }
-          /*if (node.data.isDeleted) {
-            node.data.status = 'unread'; // Default status
-          }*/
         });
 
-        // Update the cytoscape graph with new statuses
+        // Update the cytoscape graph with default statuses
         if (this.cy) {
           this.cy.style(this.showAllStyle);
         }
-      })
-      .catch((error) => {
-        console.error('Error fetching relationships from Neo4j:', error);
+        return;
+      }
+
+      const userId = user.records[0].u.identity;
+      console.log(userId);
+
+      const result = await this.neo4jService.getUserRelationships(userId);
+      console.log('Received relationships from Neo4j:', result);
+
+      const relationships = result.records || result;
+
+      // If no relationships found, set all concepts to 'unread'
+      if (!relationships) {
+        console.log('No relationships found for user');
+
+        this.elements.nodes.forEach((node) => {
+          if (node.data.type !== 'user') {
+            node.data.status = 'unread';
+            this.slideConceptservice.updateNewConcepts(node.data);
+          }
+        });
+
+        // Update the cytoscape graph with default statuses
+        if (this.cy) {
+          this.cy.style(this.showAllStyle);
+        }
+        return;
+      }
+
+      // Update node statuses based on relationship types
+      this.elements.nodes.forEach((node) => {
+        // Skip user nodes
+        if (node.data.type === 'user') {
+          return;
+        }
+
+        const nodeId = parseInt(node.data.id, 10);
+        const parsedRelationships = Array.isArray(result.records)
+          ? result.records
+          : Array.isArray(result)
+          ? result
+          : [];
+
+        console.log('Relationships for processing:', parsedRelationships);
+
+        const rel = parsedRelationships.find((r) => r.target === nodeId);
+        console.log(`Relationship for node ${nodeId}:`, rel);
+        console.log('Node data:', node.data);
+
+        if (rel) {
+          // Map Neo4j relationship type to slide KG status
+          if (rel.type === 'dnu') {
+            node.data.status = 'notUnderstood';
+            console.log('Setting as notUnderstood:', node);
+            this.slideConceptservice.updateDidNotUnderstandConcepts(node.data);
+          } else if (rel.type === 'u') {
+            node.data.status = 'understood';
+            console.log('Setting as understood:', node);
+            this.slideConceptservice.updateUnderstoodConcepts(node.data);
+          }
+        } else {
+          node.data.status = 'unread';
+          console.log('Setting as unread (no relationship):', node.data);
+          this.slideConceptservice.updateNewConcepts(node.data);
+        }
       });
+
+      // Update the cytoscape graph with new statuses
+      if (this.cy) {
+        this.cy.style(this.showAllStyle);
+      }
+    } catch (error) {
+      console.error('Error in refreshNodeStatuses:', error);
+
+      // set all concepts to 'unread'
+      if (this.elements && this.elements.nodes) {
+        this.elements.nodes.forEach((node) => {
+          if (node.data.type !== 'user') {
+            node.data.status = 'unread';
+            this.slideConceptservice.updateNewConcepts(node.data);
+          }
+        });
+
+        // Update the cytoscape graph with default statuses
+        if (this.cy) {
+          this.cy.style(this.showAllStyle);
+        }
+      }
+    }
   }
 }

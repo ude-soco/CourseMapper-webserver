@@ -1576,13 +1576,21 @@ export class CytoscapeUserKgComponent {
           };
           this.slideConceptservice.updateNewConcepts(newConceptEle);
           console.log(newConceptEle.id);
-          let conceptRelationship = await this.neo4jService.getRelationship(
-            newConceptEle.id.toString()
-          );
-          console.log(conceptRelationship.records[0].r.identity);
-          this.deleteRelationship(
-            conceptRelationship.records[0].r.identity.toString()
-          );
+          this.neo4jService
+            .getRelationship(newConceptEle.id.toString())
+            .then((conceptRelationship) => {
+              if (
+                conceptRelationship.records &&
+                conceptRelationship.records.length > 0
+              ) {
+                const relationshipId =
+                  conceptRelationship.records[0].r.identity.toString();
+                this.deleteRelationship(relationshipId);
+              }
+            })
+            .catch((err) => {
+              console.error('Error getting relationship:', err);
+            });
           const nodeElement = this.cy.$(`#${selectedId}`);
           if (nodeElement) {
             nodeElement.style('background-color', '#2196F3');
