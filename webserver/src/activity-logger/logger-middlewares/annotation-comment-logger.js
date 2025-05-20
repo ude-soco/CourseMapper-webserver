@@ -117,26 +117,37 @@ export const addMentionLogger = async (req, res, next) => {
   req.locals.category = "mentionedandreplied";
   let mentioned = req.locals.isMentionedUsersPresent;
   if (mentioned > 0) {
-    const mentionedUsers = req.locals.mentionedUsers;
     try {
-      for (const mentionedUser of mentionedUsers) {
-        req.locals.mentionedUser = mentionedUser; // Add the individual user to req.locals
-        await activityController.createActivity(
-          annotationActivityGenerator.generateAddMentionStatement(req),
-          notifications.generateNotificationInfo(req)
-        );
-      }
-      next();
+      req.locals.activity = await activityController.createActivity(
+        annotationActivityGenerator.generateAddMentionStatement(req),
+        notifications.generateNotificationInfo(req)
+      );
     } catch (err) {
       res.status(400).send({ error: "Error saving statement to mongo", err });
     }
-    // try {
-    //   req.locals.activity = await activityController.createActivity(
-    //     annotationActivityGenerator.generateAddMentionStatement(req),
-    //     notifications.generateNotificationInfo(req)
-    //   );
   }
+  next();
 };
+
+// export const addMentionLogger = async (req, res, next) => {
+//   req.locals.category = "mentionedandreplied";
+//   let mentioned = req.locals.isMentionedUsersPresent;
+//   if (mentioned > 0) {
+//     const mentionedUsers = req.locals.mentionedUsers;
+//     try {
+//       for (const mentionedUser of mentionedUsers) {
+//         req.locals.mentionedUser = mentionedUser; // Add the individual user to req.locals
+//         await activityController.createActivity(
+//           annotationActivityGenerator.generateAddMentionStatement(req),
+//           notifications.generateNotificationInfo(req)
+//         );
+//       }
+//       next();
+//     } catch (err) {
+//       res.status(400).send({ error: "Error saving statement to mongo", err });
+//     }
+//   }
+// };
 export const hideAnnotationsLogger = async (req, res) => {
   try {
     await activityController.createActivity(
