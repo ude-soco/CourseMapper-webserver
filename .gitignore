@@ -271,3 +271,4 @@ venv*
 .DS_Store
 
 coursemapper-kg/app
+webserver/public/uploads/pdfs

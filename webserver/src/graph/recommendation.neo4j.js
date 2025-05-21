@@ -246,8 +246,6 @@ export async function filterUserResourcesSavedBy(data) {
         cids: data.cids || [],
         contentType: data.content_type === 'video' ? 'Video' : 'Article',
     };
-    console.warn("params", params)
-    console.warn(query)
     const queryResult = await graphDb.driver.executeQuery(query, params);
 
     const resources = queryResult.records.map(record => ({
