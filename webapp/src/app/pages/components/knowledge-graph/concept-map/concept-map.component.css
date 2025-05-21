@@ -299,8 +299,8 @@
   border: #eb590d;
   margin-left:auto;
   z-index:12;
-} */
-/* #hideNonUnderstoodPanel {
+}
+#hideNonUnderstoodPanel {
   position: absolute;
   left: 412px;
   float: right;
@@ -314,9 +314,9 @@
   padding-left: 0.125rem;
   padding-right: 0.125rem;
   font-size: 2px;
-} */
+}
 
-/* #showNonUnderstoodPanel {
+#showNonUnderstoodPanel {
   position: absolute;
   background-color: #ffffff;
   color: #2196F3;
@@ -535,7 +535,7 @@ float: right;
 }
 
 :host ::ng-deep .graphSection {
-  width: 72em;
+  /* width: 72em; */
 } 
 
 #hideNonUnderstoodPanel {
@@ -580,3 +580,60 @@ float: right;
     width: 110em;
   } 
 }
+/* ::ng-deep .custom-close-btn {
+position: absolute;
+
+background: transparent;
+border: none;
+font-size: 22px;
+cursor: pointer;
+color: #666;
+} */
+
+::ng-deep .custom-close-btn:hover {
+color: #000;
+}
+
+.title-text {
+display: block;
+margin: 10px 0;
+font-size: 18px; /* Adjusted to match the image */
+font-weight: bold;
+color: #000; /* Black */
+}
+
+.subheading-text {
+display: block;
+margin: 10px 0;
+font-size: 16px; /* Slightly smaller */
+color: #0369A1; /* Blue as in the image */
+font-weight: 500; /* Medium weight */
+}
+.highlight-row {
+background-color: #e6f7ff;
+border-left: 4px solid #1890ff;
+}
+
+.responsive-pdf-viewer {
+width: 100%;
+height: 500px; /* Default height */
+}
+
+@media (max-height: 1024px) {
+/* For screens 16 inches (~1024px height) and smaller */
+.responsive-pdf-viewer {
+  height: 330px;
+}
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+/*button {
+  height: 40px; 
+  padding: 8px 12px; 
+  
+}*/

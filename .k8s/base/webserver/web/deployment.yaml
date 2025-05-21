@@ -43,6 +43,9 @@ spec:
         - secretRef:
             name: webserver
         volumeMounts:
+        - mountPath: /app/public/uploads/images
+          name: webserver-uploads
+          subPath: images
         - mountPath: /app/public/uploads/pdfs
           name: webserver-uploads
           subPath: pdfs
@@ -51,11 +54,11 @@ spec:
           subPath: videos
         resources:
           requests:
-            memory: 256Mi
-            cpu: 10m
+            memory: 360Mi
+            cpu: 100m
           limits:
-            memory: 512Mi
-            cpu: 1
+            memory: 1Gi
+            cpu: "1"
             ephemeral-storage: 1Gi
       volumes:
       - name: webserver-uploads

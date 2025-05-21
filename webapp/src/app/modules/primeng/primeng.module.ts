@@ -29,6 +29,7 @@ import {MessageService} from 'primeng/api';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import { MenuModule } from 'primeng/menu';
 
+
 const PrimeNgComponents = [
   AvatarModule,
   AvatarGroupModule,
@@ -57,7 +58,8 @@ const PrimeNgComponents = [
   ConfirmDialogModule,
   ToastModule,
   OverlayPanelModule,
-  MenuModule
+  MenuModule,
+
   
 ];
 

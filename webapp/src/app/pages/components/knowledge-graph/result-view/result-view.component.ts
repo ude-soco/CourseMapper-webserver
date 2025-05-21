@@ -1,13 +1,16 @@
+import { getCurrentPdfPage } from './../../annotations/pdf-annotation/state/annotation.reducer';
 import { Component, Input } from '@angular/core';
 import { VideoElementModel } from '../videos/models/video-element.model';
 import { ArticleElementModel } from '../articles/models/article-element.model';
 import { MenuItem } from 'primeng/api';
-// import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
-import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { ResourcesPagination, UserResourceFilterResult, UserResourceFilterParamsResult, Concept } from 'src/app/models/croForm';
-import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
 import { CustomRecommendationOptionService } from 'src/app/services/custom-recommenation-option.service';
-
+import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
+import { Subscription } from 'rxjs';
+import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
+import { Material } from 'src/app/models/Material';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/state/app.reducer';
 interface MaterialModel {
   name: string;
   code: string;
@@ -16,7 +19,7 @@ enum MaterialModels {
   MODEL_1 = '1',
   MODEL_2 = '2',
   MODEL_3 = '3',
-  MODEL_4 = '4'
+  MODEL_4 = '4',
 }
 interface PageEvent {
   first: number;
@@ -28,9 +31,10 @@ interface PageEvent {
 @Component({
   selector: 'app-result-view',
   templateUrl: './result-view.component.html',
-  styleUrls: ['./result-view.component.css']
+  styleUrls: ['./result-view.component.css'],
 })
 export class ResultViewComponent {
+  currentPdfPage: number;
   private conceptFromChipObj: any = null;
   private didNotUnderstandConceptsObj: any[];
   private understoodConceptsObj: any[];
@@ -106,12 +110,17 @@ export class ResultViewComponent {
   paginatorRows: number = 10;
   rowsPerPageOptions = [10, 30, 50];
 
+  @Input() currentMaterial?: Material;
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
+
   constructor(
     private slideConceptservice: SlideConceptsService,
     private materialsRecommenderService: MaterialsRecommenderService,
-    private croService: CustomRecommendationOptionService
+    private croService: CustomRecommendationOptionService,
+    private store: Store<State>
   ) {
-    slideConceptservice?.didNotUnderstandConcepts.subscribe((res) => {
+
+    slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
       this.didNotUnderstandConceptsObj = res;
       this.didNotUnderstandConceptsObj.forEach((el) => {
         this.allConceptsObj = this.allConceptsObj?.map((e) =>
@@ -128,6 +137,13 @@ export class ResultViewComponent {
         );
       });
     });
+
+    // Subscribe to get the current PDF page from store
+    this.subscriptions.add(
+      this.store.select(getCurrentPdfPage).subscribe((page) => {
+        this.currentPdfPage = page;
+      })
+    );
   }
 
   handleOnShowOnHide() {
@@ -177,7 +193,7 @@ export class ResultViewComponent {
             this.conceptFromChipObj
           );
         },
-      }
+      },
     ];
 
     this.chipMenuDNU = [
@@ -193,6 +209,22 @@ export class ResultViewComponent {
     ];
 
     this.loadResultForSelectedModel();
+
+    this.didNotUnderstandConceptsObj =
+      this.slideConceptservice.commonDidNotUnderstandConcepts;
+    this.didNotUnderstandConceptsObj.forEach((el) => {
+      this.allConceptsObj = this.allConceptsObj.map((e) =>
+        e.id === el.id ? el : e
+      );
+    });
+
+    this.understoodConceptsObj =
+      this.slideConceptservice.commonUnderstoodConcepts;
+    this.understoodConceptsObj.forEach((el) => {
+      this.allConceptsObj = this.allConceptsObj.map((e) =>
+        e.id === el.id ? el : e
+      );
+    });
   }
 
   ngAfterViewInit() {
@@ -208,7 +240,13 @@ export class ResultViewComponent {
       cid: concept.cid, // deal with cid instead of id 'AMR'
       name: concept.name,
       status: concept.status === 'understood' ? 'notUnderstood' : 'understood',
+      type: concept.type, // This is undefined because there were no type coming from the backend
     };
+
+    // console.log(
+    //   'Recommendation based on: mark as understood... concept',
+    //   concept
+    // );
   }
 
   loadResultForSelectedModel() {
@@ -217,6 +255,18 @@ export class ResultViewComponent {
       concept["status"] = "notUnderstood"
     });
     this.concepts = this.allConceptsObj;
+
+    if (this.resourcesPagination?.nodes?.videos.total_items > 0) {
+      this.recievedVideoResultIsEmpty = false;
+      this.logUserViewedRecommendedVideos();
+    } else {
+      this.recievedVideoResultIsEmpty = true;
+    }
+    if (this.resourcesPagination?.nodes?.articles.total_items > 0) {
+      this.recievedArticleResultIsEmpty = false;
+    } else {
+      this.recievedArticleResultIsEmpty = true;
+    }
   }
 
   tabChanged(tab) {
@@ -229,6 +279,12 @@ export class ResultViewComponent {
       const result = iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
     });
 
+    if (tab === 0) {
+      this.logUserViewedRecommendedVideos();
+    } else if (tab === 1) {
+      this.logUserViewedRecommendedArticles();
+    }
+
     if (this.activeIndex === 2) {
       this.getRidsFromUserSaves();
       this.getConceptsModifiedByUserFromSaves();
@@ -236,10 +292,7 @@ export class ResultViewComponent {
     this.closeVideoFrame();
     this.deactivateSortingKeys();
 
-    // localStorage.removeItem('resultTabSelected');
-    // localStorage.setItem('resultTabSelected', this.activeIndex.toString());
     this.croService.setResultaTabValue(this.activeIndex.toString());
-
     if (this.activeIndex === 0 || this.activeIndex === 1) {
       this.selectedFactorSortingKeys = null;
     }
@@ -390,23 +443,6 @@ export class ResultViewComponent {
   }
 
   onPageChangeResourcesPaginator(event: PageEvent, type) {
-    // let page_number = 0;
-    // let page_size = 0;
-
-    // if (type === 0) {
-    //   this.firstVideo = event.first;
-    //   this.rowsVideo = event.rows;
-
-    //   page_number = this.firstVideo + 1;
-    //   page_size = this.rowsVideo;
-    // } else if (type === 1) {
-    //   this.firstArticle = event.first;
-    //   this.rowsArticle = event.rows;
-
-    //   page_number = this.firstArticle + 1;
-    //   page_size = this.rowsArticle;
-    // }
-
     this.firstPaginator = event.first;
     this.rowsPaginator = event.rows;
 
@@ -451,16 +487,33 @@ export class ResultViewComponent {
     );
   }
 
-  onPageChangeResourcesPaginatorV3(event) {
-    const startIndex = event.first;
-    const endIndex = startIndex + event.rows;
-
-    const storedResources = JSON.parse(localStorage.getItem('resourcesPaginationParams'));
-    if (this.activeIndex === 0) {
-      this.resourcesPagination.nodes.videos.content = storedResources.nodes.videos.content.slice(startIndex, endIndex);
-    } else if (this.activeIndex === 1) {
-      this.resourcesPagination.nodes.articles.content  = storedResources.nodes.articles.content.slice(startIndex, endIndex);
+  
+  async logUserViewedRecommendedVideos() {
+    try {
+      const data = {
+        materialId: this.currentMaterial._id,
+        videos: this.videos,
+        materialPage: this.currentPdfPage,
+      };
+      if (!this.recievedVideoResultIsEmpty) {
+        await this.materialsRecommenderService.logViewRecommendedVideos(data);
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
     }
   }
-  
+  async logUserViewedRecommendedArticles() {
+    try {
+      const data = {
+        materialId: this.currentMaterial!._id,
+        articles: this.articles,
+        materialPage: this.currentPdfPage,
+      };
+      if (!this.recievedArticleResultIsEmpty) {
+        await this.materialsRecommenderService.logViewRecommendedArticles(data);
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  }
 }

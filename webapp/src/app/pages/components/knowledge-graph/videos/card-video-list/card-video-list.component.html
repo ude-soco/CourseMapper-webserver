@@ -8,12 +8,17 @@
           [userId]="userId"
           [resultTabType]="resultTabType"
           (resourceRemovedEvent)="onResourceRemovedEvent($event)"
+          [currentMaterial]="currentMaterial"
         >
         </app-card-video>
       </div>
     </ng-template>
     <ng-template #watchvideo>
-      <app-watch-video [video]="video" [notUnderstoodConcepts]="notUnderstoodConcepts"></app-watch-video>
+      <app-watch-video
+        [video]="video" 
+        [notUnderstoodConcepts]="notUnderstoodConcepts"
+        [currentMaterial]="currentMaterial"
+      ></app-watch-video>
       <button id="backToList"
               pButton
               type="button"
@@ -23,5 +28,4 @@
               class="bg-[#0277BD] p-button-rounded"
       ></button>
     </ng-template>
-
   </div>

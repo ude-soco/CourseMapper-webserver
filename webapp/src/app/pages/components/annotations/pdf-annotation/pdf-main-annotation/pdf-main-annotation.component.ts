@@ -40,7 +40,10 @@ import {
   State,
 } from '../state/annotation.reducer';
 import { Store } from '@ngrx/store';
-import { getCurrentMaterial, getCurrentMaterialId } from '../../../materials/state/materials.reducer';
+import {
+  getCurrentMaterial,
+  getCurrentMaterialId,
+} from '../../../materials/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import {
   distinctUntilChanged,
@@ -63,6 +66,7 @@ import { Reply } from 'src/app/models/Reply';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 import { SlideKgOrderedService } from 'src/app/services/slide-kg-ordered.service';
+import { AnnotationService } from 'src/app/services/annotation.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import * as NotificationActions from '../../../notifications/state/notifications.actions';
 import { Router } from '@angular/router';
@@ -84,6 +88,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   docURL!: string;
   subs = new Subscription();
   private API_URL = environment.API_URL;
+  private isInitialLoad: boolean = true;
 
   // Annotation properties
   drawingRect: Rectangle = {
@@ -138,11 +143,13 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   currentPdfPageSubscription: Subscription;
   private materialSubscription: Subscription;
   private socketSubscription: Subscription;
+  private hideAnnotationSubscription: Subscription;
   notificationClickedSubscription: Subscription;
   followingAnnotationClickedSubscription: any;
 
   constructor(
     private pdfViewService: PdfviewService,
+    private annotationService: AnnotationService,
     private store: Store<State>,
     private socket: Socket,
     private changeDetectorRef: ChangeDetectorRef,
@@ -235,9 +242,23 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       });
   }
   ngOnInit(): void {
-    this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
-      this.hideAnnotations(isHideAnnotations);
-    });
+    // this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
+    //   this.hideAnnotations(isHideAnnotations);
+    // });
+
+    // Ensure we only subscribe once
+    if (this.hideAnnotationSubscription) {
+      this.hideAnnotationSubscription.unsubscribe();
+    }
+
+    this.hideAnnotationSubscription = this.store
+      .select(getHideAnnotationValue)
+      .pipe(distinctUntilChanged()) // Ensures subscription triggers only on value change
+      .subscribe((isHideAnnotations) => {
+        this.hideAnnotations(isHideAnnotations);
+      });
+
+    this.isInitialLoad = false; // The annotations are hidden per default
 
     this.currentPDFPage$ = this.store.select(getCurrentPdfPage);
 
@@ -319,8 +340,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     if (this.notificationClickedSubscription) {
       this.notificationClickedSubscription.unsubscribe();
     }
+    if (this.hideAnnotationSubscription) {
+      this.hideAnnotationSubscription.unsubscribe(); // Properly clean up
+    }
   }
-
   ngAfterViewChecked(): void {
     let container = document.getElementsByClassName(
       'pdfViewerContainer'
@@ -342,6 +365,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   getDocUrl() {
     this.pdfViewService.currentDocURL.subscribe((url) => {
       this.docURL = this.API_URL + url.replace(/\\/g, '/');
+      console.log('this.docURL', this.docURL);
     });
   }
 
@@ -418,8 +442,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
       });
     }
   }
-
-
 
   /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */
   pageRendered(event: any) {
@@ -622,20 +644,45 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   /** Show/Hide Annotations on pdf */
   hideAnnotations(hideAnnotations: boolean) {
+    if (this.hideAnnotationEvent === hideAnnotations) {
+      return; // Prevent redundant API calls
+    }
+    this.hideAnnotationEvent = hideAnnotations;
     var annotationItem = Array.from(
       document.getElementsByClassName(
         'annotationItem'
       ) as HTMLCollectionOf<HTMLElement>
     );
+
+    //log the activities User hid/unhid annotations in a pdf
+    const relevantAnnotations = this.annotations.filter((annotation) =>
+      ['drawing', 'pinpoint', 'highlight'].includes(annotation.tool.type)
+    ); // The annotations object includes just the annotations that were done inside a pdf
+
+    const payload = {
+      materialId: this.materialId,
+      courseId: this.courseId,
+      annotations: relevantAnnotations,
+    };
+
     if (hideAnnotations == true) {
       this.hideAnnotationEvent = true;
       for (let i = 0; i < annotationItem.length; i++) {
         let annotationItemHmlElmt = annotationItem[i];
         annotationItemHmlElmt.remove();
       }
+      if (!this.isInitialLoad) {
+        this.annotationService.hideAnnotations(payload).subscribe();
+      }
+      // this.annotationService.hideAnnotations(payload).subscribe();
     } else {
-      this.hideAnnotationEvent = false;
+      // this.hideAnnotationEvent = false;
       this.pageRendered(hideAnnotations);
+
+      if (!this.isInitialLoad) {
+        // Only log when User clicks on the show symbol
+        this.annotationService.unhideAnnotations(payload).subscribe();
+      }
     }
   }
 
@@ -987,7 +1034,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   save() {
     localStorage.setItem('mouseDownFlag', JSON.stringify(false));
 
-    var pageScale = this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber - 1)?.scale ?? 1.0;
+    var pageScale =
+      this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber - 1)?.scale ??
+      1.0;
 
     let pdfDrawingRect = {
       x1: this.drawingRect.x1 / pageScale,

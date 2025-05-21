@@ -3,12 +3,22 @@
 <div class="mb-6 border-b border-b-4 border-gray-300">
     <div class="flex flex-col p-0">
       <span class="items-center flex flex-row justify-between">
-        <h2 class="title-article text-xl font-bold truncate inline-flex mt-1" (click)="openArticle(article)" *ngIf="article.title.length <= TITLE_MAX_LENGTH" [class.active]="isActive">{{ article.title }}</h2>
-        <h2 class="title-article text-xl font-bold truncate inline-flex mt-1" (click)="openArticle(article)" *ngIf="article.title.length > TITLE_MAX_LENGTH" [class.active]="isActive">{{ article.title.substring(0, TITLE_MAX_LENGTH) + "..." }}</h2>
-        <!-- <span pTooltip="Similarity between the concepts not understood and the content of this article"
-              class="text-sm mt-2 font-semibold inline-flex items-center py-1 px-2 rounded bg-white text-[#0277BD] border mx-2 last:mr-0 mr-1">
-          Similarity Score: {{article.similarity_score | percent}}
-        </span> -->
+        <h2 
+          class="title-article text-xl font-bold truncate inline-flex mt-1" 
+          (click)="openArticle(article)" 
+          *ngIf="article.title.length <= TITLE_MAX_LENGTH" 
+          [class.active]="isActive"
+        >
+          {{ article.title }}
+        </h2>
+        <h2 
+          class="title-article text-xl font-bold truncate inline-flex mt-1" 
+          (click)="openArticle(article)" 
+          *ngIf="article.title.length > TITLE_MAX_LENGTH" 
+          [class.active]="isActive"
+          >
+          {{ article.title.substring(0, TITLE_MAX_LENGTH) + "..." }}
+        </h2>
         <div>
           <div class="text-[#0288d1] flex flex-row gap-2 mt-1 w-48 text-sm" *ngIf="resultTabType !== 'saved'">
             <div class="flex flex-row gap-2 m-auto mb-2" *ngIf="resultTabType !== 'saved'">
@@ -67,12 +77,19 @@
         <p *ngIf="article.abstract" class="mr-2 font-semibold italic">Abstract: </p>
         <p class="text-base text-gray-600" *ngIf="(article.abstract.length <= ABSTRACT_MAX_LENGTH) && userCanExpand">{{article.abstract}}</p>
         <p class="text-base text-gray-600" *ngIf="(article.abstract.length > ABSTRACT_MAX_LENGTH) && userCanExpand">
-          {{article.abstract.substring(0, ABSTRACT_MAX_LENGTH)}}... <a class="italic" (click)="expand()"><svg
-          xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square"
-          viewBox="0 0 16 16"> <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2
-               0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/> <path
-          d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-            </svg><em>Expand</em></a>
+          {{article.abstract.substring(0, ABSTRACT_MAX_LENGTH)}}... <a class="italic" (click)="expand()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg" 
+              width="16" 
+              height="16" 
+              fill="currentColor" 
+              class="bi bi-plus-square"
+              viewBox="0 0 16 16">
+              <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2
+               0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+               <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+            </svg>
+            <em>Collapse</em></a>
         </p>
         <p class="text-base text-gray-600" *ngIf="(article.abstract.length > ABSTRACT_MAX_LENGTH) && !userCanExpand">
           {{article.abstract}} <a class="italic" (click)="expand()"><svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -92,7 +109,13 @@
         <div class="flex flex-row px-3 py-5 justify-center">
           <div class="flex items-center">
             <button class="inline-flex bg-transparent hover:bg-[#0277BD] text-[#0277BD] hover:text-white py-2 px-4 border border-[#0277BD] hover:border-transparent rounded" (click)="openArticle(article)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-right-circle-fill" viewBox="0 0 16 16"> <path d="M0 8a8 8 0 1 0 16 0A8 8 0 0 0 0 8zm5.904 2.803a.5.5 0 1 1-.707-.707L9.293 6H6.525a.5.5 0 1 1 0-1H10.5a.5.5 0 0 1 .5.5v3.975a.5.5 0 0 1-1 0V6.707l-4.096 4.096z"/> </svg>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" height="16" fill="currentColor" 
+                class="bi bi-arrow-up-right-circle-fill" 
+                viewBox="0 0 16 16">
+                <path d="M0 8a8 8 0 1 0 16 0A8 8 0 0 0 0 8zm5.904 2.803a.5.5 0 1 1-.707-.707L9.293 6H6.525a.5.5 0 1 1 0-1H10.5a.5.5 0 0 1 .5.5v3.975a.5.5 0 0 1-1 0V6.707l-4.096 4.096z"/>
+              </svg>
               <span class="text-sm ml-2 italic">View on Wikipedia</span>
             </button>
           </div>

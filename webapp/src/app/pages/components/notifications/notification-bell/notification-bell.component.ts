@@ -53,5 +53,6 @@ export class NotificationBellComponent {
     this.store.dispatch(
       AppActions.setShowNotificationsPanel({ showNotificationsPanel: true })
     );
+    this.notificationsService.getAllNotificationsLog().subscribe();
   }
 }

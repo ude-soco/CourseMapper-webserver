@@ -1,12 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {VideoElementModel} from '../models/video-element.model';
-import { MessageService } from 'primeng/api';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { VideoElementModel } from '../models/video-element.model';
+import { Material } from 'src/app/models/Material';
+import { MessageService } from 'primeng/api';
+
 
 @Component({
   selector: 'app-card-video',
   templateUrl: './card-video.component.html',
-  styleUrls: ['./card-video.component.css']
+  styleUrls: ['./card-video.component.css'],
 })
 export class CardVideoComponent {
   constructor(
@@ -35,6 +37,7 @@ export class CardVideoComponent {
   saveOrRemoveStatus = false;
   @Input() resultTabType: string = "";
   @Output() resourceRemovedEvent = new EventEmitter<string>(); // take rid
+  @Input() currentMaterial?: Material;
 
   ngOnInit(): void {}
   public readVideo(videoElement: any): void {
@@ -50,19 +53,12 @@ export class CardVideoComponent {
 
   ngOnChanges() {
     this.saveOrRemoveParams.status = this.videoElement?.is_bookmarked_fill;
-
     this.saveOrRemoveParams.user_id = this.userId;
     this.saveOrRemoveParams.rid = this.videoElement?.rid;
   }
 
   showLabelMoreDescription() {
     if (this.videoElement?.description.length > 0 ) {
-      // let video_description = document.getElementById("video_description");
-      // console.warn("video_description ->")
-      // if (video_description) {
-      //   // video_description.innerHTML += "more"
-      //   video_description.innerHTML += "&#8964;"
-      // }
     }
   }
 

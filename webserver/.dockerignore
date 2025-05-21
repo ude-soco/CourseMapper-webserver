@@ -1,6 +1,6 @@
 .gitignore
 *Dockerfile*
-/public
+/public/uploads
 compose.yaml
 example*
 node_modules

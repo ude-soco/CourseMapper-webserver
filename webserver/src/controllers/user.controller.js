@@ -37,6 +37,31 @@ export const moderatorBoard = (req, res) => {
 export const adminBoard = (req, res) => {
   res.status(200).send("Admin content");
 };
+/**
+ * @function accessPersonalDashboard
+ * access personal Dashboard
+ *
+ * @param {string} req.userId The id of the user.
+ */
+export const accessPersonalDashboard = async (req, res, next) => {
+  const userId = req.userId;
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+  };
+
+  next();
+};
 
 /**
  * @function newIndicator
@@ -77,10 +102,16 @@ export const newIndicator = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send({
-    success: `Indicator added successfully!`,
+  req.locals = {
+    user: user,
     indicator: indicator,
-  });
+    success: `Indicator added successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator added successfully!`,
+  //   indicator: indicator,
+  // });
 };
 
 /**
@@ -112,6 +143,16 @@ export const deleteIndicator = async (req, res, next) => {
     return res.status(500).send({ error: error });
   }
 
+  // Find the indicator to delete
+  let deletedIndicator;
+  deletedIndicator = user.indicators.find(
+    (indicator) => indicator._id.toString() === indicatorId
+  );
+  if (!deletedIndicator) {
+    return res.status(404).send({
+      error: `Indicator with id ${indicatorId} not found in the personal Dashboard!`,
+    });
+  }
   user.indicators = user.indicators.filter(
     (indicator) => indicator._id.toString() !== indicatorId
   );
@@ -122,9 +163,15 @@ export const deleteIndicator = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send({
+  req.locals = {
+    user: user,
+    indicator: deletedIndicator,
     success: `Indicator deleted successfully!`,
-  });
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator deleted successfully!`,
+  // });
 };
 
 /**
@@ -148,7 +195,6 @@ export const getIndicators = async (req, res, next) => {
   }
 
   const response = user.indicators ? user.indicators : [];
-
   return res.status(200).send(response);
 };
 
@@ -163,8 +209,8 @@ export const getIndicators = async (req, res, next) => {
  */
 export const resizeIndicator = async (req, res, next) => {
   const indicatorId = req.params.indicatorId;
-  const width = req.params.width;
-  const height = req.params.height;
+  const newWidth = req.params.width;
+  const newHeight = req.params.height;
   const userId = req.userId;
 
   let user;
@@ -185,10 +231,17 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: error });
   }
 
+  let resizedIndicator;
+  let oldDimensions = {};
   user.indicators.forEach((indicator) => {
     if (indicator._id.toString() === indicatorId.toString()) {
-      indicator.width = width;
-      indicator.height = height;
+      oldDimensions = {
+        width: indicator.width,
+        height: indicator.height,
+      };
+      indicator.width = newWidth;
+      indicator.height = newHeight;
+      resizedIndicator = indicator;
     }
   });
 
@@ -198,7 +251,15 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send();
+  req.locals = {
+    indicator: resizedIndicator,
+    user: user,
+    oldDimensions: oldDimensions,
+    newDimensions: { width: newWidth, height: newHeight },
+    success: `Indicator resized successfully!`,
+  };
+  next();
+  //return res.status(200).send();
 };
 
 /**
@@ -245,10 +306,19 @@ export const reorderIndicators = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  return res.status(200).send({
-    success: `Indicators updated successfully!`,
+  req.locals = {
+    user: user,
+    indicator: indicator,
+    oldIndex: oldIndex,
+    newIndex: newIndex,
     indicators: user.indicators,
-  });
+    success: `Indicators updated successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicators updated successfully!`,
+  //   indicators: user.indicators,
+  // });
 };
 
 export const getAllUsers = async (req, res) => {
@@ -270,7 +340,6 @@ export const getAllUsers = async (req, res) => {
   return res.status(200).send(results);
 };
 
-
 export const getUser = async (req, res) => {
   let userId = req.params.userId;
 
@@ -279,7 +348,7 @@ export const getUser = async (req, res) => {
   let my_object = {};
   try {
     foundUser = await User.findById(userId).populate("courses", "-__v");
-    
+
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -288,21 +357,19 @@ export const getUser = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding user" });
   }
-  my_object.firstname =foundUser.firstname;
-  my_object.lastname =foundUser.lastname;
+  my_object.firstname = foundUser.firstname;
+  my_object.lastname = foundUser.lastname;
   results.push(my_object);
   return res.status(200).send(my_object);
 };
 
 export const getUserConcepts = async (req, res) => {
-
-  let userId =  req.params.userId;
+  let userId = req.params.userId;
 
   let foundUser;
   let results;
   try {
-    foundUser = await User.findOne({ _id: userId })
-    .populate("courses", "-__v");
+    foundUser = await User.findOne({ _id: userId }).populate("courses", "-__v");
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -311,23 +378,27 @@ export const getUserConcepts = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  results={
+  results = {
     understoodConcepts: foundUser.understoodConcepts,
     didNotUnderstandConcepts: foundUser.didNotUnderstandConcepts,
-  }
+  };
   return res.status(200).send(results);
 };
 
 export async function updateUserConcepts(props) {
-  let userId= props.body.userId
-  let foundUser
-  const updatedDocument={$set: {
-    understoodConcepts: props.body.understoodConcepts,
-    didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
-  },}
+  let userId = props.body.userId;
+  let foundUser;
+  const updatedDocument = {
+    $set: {
+      understoodConcepts: props.body.understoodConcepts,
+      didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
+    },
+  };
   try {
-    foundUser = await User.findOne({ _id: props.body.userId })
-    .populate("courses", "-__v");
+    foundUser = await User.findOne({ _id: props.body.userId }).populate(
+      "courses",
+      "-__v"
+    );
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,

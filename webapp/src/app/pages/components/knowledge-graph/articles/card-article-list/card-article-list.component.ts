@@ -1,11 +1,11 @@
-import { Component, Input} from '@angular/core';
-import {ArticleElementModel} from '../models/article-element.model';
-import {ArticleMock} from '../mocks/article.mock';
-
+import { Component, Input } from '@angular/core';
+import { ArticleElementModel } from '../models/article-element.model';
+import { ArticleMock } from '../mocks/article.mock';
+import { Material } from 'src/app/models/Material';
 @Component({
   selector: 'app-card-article-list',
   templateUrl: './card-article-list.component.html',
-  styleUrls: ['./card-article-list.component.css']
+  styleUrls: ['./card-article-list.component.css'],
 })
 export class CardArticleListComponent {
   @Input()
@@ -15,6 +15,7 @@ export class CardArticleListComponent {
   public article!: ArticleElementModel;
   @Input() userId: string;
   @Input() resultTabType: string = "";
+  @Input() currentMaterial?: Material;
 
   onResourceRemovedEvent(rid: string) {
     this.articleElements = this.articleElements.filter(article => article.rid !== rid);

@@ -1,35 +1,3 @@
-<div class="mb-8 grid-cols-1 lg:flex border-b border-b-4 border-gray-300 mb-6" style="display: none;">
-    <div class="items-center image-video flex-col sm:w-fit sm:h-fit bg-transparent bg-cover text-center">
-      <img (click)="readVideo(videoElement)" class="object-cover max-w-sm md:max-w-lg rounded" [src]=videoElement.thumbnail alt="tailwind logo" width="300px"/>
-      <app-rating [element]="videoElement" [notUnderstoodConcepts]="notUnderstoodConcepts" ></app-rating>
-    </div>
-    <div class="bg-white sm:w-50 px-4 pb-4 flex flex-col">
-      <div class="text-gray-900 items-center font-bold flex flex-row text-xl">
-        <h2 class="title-video text-xl font-bold inline-block" (click)="readVideo(videoElement)" [class.active]="isActive"  [innerHTML] = "videoElement.title"></h2>
-        <span pTooltip="Similarity between the concepts not understood and the content of this video"
-              class="text-sm font-semibold flex-none w-40 text-center py-1 px-2 rounded bg-white text-[#0277BD] border mx-4 last:mr-0 mr-1">
-          Similarity Score: {{videoElement.similarity_score | percent}}
-        </span>
-      </div>
-      <p class="text-sm text-gray-600 my-2 items-center">
-        {{ videoElement.views | number }} views - {{ videoElement.publish_time | dateAgo }}
-      </p>
-      <div *ngIf="videoElement.keyphrases" class="flex flex-row mb-3 mt-6">
-        <p class="mr-2 font-semibold italic">Keyphrases: </p>
-        <div class="flex flex-wrap">
-          <div *ngFor="let concept of videoElement.keyphrases.slice(0, 5)" pTooltip="Main keyphrases extracted from this video"
-              class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept}}</div>
-        </div>
-      </div>
-      <div class="flex flex-row">
-        <p *ngIf="videoElement.description_full" class="mr-2 font-semibold italic">Description: </p>
-        <p class="text-gray-700 text-base line-clamp" [innerHTML]="videoElement.description_full | linkify"></p>
-        <!--<p class="text-gray-700 text-base" *ngIf="videoElement.description_full.length > DESCRIPTION_MAX_LENGTH" [innerHTML]="videoElement.description_full.substring(0, DESCRIPTION_MAX_LENGTH)+'...' | linkify"></p>
-      --></div>
-    </div>
-  </div>
-
-
 <p-toast key="resource_bookmark_video" position="bottom-left"></p-toast>
 
 <div class="border-b-4 border-gray-300 mb-6">
@@ -37,11 +5,14 @@
     <div class="flex flex-row gap-2">
       <div class="flex flex-col gap-1">
         <div>
-          <img (click)="readVideo(videoElement)" class="object-cover max-w-sm md:max-w-lg rounded" [src]=videoElement.thumbnail alt="tailwind logo" width="300px"/>
+          <img 
+            (click)="readVideo(videoElement)" 
+            class="object-cover max-w-sm md:max-w-lg rounded" 
+            [src]=videoElement.thumbnail 
+            alt="tailwind logo" 
+            width="300px"
+          />
         </div>
-        <!-- <div>
-          <app-rating [element]="videoElement" [notUnderstoodConcepts]="notUnderstoodConcepts" ></app-rating>
-        </div> -->
       </div>
 
       <div class="flex flex-col gap-2">
@@ -55,17 +26,6 @@
               </h3>
             </div>
           </div>
-
-          <!-- <div></div> -->
-          
-          <!-- <div class="w-3/12">
-            <div class="border-2 rounded-md border-[#D9D9D9] bg-[#D9D9D9]">
-              <span pTooltip="Similarity between the concepts not understood and the content of this video"
-                  class="text-sm flex justify-center">
-                Similarity Score: <span class="font-bold">{{videoElement.similarity_score | percent}}</span>
-              </span>
-            </div>
-          </div> -->
 
           <div class="w-3.5/12 text-sm ml-auto">
             <div class="text-[#0288d1] flex flex-row gap-2 mt-1 w-48" *ngIf="resultTabType !=='saved'">
@@ -134,41 +94,20 @@
           <span id="video_description">
             {{ videoElement.description }}
           </span>
-
-          <!-- <span>
-            <span *ngIf="isDescriptionFullDisplayed">
-              {{ videoElement.description_full }} <div (click)="showDescriptionFull()">Show less</div>
-            </span>
-            <span *ngIf="!isDescriptionFullDisplayed" class="flex flex-row gap-3" id="video_description">
-              {{ videoElement?.description }}
-            </span>
-          </span> -->
-
-          <!-- <span>
-            <span *ngIf="isDescriptionFullDisplayed">
-              {{ videoElement.description_full }} <div (click)="showDescriptionFull()">Show less</div>
-              <span class="flex flex-row my-auto cursor-pointer active:bg-blue-700" (click)="showDescriptionFull()"><span class="pi pi-chevron-up"></span></span>
-            </span>
-            <span *ngIf="!isDescriptionFullDisplayed" class="flex flex-row gap-3" id="video_description">
-              {{ videoElement?.description }}
-              <span class="flex flex-row my-auto cursor-pointer active:bg-blue-700" (click)="showDescriptionFull()"><span class="pi pi-chevron-down"></span></span>
-            </span>
-          </span> -->
-        
         </div>
-
-        <!-- <div class="flex justify-end">
-          <i class="pi pi-bookmark" style="font-size: 2rem"></i>
-        </div> -->
       </div>
     </div>
 
     <div class="flex flex-row justify-between">
       <div class="text-xs">
-        <app-rating [element]="videoElement" [notUnderstoodConcepts]="notUnderstoodConcepts" ></app-rating>
+        <app-rating 
+          [element]="videoElement" 
+          [notUnderstoodConcepts]="notUnderstoodConcepts"
+          [currentMaterial]="currentMaterial"
+        >
+        </app-rating>
       </div>
       <div></div>
     </div>
-
   </div>
 </div>

@@ -263,7 +263,7 @@
                 type="button"
                 pTooltip="When clicking on this button, the relative cocept to this cocept will be shown in the graph in addition to the top 3 categories of this concept"
                 label="Expand and publish"
-                (click)="expandAndPublish()"
+                (click)="onexpandAndPublish()"
               ></button>
             </div>
             <div *ngIf="conceptInputsDisabled">
@@ -726,20 +726,6 @@
                       >
                       </app-custom-recommendation-option>
                     </div>
-
-                    <!-- show recommendation button -->
-                    <!--
-                      <div
-                      *ngIf="
-                        showNotUnderstoodConceptsList &&
-                        mainConceptsTab &&
-                        kgSlideReceivedResponse
-                      "
-                      class="ml-auto mr-auto mb-2"
-                    >
-                    -->
-
-                    <!-- *ngIf="isRecommendationButtonDisplayed === true" -->
                     <div
                       class="ml-auto mr-auto mb-2"
                     >
@@ -784,7 +770,11 @@
                   <div
                     id="graphSection"
                     class="dialogContents sidebarShown"
-                    *ngIf="mainConceptsTab && kgSlideReceivedResponse && !kgSlideResponseEmpty"
+                    *ngIf="
+                      mainConceptsTab && 
+                      kgSlideReceivedResponse && 
+                      !kgSlideResponseEmpty
+                    "
                   >
                     <div class="graphSection" id="graphSection">
                       <app-graph
@@ -796,13 +786,14 @@
                       [slideKnowledgeGraph]="true"
                       [recommenderKnowledgeGraph]="false"
                       [cyHeight]="cyHeight"
+                      (editConcept)="editConcept($event)"
+                      (conceptDeleted)="deleteConcept($event)"
                       >
                       </app-graph>
                     </div>
                   </div>
 
                   <!-- recommendated concepts-->
-                  <!-- *ngIf="recommendedConceptsTab" -->
                   <div
                     id="graphSection"
                     *ngIf="recommendedConceptsTab"
@@ -826,9 +817,17 @@
                   <!-- generate KG for the learning material first -->
                   <div
                     class="flex-1 flex items-center justify-center ml-2"
-                    *ngIf="mainConceptsTab && kgSlideReceivedResponse && kgSlideResponseEmpty"
+                    *ngIf="
+                      mainConceptsTab && 
+                      kgSlideReceivedResponse && 
+                      kgSlideResponseEmpty
+                    "
                   >
-                    <div>Please generate KG for the learning material first. Once its generated, you can view main concepts related to this slide here</div>
+                    <div>
+                      The knowledge graph for this learning material has not been
+                      created yet. Once it’s created, you can view the Main Concepts
+                      related to this slide here.
+                    </div>
                   </div>
 
                   <!--progress spinner while loading recommendated concepts-->
@@ -869,18 +868,12 @@
                   
                     <!-- final recommendation result-->
                     <div>
-                      <!-- <app-result-view
-                        *ngIf="this.resultMaterials!=null"
-                          [concepts1]="concepts1"
-                          [results1]="resultMaterials"
-                      >
-                      </app-result-view> -->
-
                       <app-result-view
                         class="graphSection"
                         *ngIf="resourcesPagination !== undefined"
                           [resourcesPagination]="resourcesPagination"
                           [userId]="userid"
+                          [currentMaterial]="currentMaterial"
                       >
                       </app-result-view>
                     </div>
