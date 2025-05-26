@@ -39,6 +39,13 @@ spec:
           value: $(REDIS_SERVICE)
         - name: REDIS_PORT
           value: "6379"
+        - name: MEMORY_LIMIT
+          valueFrom:
+            resourceFieldRef:
+              divisor: "0"
+              resource: limits.memory
+        - name: NODE_OPTIONS
+          value: "--max-old-space-size=$(MEMORY_LIMIT)"
         envFrom:
         - secretRef:
             name: webserver
@@ -54,10 +61,10 @@ spec:
           subPath: videos
         resources:
           requests:
-            memory: 360Mi
+            memory: 0.8Gi
             cpu: 100m
           limits:
-            memory: 1Gi
+            memory: 1.2Gi
             cpu: "1"
             ephemeral-storage: 1Gi
       volumes:

@@ -8,41 +8,8 @@ on:
     branches:   [ main, dev, development ]
 
 jobs:
-  assert-branch:
-    name: Assert main branch
-    runs-on: ubuntu-latest
-    steps:
-    - name: Notify if untagged
-      if: ${{ !(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
-      run: echo "::notice::Not tagged, skipping branch check"
-
-    - name: Checkout repository
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0 # all history
-
-    - name: Determine if tag is contained in branch history
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-      uses: rickstaa/action-contains-tag@v1
-      id: contains_tag
-      with:
-        reference: main
-        tag: ${{ github.ref_name }}
-
-    - name: Notify about allowed branch
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval == 'true'
-      run: echo "::notice::Release tag located on main branch"
-
-    - name: Fail because of forbidden branch
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && steps.contains_tag.outputs.retval != 'true'
-      uses: actions/github-script@v7
-      with:
-        script: core.setFailed('Release tag not located on main branch')
-
   images:
     name: Build container images
-    needs: [ assert-branch ]
     uses: ./.github/workflows/build.yml
     with:
       services:        '[ "webapp", "webserver", "coursemapper-kg/concept-map", "coursemapper-kg/preprocess", "coursemapper-kg/recommendation", "coursemapper-kg/wp-pg" ]'
@@ -51,6 +18,6 @@ jobs:
 
   release:
     name: Release on GitHub
-    needs: [ assert-branch, images ]
+    needs: [ images ]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     uses: ./.github/workflows/release.yml

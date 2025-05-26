@@ -29,7 +29,7 @@ spec:
             cpu: 10m
           limits:
             memory: 512Mi
-            cpu: 2
+            cpu: 4
             ephemeral-storage: 1Gi
       containers:
       - name: mongodb
