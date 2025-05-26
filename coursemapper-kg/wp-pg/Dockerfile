@@ -10,7 +10,7 @@ RUN --mount=type=cache,sharing=private,target=/var/cache/apt \
     --mount=type=cache,sharing=private,target=/var/lib/apt <<EOF
   rm -f /etc/apt/apt.conf.d/docker-clean
   echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-  apt-get --reinstall install debian-archive-keyring &&
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 112695A0E562B32A &&
   DEBIAN_FRONTEND=noninteractive apt-get update -q &&
   apt-get install -qq --no-install-recommends -o=Dpkg::Use-Pty=0 $RUNTIME_DEPS
 EOF
