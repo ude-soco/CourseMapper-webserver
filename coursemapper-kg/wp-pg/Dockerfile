@@ -2,7 +2,7 @@
 FROM postgres:16
 
 # APT requires archive URLs
-COPY debian/sources.list /etc/apt/sources.list
+COPY debian/stretch.sources.list /etc/apt/sources.list
 
 # Install dependencies
 ENV RUNTIME_DEPS="ca-certificates rclone"
