@@ -24,7 +24,7 @@ EOF
 
 # Install Python packages
 COPY Pipfile Pipfile.lock ./
-RUN pip install --no-color --disable-pip-version-check pipenv==2023.12.1
+RUN pip install --no-color --disable-pip-version-check --no-cache-dir pipenv==2023.12.1
 RUN pipenv install --deploy
 
 # Remove build dependencies
