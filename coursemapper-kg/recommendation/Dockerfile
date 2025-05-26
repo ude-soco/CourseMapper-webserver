@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.6
+# syntax=docker/dockerfile:1.15
 FROM python:3.11.5
 
 # APT requires archive URLs

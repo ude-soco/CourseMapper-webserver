@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.6
+# syntax=docker/dockerfile:1.15
 FROM alpine as MODELS
 WORKDIR /download
 
@@ -7,7 +7,7 @@ ADD https://uni-duisburg-essen.sciebo.de/s/nO06q2wY0t5h8SO/download stanford-cor
 RUN unzip stanford-corenlp-full-2018-02-27.zip -d stanford-corenlp-full-2018-02-27 && rm stanford-corenlp-full-2018-02-27.zip
 
 
-from python:3.11.5
+FROM python:3.11.5
 
 # APT requires archive URLs
 COPY debian/sources.list /etc/apt/sources.list
@@ -30,10 +30,10 @@ USER 1000
 WORKDIR /home/app
 
 # Configure Python environment
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-ENV PIPENV_VENV_IN_PROJECT 1
-ENV PIPENV_VERBOSITY -1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIPENV_VENV_IN_PROJECT=1
+ENV PIPENV_VERBOSITY=-1
 ENV VIRTUAL_ENV=/home/app/.venv
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
@@ -63,6 +63,6 @@ COPY --from=MODELS --chown=app /download/* .
 # Add source code
 COPY . .
 
-ENV OMP_NUM_THREADS 1
+ENV OMP_NUM_THREADS=1
 EXPOSE $PORT
 CMD [ "bin/worker" ]

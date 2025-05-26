@@ -1,7 +1,7 @@
 help:
 	@cat $(MAKEFILE_LIST) | docker run --rm -i --platform linux/amd64 xanders/make-help
 
-compose = docker compose -f compose.yaml
+compose = COMPOSE_BAKE=1 docker compose -f compose.yaml
 
 all: clean build run
 
