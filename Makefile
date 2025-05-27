@@ -32,7 +32,7 @@ build:
 
 # Push container images to remote registry
 push:
-	@docker compose push
+	@$(compose) push
 
 # Start all services for development using Tilt for live container updates
 tilt:
