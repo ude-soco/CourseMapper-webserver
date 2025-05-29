@@ -54,8 +54,8 @@ class Prerequisite:
         related_relationships = clean_data.get_related_relationships()
         print("related_relationships", related_relationships)
 
-        # concept_dict.to_csv("clean_data_simple.csv")
-        # concept_dict = pd.read_csv("clean_data_simple.csv", index_col=0)
+        concept_dict.to_csv("clean_data_simple.csv")
+        concept_dict = pd.read_csv("clean_data_simple.csv", index_col=0)
 
 
 

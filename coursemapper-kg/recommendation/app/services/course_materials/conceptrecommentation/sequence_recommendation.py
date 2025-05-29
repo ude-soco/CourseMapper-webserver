@@ -84,35 +84,36 @@ class Sequence_recommendation:
         with self.driver.session() as session:
             result = session.run(
                 """
+                // Accept a list of CIDs as input
                 WITH $cid AS targetCIDs
 
-                // Find the starting node
-                MATCH (startNode)
-                WHERE startNode.cid IN targetCIDs
+                // Unwind and filter for real nodes
+                UNWIND targetCIDs AS startCID
+                MATCH (startNode:Concept {cid: startCID})
 
-                // Find all paths connected by PREREQUISITE_TO
-                OPTIONAL MATCH path = (startNode)-[:PREREQUISITE_TO*]->(endNode)
+                // Traverse only from those nodes to connected nodes via PREREQUISITE_TO
+                OPTIONAL MATCH path = (startNode)-[:PREREQUISITE_TO*1..3]->(endNode:Concept)
                 WHERE endNode.cid IN targetCIDs
 
-                // Collect the target node CID in the path
-                WITH collect([node IN nodes(path) WHERE node.cid IN targetCIDs | node.cid]) AS groupedPaths, targetCIDs
+                // Get only cids from paths
+                WITH collect(DISTINCT [n IN nodes(path) WHERE n.cid IN targetCIDs | n.cid]) AS groupedPaths, targetCIDs
 
-                // Remove duplicate paths (mimic apoc.coll.toSet using DISTINCT)
-                UNWIND groupedPaths AS path
-                WITH DISTINCT path AS uniquePaths, targetCIDs
-                WITH collect(uniquePaths) AS groupedPaths, targetCIDs
+                // Flatten & deduplicate all found CIDs
+                WITH groupedPaths, REDUCE(flat=[], p IN groupedPaths | flat + p) AS allPathCIDs, targetCIDs
+                UNWIND allPathCIDs AS cid
+                WITH groupedPaths, collect(DISTINCT cid) AS allConnectedCIDs, targetCIDs
 
-                // Flatten groupedPaths and calculate the isolated nodes
-                WITH groupedPaths, [cid IN targetCIDs WHERE NOT cid IN REDUCE(flat=[], x IN groupedPaths | flat + x)] AS isolatedNodes
+                // Identify isolated nodes (in targetCIDs but not in any path)
+                WITH groupedPaths, [cid IN targetCIDs WHERE NOT cid IN allConnectedCIDs] AS isolatedNodes
 
-                // Return the result with the CIDs in the path and the CIDs of the isolated nodes
                 RETURN groupedPaths, isolatedNodes
+
                 """,
                 cid=cid_list,
         ).data()
 
         result = list(result)
-        print (result)
+        logger.info(result)
         if not result:
             print("No data returned from the query.")
             groupedPaths = []

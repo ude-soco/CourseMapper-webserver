@@ -6,7 +6,7 @@ import psycopg
 from psycopg.rows import dict_row
 from services.embedding import EmbeddingService
 from config import Config
-from diskcache import Cache
+#from diskcache import Cache
 from bs4 import BeautifulSoup
 import requests
 
@@ -26,7 +26,7 @@ class WikipediaPage:
 class WikipediaService:
     def __init__(self):
         self._wiki = wikipediaapi.Wikipedia(Config.WIKIPEDIA_USER_AGENT, 'en')
-        self.cache = Cache('./cache')
+        #self.cache = Cache('./cache')
         self._use_stored_embeddings = Config.WIKIPEDIA_USE_STORED_EMBEDDINGS
         self._conn = None
         self.wikipedia_fallback = Config.WIKIPEDIA_FALLBACK
@@ -71,32 +71,32 @@ class WikipediaService:
             return None
 
         # Check if page exists in Wikipedia
-        # try:
-        #     print("thisc called")
-        #     page = self._wiki.page(title)
-        #     if not page.exists():
-        #         return None
-        # except Exception as e:
-        #     return None
-        # Check the cache first
         try:
-            if title in self.cache:
-                print(f"Cache hit for title: {title}")
-                page = self.cache[title]  # Retrieve the cached page
-                return page  # Return the cached page
-
-        # If not in cache, fetch from Wikipedia API
-       
-            print(f"Fetching from Wikipedia API: {title}")
+            #print("thisc called")
             page = self._wiki.page(title)
             if not page.exists():
                 return None
-
-            # Store the fetched page in cache
-            self.cache[title] = page
-            return page
         except Exception as e:
-            print(f"Error fetching page: {e}")
+            return None
+        # Check the cache first
+        # try:
+        #     if title in self.cache:
+        #         print(f"Cache hit for title: {title}")
+        #         page = self.cache[title]  # Retrieve the cached page
+        #         return page  # Return the cached page
+
+        # # If not in cache, fetch from Wikipedia API
+       
+        #     print(f"Fetching from Wikipedia API: {title}")
+        #     page = self._wiki.page(title)
+        #     if not page.exists():
+        #         return None
+
+        #     # Store the fetched page in cache
+        #     self.cache[title] = page
+        #     return page
+        # except Exception as e:
+        #     print(f"Error fetching page: {e}")
             
 
         page_categories = [(page.title, category.split(':', 1)[1]) for category in page.categories]
