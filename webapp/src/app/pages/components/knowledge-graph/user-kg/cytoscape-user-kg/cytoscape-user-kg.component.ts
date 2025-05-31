@@ -426,6 +426,8 @@ export class CytoscapeUserKgComponent {
     } else {
       document.getElementById('cy').style.width = 100 + '%';
     }
+    let cyContainer = document.getElementById('cy');
+    cyContainer.style.width = '120%';
   }
 
   updateEdgeType = async function (nodeId: string, type: string) {
@@ -623,6 +625,7 @@ export class CytoscapeUserKgComponent {
                 .targets()
                 .style('display', 'none');
             }
+            // filter by dnu
             if (this.showDNU) {
               let nodesToHide = nodes.filter(function (e: any) {
                 return (
@@ -649,6 +652,7 @@ export class CytoscapeUserKgComponent {
                   .$(`#${edgesToHide[i].data.target}`)
                   .style('display', 'none');
               }
+              // filter by u
             } else if (this.showU) {
               let nodesToHide = nodes.filter(function (e: any) {
                 return (
@@ -952,6 +956,7 @@ export class CytoscapeUserKgComponent {
         const connectedConcepts = userNode.connectedEdges().targets();
 
         // If showDNU is true, only show concepts connected by non-'u' edges
+        // prevent resetting filter
         if (this.showDNU) {
           connectedConcepts
             .filter((node) => {
@@ -1514,6 +1519,7 @@ export class CytoscapeUserKgComponent {
           }
         }
       });
+      // right clicking a node
       this.cy.on('cxttapend', async (event: any) => {
         var eventTarget = event.target;
         if (
@@ -1576,13 +1582,21 @@ export class CytoscapeUserKgComponent {
           };
           this.slideConceptservice.updateNewConcepts(newConceptEle);
           console.log(newConceptEle.id);
-          let conceptRelationship = await this.neo4jService.getRelationship(
-            newConceptEle.id.toString()
-          );
-          console.log(conceptRelationship.records[0].r.identity);
-          this.deleteRelationship(
-            conceptRelationship.records[0].r.identity.toString()
-          );
+          this.neo4jService
+            .getRelationship(newConceptEle.id.toString())
+            .then((conceptRelationship) => {
+              if (
+                conceptRelationship.records &&
+                conceptRelationship.records.length > 0
+              ) {
+                const relationshipId =
+                  conceptRelationship.records[0].r.identity.toString();
+                this.deleteRelationship(relationshipId);
+              }
+            })
+            .catch((err) => {
+              console.error('Error getting relationship:', err);
+            });
           const nodeElement = this.cy.$(`#${selectedId}`);
           if (nodeElement) {
             nodeElement.style('background-color', '#2196F3');
