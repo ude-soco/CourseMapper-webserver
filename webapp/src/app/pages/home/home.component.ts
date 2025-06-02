@@ -80,17 +80,18 @@ export class HomeComponent implements OnInit {
   getMyCourses() {
     this.courseService.fetchCourses().subscribe((courses) => {
       this.courses = courses;
-
+      
       for (var course of this.courses) {
         this.Users = [];
-        console.log(' the retrived course url is: ', course);
+        //console.log(' the retrived course url is: ', course);
         this.Users = course.users;
-        // console.log(course.users[0].role.name)
-        //       let userModerator = this.Users.find(
-        //         (user) => user.role.id === 'moderator'
-        //       );
-
-        this.buildCardInfo(course.users[0].userId, course);
+              let userModerator = this.Users.find(
+                (user) => user.role.name === 'moderator'
+              );
+              if (!userModerator) {
+                throw new Error(`Moderator not found for course with id ${course._id}`);
+              }
+        this.buildCardInfo(userModerator.userId, course);
       }
     });
     if (this.courseTriggered == false) {

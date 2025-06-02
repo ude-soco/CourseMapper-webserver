@@ -88,6 +88,7 @@ export class CourseService {
     return this.http.get<Course[]>(`${this.API_URL}/my-courses`).pipe(
       tap((courses) => {
         this.courses = courses; // Store fetched courses
+        //console.log('Fetched courses:', this.courses);
       }),
       catchError((error: HttpErrorResponse) => {
         // if (error.status === 401) {
