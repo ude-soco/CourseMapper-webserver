@@ -18,7 +18,8 @@ export const createReplyLogger = async (req, res, next) => {
 export const createReplyToUserLogger = async (req, res, next) => {
   try {
     req.locals.activity = await activityController.createActivity(
-      replyActivityGenerator.generateReplyToUserActivity(req)
+      replyActivityGenerator.generateReplyToUserActivity(req),
+      notifications.generateNotificationInfo(req)
     );
     next();
   } catch (err) {
@@ -79,16 +80,27 @@ export const editReplyLogger = async (req, res, next) => {
   }
 };
 
+// export const newMentionLogger = async (req, res, next) => {
+//   try {
+//     let mentionedUsers = req.locals.mentionedUsers;
+//     for (const mentionedUser of mentionedUsers) {
+//       req.locals.mentionedUser = mentionedUser;
+//       await activityController.createActivity(
+//         replyActivityGenerator.getNewMentionCreationStatement(req),
+//         notifications.generateNotificationInfo(req)
+//       );
+//     }
+//     next();
+//   } catch (err) {
+//     res.status(400).send({ error: "Error saving statement to mongo", err });
+//   }
+// };
 export const newMentionLogger = async (req, res, next) => {
   try {
-    let mentionedUsers = req.locals.mentionedUsers;
-    for (const mentionedUser of mentionedUsers) {
-      req.locals.mentionedUser = mentionedUser;
-      await activityController.createActivity(
-        replyActivityGenerator.getNewMentionCreationStatement(req)
-      );
-    }
-    notifications.generateNotificationInfo(req);
+    req.locals.activity = await activityController.createActivity(
+      replyActivityGenerator.getNewMentionCreationStatement(req),
+      notifications.generateNotificationInfo(req)
+    );
     next();
   } catch (err) {
     res.status(400).send({ error: "Error saving statement to mongo", err });

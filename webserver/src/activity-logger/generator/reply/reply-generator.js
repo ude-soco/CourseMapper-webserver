@@ -16,9 +16,10 @@ import { createCommentObject } from "../comment/comment-utils";
 
 let DOMAIN = "http://www.CourseMapper.de"; // TODO: Hardcoded due to frontend implementation
 
+//TODO: (Shoeb) The username should be anonymized
 const createUserObject = (req) => {
   let user = req.locals.user;
-  let annotation = req.locals.annotation;
+  let reply = req.locals.reply;
   let author = req.locals.annotation.author;
   let origin = req.get("origin");
   return {
@@ -33,12 +34,19 @@ const createUserObject = (req) => {
         [`${DOMAIN}/extensions/user`]: {
           id: author.userId,
           authorName: author.name,
-          content: annotation.content,
-          annotation_id: annotation._id,
-          material_id: annotation.materialId,
-          channel_id: annotation.channelId,
-          topic_id: annotation.topicId,
-          course_id: annotation.courseId,
+          // content: annotation.content,
+          // annotation_id: annotation._id,
+          // material_id: annotation.materialId,
+          // channel_id: annotation.channelId,
+          // topic_id: annotation.topicId,
+          // course_id: annotation.courseId,
+          replyId: reply._id,
+          annotation_id: reply.annotationId,
+          material_id: reply.materialId,
+          channel_id: reply.channelId,
+          topic_id: reply.topicId,
+          course_id: reply.courseId,
+          content: reply.content,
         },
       },
     },
@@ -64,6 +72,7 @@ export const generateReplyToUserActivity = (req) => {
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/replied", "replied"),
     object: createUserObject(req),
+    result: createReplyAnnotationResultObject(req),
     context: createContext(),
   };
 };
@@ -188,6 +197,37 @@ export const generateEditReplyActivity = (req) => {
   };
 };
 
+// export const getNewMentionCreationStatement = (req) => {
+//   const metadata = createMetadata();
+//   let reply = req.locals.reply;
+//   return {
+//     ...metadata,
+//     actor: createUser(req),
+//     verb: createVerb(`http://id.tincanapi.com/verb/mentioned`, "mentioned"),
+//     object: {
+//       objectType: config.activity,
+//       definition: {
+//         type: `${DOMAIN}/activityType/user`,
+//         name: {
+//           [config.language]: req.locals.mentionedUser.name,
+//         },
+//         extensions: {
+//           [`${DOMAIN}/extensions/user`]: {
+//             replyId: reply._id,
+//             annotation_id: reply.annotationId,
+//             material_id: reply.materialId,
+//             channel_id: reply.channelId,
+//             topic_id: reply.topicId,
+//             course_id: reply.courseId,
+//             content: reply.content,
+//           },
+//         },
+//       },
+//     },
+//     //result: createReplyResultObject(req),
+//     context: createContext(),
+//   };
+// };
 export const getNewMentionCreationStatement = (req) => {
   const metadata = createMetadata();
   let reply = req.locals.reply;
@@ -196,15 +236,17 @@ export const getNewMentionCreationStatement = (req) => {
     actor: createUser(req),
     verb: createVerb(`http://id.tincanapi.com/verb/mentioned`, "mentioned"),
     object: {
-      objectType: config.activity,
+      objectType: "User",
       definition: {
-        type: `${DOMAIN}/activityType/user`,
+        type: `${DOMAIN}/activityType/you`,
         name: {
-          [config.language]: req.locals.mentionedUser.name,
+          [config.language]: `${reply.content.slice(0, 50)}${
+            reply.content.length > 50 ? " ..." : ""
+          }`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/user`]: {
-            replyId: reply._id,
+          [`${DOMAIN}/extensions/reply`]: {
+            id: reply._id,
             annotation_id: reply.annotationId,
             material_id: reply.materialId,
             channel_id: reply.channelId,
@@ -215,7 +257,7 @@ export const getNewMentionCreationStatement = (req) => {
         },
       },
     },
-    //result: createReplyResultObject(req),
+    result: createReplyResultObject(req),
     context: createContext(),
   };
 };

@@ -141,13 +141,14 @@ export const generateCreateAnnotationActivity = (req) => {
     verb = "added";
     verbURI = "http://activitystrea.ms/schema/1.0/add";
   }
+  let formattedType = formatActivityType(req.locals.annotation.type);
 
   return {
     ...metadata,
     actor: createUser(req),
     verb: createVerb(verbURI, verb),
     object: createAnnotationObject(req),
-    //result: createAnnotationCommentMaterialResultObject(req, "annotation"), // Confision related to annotation and comment, perhaps comment needs to be removed
+    result: createAnnotationCommentResultObject(req, formattedType), // Confision related to annotation and comment, perhaps comment needs to be removed
     context: createContext(),
   };
 };
@@ -290,6 +291,7 @@ export const generateEditAnnotationActivity = (req) => {
       },
     },
     result: {
+      //TODO: This needs to be removed, use in the notification the deifinition's extensions
       extensions: {
         [`${DOMAIN}/extensions/${formattedType}`]: {
           content: newAnnotation.content,
@@ -303,6 +305,39 @@ export const generateEditAnnotationActivity = (req) => {
   };
 };
 
+// export const generateAddMentionStatement = (req) => {
+//   const metadata = createMetadata();
+//   let annotation = req.locals.annotation;
+//   let origin = req.get("origin");
+//   return {
+//     ...metadata,
+//     actor: createUser(req),
+//     verb: createVerb("http://id.tincanapi.com/verb/mentioned", "mentioned"),
+//     object: {
+//       objectType: config.activity,
+//       id: `${origin}/activity/course/${annotation.courseId}/topic/${annotation.topicId}/channel/${annotation.channelId}/material/${annotation.materialId}/mention/${req.locals.mentionedUser.userId}`,
+//       definition: {
+//         type: `${DOMAIN}/activityType/you`,
+//         name: {
+//           [config.language]: req.locals.mentionedUser.name,
+//         },
+//         extensions: {
+//           [`${DOMAIN}/extensions/annotation`]: {
+//             id: annotation._id,
+//             material_id: annotation.materialId,
+//             channel_id: annotation.channelId,
+//             topic_id: annotation.topicId,
+//             course_id: annotation.courseId,
+//             content: annotation.content,
+//           },
+//         },
+//       },
+//     },
+//     result: createAnnotationCommentResultObject(req, "annotation"),
+//     context: createContext(),
+//   };
+// };
+//TODO: Actually the type is user, but the notification section uses you/annotation
 export const generateAddMentionStatement = (req) => {
   const metadata = createMetadata();
   let annotation = req.locals.annotation;
@@ -311,15 +346,17 @@ export const generateAddMentionStatement = (req) => {
     actor: createUser(req),
     verb: createVerb("http://id.tincanapi.com/verb/mentioned", "mentioned"),
     object: {
-      objectType: config.activity,
+      objectType: "User",
       definition: {
-        type: `${DOMAIN}/activityType/user`,
+        type: `${DOMAIN}/activityType/you`,
         name: {
-          [config.language]: req.locals.mentionedUser.name,
+          [config.language]: `${annotation.content.slice(0, 50)}${
+            annotation.content.length > 50 ? " ..." : ""
+          }`,
         },
         extensions: {
-          [`${DOMAIN}/extensions/user`]: {
-            annotationId: annotation._id,
+          [`${DOMAIN}/extensions/annotation`]: {
+            id: annotation._id,
             material_id: annotation.materialId,
             channel_id: annotation.channelId,
             topic_id: annotation.topicId,
@@ -329,7 +366,7 @@ export const generateAddMentionStatement = (req) => {
         },
       },
     },
-    //result: createAnnotationCommentResultObject(req, "annotation"),
+    result: createAnnotationCommentResultObject(req, "annotation"),
     context: createContext(),
   };
 };
