@@ -107,7 +107,7 @@ export class CytoscapeUserKgComponent {
         console.log('closed');
         let cyElement = document.getElementById('cy');
         if (cyElement) {
-          cyElement.style.width = 100 + '%';
+          cyElement.style.width = 120 + '%';
         }
       });
 
@@ -117,8 +117,8 @@ export class CytoscapeUserKgComponent {
       quality: 'proof',
       randomize: false,
       // Increase spacing between nodes
-      nodeRepulsion: 15000,
-      idealEdgeLength: 200,
+      nodeRepulsion: 10000,
+      idealEdgeLength: 150,
       edgeElasticity: 0.6,
       // Tiered positioning
       nodeDimensionsIncludeLabels: true,

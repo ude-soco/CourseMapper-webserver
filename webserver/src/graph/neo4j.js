@@ -448,7 +448,7 @@ export async function deleteHasConcept(courseId) {
   }
 }
 
-/*export async function renewConcept(conceptId) {
+export async function renewConcept(conceptId) {
   try {
     const { records, summary, keys } = await graphDb.driver.executeQuery(
       `MATCH (c:Concept) WHERE ID(c) = toInteger($id)
@@ -462,7 +462,7 @@ export async function deleteHasConcept(courseId) {
     console.error("Neo4j query error:", error);
     return [];
   }
-}*/
+}
 
 // get relationship of concept to change state to new
 export async function getRelationship(targetId) {
