@@ -74,7 +74,7 @@ export async function userRatesResource(rating) {
             "reset": true // to undo any rating
         }
     */
-    console.log("Saving or Removing: User Resource");
+    console.log("User Rates Resource");
     let resetStatus = false;
     let result = {};
 

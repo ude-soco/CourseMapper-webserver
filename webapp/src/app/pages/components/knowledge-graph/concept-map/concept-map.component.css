@@ -510,7 +510,7 @@ float: right;
 }
 
 
-:host ::ng-deep .p-accordion-tab {
+:host ::ng-deep #view_dnus .p-accordion-tab {
   border: 2px solid #0288d1;
 }
 
@@ -569,9 +569,9 @@ float: right;
   z-index: 12;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 2200px) {
   :host ::ng-deep .graphSection {
-    width: 50em;
+    width: 72em;
   } 
 }
 

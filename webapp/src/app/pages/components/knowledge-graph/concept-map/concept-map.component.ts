@@ -160,7 +160,7 @@ export class ConceptMapComponent {
 
   tabs = [
     {
-      label: 'Main Concepts',
+      label: 'Main Concepts', // graphSection
       command: (e) => {
         let tempMapData = this.filteredMapData;
         this.filteredMapData = null;
@@ -718,7 +718,7 @@ export class ConceptMapComponent {
       conceptSlides: new FormControl(null),
     });
 
-    window.addEventListener('resize', this.setResponsiveWidthKnowledgeGraph);
+    // window.addEventListener('resize', this.setResponsiveWidthKnowledgeGraph);
   }
 
   ngAfterViewChecked() {
@@ -801,6 +801,17 @@ export class ConceptMapComponent {
       this.materialKgActivated = false;
     }    
   }
+
+  onActiveItemChange(event: MenuItem) {
+    // console.warn("tab onActiveItemChange") // graphSection
+    if (event.label === 'Main Concepts') {
+      // console.warn("Main Concepts")
+    } else if (event.label === 'Recommended Concepts') {
+      // console.warn("Recommended Concepts")
+    } else {
+    }
+
+  }
   
   onResize(e) {
     if (this.showSlideKg) {
@@ -858,7 +869,10 @@ export class ConceptMapComponent {
       if (flexboxNotUnderstood) {
         this.slideKgWidth =
           slideKgDialogDiv.offsetWidth - flexboxNotUnderstood.offsetWidth;
-        knowledgeGraph.style.marginLeft = 1 + 'rem';
+
+          if (knowledgeGraph) {
+            knowledgeGraph.style.marginLeft = 1 + 'rem';
+          }
       } else {
         this.slideKgWidth = slideKgDialogDiv.offsetWidth;
       }

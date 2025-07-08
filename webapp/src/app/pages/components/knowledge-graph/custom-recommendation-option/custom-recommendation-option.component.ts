@@ -141,7 +141,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
     this.croForm["user_id"] = this.userId;
     this.croForm["mid"] = this.materialId;
     this.croForm["slide_id"] = this.slideId;
-    this.croService.setResultaTabValue("0");
+    // this.croService.setResultaTabValue("1");
 
     this.croService.isResultTabSelected$.subscribe(tabSelected => {
       if (tabSelected === '0') {
@@ -152,7 +152,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
       }
       else if (tabSelected === '1') {
         for (let factor of this.factor_weights.original) {
-          if (this.factorsTabArticle.includes(factor.key) === true) {
+          if (!this.factorsTabArticle.includes(factor.key) === true) {
             factor.checked = false;
             factor.deactivated = true;
           }

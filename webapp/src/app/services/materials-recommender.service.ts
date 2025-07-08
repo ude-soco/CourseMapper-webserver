@@ -40,7 +40,7 @@ export class MaterialsRecommenderService {
 
   async rateRecommendedMaterials(data: any): Promise<any> {
     const recommendedMaterialsRating$ = this.http.post<any>(
-      `${this.apiURL}/knowledge-graph/rating`,
+      `${this.LEAF_URL}/rating_resource`,
       data,
       HTTPOptions
     );

@@ -255,7 +255,7 @@ export class CytoscapeRecommendedComponent {
   };
 
   ngOnChanges() {
-    console.log(this.elements);
+    // console.log(this.elements);
     this.init();
   }
 
