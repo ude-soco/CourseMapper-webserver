@@ -44,7 +44,7 @@ export class RatingComponent {
     );
   }
 
-  @Input() element: ArticleElementModel | VideoElementModel;
+  @Input() element!: ArticleElementModel | VideoElementModel;
   @Input() notUnderstoodConcepts: any[];
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Input() currentMaterial?: Material;

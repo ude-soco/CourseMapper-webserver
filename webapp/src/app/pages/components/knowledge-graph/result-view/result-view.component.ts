@@ -320,11 +320,8 @@ export class ResultViewComponent {
   }
 
   filteringResourcesSaved() {
-    this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 1 ? true : false;
-    if (this.filteringParamsSavedTab.text.length == 0) {
-      this.getUserResources(this.filteringParamsSavedTab);
-    } else if (this.filteringParamsSavedTab.text.length >= 2) {
-      // this.filteringParamsSavedTab.user_id = this.userId;
+    this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 3 ? true : false;
+    if (this.filteringParamsSavedTab.text.length > 3) {
       this.getUserResources(this.filteringParamsSavedTab);
     } else {
       this.filteringResourcesFound = { articles: [], videos: [] };
@@ -337,7 +334,16 @@ export class ResultViewComponent {
     }
   }
 
+  onInitGetUserResources() {
+    this.filteringParamsSavedTab.user_id = this.userId;
+    this.conceptModifiedByUserSelected = [... this.conceptsModifiedByUser]
+    let cids = this.conceptModifiedByUserSelected.map(concept => concept.cid);
+    this.filteringParamsSavedTab.cids = cids;
+    this.getUserResources(this.filteringParamsSavedTab);
+  }
+
   getUserResources(params) {
+    this.filteringResourcesFound = { articles: [], videos: [] };
     this.materialsRecommenderService.filterUserResourcesSavedBy(params)
       .subscribe({
         next: (data: UserResourceFilterResult) => {
@@ -371,6 +377,7 @@ export class ResultViewComponent {
       .subscribe({
         next: (data: Concept[]) => {
           this.conceptsModifiedByUser = data;
+          // this.onInitGetUserResources();
         },
         error: (err) => {
           console.log(err);

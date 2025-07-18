@@ -52,7 +52,7 @@ export class MaterialsRecommenderService {
 
   logWikiArticleView(data: any): Observable<any> {
     return this.http.post<any>(
-      `${this.apiURL}/materials/${data.materialId}/recommended-articles/${data.title}/log`,
+      `${this.apiURL}/materials/${data.materialId}/recommended-articles/log`,
       data,
       HTTPOptions
     );
@@ -60,14 +60,14 @@ export class MaterialsRecommenderService {
 
   logExpandAbstract(data: any): Observable<any> {
     return this.http.post<any>(
-      `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/abstract/log-expand`,
+      `${this.apiURL}/materials/${data.materialId}/recommended-article/abstract/log-expand`,
       data,
       HTTPOptions
     );
   }
   logCollapseAbstract(data: any): Observable<any> {
     return this.http.post<any>(
-      `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/abstract/log-collapse`,
+      `${this.apiURL}/materials/${data.materialId}/recommended-article/abstract/log-collapse`,
       data,
       HTTPOptions
     );
@@ -76,7 +76,7 @@ export class MaterialsRecommenderService {
   logMarkAsHelpfulArticle(data: any): Promise<any> {
     return lastValueFrom(
       this.http.post<any>(
-        `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/mark-helpful`,
+        `${this.apiURL}/materials/${data.materialId}/recommended-article/mark-helpful`,
         data,
         HTTPOptions
       )
@@ -95,7 +95,7 @@ export class MaterialsRecommenderService {
   logMarkAsNotHelpfulArticle(data: any): Promise<any> {
     return lastValueFrom(
       this.http.post<any>(
-        `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/mark-not-helpful`,
+        `${this.apiURL}/materials/${data.materialId}/recommended-article/mark-not-helpful`,
         data,
         HTTPOptions
       )
@@ -113,7 +113,7 @@ export class MaterialsRecommenderService {
   logUnmarkAsHelpfulArticle(data: any): Promise<any> {
     return lastValueFrom(
       this.http.post<any>(
-        `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/un-mark-helpful`,
+        `${this.apiURL}/materials/${data.materialId}/recommended-article/un-mark-helpful`,
         data,
         HTTPOptions
       )
@@ -132,7 +132,7 @@ export class MaterialsRecommenderService {
   logUnmarkAsNotHelpfulArticle(data: any): Promise<any> {
     return lastValueFrom(
       this.http.post<any>(
-        `${this.apiURL}/materials/${data.materialId}/recommended-article/${data.title}/un-mark-not-helpful`,
+        `${this.apiURL}/materials/${data.materialId}/recommended-article/un-mark-not-helpful`,
         data,
         HTTPOptions
       )

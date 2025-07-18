@@ -22,7 +22,7 @@ export class CardVideoComponent {
   selectedConcepts: string[] = [];
 
   @Input()
-  public videoElement: VideoElementModel;
+  public videoElement!: VideoElementModel;
   @Input()
   public notUnderstoodConcepts: string[];
   @Output() onClick: EventEmitter<any> = new EventEmitter();

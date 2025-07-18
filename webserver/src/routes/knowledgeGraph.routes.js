@@ -287,13 +287,13 @@ module.exports = function (app) {
     logger.viewAllRecommendedArticlesLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/mark-helpful",
+    "/api/materials/:materialId/recommended-article/mark-helpful",
     [authJwt.verifyToken],
     controller.rateArticle,
     logger.markArticleAsHelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/mark-not-helpful",
+    "/api/materials/:materialId/recommended-article/mark-not-helpful",
     [authJwt.verifyToken],
     controller.rateArticle,
     logger.markArticleAsUnhelpfulLogger
@@ -312,13 +312,13 @@ module.exports = function (app) {
   );
 
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/un-mark-helpful",
+    "/api/materials/:materialId/recommended-article/un-mark-helpful",
     [authJwt.verifyToken],
     controller.rateArticle,
     logger.unmarkArticleAsHelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/un-mark-not-helpful",
+    "/api/materials/:materialId/recommended-article/un-mark-not-helpful",
     [authJwt.verifyToken],
     controller.rateArticle,
     logger.unmarkArticleAsUnhelpfulLogger
@@ -336,13 +336,13 @@ module.exports = function (app) {
     logger.unmarkVideoAsUnhelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/abstract/log-expand",
+    "/api/materials/:materialId/recommended-article/abstract/log-expand",
     [authJwt.verifyToken],
     controller.expandedArticleAbstract,
     logger.expandArticleAbstractLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/abstract/log-collapse",
+    "/api/materials/:materialId/recommended-article/abstract/log-collapse",
     [authJwt.verifyToken],
     controller.collapsedArticleAbstract,
     logger.collapseArticleAbstractLogger
@@ -350,7 +350,7 @@ module.exports = function (app) {
 
   // This endpoint is for the recommended Articles part.
   app.post(
-    "/api/materials/:materialId/recommended-articles/:title/log",
+    "/api/materials/:materialId/recommended-articles/log",
     [authJwt.verifyToken],
     controller.viewFullWikipediaArticle,
     logger.viewFullArticleRecommendedArticleLogger

@@ -89,7 +89,7 @@
                0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
             </svg>
-            <em>Collapse</em></a>
+            <em>Expand</em></a>
         </p>
         <p class="text-base text-gray-600" *ngIf="(article.abstract.length > ABSTRACT_MAX_LENGTH) && !userCanExpand">
           {{article.abstract}} <a class="italic" (click)="expand()"><svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -102,7 +102,12 @@
     </div>
     <div class="flex flex-row justify-between">
       <div class="py-3 pl-7">
-        <app-rating [element]="article" [notUnderstoodConcepts]="notUnderstoodConcepts" [currentMaterial]="currentMaterial"></app-rating>
+        <app-rating 
+          [element]="article" 
+          [notUnderstoodConcepts]="notUnderstoodConcepts" 
+          [currentMaterial]="currentMaterial"
+        >
+        </app-rating>
       </div>
 
       <div class="py-3 pl-7">

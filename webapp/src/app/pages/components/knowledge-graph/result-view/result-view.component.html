@@ -199,47 +199,56 @@
 
       <!-- display resources saved and offer filtering possibility -->
       <p-tabPanel header="Saved" leftIcon="pi pi-bookmark">
-        <div class="flex flex-row justify-between">
-          <div class="flex flex-row gap-4">
-            <div class="my-auto">Content type:</div>
+
+        <div class="flex flex-row justify-between items-center w-full gap-4">
+          <!-- Left side: Content type radios -->
+          <div class="flex flex-row items-center gap-4">
+            <div>Content type:</div>
             <div class="flex flex-row gap-4">
-              <div class="flex flex-row my-auto">
-                <p-radioButton name="video" value="video" [(ngModel)]="filteringParamsSavedTab.content_type" inputId="video"
-                (onClick)="onContentTypeChange($event)"
-                >
+              <div class="flex flex-row items-center">
+                <p-radioButton 
+                  name="video" 
+                  value="video" 
+                  [(ngModel)]="filteringParamsSavedTab.content_type" 
+                  inputId="video"
+                  (onClick)="onContentTypeChange($event)">
                 </p-radioButton>
                 <label for="video" class="ml-1">Video</label>
               </div>
-              <div class="flex flex-row my-auto">
-                <p-radioButton name="article" value="article" [(ngModel)]="filteringParamsSavedTab.content_type" inputId="article"
-                (onClick)="onContentTypeChange($event)"
-                >
+              <div class="flex flex-row items-center">
+                <p-radioButton 
+                  name="article" 
+                  value="article" 
+                  [(ngModel)]="filteringParamsSavedTab.content_type" 
+                  inputId="article"
+                  (onClick)="onContentTypeChange($event)">
                 </p-radioButton>
                 <label for="article" class="ml-1">Article</label>
               </div>
             </div>
           </div>
 
-          <div class="flex justify-center text-xs ml-8" id="result_concepts_modified">
+          <!-- Middle: MultiSelect -->
+          <div class="flex justify-center text-xs">
             <p-multiSelect 
-            [options]="conceptsModifiedByUser"
-            [(ngModel)]="conceptModifiedByUserSelected"
-            optionLabel="name"
-            [filter]="true"
-            filterBy="name"
-            placeholder="Search a Concept"
-            emptyFilterMessage="No Concept found"
-            (onChange)="onChangeConceptsModifiedByUser($event)"
-            [resetFilterOnHide]="true"
-            [displaySelectedLabel]="false"
-            [style]="{ width: '16rem', 'border-radius': '0.5rem', 'font-size': '12px' }"
-            [panelStyle]="{ width: '16rem' }"
-            [showClear]="false"
-            >
+              [options]="conceptsModifiedByUser"
+              [(ngModel)]="conceptModifiedByUserSelected"
+              optionLabel="name"
+              [filter]="true"
+              filterBy="name"
+              placeholder="Search a Concept"
+              emptyFilterMessage="No Concept found"
+              (onChange)="onChangeConceptsModifiedByUser($event)"
+              [resetFilterOnHide]="true"
+              [displaySelectedLabel]="false"
+              [style]="{ width: '16rem', 'border-radius': '0.5rem', 'font-size': '12px' }"
+              [panelStyle]="{ width: '16rem' }"
+              [showClear]="false">
             </p-multiSelect>
           </div>
-          
-          <div class="p-field p-fluid" class="ml-auto">
+
+          <!-- Right: Search input -->
+          <div class="flex p-field p-fluid">
             <span class="p-float-label">
               <input
                 id="search-input"
@@ -247,8 +256,7 @@
                 pInputText
                 [(ngModel)]="filteringParamsSavedTab.text"
                 placeholder=" "
-                (input)="filteringResourcesSaved()"
-              />
+                (input)="filteringResourcesSaved()" />
               <label for="search-input-videos-articles">Search for videos/articles</label>
               <i class="pi pi-search search-icon" *ngIf="!showSearchIconPinner"></i>
               <i class="pi pi-spin pi-spinner search-icon" *ngIf="showSearchIconPinner"></i>
