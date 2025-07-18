@@ -1,9 +1,9 @@
-# syntax=docker/dockerfile:1.5
-FROM node:22-slim
+# syntax=docker/dockerfile:1.15
+FROM node:24-slim
 
 WORKDIR /app
-ENV PATH "$PATH:/app/node_modules/.bin"
-ENV NODE_ENV development
+ENV PATH="$PATH:/app/node_modules/.bin"
+ENV NODE_ENV=development
 
 # No files are added, source directory is expected to be mounted
 

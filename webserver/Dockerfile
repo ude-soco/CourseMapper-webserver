@@ -1,9 +1,9 @@
-# syntax=docker/dockerfile:1.5
-FROM node:22.1-slim as base
+# syntax=docker/dockerfile:1.15
+FROM node:24.0-slim as base
 WORKDIR /app
-ENV PATH "$PATH:/app/node_modules/.bin"
-ENV NODE_ENV production
-ENV NPM_CONFIG_UPDATE_NOTIFIER false
+ENV PATH="$PATH:/app/node_modules/.bin"
+ENV NODE_ENV=production
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
 
 
 FROM base as build

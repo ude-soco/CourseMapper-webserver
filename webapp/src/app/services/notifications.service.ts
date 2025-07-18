@@ -38,6 +38,15 @@ import {
 } from 'src/app/models/Notification';
 import * as CourseActions from '../pages/courses/state/course.actions';
 
+//! TODO: This is hardcoded for the moment, it should be enhanced
+const ANNOTATION_OBJECTS = [
+  'annotation',
+  'note',
+  'question',
+  'external-resource',
+];
+
+const MATERIAL_OBJECTS = ['pdf', 'youtube', 'video'];
 @Injectable({
   providedIn: 'root',
 })
@@ -82,7 +91,7 @@ export class NotificationsService {
           let transformedNotifications = notifications.map((notification) => {
             if (
               (notification.annotationAuthorId === user.id &&
-                notification.object === 'annotation') ||
+                ANNOTATION_OBJECTS.includes(notification.object)) ||
               (notification.replyAuthorId === user.id &&
                 notification.object === 'reply')
             ) {
@@ -165,7 +174,7 @@ export class NotificationsService {
         notifications = notifications.map((notification) => {
           if (
             (notification.annotationAuthorId === user.id &&
-              notification.object === 'annotation') ||
+              ANNOTATION_OBJECTS.includes(notification.object)) ||
             (notification.replyAuthorId === user.id &&
               notification.object === 'reply')
           ) {
@@ -509,10 +518,8 @@ export class NotificationsService {
     let lastWord =
       notification.activityId.statement.object.definition.type.slice(40);
     let name = null;
-    if (lastWord === 'annotation' || lastWord === 'reply') {
-      name = notification.activityId.statement.object.definition.name[
-        'en-US'
-      ].substring(lastWord.length);
+    if (ANNOTATION_OBJECTS.includes(lastWord) || lastWord === 'reply') {
+      name = notification.activityId.statement.object.definition.name['en-US'];
     }
     const extensions = Object.values(
       notification.activityId.statement.object.definition.extensions
@@ -557,7 +564,13 @@ export class NotificationsService {
     }
     if (
       notification.activityId.statement.object.definition.type ===
-      'http://www.CourseMapper.de/activityType/material'
+        'http://www.CourseMapper.de/activityType/material' ||
+      notification.activityId.statement.object.definition.type ===
+        'http://www.CourseMapper.de/activityType/pdf' ||
+      notification.activityId.statement.object.definition.type ===
+        'http://www.CourseMapper.de/activityType/youtube' ||
+      notification.activityId.statement.object.definition.type ===
+        'http://www.CourseMapper.de/activityType/video'
     ) {
       material_id = extensions.id;
     } else if (extensions.material_id) {
@@ -565,16 +578,33 @@ export class NotificationsService {
     }
     if (
       notification.activityId.statement.object.definition.type ===
-      'http://www.CourseMapper.de/activityType/annotation'
+        'http://www.CourseMapper.de/activityType/annotation' ||
+      notification.activityId.statement.object.definition.type ===
+        'http://www.CourseMapper.de/activityType/note' ||
+      notification.activityId.statement.object.definition.type ===
+        'http://www.CourseMapper.de/activityType/question' ||
+      notification.activityId.statement.object.definition.type ===
+        'http://www.CourseMapper.de/activityType/external-resource'
     ) {
       annotation_id = extensions.id;
       from = resultExtensions?.location?.from ?? null;
       startPage = resultExtensions?.location?.startPage ?? null;
     }
     if (
-      resultExtensionFirstKey ===
-        'http://www.CourseMapper.de/extensions/annotation' &&
-      extensionsFirstKey === 'http://www.CourseMapper.de/extensions/material'
+      (resultExtensionFirstKey ===
+        'http://www.CourseMapper.de/extensions/annotation' ||
+        resultExtensionFirstKey ===
+          'http://www.CourseMapper.de/extensions/note' ||
+        resultExtensionFirstKey ===
+          'http://www.CourseMapper.de/extensions/question' ||
+        resultExtensionFirstKey ===
+          'http://www.CourseMapper.de/extensions/external-resource') &&
+      (extensionsFirstKey ===
+        'http://www.CourseMapper.de/extensions/material' ||
+        extensionsFirstKey === 'http://www.CourseMapper.de/extensions/pdf' ||
+        extensionsFirstKey ===
+          'http://www.CourseMapper.de/extensions/youtube' ||
+        extensionsFirstKey === 'http://www.CourseMapper.de/extensions/video')
     ) {
       annotation_id = resultExtensions.id;
       from = resultExtensions?.location?.from ?? null;
@@ -591,7 +621,13 @@ export class NotificationsService {
     if (
       resultExtensionFirstKey ===
         'http://www.CourseMapper.de/extensions/reply' &&
-      extensionsFirstKey === 'http://www.CourseMapper.de/extensions/annotation'
+      (extensionsFirstKey ===
+        'http://www.CourseMapper.de/extensions/annotation' ||
+        extensionsFirstKey === 'http://www.CourseMapper.de/extensions/note' ||
+        extensionsFirstKey ===
+          'http://www.CourseMapper.de/extensions/question' ||
+        extensionsFirstKey ===
+          'http://www.CourseMapper.de/extensions/external-resource')
     ) {
       reply_id = resultExtensions.id;
       from = resultExtensions?.location?.from ?? null;
@@ -609,7 +645,12 @@ export class NotificationsService {
       }
       if (
         extensionsFirstKey ===
-        'http://www.CourseMapper.de/extensions/annotation'
+          'http://www.CourseMapper.de/extensions/annotation' ||
+        extensionsFirstKey === 'http://www.CourseMapper.de/extensions/note' ||
+        extensionsFirstKey ===
+          'http://www.CourseMapper.de/extensions/question' ||
+        extensionsFirstKey ===
+          'http://www.CourseMapper.de/extensions/external-resource'
       ) {
         annotation_id = extensions.id;
         from = resultExtensions?.location?.from ?? null;
