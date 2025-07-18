@@ -377,7 +377,7 @@ export class ResultViewComponent {
       .subscribe({
         next: (data: Concept[]) => {
           this.conceptsModifiedByUser = data;
-          // this.onInitGetUserResources();
+          this.onInitGetUserResources();
         },
         error: (err) => {
           console.log(err);
