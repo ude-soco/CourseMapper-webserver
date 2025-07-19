@@ -24,13 +24,6 @@ spec:
           httpGet:
             path: /api/healthz
             port: 8080
-        livenessProbe:
-          httpGet:
-            path: /api/healthz
-            port: 8080
-          timeoutSeconds: 30
-          failureThreshold: 5
-          periodSeconds: 60
         env:
         - name: PORT
           value: "8080"
