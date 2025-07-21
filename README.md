@@ -11,11 +11,11 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 - Production:
   [coursemapper.de](https://coursemapper.de/)
   ([branch `main`](https://github.com/ude-soco/CourseMapper-webserver/tree/main))
-  ![status](https://argocd.soco.ude.systems/api/badge?name=cmw-prod)
+  ![production status](https://argocd.soco.ude.systems/api/badge?name=cmw-prod)
 - Preview:
   [br-dev.coursemapper.de](https://br-dev.coursemapper.de/)
   ([branch `dev`](https://github.com/ude-soco/CourseMapper-webserver/tree/dev))
-  ![status](https://argocd.soco.ude.systems/api/badge?name=cmw-br-dev)
+  ![branch preview status](https://argocd.soco.ude.systems/api/badge?name=cmw-br-dev)
 
 *Note:* Stable [releases](https://github.com/ude-soco/CourseMapper-webserver/releases) are currently not running in production.
 
