@@ -77,12 +77,16 @@ export const getMyCourses = async (req, res) => {
   try {
     user = await User.findById(userId)
       .populate({ path: "courses", populate: { path: "role" } })
-      .populate({ path: "courses", populate: { path: "courseId" } });
+      .populate({ path: "courses", populate: { path: "courseId", populate: [
+        { path: "users.role" }, ] } })
+
+      
   } catch (err) {
     return res.status(500).send({ message: "Error finding user" });
   }
 
   user.courses?.forEach((object) => {
+    const users = object?.courseId?.users || [];
     let course = {
       _id: object?.courseId?._id,
       name: object?.courseId.name,
@@ -98,7 +102,13 @@ export const getMyCourses = async (req, res) => {
       url: object?.courseId.url,
     };
     results.push(course);
+    // users.forEach(user => {
+    //   console.log("UserId:", user.userId);
+    //   console.log("Role object:", user.role); // This prints the whole populated role object
+    // });
   });
+  
+  //console.log("getMyCourses called with userId: ", results); 
   return res.status(200).send(results);
 };
 
@@ -133,6 +143,7 @@ export const getMyCourses = async (req, res) => {
  * @param {string} req.params.courseId The id of the course
  */
 export const getCourse = async (req, res) => {
+  console.log("getCourse called with courseId: called");
   const courseId = req.params.courseId;
   const userId = req.userId; //"63387f529dd66f86548d3537"
 
@@ -150,193 +161,7 @@ export const getCourse = async (req, res) => {
 
   let foundCourse;
   try {
-    /*     foundCourse = await Course.aggregate([
-      {
-        $match: {
-          _id: new ObjectId(courseId),
-        },
-      },
-      {
-        $lookup: {
-          from: "roles",
-          localField: "users.role",
-          foreignField: "_id",
-          as: "result",
-        },
-      },
-      {
-        $addFields: {
-          users: {
-            $map: {
-              input: "$users",
-              as: "user",
-              in: {
-                userId: "$$user.userId",
-                _id: "$$user._id",
-                role: {
-                  $arrayElemAt: [
-                    "$result",
-                    {
-                      $indexOfArray: ["$result._id", "$$user.role"],
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-      },
-      {
-        $unset: "result",
-      },
-      {
-        $lookup: {
-          from: "channels",
-          localField: "channels",
-          foreignField: "_id",
-          as: "result",
-        },
-      },
-      {
-        $lookup: {
-          from: "followannotations",
-          let: {
-            cId: "$_id",
-          },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    {
-                      $eq: ["$$cId", "$courseId"],
-                    },
-                    {
-                      $eq: ["$userId", new ObjectId(userId)],
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-          as: "followannotations",
-        },
-      },
-      {
-        $lookup: {
-          from: "annotations",
-          localField: "followannotations.annotationId",
-          foreignField: "_id",
-          as: "annotations",
-        },
-      },
-      {
-        $addFields: {
-          mergedObjects: {
-            $map: {
-              input: "$annotations",
-              in: {
-                $mergeObjects: [
-                  {
-                    materialType: "$$this.materialType",
-                    content: "$$this.content",
-                  },
-                  {
-                    $arrayElemAt: [
-                      "$followannotations",
-                      {
-                        $indexOfArray: [
-                          "$followannotations.annotationId",
-                          "$$this._id",
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-      {
-        $unset: "annotations",
-      },
-      {
-        $unset: "followannotations",
-      },
-      {
-        $addFields: {
-          channels: {
-            $map: {
-              input: "$result",
-              as: "channel",
-              in: {
-                $mergeObjects: [
-                  "$$channel",
-                  {
-                    followingAnnotations: {
-                      $filter: {
-                        input: "$mergedObjects",
-                        as: "mergedObj",
-                        cond: {
-                          $eq: ["$$mergedObj.channelId", "$$channel._id"],
-                        },
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-      {
-        $unset: "mergedObjects",
-      },
-      {
-        $unset: "result",
-      },
-      {
-        $lookup: {
-          from: "topics",
-          localField: "topics",
-          foreignField: "_id",
-          as: "result",
-        },
-      },
-      {
-        $addFields: {
-          topics: {
-            $map: {
-              input: "$result",
-              as: "topic",
-              in: {
-                $mergeObjects: [
-                  "$$topic",
-                  {
-                    channels: {
-                      $filter: {
-                        input: "$channels",
-                        as: "channel",
-                        cond: {
-                          $eq: ["$$channel.topicId", "$$topic._id"],
-                        },
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-      {
-        $unset: "result",
-      },
-      {
-        $unset: "channels",
-      },
-    ]); */
+
     foundCourse = await Course.findById(courseId)
       .populate("topics", "-__v")
       .populate({ path: "users", populate: { path: "role" } })
@@ -349,7 +174,9 @@ export const getCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: "Error finding a course" });
   }
-
+  // foundCourse.users.forEach(user => {
+  //   console.log(`UserId: ${user.userId}, Role: ${user.role?.name}`);
+  // });
   let notificationSettings;
   try {
     /*     notificationSettings = await BlockingNotification.findOne({
@@ -374,35 +201,14 @@ export const getCourse = async (req, res) => {
       role: currentUser?.role.name || null, // Attach the role of the found user or null if not found
     };
   
-
+    courseWithUserRole.users.forEach(user => {
+      console.log(`UserId: ${user.userId}, Role: ${user.role?.name}`);
+    });
   return res.status(200).send({
     course: courseWithUserRole,
     notificationSettings: notificationSettings[0],
   });
 
-  // TODO: Uncomment these code when logger is added
-  // results = foundCourse.topics.map((topic) => {
-  //   let channels = topic.channels.map((channel) => {
-  //     return {
-  //       _id: channel._id,
-  //       name: channel.name,
-  //       topic_id: channel.topicId,
-  //       course_id: channel.courseId,
-  //     };
-  //   });
-  //   return {
-  //     _id: topic._id,
-  //     name: topic.name,
-  //     course_id: topic.courseId,
-  //     channels: channels,
-  //   };
-  // });
-  // req.locals = {
-  //   response: results,
-  //   course: foundCourse,
-  //   user: foundUser,
-  // };
-  // return next();
 };
 
 /**
