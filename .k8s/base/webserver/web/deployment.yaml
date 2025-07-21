@@ -45,7 +45,7 @@ spec:
         - name: MEMORY_LIMIT
           valueFrom:
             resourceFieldRef:
-              divisor: "0"
+              divisor: "1Mi"
               resource: limits.memory
         - name: NODE_OPTIONS
           value: "--max-old-space-size=$(MEMORY_LIMIT)"
