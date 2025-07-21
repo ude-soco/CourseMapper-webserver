@@ -28,6 +28,9 @@ spec:
           httpGet:
             path: /api/healthz
             port: 8080
+          timeoutSeconds: 30
+          failureThreshold: 5
+          periodSeconds: 60
         env:
         - name: PORT
           value: "8080"
@@ -64,7 +67,7 @@ spec:
             memory: 0.8Gi
             cpu: 100m
           limits:
-            memory: 1.2Gi
+            memory: 2Gi
             cpu: "1"
             ephemeral-storage: 1Gi
       volumes:
