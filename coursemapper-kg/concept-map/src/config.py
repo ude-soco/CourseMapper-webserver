@@ -1,4 +1,4 @@
-     import os
+import os
 
 class Config:
     PIPELINES = os.getenv('PIPELINES', 'concept-map,modify-graph,expand-material').split(',')
