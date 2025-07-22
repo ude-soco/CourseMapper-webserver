@@ -40,7 +40,10 @@ import {
   State,
 } from '../state/annotation.reducer';
 import { Store } from '@ngrx/store';
-import { getCurrentMaterialId } from '../../../materials/state/materials.reducer';
+import {
+  getCurrentMaterial,
+  getCurrentMaterialId,
+} from '../../../materials/state/materials.reducer';
 import { PdfviewService } from 'src/app/services/pdfview.service';
 import {
   distinctUntilChanged,
@@ -63,6 +66,7 @@ import { Reply } from 'src/app/models/Reply';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 import { SlideKgOrderedService } from 'src/app/services/slide-kg-ordered.service';
+import { AnnotationService } from 'src/app/services/annotation.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import * as NotificationActions from '../../../notifications/state/notifications.actions';
 import { Router } from '@angular/router';
@@ -84,6 +88,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   docURL!: string;
   subs = new Subscription();
   private API_URL = environment.API_URL;
+  private isInitialLoad: boolean = true;
 
   // Annotation properties
   drawingRect: Rectangle = {
@@ -136,12 +141,15 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   showConceptMapEvent: boolean = false;
   currentPDFPage$: Observable<number>;
   currentPdfPageSubscription: Subscription;
+  private materialSubscription: Subscription;
   private socketSubscription: Subscription;
+  private hideAnnotationSubscription: Subscription;
   notificationClickedSubscription: Subscription;
   followingAnnotationClickedSubscription: any;
 
   constructor(
     private pdfViewService: PdfviewService,
+    private annotationService: AnnotationService,
     private store: Store<State>,
     private socket: Socket,
     private changeDetectorRef: ChangeDetectorRef,
@@ -203,51 +211,54 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     this.isAnnotationCanceled$ = this.store.select(getIsAnnotationCanceled);
     this.isAnnotationPosted$ = this.store.select(getIsAnnotationPosted);
 
-    /*  this.socket.on(
-      this.materialId,
-      (payload: {
-        eventType: string;
-        annotation: Annotation;
-        reply: Reply;
-      }) => {
-        let annotation = this.annotations.find(
-          (anno) => payload.annotation?._id == anno._id
-        );
-        this.store.dispatch(
-          AnnotationActions.updateAnnotationsOnSocketEmit({ payload: payload })
-        );
-        this.store.dispatch(
-          CourseActions.updateFollowingAnnotationsOnSocketEmit({
-            payload: payload,
-          })
-        );
-      }
-    ); */
-    this.socketSubscription = this.socket
-      .fromEvent(this.materialId)
-      .subscribe(
-        (payload: {
-          eventType: string;
-          annotation: Annotation;
-          reply: Reply;
-        }) => {
-          this.store.dispatch(
-            AnnotationActions.updateAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
-          this.store.dispatch(
-            CourseActions.updateFollowingAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
+    this.materialSubscription = this.store
+      .select(getCurrentMaterial)
+      .subscribe((material) => {
+        if (material && material.type === 'pdf') {
+          if (this.socketSubscription) {
+            this.socketSubscription.unsubscribe();
+          }
+          this.socketSubscription = this.socket
+            .fromEvent(material._id)
+            .subscribe(
+              (payload: {
+                eventType: string;
+                annotation: Annotation;
+                reply: Reply;
+              }) => {
+                this.store.dispatch(
+                  AnnotationActions.updateAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+                this.store.dispatch(
+                  CourseActions.updateFollowingAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+              }
+            );
         }
-      );
+      });
   }
   ngOnInit(): void {
-    this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
-      this.hideAnnotations(isHideAnnotations);
-    });
+    // this.store.select(getHideAnnotationValue).subscribe((isHideAnnotations) => {
+    //   this.hideAnnotations(isHideAnnotations);
+    // });
+
+    // Ensure we only subscribe once
+    if (this.hideAnnotationSubscription) {
+      this.hideAnnotationSubscription.unsubscribe();
+    }
+
+    this.hideAnnotationSubscription = this.store
+      .select(getHideAnnotationValue)
+      .pipe(distinctUntilChanged()) // Ensures subscription triggers only on value change
+      .subscribe((isHideAnnotations) => {
+        this.hideAnnotations(isHideAnnotations);
+      });
+
+    this.isInitialLoad = false; // The annotations are hidden per default
 
     this.currentPDFPage$ = this.store.select(getCurrentPdfPage);
 
@@ -317,6 +328,9 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.materialSubscription) {
+      this.materialSubscription.unsubscribe();
+    }
     if (this.socketSubscription) {
       this.socketSubscription.unsubscribe();
     }
@@ -326,8 +340,10 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     if (this.notificationClickedSubscription) {
       this.notificationClickedSubscription.unsubscribe();
     }
+    if (this.hideAnnotationSubscription) {
+      this.hideAnnotationSubscription.unsubscribe(); // Properly clean up
+    }
   }
-
   ngAfterViewChecked(): void {
     let container = document.getElementsByClassName(
       'pdfViewerContainer'
@@ -349,6 +365,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   getDocUrl() {
     this.pdfViewService.currentDocURL.subscribe((url) => {
       this.docURL = this.API_URL + url.replace(/\\/g, '/');
+      console.log('this.docURL', this.docURL);
     });
   }
 
@@ -424,12 +441,6 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         this.pinObjectsList.push(updatedElement.tool);
       });
     }
-  }
-
-  afterLoadComplete(event: any) {
-    this.store.dispatch(
-      AnnotationActions.setCurrentPdfPage({ pdfCurrentPage: 1 })
-    );
   }
 
   /** Is called when a page is rendered. Is used to add Pin/rectangle/ highlight/circle on the pdf when a page is rendering */
@@ -633,20 +644,45 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   /** Show/Hide Annotations on pdf */
   hideAnnotations(hideAnnotations: boolean) {
+    if (this.hideAnnotationEvent === hideAnnotations) {
+      return; // Prevent redundant API calls
+    }
+    this.hideAnnotationEvent = hideAnnotations;
     var annotationItem = Array.from(
       document.getElementsByClassName(
         'annotationItem'
       ) as HTMLCollectionOf<HTMLElement>
     );
+
+    //log the activities User hid/unhid annotations in a pdf
+    const relevantAnnotations = this.annotations.filter((annotation) =>
+      ['drawing', 'pinpoint', 'highlight'].includes(annotation.tool.type)
+    ); // The annotations object includes just the annotations that were done inside a pdf
+
+    const payload = {
+      materialId: this.materialId,
+      courseId: this.courseId,
+      annotations: relevantAnnotations,
+    };
+
     if (hideAnnotations == true) {
       this.hideAnnotationEvent = true;
       for (let i = 0; i < annotationItem.length; i++) {
         let annotationItemHmlElmt = annotationItem[i];
         annotationItemHmlElmt.remove();
       }
+      if (!this.isInitialLoad) {
+        this.annotationService.hideAnnotations(payload).subscribe();
+      }
+      // this.annotationService.hideAnnotations(payload).subscribe();
     } else {
-      this.hideAnnotationEvent = false;
+      // this.hideAnnotationEvent = false;
       this.pageRendered(hideAnnotations);
+
+      if (!this.isInitialLoad) {
+        // Only log when User clicks on the show symbol
+        this.annotationService.unhideAnnotations(payload).subscribe();
+      }
     }
   }
 
@@ -705,17 +741,17 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
           'style',
           'height:30px; width:30px; position: absolute;' +
             'left:' +
-            this.lastMousePosition.x +
+            (this.lastMousePosition.x - 15) +
             'px; top:' +
-            this.lastMousePosition.y +
+            (this.lastMousePosition.y - 30) +
             'px;'
         );
         this.pinElement = img;
         this.pinCoords = {
           height: 30,
           width: 30,
-          left: this.lastMousePosition.x,
-          top: this.lastMousePosition.y,
+          left: this.lastMousePosition.x - 15,
+          top: this.lastMousePosition.y - 30,
         };
 
         //add pin icon in div
@@ -997,10 +1033,26 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
 
   save() {
     localStorage.setItem('mouseDownFlag', JSON.stringify(false));
+
+    var pageScale =
+      this.pdfComponent.pdfViewer.getPageView(this.dataPageNumber - 1)?.scale ??
+      1.0;
+
+    let pdfDrawingRect = {
+      x1: this.drawingRect.x1 / pageScale,
+      y1: this.drawingRect.y1 / pageScale,
+      x2: this.drawingRect.x2 / pageScale,
+      y2: this.drawingRect.y2 / pageScale,
+      width: this.drawingRect.width / pageScale,
+      height: this.drawingRect.height / pageScale,
+      borderRadius: this.drawingRect.borderRadius,
+      lineHeight: this.drawingRect.lineHeight,
+    };
+
     const currentRect = {
       rectangleId: ' ',
       pageNumber: this.dataPageNumber,
-      coordinates: this.drawingRect,
+      coordinates: pdfDrawingRect,
       isDelete: false,
       type: this.annotationToolForm,
       lineHeight: this.selectedLineHeight,
@@ -1021,10 +1073,16 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
         };
         break;
       case PdfToolType.Pin:
+        let pinCoords = {
+          left: this.pinCoords.left / pageScale,
+          top: this.pinCoords.top / pageScale,
+          width: this.pinCoords.width / pageScale,
+          height: this.pinCoords.height / pageScale,
+        };
         this.pdfAnnotationToolObject = {
           type: PdfToolType['Pin'],
           color: 'RGB(238,170,0, .5)',
-          coordinates: [this.pinCoords],
+          coordinates: [pinCoords],
           page: this.dataPageNumber,
           _id: '',
         };

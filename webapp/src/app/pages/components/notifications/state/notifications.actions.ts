@@ -154,7 +154,7 @@ export const loadGlobalAndCoursesNotificationSettingsFailure = createAction(
 
 export const setGlobalNotificationSettings = createAction(
   '[Notification] Set Global Notification Settings',
-  props<{ [key: string]: boolean | string }>()
+  props<{ [key: string]: boolean | string; labelClicked: string }>()
 );
 
 export const setGlobalNotificationSettingsSuccess = createAction(

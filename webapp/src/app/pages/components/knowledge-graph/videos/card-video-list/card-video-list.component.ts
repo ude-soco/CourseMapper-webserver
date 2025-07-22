@@ -1,12 +1,20 @@
-import { Component , ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {VideoElementModel} from '../models/video-element.model';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { VideoElementModel } from '../models/video-element.model';
 import { videoMock } from '../mocks/video.mock';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
+import { Material } from 'src/app/models/Material';
 
 @Component({
   selector: 'app-card-video-list',
   templateUrl: './card-video-list.component.html',
-  styleUrls: ['./card-video-list.component.css']
+  styleUrls: ['./card-video-list.component.css'],
 })
 export class CardVideoListComponent {
   @ViewChild('videoPlayer', { static: false }) videoplayer: ElementRef;
@@ -17,8 +25,11 @@ export class CardVideoListComponent {
   public notUnderstoodConcepts: string[];
   public showVideo = false;
   public video: VideoElementModel;
+  @Input() currentMaterial?: Material;
 
-  constructor(private route: Router) { }
+  @Output() backButtonClicked: EventEmitter<void> = new EventEmitter();
+
+  constructor(private route: Router) {}
 
   public readVideo(videoElement: VideoElementModel): void {
     this.showVideo = !this.showVideo;
@@ -28,5 +39,6 @@ export class CardVideoListComponent {
 
   goBack(): void {
     this.showVideo = !this.showVideo;
+    this.backButtonClicked.emit(); // Notify the parent
   }
 }

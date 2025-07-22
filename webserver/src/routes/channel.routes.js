@@ -1,6 +1,6 @@
 const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/channel.controller");
-const logger = require("../xAPILogger/logger/channel.logger");
+const logger = require("../activity-logger/logger-middlewares/channel-logger");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -13,8 +13,7 @@ module.exports = function (app) {
   app.get(
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getChannel,
-    logger.getChannel
+    controller.getChannel
   );
 
   // Create a new channel
@@ -23,7 +22,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/topics/:topicId/channel",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newChannel,
-    logger.newChannel,
+    logger.createChannelLogger,
     notifications.updateBlockingNotificationsNewChannel,
     notifications.channelCourseUpdateNotificationUsers,
     notifications.populateUserNotification
@@ -35,7 +34,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteChannel,
-    logger.deleteChannel,
+    logger.deleteChannelLogger,
     notifications.channelCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
@@ -46,22 +45,30 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editChannel,
-    logger.editChannel,
+    logger.editChannelLogger,
     notifications.channelCourseUpdateNotificationUsers,
     notifications.populateUserNotification
   );
 
+  app.post(
+    "/api/channels/:channelId/log-dashboard",
+    [authJwt.verifyToken],
+    controller.accessChannelDashboard,
+    logger.accessChannelDashboardLogger
+  );
 
   app.post(
     "/api/courses/:courseId/channels/:channelId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newIndicator
+    controller.newIndicator,
+    logger.newChannelIndicatorLogger
   );
 
   app.delete(
     "/api/courses/:courseId/channels/:channelId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteIndicator
+    controller.deleteIndicator,
+    logger.deleteChannelIndicatorLogger
   );
 
   app.get(
@@ -73,14 +80,21 @@ module.exports = function (app) {
   app.put(
     "/api/courses/:courseId/channels/:channelId/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.resizeIndicator
+    controller.resizeIndicator,
+    logger.resizeChannelIndicatorLogger
   );
 
   app.put(
     "/api/courses/:courseId/channels/:channelId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.reorderIndicators
+    controller.reorderIndicators,
+    logger.reorderChannelIndicatorLogger
   );
 
-
+  app.get(
+    "/api/courses/:courseId/channels/:channelId/log",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getChannelLog,
+    logger.accessChannelLogger
+  );
 };

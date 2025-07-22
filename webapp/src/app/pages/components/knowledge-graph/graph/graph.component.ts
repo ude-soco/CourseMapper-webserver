@@ -1,9 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
+import { ConceptMapService } from 'src/app/services/concept-map-service.service';
 import { ConceptStatusService } from 'src/app/services/concept-status.service';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
-
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/state/app.reducer';
+import { getCurrentMaterial } from '../../materials/state/materials.reducer';
+import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
+import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.component.html',
@@ -22,6 +27,12 @@ export class GraphComponent {
   @Input() cyWidth: any;
   @Input() showMaterialKg: boolean;
   @Input() showCourseKg: boolean;
+  @Input() isDraft: boolean;
+
+  @Output() editConcept: EventEmitter<string> = new EventEmitter();
+  @Output() conceptDeleted: EventEmitter<string> = new EventEmitter();
+  @Output() conceptDeletedBulk: EventEmitter<string[]> = new EventEmitter();
+
 
   node_id: string | undefined;
   node_cid: string | undefined;
@@ -44,10 +55,16 @@ export class GraphComponent {
   understoodConceptsSubscription: Subscription;
   truncatedAbstract: string;
 
+  currentMaterial: any;
+  currentPdfPage: number;
+  courseId: string;
+  subscriptions: Subscription = new Subscription(); // Manage subscriptions
   constructor(
     private messageService: MessageService, // show toast msgs
     private slideConceptservice: SlideConceptsService, //Change concepts' status on slide_KG [new, understood, did not understand]
-    private statusServie: ConceptStatusService // informs this component when a status has been changed to show a toast msg in case the abstract covers the selected concept
+    private statusServie: ConceptStatusService, // informs this component when a status has been changed to show a toast msg in case the abstract covers the selected concept
+    private conceptMapService: ConceptMapService, // remove concept
+    private store: Store<State>
   ) {
     this.newConceptsSubscription = slideConceptservice.newConcepts.subscribe(
       (res) => {
@@ -62,6 +79,26 @@ export class GraphComponent {
       slideConceptservice.understoodConcepts.subscribe((res) => {
         this.understoodConceptsObj = res;
       });
+
+    // Subscribe to get material Data from store
+    this.subscriptions.add(
+      this.store.select(getCurrentMaterial).subscribe((material) => {
+        if (material) {
+          this.currentMaterial = material;
+        }
+      })
+    );
+
+    // Subscribe to get the current PDF page from store
+    this.subscriptions.add(
+      this.store.select(getCurrentPdfPage).subscribe((page) => {
+        this.currentPdfPage = page;
+      })
+    );
+    // Subscribe to get the current courseId
+    this.store.select(getCurrentCourseId).subscribe((courseId) => {
+      this.courseId = courseId;
+    });
   }
   ngOnInit(): void {}
 
@@ -143,7 +180,7 @@ export class GraphComponent {
             (
               Number(sidebarChild.offsetWidth) - sidebarHeader.offsetWidth
             ).toString() + 'px';
-          
+
           // set abstractPanel length to be equal to shown kg length
           abstractContainer.style.height =
             Number(this.cyHeight - 75).toString() + 'px';
@@ -170,7 +207,8 @@ export class GraphComponent {
             // considering the length of the shown wiki link that is 95
             var maxChars =
               Math.floor(sBarWidth / fontSize) *
-                Math.floor(sBarHeight / fontSize) -95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
+                Math.floor(sBarHeight / fontSize) -
+              95; //get max number of abstract chars in which no scrolling needed [(container area/ font size)-header area - link size]
             this.truncatedAbstract = this.node_abstract.substring(0, maxChars); // limit max size of chars at abstract
 
             // // in case removing last word from the text is needed
@@ -197,6 +235,33 @@ export class GraphComponent {
   }
 
   goToWikipediaPage(wikipedia: string) {
+    const data = {
+      node_id: this.node_id,
+      node_cid: this.node_cid,
+      node_name: this.node_name,
+      node_type: this.node_type,
+      node_abstract: this.node_abstract,
+      node_wikipedia: wikipedia,
+      courseId: this.courseId,
+    };
+    if (this.showCourseKg) {
+      this.conceptMapService.logViewFullArticleCKG(data).subscribe(); // This is responsible for logging the activity from Course-kg.
+    } else if (this.showMaterialKg) {
+      const payload = {
+        ...data,
+        materialId: this.currentMaterial._id,
+      };
+      this.conceptMapService.logViewFullArticleMKG(payload).subscribe(); // This is responsible for logging the activity from material-kg.
+    } else if (this.slideKnowledgeGraph) {
+      const payload = {
+        ...data,
+        materialId: this.currentMaterial._id,
+        currentPage: this.currentPdfPage,
+      };
+      this.slideConceptservice
+        .logViewFullArticleMainConcept(payload)
+        .subscribe(); // This is responsible for logging the activity from slide-kg & main concepts part.
+    }
     if (wikipedia != '') {
       window.open(wikipedia);
     }
@@ -209,21 +274,23 @@ export class GraphComponent {
     this.showConceptAbstract = false;
     this.statusServie.abstractStatusChanged();
   }
-  markAsUnderstood(nodeId, nodeCid, nodeName) {
+  markAsUnderstood(nodeId, nodeCid, nodeName, nodeType) {
     const nodeObj = {
       id: nodeId,
       cid: nodeCid,
       name: nodeName,
+      type: nodeType,
     };
     this.slideConceptservice.updateUnderstoodConcepts(nodeObj);
     // this.kgToastService.understoodListupdated()
     this.understoodConceptMsgToast();
   }
-  markAsDidNotUnderstand(nodeId, nodeCid, nodeName) {
+  markAsDidNotUnderstand(nodeId, nodeCid, nodeName, nodeType) {
     const nodeObj = {
       id: nodeId,
       cid: nodeCid,
       name: nodeName,
+      type: nodeType,
     };
     this.slideConceptservice.updateDidNotUnderstandConcepts(nodeObj);
     this.statusServie.statusChanged();
@@ -247,4 +314,16 @@ export class GraphComponent {
       detail: 'Added to not understood concepts list!',
     });
   }
+
+  editConcept_() {
+    this.editConcept.emit(this.node_cid);
+    this.closeAbstractPanel();
+  }
+
+  deleteConcept() {
+    this.conceptDeleted.emit(this.node_cid);
+    this.closeAbstractPanel();
+  }
+
+
 }

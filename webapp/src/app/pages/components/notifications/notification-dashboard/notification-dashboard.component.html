@@ -100,12 +100,16 @@
                   [formControlName]="earlierNotification._id"
                   [binary]="true"
                 ></p-checkbox>
+
+                <!-- !TODO: Redirection to materials issue, temporary fix by disabling click event to app-notification-box -->
+                <!-- (notificationClicked)="onNotificationClicked(earlierNotification)" -->
                 <app-notification-box
                   [notification]="earlierNotification"
                   (notificationClicked)="
                     onNotificationClicked(earlierNotification)
                   "
                 ></app-notification-box>
+
                 <!-- (click)="onNotificationClicked($event, notification)" -->
               </div>
             </ng-container>

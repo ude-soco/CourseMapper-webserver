@@ -11,6 +11,16 @@ const Tag = db.tag;
 const BlockingNotifications = db.blockingNotifications;
 const ObjectId = require("mongoose").Types.ObjectId;
 
+// User identification for the logging system
+const findUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found!");
+  return user;
+};
+const handleError = (res, error, message) => {
+  console.error(error);
+  return res.status(500).send({ error: message });
+};
 /**
  * @function getChannel
  * Get details of a channel controller
@@ -18,7 +28,7 @@ const ObjectId = require("mongoose").Types.ObjectId;
  * @param {string} req.params.courseId The id of the course
  * @param {string} req.params.channelId The id of the channel
  */
-export const getChannel = async (req, res, next) => {
+export const getChannel = async (req, res) => {
   const channelId = req.params.channelId;
   const courseId = req.params.courseId;
   const userId = req.userId;
@@ -188,8 +198,45 @@ export const getChannel = async (req, res, next) => {
       .send({ message: "Error finding notification settings" });
   }
 
+  return res.status(200).send({ channel: foundChannel, notificationSettings });
+};
+
+export const getChannelLog = async (req, res, next) => {
+  const channelId = req.params.channelId;
+  const courseId = req.params.courseId;
+  const userId = req.userId;
+
+  let user;
+  try {
+    user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findById(channelId).populate(
+      "materials",
+      "-__v"
+    );
+    if (!foundChannel) {
+      return res.status(404).send({
+        error: `Channel with id ${channelId} doesn't exist!`,
+      });
+    }
+    if (foundChannel.courseId.valueOf() !== courseId) {
+      return res.status(404).send({
+        error: `Channel doesn't belong to course with id ${courseId}!`,
+      });
+    }
+  } catch (err) {
+    return res.status(500).send({ message: "Error finding channel", err });
+  }
+
   req.locals = {
-    response: { channel: foundChannel, notificationSettings },
+    response: { channel: foundChannel },
     channel: foundChannel,
     user: user,
   };
@@ -473,6 +520,46 @@ export const editChannel = async (req, res, next) => {
   return next();
 };
 
+/**
+ * @function accessChannelDashboard
+ * access channel Dashboard
+ *
+ * @param {string} req.params.channelId The id of the channel
+ *
+ */
+export const accessChannelDashboard = async (req, res, next) => {
+  const channelId = req.params.channelId;
+  const userId = req.userId;
+
+  let foundChannel;
+  try {
+    foundChannel = await Channel.findById(channelId);
+    if (!foundChannel) {
+      return res
+        .status(404)
+        .send({ error: `Channel with id ${channelId} not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding channel" });
+  }
+
+  let foundUser;
+  try {
+    foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: `User not found` });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: "Error finding user" });
+  }
+
+  req.locals = {
+    user: foundUser,
+    channel: foundChannel,
+  };
+
+  next();
+};
 
 /**
  * @function newIndicator
@@ -486,17 +573,22 @@ export const editChannel = async (req, res, next) => {
  */
 export const newIndicator = async (req, res, next) => {
   const channelId = req.params.channelId;
-
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
   let foundChannel;
-  try{
+  try {
     foundChannel = await Channel.findById(channelId);
     if (!foundChannel) {
       return res.status(404).send({
         error: `Channel with id ${channelId} doesn't exist!`,
       });
     }
-
-  }catch (err) {
+  } catch (err) {
     return res.status(500).send({ error: "Error finding channel" });
   }
 
@@ -515,11 +607,18 @@ export const newIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving channel" });
   }
 
-  return res.status(200).send({
-    success: `Indicator added successfully!`,
+  req.locals = {
+    user: foundUser,
+    channel: foundChannel,
     indicator: indicator,
-  });
-}
+    success: `Indicator added successfully!`,
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator added successfully!`,
+  //   indicator: indicator,
+  // });
+};
 
 /**
  * @function deleteIndicator
@@ -531,11 +630,18 @@ export const newIndicator = async (req, res, next) => {
 export const deleteIndicator = async (req, res, next) => {
   const channelId = req.params.channelId;
   const indicatorId = req.params.indicatorId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
-  let  foundChannel;
+  let foundChannel;
   try {
     foundChannel = await Channel.findOne({ "indicators._id": indicatorId });
-    if (! foundChannel) {
+    if (!foundChannel) {
       return res.status(404).send({
         error: `channel with id ${channelId} doesn't exist!`,
       });
@@ -549,7 +655,19 @@ export const deleteIndicator = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding channel" });
   }
-  foundChannel.indicators =  foundChannel.indicators.filter(
+
+  // Find the indicator to delete
+  let deletedIndicator;
+  deletedIndicator = foundChannel.indicators.find(
+    (indicator) => indicator._id.toString() === indicatorId
+  );
+  if (!deletedIndicator) {
+    return res.status(404).send({
+      error: `Indicator with id ${indicatorId} not found in the Channel!`,
+    });
+  }
+
+  foundChannel.indicators = foundChannel.indicators.filter(
     (indicator) => indicator._id.toString() !== indicatorId
   );
 
@@ -559,10 +677,17 @@ export const deleteIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving channel" });
   }
 
-  return res.status(200).send({
+  req.locals = {
+    user: foundUser,
+    channel: foundChannel,
+    indicator: deletedIndicator,
     success: `Indicator deleted successfully!`,
-  });
-}
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicator deleted successfully!`,
+  // });
+};
 
 /**
  * @function getIndicators
@@ -572,8 +697,15 @@ export const deleteIndicator = async (req, res, next) => {
  */
 export const getIndicators = async (req, res, next) => {
   const channelId = req.params.channelId;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
-  let  foundChannel;
+  let foundChannel;
   try {
     foundChannel = await Channel.findById(channelId);
     if (!foundChannel) {
@@ -585,11 +717,10 @@ export const getIndicators = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  const response =  foundChannel.indicators ?  foundChannel.indicators : [];
+  const response = foundChannel.indicators ? foundChannel.indicators : [];
 
   return res.status(200).send(response);
 };
-
 
 /**
  * @function resizeIndicator
@@ -603,10 +734,17 @@ export const getIndicators = async (req, res, next) => {
 export const resizeIndicator = async (req, res, next) => {
   const channelId = req.params.channelId;
   const indicatorId = req.params.indicatorId;
-  const width = req.params.width;
-  const height = req.params.height;
+  const newWidth = req.params.width;
+  const newHeight = req.params.height;
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
-  let  foundChannel;
+  let foundChannel;
   try {
     foundChannel = await Channel.findOne({ "indicators._id": indicatorId });
     if (!foundChannel) {
@@ -615,7 +753,7 @@ export const resizeIndicator = async (req, res, next) => {
       });
     }
 
-    if ( foundChannel._id.toString() !== channelId) {
+    if (foundChannel._id.toString() !== channelId) {
       return res.status(404).send({
         error: `indicator with id ${indicatorId} doesn't belong to channel with id ${channelId}!`,
       });
@@ -624,10 +762,17 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding channel" });
   }
 
+  let resizedIndicator;
+  let oldDimensions = {};
   foundChannel.indicators.forEach((indicator) => {
     if (indicator._id.toString() === indicatorId.toString()) {
-      indicator.width = width;
-      indicator.height = height;
+      oldDimensions = {
+        width: indicator.width,
+        height: indicator.height,
+      };
+      indicator.width = newWidth;
+      indicator.height = newHeight;
+      resizedIndicator = indicator;
     }
   });
 
@@ -637,7 +782,16 @@ export const resizeIndicator = async (req, res, next) => {
     return res.status(500).send({ error: "Error saving channek" });
   }
 
-  return res.status(200).send();
+  req.locals = {
+    channel: foundChannel,
+    indicator: resizedIndicator,
+    user: foundUser,
+    oldDimensions: oldDimensions,
+    newDimentions: { width: newWidth, height: newHeight },
+    success: `Indicator resized successfully!`,
+  };
+  next();
+  //return res.status(200).send();
 };
 
 /**
@@ -652,6 +806,13 @@ export const reorderIndicators = async (req, res, next) => {
   const channelId = req.params.channelId;
   const newIndex = parseInt(req.params.newIndex);
   const oldIndex = parseInt(req.params.oldIndex);
+  const userId = req.userId;
+  let foundUser;
+  try {
+    foundUser = await findUserById(userId);
+  } catch (err) {
+    return handleError(res, err, "Error finding user");
+  }
 
   let foundChannel;
   try {
@@ -664,14 +825,14 @@ export const reorderIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding channel" });
   }
-  let indicator =  foundChannel.indicators[oldIndex];
+  let indicator = foundChannel.indicators[oldIndex];
   if (oldIndex < newIndex) {
     for (let i = oldIndex; i < newIndex; i++) {
-      foundChannel.indicators[i] =  foundChannel.indicators[i + 1];
+      foundChannel.indicators[i] = foundChannel.indicators[i + 1];
     }
   } else {
     for (let i = oldIndex; i > newIndex; i--) {
-      foundChannel.indicators[i] =  foundChannel.indicators[i - 1];
+      foundChannel.indicators[i] = foundChannel.indicators[i - 1];
     }
   }
   foundChannel.indicators[newIndex] = indicator;
@@ -680,10 +841,19 @@ export const reorderIndicators = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving channel" });
   }
-  return res.status(200).send({
+
+  req.locals = {
+    user: foundUser,
+    channel: foundChannel,
+    indicator: indicator,
+    oldIndex: oldIndex,
+    newIndex: newIndex,
+    indicators: foundChannel.indicators,
     success: `Indicators updated successfully!`,
-    indicators:  foundChannel.indicators,
-  });
+  };
+  next();
+  // return res.status(200).send({
+  //   success: `Indicators updated successfully!`,
+  //   indicators: foundChannel.indicators,
+  // });
 };
-
-

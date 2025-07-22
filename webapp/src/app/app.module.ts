@@ -100,6 +100,8 @@ import { CourseDashboardComponent } from './pages/components/Dashboards/course-d
 import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
 import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
 import { BackButtonComponent } from './pages/components/back-button/back-button.component';
+import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
+import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
 import { VisLandingPageComponent } from './pages/vis-dashboard/vis-landing-page/vis-landing-page.component';
 import { VisDashboardLayoutComponent } from './pages/components/vis-dashboard/vis-dashboard-layout/vis-dashboard-layout.component';
 import { VisHeaderComponent } from './pages/components/vis-dashboard/vis-header/vis-header.component';
@@ -221,6 +223,44 @@ import { PopularTopicsComponent } from './pages/components/vis-dashboard/cards/p
     CarouselBackwardButtonComponent,
     SvgIconVisComponent,
     PopularTopicsComponent,
+    EmailValidationComponent,
+    RequestEmailValidationComponent,
+
+  ],
+  imports: [
+    MentionModule,
+    DynamicDialogModule,
+    MenuModule,
+    BrowserModule,
+    AppRoutingModule,
+    PrimengModule,
+    HttpClientModule,
+    DialogModule,
+    ButtonModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    InputTextModule,
+    ReactiveFormsModule,
+    ToastModule,
+    RippleModule,
+    ConfirmDialogModule,
+    NotificationModule,
+    StoreModule.forRoot({}, {}),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
+    SharedComponentsModule,
+    StoreModule.forFeature('general', appReducer),
+    EffectsModule.forFeature([AppEffects]),
+    InputTextareaModule,
+    DragulaModule.forRoot(),
+    SocketIoModule.forRoot(environment.socketConfig),
+    CourseModule,
+    KnowledgeGraphModule,
+    TabMenuModule,
+    DividerModule,
   ],
     imports: [
         MentionModule,

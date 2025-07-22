@@ -12,6 +12,8 @@ import { User } from 'src/app/modules/primeng/UserModule';
 import { Roles } from 'src/app/models/Roles';
 import { ThisReceiver } from '@angular/compiler';
 import { toggleShowHideAnnotation } from '../components/annotations/pdf-annotation/state/annotation.actions';
+import { MessageService } from 'primeng/api';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-landing-page',
@@ -35,6 +37,7 @@ export class LandingPageComponent {
   myCourses: Course[];
   Enrolled: boolean = false;
   createdAt: string;
+  private API_URL = environment.API_URL;
 
   firstName: string = '';
   lastName: string = '';
@@ -49,7 +52,8 @@ export class LandingPageComponent {
     private courseService: CourseService,
     private userService: UserServiceService,
     private router: Router,
-    private store: Store<State>
+    private store: Store<State>,
+    private messageService: MessageService
   ) {
     this.loggedInUser = this.storageService.isLoggedIn();
 
@@ -59,55 +63,58 @@ export class LandingPageComponent {
   }
 
   ngOnInit() {
-    //console.log("ngOnInit triggered")
-    // this.currentUser = this.storageService.getUser();
-    this.courseService.fetchCourses().subscribe((courses1) => {
-      this.myCourses = courses1;
-    });
-    //console.log(this.userArray.length, "userArray ngOnInit" )
-    //this.userArray =  []
-    this.getAllCourses();
-    // console.log(this.userArray.length, "userArray ngOnInit after" )
+    this.getAllCourses(); // Fetch all available courses
+    if (this.loggedInUser) {
+      console.log('User is logged in new test');
+      this.fetchUserCourses(); // Fetch courses the user is enrolled in
+    }
   }
-
+  fetchUserCourses(): void {
+    this.courseService.fetchCourses().subscribe({
+      next: (courses) => {
+        this.myCourses = courses; // Save user's enrolled courses
+      },
+      error: (err) => {
+        if (err) {
+          console.error('Error fetching user courses:', err);
+        }
+      },
+    });
+  }
   getAllCourses() {
-    // console.log("getAllCourses triggered")
-    // console.log(this.userArray.length, "userArray getAllCourses begining" )
     this.courseService.GetAllCourses().subscribe({
       next: (courses) => {
-        //console.log("courseService.GetAllCourses triggered")
-        this.courses = courses;
 
+         
+        this.courses = courses;
+console.log('Courses:', this.courses);
         for (var course of this.courses) {
+          try{
+
           this.Users = [];
 
           this.Users = course.users;
-
           let userModerator = this.Users.find(
             (user) => user.role.name === 'moderator'
           );
-          //this.userArray =  []
-
-          // console.log(this.userArray.length, "userArray befre build card")
-          // console.log("buildCardInfo go")
+      if (!userModerator) {
+        throw new Error(`Moderator not found for course with id ${course.id}`);
+      }
           this.buildCardInfo(userModerator.userId, course);
-          //console.log(this.userArray.length, "userArray after build card")
-          // this.userArray =  []
         }
-        // this.userArray =  []
-        // console.log(this.userArray, "userArray after build card func" )
-        //console.log(this.courses, "GetAllCourses")
+       catch (error) {
+        
+        console.log('Error:', error);  
+      continue
+     }
+
+    }
       },
     });
     if (this.courseTriggered == false) {
       this.courseService.onUpdateCourses$.subscribe({
         next: (courses1) => {
-          // this.courses .push(courses1[courses1.length-1]),
-
-          // console.log(this.userArray, "userArray onUpdateCourses" ),
-
-          // console.log(this.courses, "after"),
-          // this.courses = courses1,
+          this.courses = courses1;
           (this.courseTriggered = true), this.ngOnInit();
         },
       });
@@ -115,10 +122,7 @@ export class LandingPageComponent {
   }
 
   buildCardInfo(userModeratorID: string, course: Course) {
-    // console.log("buildCardInfo triggered")
-    //this.userArray.length=0
     this.userArray = [];
-    //console.log(this.userArray, "userArray inside build card func" )
     this.userService.GetUserName(userModeratorID).subscribe((user) => {
       this.firstName = user.firstname;
       this.lastName = user.lastname;
@@ -131,58 +135,37 @@ export class LandingPageComponent {
         firstName: this.firstName,
         lastName: this.lastName,
         description: course.description,
+        url: course.url,
+        numberOfUsers: course.numberUsers,
       };
       this.userArray.push(ingoPush);
     });
-    // console.log(this.userArray, "userArray")
     this.userArray = [];
-    // console.log(this.userArray, "userArray end of building card func" )
   }
-  //   Search(){
 
-  //  this.updatedCourses = this.courses.find(obj => obj.name === this.value1);
-  //   //updatedCourses=coursesList
-  //     //this.hideImg=true
-  //
-
-  //   }
   onSelectCourse(selcetedCourse: any) {
-    // let selcetedCourse = this.courses.find(
-    //   (course) => course._id == selcetedCourseId
-    // );
-
     if (this.loggedInUser) {
-      let varcc = this.myCourses.find(
-        (course) => selcetedCourse.id === course._id
-      );
-
-      //  if(this.user.role.name==='admin')
-      //  {
-      //   let adminCourse = this.courses.find(
-      //     (course) => selcetedCourse.id === course._id
-      //    );
-
-      //      this.Enrolled = true;
-      //      console.log(selcetedCourse, 'selcetedCourse.id landingpage admin role')
-      //    this.router.navigate(['course', selcetedCourse.id]);
-
-      //  }
-
-      if (varcc) {
-        this.Enrolled = true;
-        this.router.navigate(['course', selcetedCourse.id, 'welcome']);
-        // this.router.navigate(['course', selcetedCourse.id]);
-      } else {
-        this.Enrolled = false;
-        this.store.dispatch(
-          CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
+      try {
+        let enrolledCourse = this.myCourses.find(
+          (course) => selcetedCourse.id === course._id
         );
-        this.store.dispatch(
-          CourseAction.setCourseId({ courseId: selcetedCourse.id })
-        );
-        this.router.navigate(['course-description', selcetedCourse.id]);
-
-        //console.log(selcetedCourse)
+        if (enrolledCourse) {
+          this.Enrolled = true;
+          this.router.navigate(['course', selcetedCourse.id, 'welcome']);
+          // this.router.navigate(['course', selcetedCourse.id]);
+        } else {
+          this.Enrolled = false;
+          this.store.dispatch(
+            CourseAction.setCurrentCourse({ selcetedCourse: selcetedCourse })
+          );
+          this.store.dispatch(
+            CourseAction.setCourseId({ courseId: selcetedCourse.id })
+          );
+          this.router.navigate(['course-description', selcetedCourse.id]);
+        }
+      } catch (error) {
+        this.router.navigate(['login']);
+        this.showError('Your session has expired. Please login again');
       }
     } else {
       this.store.dispatch(
@@ -193,5 +176,25 @@ export class LandingPageComponent {
       );
       this.router.navigate(['course-description', selcetedCourse.id]);
     }
+  }
+  showError(msg) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: msg,
+    });
+  }
+
+  getCourseImage(course: Course): string {
+    if (course.url) {
+      // If course.url is already a full URL, return it directly.
+      if (course.url.startsWith('http') || course.url.startsWith('https')) {
+        return course.url;
+      }
+      // Otherwise, prepend the API_URL to form the complete URL.
+      return this.API_URL + course.url.replace(/\\/g, '/');
+    }
+    // Return an empty string or a default image if needed.
+    return '/assets/img/courseCard.png';
   }
 }

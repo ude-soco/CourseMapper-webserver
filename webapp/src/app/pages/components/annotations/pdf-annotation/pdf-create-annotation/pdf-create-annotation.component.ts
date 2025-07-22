@@ -219,6 +219,7 @@ export class PdfCreateAnnotationComponent
   }
 
   dispatchAnnotation() {
+   
     this.removeRepeatedUsersFromMentionsArray();
     this.store.dispatch(
       AnnotationActions.postAnnotation({

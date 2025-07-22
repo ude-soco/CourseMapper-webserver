@@ -8,6 +8,8 @@ import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
 import * as AppActions from 'src/app/state/app.actions';
+import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
+
 import {
   getCurrentCourse,
   getCurrentCourseId,
@@ -16,6 +18,10 @@ import {
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { MessageService } from 'primeng/api';
 import { Socket } from 'ngx-socket-io';
+import { NotificationsService } from 'src/app/services/notifications.service';
+import { getShowNotificationsPanel } from 'src/app/state/app.reducer';
+import { environment } from 'src/environments/environment';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-course-description',
@@ -35,6 +41,8 @@ export class CourseDescriptionComponent {
   course_enroll: Course;
   param: any;
   isLoaded: boolean = true;
+  private API_URL = environment.API_URL;
+
   //selectedCourse: Course = new CourseImp('', '');
 
   constructor(
@@ -45,7 +53,9 @@ export class CourseDescriptionComponent {
     private router: Router,
     private messageService: MessageService,
     private route: ActivatedRoute,
-    private socket:Socket
+    private socket: Socket,
+    private notificationsService: NotificationsService,
+    private sanitizer: DomSanitizer,
   ) {}
   ngOnInit(): void {
     this.isloggedin = this.storageService.isLoggedIn();
@@ -54,34 +64,40 @@ export class CourseDescriptionComponent {
     //   .subscribe((course) => (this.course_enroll = course));
     this.route.params.subscribe((params) => {
       if (params['courseID']) {
-    this.courseService.GetAllCourses().subscribe((courses) => {
-      this.course_enroll = courses.find((course) => course._id == params['courseID']);
+        this.courseService.GetAllCourses().subscribe((courses) => {
+          this.course_enroll = courses.find(
+            (course) => course._id == params['courseID']
+          );
 
-      this.store.dispatch(
-        CourseActions.setCurrentCourse({
-          selcetedCourse: this.course_enroll,
-        })
-      );
-      this.store.dispatch(
-        CourseActions.setCourseId({ courseId: this.course_enroll._id })
-      );
-      this.Users = [];
-      //console.log(this.course, "course found from des page")
-      this.Users = this.course_enroll.users;
-      var index = this.course_enroll.createdAt.indexOf('T');
-      (this.createdAt = this.course_enroll.createdAt.slice(0, index)),
-        this.course_enroll.createdAt.slice(index + 1);
-      let userModerator = this.Users.find(
-        (user) => user.role.name === 'moderator'
-      );
+          this.store.dispatch(
+            CourseActions.setCurrentCourse({
+              selcetedCourse: this.course_enroll,
+            })
+          );
+          this.store.dispatch(
+            CourseActions.setCourseId({ courseId: this.course_enroll._id })
+          );
+          this.Users = [];
+          this.Users = this.course_enroll.users;
+          var index = this.course_enroll.createdAt.indexOf('T');
+          (this.createdAt = this.course_enroll.createdAt.slice(0, index)),
+            this.course_enroll.createdAt.slice(index + 1);
+          let userModerator = this.Users.find(
+            (user) => user.role.name === 'moderator'
+          );
 
-      this.buildCardInfo(userModerator.userId, this.course_enroll);
-      this.isLoaded = false;
+          this.buildCardInfo(userModerator.userId, this.course_enroll);
+          this.isLoaded = false;
+        });
+      }
     });
-
   }
-});
-  }
+  sanitizeDescription(description: string): SafeHtml {
+    // console.log('Sanitizing description:', this.selectedCourse.description);
+     return  this.sanitizer.bypassSecurityTrustHtml(
+       description
+     );
+   }
   getName(firstName: string, lastName: string) {
     let Name = firstName + ' ' + lastName;
     return Name.split(' ')
@@ -99,31 +115,22 @@ export class CourseDescriptionComponent {
 
   EnrollToCOurse() {
     if (this.isloggedin == false) {
-      console.log(this.course_enroll, 'this.course');
       this.store.dispatch(
         CourseActions.setCurrentCourse({ selcetedCourse: this.course_enroll })
       );
       this.router.navigate(['login']);
     } else if (this.isloggedin == true) {
-      
       this.store.select(getCurrentCourse).subscribe((data) => {
-        
         this.course_enroll = data;
-      
       });
 
       if (this.course_enroll._id == null) {
-        console.log('entered');
-        
-        console.log("emitted")
         this.courseService
           .EnrollToCOurse(this.course_enroll._id)
           .subscribe((data) => {
             this.Enrolled = true;
-            console.log('response after calling the service', data);
             if ('success' in data) {
-              this.socket.emit("join", "course:"+this.course_enroll._id);
-              console.log('entered success msg');
+              this.socket.emit('join', 'course:' + this.course_enroll._id);
               // this.showInfo(res.success);
               this.showInfo('You are successfully enrolled to the course');
             } else {
@@ -138,24 +145,40 @@ export class CourseDescriptionComponent {
             }, 850);
           });
       } else {
-        
-        this.courseService.EnrollToCOurse(this.course_enroll._id).subscribe((data) => {
-          this.Enrolled = true;
-          console.log('data', data);
-          //if ( "write something here".indexOf("write som") > -1 )  { alert( "found it" );  }
+        try {
+          this.courseService
+            .EnrollToCOurse(this.course_enroll._id)
+            .subscribe((data) => {
+              if ('success' in data) {
+                this.Enrolled = true;
+                this.socket.emit('join', 'course:' + this.course_enroll._id);
 
-          if ('success' in data) {
-            this.socket.emit("join", "course:"+this.course_enroll._id);
-            console.log('entered success msg');
-            // this.showInfo(res.success);
-            this.showInfo('You are successfully enrolled to the course');
-          } else {
-            this.showError(data.errorMsg);
-          }
-          setTimeout(() => {
-            this.router.navigate(['course', this.course_enroll._id, 'welcome']);
-          }, 850);
-        });
+                this.showInfo('You are successfully enrolled to the course');
+              } else {
+                this.showError(data.errorMsg);
+                if (data.errorMsg.includes('User already enrolled in course')) {
+                  const user = this.storageService.getUser();
+
+                  this.socket.emit('JWT', user.token);
+                  this.router
+                    .navigate(['course', this.course_enroll._id, 'welcome'])
+                    .then(() => {
+                      // Wait for a short period of time before refreshing the page
+                      setTimeout(() => {
+                        window.location.href = window.location.href;
+                      }, 700); // Adjust the timeout as needed
+                    });
+                }
+              }
+              setTimeout(() => {
+                this.router.navigate([
+                  'course',
+                  this.course_enroll._id,
+                  'welcome',
+                ]);
+              }, 850);
+            });
+        } catch (error) {}
       }
     }
   }
@@ -168,7 +191,7 @@ export class CourseDescriptionComponent {
   }
   showInfo(msg) {
     this.messageService.add({
-      severity: 'info',
+      severity: 'success',
       summary: 'Success',
       detail: msg,
     });
@@ -180,5 +203,28 @@ export class CourseDescriptionComponent {
       summary: 'Error',
       detail: msg,
     });
+  }
+
+  getCourseImage(course: Course): string {
+    if (course.url) {
+      //console.log('course.url getCourseImage', course.url);
+      // If course.url is already a full URL, return it directly.
+      if (course.url.startsWith('http') || course.url.startsWith('https')) {
+        
+        return course.url 
+       //return course.url 
+      }
+      // Otherwise, prepend the API_URL to form the complete URL.
+      
+
+      return this.API_URL + course.url.replace(/\\/g, '/');
+    }
+    // Return an empty string or a default image if needed.
+    //return '/assets/img/courseCard.png';
+    return '/assets/img/courseCard.png';
+  }
+
+  editCourseName() {
+    console.log('Edit course event has been invoked!!');
   }
 }

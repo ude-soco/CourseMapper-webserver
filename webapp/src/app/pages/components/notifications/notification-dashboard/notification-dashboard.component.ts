@@ -41,6 +41,7 @@ import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import * as $ from 'jquery';
 import * as AppActions from 'src/app/state/app.actions';
 import { IntervalService } from 'src/app/services/interval.service';
+import { Actions } from '@ngrx/effects';
 @Component({
   selector: 'app-notification-dashboard',
   templateUrl: './notification-dashboard.component.html',
@@ -87,7 +88,8 @@ export class NotificationDashboardComponent {
     this.numOfTimesScrolledToEndBehaviourSubject.asObservable();
   protected numOfTimesScrolledToEnd = 1;
   protected numOfNotificationsToLoad = 15;
-
+  // Define a flag to control whether scrolling should happen
+  protected shouldScroll = false;
   constructor(
     protected store: Store<State>,
     protected router: Router,
@@ -415,14 +417,13 @@ export class NotificationDashboardComponent {
         NotificationActions.setCurrentlySelectedNotification({ notification })
       );
 
-      if (notification.reply_id) {
-        this.courseService.navigatingToMaterial = true;
-        this.store.dispatch(
-          AppActions.setShowNotificationsPanel({
-            showNotificationsPanel: false,
-          })
-        );
+      if ('reply_id' in notification) {
         if (notification.isDeletingReply) {
+          this.store.dispatch(
+            AppActions.setShowNotificationsPanel({
+              showNotificationsPanel: false,
+            })
+          );
           this.router.navigateByUrl(
             '/course/' +
               notification.course_id +
@@ -437,6 +438,61 @@ export class NotificationDashboardComponent {
           return;
         }
 
+        //if website is already on the same material, then just scroll to the annotation
+
+        if (
+          this.router.url.includes(
+            '/course/' +
+              notification.course_id +
+              '/channel/' +
+              notification.channel_id +
+              '/material/' +
+              '(material:' +
+              notification.material_id +
+              `/${notification.materialType})`
+          )
+        ) {
+          this.store.dispatch(
+            AppActions.setShowNotificationsPanel({
+              showNotificationsPanel: false,
+            })
+          );
+
+          this.courseService.navigatingToMaterial = false;
+          const url = window.location.href;
+
+          const elementToScrollTo = document.getElementById(
+            `reply-${notification.reply_id}`
+          );
+          elementToScrollTo?.scrollIntoView();
+          // Scroll to the element
+          window.location.hash = '#reply-' + notification.reply_id;
+          setTimeout(function () {
+            $(window.location.hash).css(
+              'box-shadow',
+              '0 0 25px rgba(83, 83, 255, 1)'
+            );
+            setTimeout(function () {
+              // elementToScrollTo.scrollIntoView=null
+              window.history.replaceState(
+                {},
+                document.title,
+                url.split('#')[0]
+              );
+              $(window.location.hash).css('box-shadow', 'none');
+            }, 5000);
+          }, 100);
+          return;
+        }
+
+        //if we are not on the material where annotation is present, then we will need to navigate to it.
+        this.courseService.navigatingToMaterial = true;
+        this.store.dispatch(
+          AppActions.setShowNotificationsPanel({
+            showNotificationsPanel: false,
+          })
+        );
+
         this.router.navigateByUrl(
           '/course/' +
             notification.course_id +
@@ -449,8 +505,7 @@ export class NotificationDashboardComponent {
             `#reply-${notification.reply_id}`
         );
         return;
-      }
-      if (notification.annotation_id) {
+      } else {
         if (notification.isDeletingAnnotation) {
           this.store.dispatch(
             AppActions.setShowNotificationsPanel({
@@ -496,18 +551,37 @@ export class NotificationDashboardComponent {
           const elementToScrollTo = document.getElementById(
             `annotation-${notification.annotation_id}`
           );
-          elementToScrollTo?.scrollIntoView();
-          // Scroll to the element
-          window.location.hash = '#annotation-' + notification.annotation_id;
+
           setTimeout(function () {
-            $(window.location.hash).css(
+            // if (elementToScrollTo  && !this.shouldScroll) {
+
+            elementToScrollTo?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+            // Set the flag to false to prevent future scrolling
+            // this.shouldScroll = true;
+            // Scroll to the element
+            window.location.hash = '#annotation-' + notification.annotation_id;
+            $(elementToScrollTo).css(
               'box-shadow',
               '0 0 25px rgba(83, 83, 255, 1)'
             );
             setTimeout(function () {
-              $(window.location.hash).css('box-shadow', 'none');
-            }, 5000);
-          }, 100);
+              window.history.replaceState(
+                {},
+                document.title,
+                url.split('#')[0]
+              );
+              $(elementToScrollTo).css('box-shadow', 'none');
+              // this.shouldScroll = false;
+            }, 4000);
+          }, 1000);
+
+          // else {
+          //   console.error('Element not found for ID:', `annotation-${notification.annotation_id}`);
+          // }
+
           return;
         }
 

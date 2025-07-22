@@ -1,6 +1,6 @@
 const { authJwt, notifications } = require("../middlewares");
 const controller = require("../controllers/material.controller");
-const logger = require("../xAPILogger/logger/material.logger");
+const logger = require("../activity-logger/logger-middlewares/material-logger");
 const knowledgeGraphController = require("../controllers/knowledgeGraph.controller");
 
 module.exports = function (app) {
@@ -15,7 +15,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.getMaterial
+    logger.accessMaterialLogger
   );
 
   // Create a new material
@@ -24,7 +24,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/channels/:channelId/material",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.newMaterial,
-    logger.newMaterial,
+    logger.addMaterialLogger,
     notifications.updateBlockingNotificationsNewMaterial,
     notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification
@@ -37,7 +37,7 @@ module.exports = function (app) {
     [authJwt.verifyToken, authJwt.isModerator],
     knowledgeGraphController.deleteMaterial,
     controller.deleteMaterial,
-    logger.deleteMaterial,
+    logger.deleteMaterialLogger,
     notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification
   );
@@ -48,7 +48,7 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editMaterial,
-    logger.editMaterial,
+    logger.editMaterialLogger,
     notifications.materialCourseUpdateNotificationsUsers,
     notifications.populateUserNotification
   );
@@ -57,48 +57,57 @@ module.exports = function (app) {
     "/api/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/play",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.playVideo
+    logger.playVideoLogger
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/:hours/:minutes/:seconds/video/pause",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.pauseVideo
+    logger.pauseVideoLogger
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/video/complete",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.completeVideo
+    logger.completeVideoLogger
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/pdf/slide/:slideNr/view",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    knowledgeGraphController.readSlide,
-    logger.viewSlide
+    // knowledgeGraphController.readSlide,
+    logger.viewSlideLogger
   );
 
   app.get(
     "/api/courses/:courseId/materials/:materialId/pdf/complete",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.getMaterial,
-    logger.completePDF
+    logger.completePDFLogger
+  );
+
+  app.post(
+    "/api/materials/:materialId/log-dashboard",
+    [authJwt.verifyToken],
+    controller.accessMaterialDashboard,
+    logger.accessMaterialDashboardLogger
   );
 
   app.post(
     "/api/courses/:courseId/materials/:materialId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newIndicator
+    controller.newIndicator,
+    logger.newMaterialIndicatorLogger
   );
 
   app.delete(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteIndicator
+    controller.deleteIndicator,
+    logger.deleteMaterialIndicatorLogger
   );
 
   app.get(
@@ -110,11 +119,19 @@ module.exports = function (app) {
   app.put(
     "/api/courses/:courseId/materials/:materialId/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.resizeIndicator
+    controller.resizeIndicator,
+    logger.resizeMaterialIndicatorLogger
   );
   app.put(
     "/api/courses/:courseId/materials/:materialId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.reorderIndicators
+    controller.reorderIndicators,
+    logger.reorderMaterialIndicatorLogger
+  );
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/pdf-zoom",
+    [authJwt.verifyToken],
+    controller.zoomPDF,
+    logger.zoomPDFLogger
   );
 };

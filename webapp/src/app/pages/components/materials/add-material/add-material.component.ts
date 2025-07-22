@@ -172,17 +172,23 @@ export class AddMaterialComponent implements OnInit {
     this.materialToAdd.description =
       this.validateForm.controls['description'].value;
     if (this.materialType == 'video') {
-      if (this.urlFormControl.value) {
+      if (this.urlFormControl.value && this.urlOrFile === 'urlOption') {
         this.materialToAdd.url = this.urlFormControl.value;
-      } else {
+        this.materialToAdd.videoType = 'urlVideo';
+      } else if (this.urlOrFile === 'videoOption') {
         this.materialToAdd.url = '';
+        this.materialToAdd.videoType = 'fileVideo';
       }
     } else if (this.materialType == 'pdf') {
       this.materialToAdd.url = '/public/uploads/pdfs/';
     }
+    const payload: Partial<CreateMaterial> = { ...this.materialToAdd };
+    if (this.materialType !== 'video') {
+      delete payload.videoType; // Remove videoType if not video
+    }
 
     var result = this.materialService
-      .addMaterial(this.materialToAdd)
+      .addMaterial(payload as CreateMaterial)
       .subscribe({
         next: (data) => {
           this.materialId = data.material._id;
@@ -281,7 +287,7 @@ export class AddMaterialComponent implements OnInit {
    */
   showInfo(msg) {
     this.messageService.add({
-      severity: 'info',
+      severity: 'success',
       summary: 'Success',
       detail: msg,
     });

@@ -28,12 +28,22 @@ import {
   getNotificationSettingsOfLastChannelMenuClicked,
   getNotificationSettingsOfLastTopicMenuClicked,
   getFollowingAnnotationsOfDisplayedChannels,
+  getSelectedTopic,
 } from '../../courses/state/course.reducer';
 import {
   topicNotificationSettingLabels,
   channelNotificationSettingLabels,
 } from 'src/app/models/Notification';
-import { Subscription, combineLatest, map, tap } from 'rxjs';
+import {
+  Subscription,
+  combineLatest,
+  map,
+  tap,
+  BehaviorSubject,
+  switchMap,
+  of,
+  distinctUntilChanged,
+} from 'rxjs';
 import { getNotifications } from '../notifications/state/notifications.reducer';
 import { Annotation } from 'src/app/models/BlockingNotification';
 import * as $ from 'jquery';
@@ -41,6 +51,7 @@ import * as NotificationActions from '../notifications/state/notifications.actio
 import { Notification } from 'src/app/models/Notification';
 import { getLastTimeCourseMapperOpened } from 'src/app/state/app.reducer';
 import { IntervalService } from 'src/app/services/interval.service';
+import { AnnotationService } from 'src/app/services/annotation.service';
 @Component({
   selector: 'app-topic-dropdown',
   templateUrl: './topic-dropdown.component.html',
@@ -48,6 +59,10 @@ import { IntervalService } from 'src/app/services/interval.service';
   providers: [MessageService, ConfirmationService],
 })
 export class TopicDropdownComponent implements OnInit {
+  isCollapsed: boolean = true;
+  maxVisibleAnnotations: number = 5;
+
+  length;
   constructor(
     private courseService: CourseService,
     private topicChannelService: TopicChannelService,
@@ -60,7 +75,8 @@ export class TopicDropdownComponent implements OnInit {
     private renderer: Renderer2,
     private changeDetectorRef: ChangeDetectorRef,
     protected fb: FormBuilder,
-    private intervalService: IntervalService
+    private intervalService: IntervalService,
+    private annotationService: AnnotationService
   ) {
     const url = this.router.url;
     if (url.includes('course') && url.includes('channel')) {
@@ -84,6 +100,7 @@ export class TopicDropdownComponent implements OnInit {
   @Input() showModeratorPrivileges: boolean;
   @ViewChild('topicMenu') topicMenu: any;
   @ViewChild('channelMenu') channelMenu: any;
+  followingAnnotations: Annotation[] = [];
   topics: Topic[] = [];
   displayAddChannelDialogue: boolean = false;
   selectedTopic: Topic = null;
@@ -132,21 +149,36 @@ export class TopicDropdownComponent implements OnInit {
   lastTimeCourseMapperOpened$: Observable<string>;
 
   ngOnInit(): void {
-    this.topicChannelService
-      .fetchTopics(this.courseService.getSelectedCourse()._id)
-      .subscribe((res) => {
-        this.topics = res.course.topics;
-
-        this.store.dispatch(
-          CourseActions.initialiseNotificationSettings({
-            notificationSettings: res.notificationSettings,
-          })
-        );
-      });
-
+    this.loadTopics();
     this.topicChannelService.onUpdateTopics$.subscribe(
       (topics) => (this.topics = topics)
     );
+    // // Handle topic and channel-specific subscriptions
+    // this.store.select(getSelectedTopic).pipe(
+    //   distinctUntilChanged(), // Ensure we react only to changes in the selected topic
+    //   switchMap((selectedTopic) => {
+    //     if (!selectedTopic) {
+    //       return of(null); // If no topic is selected, return null
+    //     }
+
+    //     // Fetch the annotations for the selected channel when the topic changes
+    //     return this.store.select(getFollowingAnnotationsOfDisplayedChannels).pipe(
+    //       map((followingAnnotations) => {
+    //         if (this.selectedChannelId) {
+    //           const annotations = followingAnnotations[this.selectedChannelId] || [];
+    //           this.length = annotations.length;
+    //           return annotations;
+    //         }
+    //         return [];
+    //       })
+    //     );
+    //   })
+    // ).subscribe(
+    //   (annotations) => {
+    //     this.followingAnnotations = annotations;
+    //   },
+    //   (error) => console.error(error)
+    // );
 
     this.notificationSettingsOfLastTopicMenuClicked$ = this.store.select(
       getNotificationSettingsOfLastTopicMenuClicked
@@ -205,7 +237,18 @@ export class TopicDropdownComponent implements OnInit {
       getLastTimeCourseMapperOpened
     );
   }
-
+  loadTopics() {
+    this.topicChannelService
+      .fetchTopics(this.courseService.getSelectedCourse()._id)
+      .subscribe((res) => {
+        this.topics = res.course.topics;
+        this.store.dispatch(
+          CourseActions.initialiseNotificationSettings({
+            notificationSettings: res.notificationSettings,
+          })
+        );
+      });
+  }
   getTopicActivityIndicator(topicId: string) {
     return combineLatest([
       this.allNotifications$,
@@ -309,13 +352,42 @@ export class TopicDropdownComponent implements OnInit {
     );
   }
 
-  getFollowingAnnotationsOfDisplayedChannels(channelId: string) {
+  // getFollowingAnnotationsOfDisplayedChannels(channelId: string): Observable<any[]> {
+
+  //   // this.selectedChannelId$.next(channelId);
+
+  //   return this.selectedChannelId$.pipe(
+  //     switchMap((channelId) => {
+  //       if (!channelId) return of([]); // If no channel selected, return empty array
+
+  //       return this.store.select(getFollowingAnnotationsOfDisplayedChannels).pipe(
+  //         map((followingAnnotations) => {
+  //           if (!followingAnnotations || !followingAnnotations[channelId]) {
+  //             return [];
+  //           }
+
+  //           const annotations = followingAnnotations[channelId] || [];
+  //           this.length = Array.isArray(annotations) ? annotations.length : 0;
+  //           return annotations;
+  //         })
+  //       );
+  //     })
+  //   );
+  // }
+  getFollowingAnnotationsOfDisplayedChannels(
+    channelId: string
+  ): Observable<any[]> {
+    // return this.store.select(getFollowingAnnotationsOfDisplayedChannels).pipe(
     return this.followingAnnotationsOfDisplayedChannels$.pipe(
       map((followingAnnotations) => {
-        if (!followingAnnotations) {
+        if (!followingAnnotations || !followingAnnotations[channelId]) {
           return [];
         }
-        return followingAnnotations[channelId];
+
+        const annotations = followingAnnotations[channelId] || [];
+        this.length = Array.isArray(annotations) ? annotations.length : 0;
+
+        return annotations;
       })
     );
   }
@@ -373,17 +445,41 @@ export class TopicDropdownComponent implements OnInit {
         return;
       } */
       this.courseService.navigatingToMaterial = true;
-      this.router.navigateByUrl(
-        '/course/' +
-          followingAnnotation.courseId +
-          '/channel/' +
-          followingAnnotation.channelId +
-          '/material/' +
-          '(material:' +
-          followingAnnotation.materialId +
-          `/${followingAnnotation.materialType})` +
-          `#annotation-${followingAnnotation.annotationId}`
-      );
+      // this.router.navigateByUrl(
+      //   '/course/' +
+      //     followingAnnotation.courseId +
+      //     '/channel/' +
+      //     followingAnnotation.channelId +
+      //     '/material/' +
+      //     '(material:' +
+      //     followingAnnotation.materialId +
+      //     `/${followingAnnotation.materialType})` +
+      //     `#annotation-${followingAnnotation.annotationId}`
+      // );
+      const annotationUrl =
+        `/course/${followingAnnotation.courseId}/channel/${followingAnnotation.channelId}/material/` +
+        `(material:${followingAnnotation.materialId}/${followingAnnotation.materialType})` +
+        `#annotation-${followingAnnotation.annotationId}`;
+
+      // this.router.navigateByUrl(annotationUrl).then(() => {
+      //   // Find the annotation element after navigation
+      //   setTimeout(() => {
+      //     const elementToScrollTo = document.getElementById(`annotation-${followingAnnotation.annotationId}`);
+      //     if (elementToScrollTo) {
+      //       elementToScrollTo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      //       // Highlight the annotation
+      //       elementToScrollTo.style.boxShadow = '0 0 25px rgba(83, 83, 255, 1)';
+      //       setTimeout(() => {
+      //         elementToScrollTo.style.boxShadow = 'none';
+      //       }, 5000);
+      //     }
+      //   }, 100); // Adjust the timeout if needed to ensure the element is rendered
+      // });
+      // this.router.navigateByUrl(annotationUrl).then(() => {
+      //   // Emit the event to trigger scrolling after navigation
+      //   this.annotationService.scrollToAnnotation.emit(followingAnnotation.annotationId);
+      // });
+      this.router.navigateByUrl(annotationUrl);
     }
   }
 
@@ -391,7 +487,9 @@ export class TopicDropdownComponent implements OnInit {
     $event.stopPropagation();
     menu.toggle($event);
   }
-
+  toggleCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+  }
   ngOnDestroy() {
     this.expandTopic = null;
     this.selectedChannelId = null;
@@ -435,7 +533,8 @@ export class TopicDropdownComponent implements OnInit {
   showMenu() {}
 
   onSelectTopic(topic: Topic) {
-    // console.log(this.selectedTopic)
+    this.loadTopics(); // Call it when a new topic is selected
+
     if (this.expandTopic.includes(topic._id)) {
       this.expandTopic.some((topicId, index) => {
         if (topicId === topic._id) {
@@ -446,11 +545,20 @@ export class TopicDropdownComponent implements OnInit {
         CourseActions.setCurrentTopic({ selcetedTopic: null })
       );
     } else {
+      this.topicChannelService
+        .logTopic(this.selectedCourseId, this.selectedTopic._id)
+        .subscribe();
       this.expandTopic = [];
       this.expandTopic.push(topic._id);
       this.store.dispatch(
         CourseActions.setCurrentTopic({ selcetedTopic: topic })
       );
+      //       // New: Fetch following annotations for the selected topic
+      // if (this.selectedChannelId) {
+      //   this.getFollowingAnnotationsOfDisplayedChannels(this.selectedChannelId).subscribe((annotations) => {
+      //     this.followingAnnotations = annotations; // Store the annotations locally if necessary
+      //   });
+      // }
       // wait until expanded topic rendered
       setTimeout(() => {
         // if exists channel previously selected --> make channel container bg=white
@@ -472,12 +580,20 @@ export class TopicDropdownComponent implements OnInit {
     this.selectedCourseId = this.courseService.getSelectedCourse()._id;
     this.prevSelectedCourseId = this.selectedCourseId;
     this.topicChannelService.selectChannel(channel);
+    this.topicChannelService
+      .logChannel(this.selectedCourseId, channel._id)
+      .subscribe();
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
       'channel',
       channel._id,
     ]);
+
+    // this.getFollowingAnnotationsOfDisplayedChannels(channel._id).subscribe((annotations) => {
+    //   // This block ensures the annotations are updated when a new channel is selected
+    //   this.followingAnnotations = annotations;  // Store the annotations locally if necessary
+    // });
     this.store.dispatch(
       CourseActions.toggleChannelSelected({ channelSelected: true })
     );
@@ -489,7 +605,10 @@ export class TopicDropdownComponent implements OnInit {
     );
     // make selected channel's background white
     this.selectedChannelId = channel._id;
+    // this.getFollowingAnnotationsOfDisplayedChannels(this.selectedChannelId).subscribe((annotations) => {
+    //   this.followingAnnotations = annotations; // Update followingAnnotations for display
 
+    // });
     // make all channels' container background Null
     this.topics.forEach((topic) => {
       topic.channels.forEach((channelEle) => {
@@ -961,7 +1080,7 @@ export class TopicDropdownComponent implements OnInit {
     let objToSend = {
       topicId: this.topicIdOfTopicMenuClicked,
       courseId: this.selectedCourseId,
-
+      labelClicked: labelClicked,
       [topicNotificationSettingLabels.annotations]:
         labelClicked === topicNotificationSettingLabels.annotations
           ? !this.checkBoxesGroup.value[
@@ -1001,7 +1120,7 @@ export class TopicDropdownComponent implements OnInit {
     let objToSend = {
       channelId: this.channelIdOfChannelMenuClicked,
       courseId: this.selectedCourseId,
-
+      labelClicked: labelClicked,
       [channelNotificationSettingLabels.annotations]:
         labelClicked === channelNotificationSettingLabels.annotations
           ? !this.channelCheckBoxesGroup.value[
@@ -1061,7 +1180,7 @@ export class TopicDropdownComponent implements OnInit {
    */
   showInfo(msg) {
     this.messageService.add({
-      severity: 'info',
+      severity: 'success',
       summary: 'Success',
       detail: msg,
     });
@@ -1092,22 +1211,30 @@ export class TopicDropdownComponent implements OnInit {
     });
   }
 
-  viewDashboardClicked(){
+  viewDashboardClicked() {
     this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
       'topic',
-      this.selectedTopic._id,'dashboard'
-          
+      this.selectedTopic._id,
+      'dashboard',
     ]);
-   
-
+    //Log the activity
+    this.topicChannelService
+      .logAccessTopicDashboard(this.selectedTopic._id)
+      .subscribe();
   }
-  viewChannelDashboardClicked(){
-     this.router.navigate([
+  viewChannelDashboardClicked() {
+    this.router.navigate([
       'course',
       this.courseService.getSelectedCourse()._id,
       'channel',
-      this.selectedChannel._id,'dashboard']);     
+      this.selectedChannel._id,
+      'dashboard',
+    ]);
+    //Log the activity
+    this.topicChannelService
+      .logAccessChannelDashboard(this.selectedChannel._id)
+      .subscribe();
   }
 }

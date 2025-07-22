@@ -49,6 +49,7 @@ export class TopicChannelService {
       )
       .pipe(
         tap((res) => {
+          
           this.topics = res.course?.topics;
         })
       );
@@ -68,6 +69,11 @@ export class TopicChannelService {
     });
   }
 
+  logTopic(courseId: string, topicId: string): Observable<any> {
+    return this.http.get<Course>(
+      `${this.API_URL}/courses/${courseId}/topics/${topicId}`
+    );
+  }
   /**
    * @function addTopic
    * Add new topic to a course in the backend and if the communication was
@@ -351,5 +357,24 @@ export class TopicChannelService {
         notificationSettings: BlockingNotifications;
       }>(`${this.API_URL}/courses/${courseId}/channels/${channelId}`)
       .pipe(map((res) => res.channel));
+  }
+
+  logChannel(courseId: string, channelId: string): Observable<any> {
+    return this.http.get<Course>(
+      `${this.API_URL}/courses/${courseId}/channels/${channelId}/log`
+    );
+  }
+  logAccessTopicDashboard(topicId: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/topics/${topicId}/log-dashboard`, {
+      topicId,
+    });
+  }
+  logAccessChannelDashboard(channelId: string): Observable<any> {
+    return this.http.post(
+      `${this.API_URL}/channels/${channelId}/log-dashboard`,
+      {
+        channelId,
+      }
+    );
   }
 }

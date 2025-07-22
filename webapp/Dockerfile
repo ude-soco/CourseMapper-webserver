@@ -1,11 +1,11 @@
-# syntax=docker/dockerfile:1.5
-FROM node:20.1-slim as build
+# syntax=docker/dockerfile:1.15
+FROM node:24.0-slim as build
 
 WORKDIR /app
-ENV PATH "$PATH:/app/node_modules/.bin"
-ENV NODE_ENV production
-ENV NPM_CONFIG_UPDATE_NOTIFIER false
-ENV NG_PERSISTENT_BUILD_CACHE 1
+ENV PATH="$PATH:/app/node_modules/.bin"
+ENV NODE_ENV=production
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+ENV NG_PERSISTENT_BUILD_CACHE=1
 
 COPY package*.json .
 RUN  --mount=type=cache,target=/app/.npm,rw \
@@ -17,7 +17,7 @@ RUN  --mount=type=cache,target=/app/node_modules/.cache,rw \
 
 
 
-FROM nginxinc/nginx-unprivileged:1.25.4-alpine
+FROM nginxinc/nginx-unprivileged:1.29.0-alpine
 
 USER root
 WORKDIR /usr/share/nginx/html
@@ -28,5 +28,5 @@ COPY --link --from=build --chown=101 /app/dist/webapp/ ./
 COPY --link ./nginx/conf.d/* /etc/nginx/conf.d/
 COPY --link --chmod=0755 ./nginx/docker-entrypoint.d/* /docker-entrypoint.d/
 
-ENV NGINX_ENTRYPOINT_QUIET_LOGS 1
+ENV NGINX_ENTRYPOINT_QUIET_LOGS=1
 EXPOSE 4200

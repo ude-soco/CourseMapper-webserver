@@ -8,8 +8,16 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 #### Live instances
 
-- Production: [coursemapper.soco.inko.cloud](https://coursemapper.soco.inko.cloud/) (latest [release](https://github.com/ude-soco/CourseMapper-webserver/releases))
-- Preview: [edge.coursemapper.soco.inko.cloud](https://edge.coursemapper.soco.inko.cloud/) ([branch `main`](https://github.com/ude-soco/CourseMapper-webserver/tree/main))
+- Production:
+  [coursemapper.de](https://coursemapper.de/)
+  ([branch `main`](https://github.com/ude-soco/CourseMapper-webserver/tree/main))
+  ![production status](https://argocd.soco.ude.systems/api/badge?name=cmw-prod)
+- Preview:
+  [br-dev.coursemapper.de](https://br-dev.coursemapper.de/)
+  ([branch `dev`](https://github.com/ude-soco/CourseMapper-webserver/tree/dev))
+  ![branch preview status](https://argocd.soco.ude.systems/api/badge?name=cmw-br-dev)
+
+*Note:* Stable [releases](https://github.com/ude-soco/CourseMapper-webserver/releases) are currently not running in production.
 
 #### Build and run
 
@@ -22,38 +30,24 @@ Visit the [proxy service on port 8000](http://localhost:8000/) to use the applic
 
 ## 🖥️ Application stack
 
-The services making up the coursemapper-webserver project use the following images, hosted on Docker Hub:
-
-- proxy: not published, only required for environments without built-in HTTP routing
-- webapp: [socialcomputing/coursemapper-webserver-webapp](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webapp/general)
-- webserver: [socialcomputing/coursemapper-webserver-webserver](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-webserver/general)
-- coursemapper-kg: [socialcomputing/coursemapper-webserver-coursemapper-kg](https://hub.docker.com/repository/docker/socialcomputing/coursemapper-webserver-coursemapper-kg/general)
+The services making up the coursemapper-webserver application are released as [container images, hosted on GitHub Packages](https://github.com/orgs/ude-soco/packages?repo_name=CourseMapper-webserver). Additional third-party images used:
 - MongoDB: [mongo (official image)](https://hub.docker.com/_/mongo)
+- Neo4J: [neo4j (official image)](https://hub.docker.com/_/neo4j)
+- Redis: [redis (official image)](https://hub.docker.com/_/redis)
+
 
 ## 🔨 Development Setup Guide
+
+<details>
+<summary>Step by step manual for setting up a development machine running a desktop environment</summary>
 
 #### Step 1: Pre-requisites
 
 - Download NodeJS (v16.14.2) from [the official website](https://nodejs.org/en/blog/release/v16.14.2)
-
-- Python (v3.7.2) from [the official website](https://www.python.org/downloads/release/python-372/)
-
-- Download [Java JDK 17](https://www.oracle.com/java/technologies/downloads/) and install it
-
-- Download [IntelliJ Ultimate](https://www.jetbrains.com/de-de/idea/download/#section=windows) or [Visual Studio Code](https://code.visualstudio.com/download) and install one of the code editors
-
 - Download [MongoDB Community Server](https://www.mongodb.com/try/download/community) and [MongoDB Compass](https://www.mongodb.com/try/download/compass) and install them
-
 - Neo4j Desktop from [the official website](https://neo4j.com/download-center/#desktop), install it, start the server, and login to the server.
-
 - Redis from [the Redis releases page](https://github.com/tporadowski/redis/releases) and install it
-
-- Downlod Elmo packages: [Link 1](https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5) and [Link 2](https://uni-duisburg-essen.sciebo.de/s/r4bNsDrkuAkPSfo/download), and copy it inside `coursemapper-kg/app/algorithms` folder
-
-- Download [StanfordCoreNLP](https://uni-duisburg-essen.sciebo.de/s/nO06q2wY0t5h8SO) and extract the ZIP file inside `coursemapper-kg/app/algorithms` folder. Make sure the stanford-corenlp folder name is `stanford-corenlp-full-2018-02-27`.
-
 - Download [Postman](https://www.postman.com/downloads/) and install it
-
 - Download and install Github Desktop [official website](https://desktop.github.com/)
 
 #### Step 2: Installation Guide for CourseMapper webserver
@@ -108,55 +102,7 @@ The services making up the coursemapper-webserver project use the following imag
 
 #### Step 4: Installation Guide for CourseMapper coursemapper-kg
 
-- Using your file explorer, go inside the directory `coursemapper-kg`
-
-	- Copy the `example.env` file and paste it in the same folder. Rename the copied environment file to `.env`. Change the values (`NEO4J_USER`, `NEO4J_PASSWORD`, `REDIS_PASSWORD`) of the environment variables in the `.env` file to your own values.
-
-- Open a command prompt/terminal in the `coursemapper-kg` directory (with **administration rights** for Windows)
-
-- Install and activate python virtual environment for Windows
-
-  - Type the following commands to install and activate the virtual environment:
-
-    - Install python virtual environment (only first time)
-
-      ```bash
-      pip install pipenv
-      ```
-
-    - Install python package (only first time)
-
-      ```bash
-      pipenv install
-      ```
-
-    - Activate the virtual environment (every time when you want to start the server)
-
-      ```bash
-      pipenv shell
-      ```
-
-      (**Optional**) To check the location of your Python virtual environment, type `pipenv --venv` the following command in your command prompt
-
-- Download the spacy package (only first time)
-
-  ```
-  python -m spacy download en
-  ```
-
-- Move to the directory `coursemapper-kg`, open a terminal, copy the codes below and paste it in the terminal one at a time to download the necessary nltk and sentence transformer packages.
-
-  Make sure that you have downloaded the models from number 7 and 8 from step 1 above.
-
-  ``` (only first time)
-  python -c "import nltk;nltk.download('stopwords'); nltk.download('punkt'); nltk.download('wordnet'); import spacy; spacy.cli.download('en_core_web_sm'); from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2'); from flair.embeddings import TransformerDocumentEmbeddings;  TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b'); from app.services.course_materials.kwp_extraction.model import KeyphraseExtractor; KeyphraseExtractor(); KeyphraseExtractor('squeezebert/squeezebert-mnli');"
-  ```
-
-- Run the worker
-
-  ```bash
-  pipenv run python -m app.worker
-  ```
+See [README.md](coursemapper-kg/concept-map/README.md) in the `coursemapper-kg/concept-map` directory and [README.md](coursemapper-kg/recommendation/README.md) in the `coursemapper-kg/recommendation` directory for installation instructions.
 
 #### Step 5: Postman configuration
 
@@ -166,3 +112,4 @@ The services making up the coursemapper-webserver project use the following imag
 
 - Open MongoDB Compass and type `mongodb://localhost:27017` in the URI textbox and press connect button
 - Find the database `coursemapper_v2` in the left panel
+</details>

@@ -2,11 +2,13 @@ version: 2
 updates:
 - package-ecosystem: "github-actions"
   directory: "/"
+  target-branch: "dev"
   schedule:
     interval: "weekly"
 
 - package-ecosystem: "docker"
   directory: "/proxy"
+  target-branch: "dev"
   schedule:
     interval: "weekly"
   labels:
@@ -16,6 +18,7 @@ updates:
 
 - package-ecosystem: "docker"
   directory: "/webapp"
+  target-branch: "dev"
   schedule:
     interval: "weekly"
   ignore:
@@ -28,6 +31,7 @@ updates:
 
 - package-ecosystem: "docker"
   directory: "/webserver"
+  target-branch: "dev"
   schedule:
     interval: "weekly"
   ignore:
@@ -40,6 +44,7 @@ updates:
 
 - package-ecosystem: "npm"
   directory: "/webapp"
+  target-branch: "dev"
   schedule:
     interval: "daily"
   open-pull-requests-limit: 10
@@ -54,9 +59,11 @@ updates:
       - "@angular-devkit/*"
       - "@ngrx/*"
       - "primeng"
+      update-types: minor
 
 - package-ecosystem: "npm"
   directory: "/webserver"
+  target-branch: "dev"
   schedule:
     interval: "daily"
   open-pull-requests-limit: 10
@@ -65,8 +72,9 @@ updates:
   - "javascript"
   - "webserver"
 
-- package-ecosystem: "python"
+- package-ecosystem: "pip"
   directory: "/coursemapper-kg"
+  target-branch: "dev"
   schedule:
     interval: "daily"
   open-pull-requests-limit: 10

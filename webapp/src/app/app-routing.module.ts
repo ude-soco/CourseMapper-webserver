@@ -25,6 +25,9 @@ import { ResetPasswordRequestComponent } from './pages/components/forget-passwor
 import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
 import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
+import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
+import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
+import { CanDeactivateService } from './services/can-deactivate.service';
 import {VisLandingPageComponent} from "./pages/vis-dashboard/vis-landing-page/vis-landing-page.component";
 import {
   VisDashboardLayoutComponent
@@ -72,10 +75,18 @@ const routes: Routes = [
   {
     path: 'restPassword/:token',
     component: ResetPasswordComponent,
-  },
-  {
+  }, {
     path: 'restRequest',
     component: ResetPasswordRequestComponent,
+  },
+  {
+  path: 'verify/:token',
+  component: RequestEmailValidationComponent,
+},
+ 
+  {
+    path: 'validateEmail',
+    component: EmailValidationComponent,
   },
   {
     path: 'home',
@@ -125,6 +136,7 @@ const routes: Routes = [
       {
         path: 'welcome',
         component: CourseWelcomeComponent,
+        canDeactivate: [CanDeactivateService],
       },
     ],
   },

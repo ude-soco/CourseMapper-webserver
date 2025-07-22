@@ -2,6 +2,10 @@ services:
   coursemapper-kg:
     image: coursemapper-webserver-coursemapper-kg-web
 
+  wp-pg:
+    ports:
+    - 5432:5432
+
   proxy:
     image: coursemapper-webserver-proxy
 

@@ -1,3 +1,4 @@
+
 const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
 const User = db.user;
@@ -11,6 +12,10 @@ const Reply = db.reply;
 const Tag = db.tag;
 const Activity = db.activity;
 const BlockingNotifications = db.blockingNotifications;
+const fs = require('fs/promises');
+const path = require('path');
+
+const crypto = require("crypto");
 
 //write a method to make a new document in the blockingNotification collection. The argumetns for the method will be the courseID and the userID. and according to the default notifications variables in the course document set the notifications variables for the materials, channels, topics.
 
@@ -115,6 +120,42 @@ export const initialiseNotificationSettings = async (course, user) => {
   return blockingNotification;
 };
 
+export const generateMboxAndMboxSha1Sum = (email) => {
+  let mailbox = `mailto:${email}`;
+  let hash = crypto.createHash("sha1");
+  hash.update(mailbox);
+  return {
+    mbox: mailbox,
+    mbox_sha1sum: hash.digest("hex"),
+  };
+};
+export const getRandomImageUrl = async (req) => {
+  const imagesDir = path.join(__dirname, '..', '..','public/randomImgs');
+  //console.log('imagesDir:', imagesDir);
+
+  // Read the directory asynchronously
+  const files = await fs.readdir(imagesDir);
+  //console.log('files:', files);
+
+  // Filter only for image files (assuming they are all images)
+  const imageFiles = files.filter(file => /\.(jpe?g|png|gif)$/i.test(file));
+  
+  if (imageFiles.length === 0) {
+    throw new Error('No images found in the randomImgs folder.');
+  }
+  
+  // Pick a random image from the array
+  const randomIndex = Math.floor(Math.random() * imageFiles.length);
+  const randomImage = imageFiles[randomIndex];
+  
+  // Construct the URL for the image using the request object.
+  // Assuming you are serving static files from: 
+  // app.use("/api/public/uploads", express.static("public/uploads"));
+  return `${req.protocol}://${req.get('host')}/api/public/randomImgs/${randomImage}`;
+};
+
 module.exports = {
   initialiseNotificationSettings,
+  generateMboxAndMboxSha1Sum,
+  getRandomImageUrl
 };

@@ -1,6 +1,7 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/course.controller");
-const logger = require("../xAPILogger/logger/course.logger");
+const logger = require("../activity-logger/logger-middlewares/course-logger");
+const { getCourseOriginal } = require("../controllers/course.controller");
 // const controller2 = require("../controllers/user.controller");
 
 module.exports = function (app) {
@@ -39,7 +40,7 @@ module.exports = function (app) {
     "/api/course",
     [authJwt.verifyToken],
     controller.newCourse,
-    logger.newCourse
+    logger.createCourseLogger
   );
 
   // Enrol in a course
@@ -47,7 +48,7 @@ module.exports = function (app) {
     "/api/enrol/:courseId",
     [authJwt.verifyToken],
     controller.enrolCourse,
-    logger.enrolCourse
+    logger.enrolToCourseLogger
   );
 
   // Withdraw from a course
@@ -56,7 +57,7 @@ module.exports = function (app) {
     "/api/withdraw/:courseId",
     [authJwt.verifyToken, authJwt.isEnrolled],
     controller.withdrawCourse,
-    logger.withdrawCourse
+    logger.withdrawFromCourseLogger
   );
 
   // Delete a course
@@ -65,8 +66,17 @@ module.exports = function (app) {
     "/api/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.deleteCourse,
-    logger.deleteCourse
+    logger.deleteCourseLogger
     // controller2.moderatorBoard
+  );
+
+  // Share a course
+  // Available to all users
+  app.post(
+    "/api/courses/:courseId/share",
+    [authJwt.verifyToken],
+    controller.shareCourse,
+    logger.shareCourseLogger
   );
 
   // Update a course
@@ -75,19 +85,29 @@ module.exports = function (app) {
     "/api/courses/:courseId",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.editCourse,
-    logger.editCourse
+    logger.editCourseLogger
   );
 
   app.post(
+    "/api/courses/:courseId/log-dashboard",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.accessCourseDashboard,
+    logger.accessCourseDashboardLogger
+  );
+
+  // Add a new course indicator to the course Dashboard
+  app.post(
     "/api/courses/:courseId/indicator",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.newIndicator
+    controller.newIndicator,
+    logger.newCourseIndicatorLogger
   );
 
   app.delete(
     "/api/courses/:courseId/indicator/:indicatorId",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.deleteIndicator
+    controller.deleteIndicator,
+    logger.deleteCourseIndicatorLogger
   );
 
   app.get(
@@ -99,12 +119,21 @@ module.exports = function (app) {
   app.put(
     "/api/courses/:courseId/indicator/:indicatorId/resize/:width/:height",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.resizeIndicator
+    controller.resizeIndicator,
+    logger.resizeCourseIndicatorLogger
   );
 
   app.put(
     "/api/courses/:courseId/reorder/:newIndex/:oldIndex",
     [authJwt.verifyToken, authJwt.isModerator],
-    controller.reorderIndicators
+    controller.reorderIndicators,
+    logger.reorderCourseIndicatorLogger
+  );
+
+  app.get(
+    "/api/courses/:courseId/log",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getCourseOriginal,
+    logger.accessCourseLogger
   );
 };

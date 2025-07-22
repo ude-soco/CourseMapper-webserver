@@ -1,5 +1,5 @@
-# syntax=docker/dockerfile:1.5
-FROM nginxinc/nginx-unprivileged:1.25.4-alpine
+# syntax=docker/dockerfile:1.15
+FROM nginxinc/nginx-unprivileged:1.29.0-alpine
 
 USER root
 COPY --link ./nginx/conf.d/* /etc/nginx/conf.d/

@@ -169,28 +169,31 @@ export class VideoMainAnnotationComponent
           this.material = material;
           this.materilaId = material._id;
           this.getVideoUrl();
+          if (this.socketSubscription) {
+            this.socketSubscription.unsubscribe();
+          }
+          this.socketSubscription = this.socket
+            .fromEvent(material._id)
+            .subscribe(
+              (payload: {
+                eventType: string;
+                annotation: Annotation;
+                reply: Reply;
+              }) => {
+                this.store.dispatch(
+                  AnnotationActions.updateAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+                this.store.dispatch(
+                  CourseActions.updateFollowingAnnotationsOnSocketEmit({
+                    payload: payload,
+                  })
+                );
+              }
+            );
         }
       });
-    this.socketSubscription = this.socket
-      .fromEvent(this.material._id)
-      .subscribe(
-        (payload: {
-          eventType: string;
-          annotation: Annotation;
-          reply: Reply;
-        }) => {
-          this.store.dispatch(
-            AnnotationActions.updateAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
-          this.store.dispatch(
-            CourseActions.updateFollowingAnnotationsOnSocketEmit({
-              payload: payload,
-            })
-          );
-        }
-      );
     this.subscriptions.push(materialSubscriper);
     if (!this.apiLoaded) {
       const tag = document.createElement('script');
@@ -326,10 +329,10 @@ export class VideoMainAnnotationComponent
     // create an overlay element that covers the player element
     const overlay = document.createElement('div');
     overlay.style.position = 'absolute';
-    overlay.style.top = '0';
+    overlay.style.top = '50px';
     overlay.style.left = '0';
     overlay.style.width = '100%';
-    overlay.style.height = '94%';
+    overlay.style.height = '87%';
     overlay.style.background = 'transparent';
     overlay.style.pointerEvents = 'auto';
     overlay.className = 'selection-overlay';

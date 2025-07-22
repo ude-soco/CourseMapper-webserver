@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { State } from '../pages/courses/state/course.reducer';
 import * as NotificationActions from '../pages/components/notifications/state/notifications.actions';
 import { Neo4jService } from './neo4j.service';
+import { Course } from '../models/Course';
 @Injectable({
   providedIn: 'root',
 })
@@ -18,11 +19,14 @@ export class MaterilasService {
   isMaterialSelected = new BehaviorSubject<boolean>(false);
 
   selectedMaterial: CreateMaterial;
-  constructor(private http: HttpClient, private store: Store<State>,private neo4jservice: Neo4jService) {}
+  constructor(
+    private http: HttpClient,
+    private store: Store<State>,
+    private neo4jservice: Neo4jService
+  ) {}
 
-
-  getSelectedMaterial(): CreateMaterial{
-    return this.selectedMaterial
+  getSelectedMaterial(): CreateMaterial {
+    return this.selectedMaterial;
   }
   selectMaterial(material: CreateMaterial) {
     // if there is no selected course then no need to update the topics.
@@ -35,15 +39,26 @@ export class MaterilasService {
   }
 
   addMaterial(material: CreateMaterial): any {
+    const payload: any = {
+      type: material.type,
+      url: material.url,
+      name: material.name,
+      description: material.description,
+    };
+    // Add videoType to payload, when the materialType is video
+    if (material.type === 'video' && material.videoType) {
+      payload.videoType = material.videoType;
+    }
     return this.http
       .post<any>(
         `${this.API_URL}/courses/${material.courseId}/channels/${material.channelId}/material`,
-        {
-          type: material.type,
-          url: material.url,
-          name: material.name,
-          description: material.description,
-        }
+        payload
+        // {
+        //   type: material.type,
+        //   url: material.url,
+        //   name: material.name,
+        //   description: material.description,
+        // }
       )
       .pipe(
         catchError((err) => {
@@ -72,23 +87,32 @@ export class MaterilasService {
       );
   }
 
+  logMaterial(courseId: string, materialId: string): Observable<any> {
+    return this.http.get<CreateMaterial>(
+      `${this.API_URL}/courses/${courseId}/materials/${materialId}`
+    );
+  }
+
   uploadFile(formData: any, materialType: string = 'pdf'): any {
     if (materialType == 'video') {
       return this.http
         .post<any>(`${this.API_URL}/upload/video`, formData)
         .pipe(tap((res) => console.log(res)));
+    } else if (materialType == 'pdf') {
+      return this.http
+        .post<any>(`${this.API_URL}/upload/pdf`, formData)
+        .pipe(tap((res) => console.log(res)));
+    } else if (materialType == 'img') {
+      return this.http
+        .post<any>(`${this.API_URL}/upload/img`, formData)
+        .pipe(tap((res) => console.log('result from the image upload in the material service', res)));
     }
-
-    return this.http
-      .post<any>(`${this.API_URL}/upload/pdf`, formData)
-      .pipe(tap((res) => console.log(res)));
   }
 
   deleteMaterial(material: Material) {
-    return this.http
-      .delete(
-        `${this.API_URL}/courses/${material['courseId']}/materials/${material._id}`
-      );
+    return this.http.delete(
+      `${this.API_URL}/courses/${material['courseId']}/materials/${material._id}`
+    );
   }
   deleteFile(material: Material) {
     if (material.type == 'pdf') {
@@ -109,6 +133,12 @@ export class MaterilasService {
         );
     }
   }
+  deleteCourseImage(course: Course): Observable<any> {
+    const fileName = course.url.split('/').pop();
+    // Assuming course.imageFileName is the full file name with extension
+    const url = `${this.API_URL}/images/${fileName}`;
+    return this.http.delete(url, { body: course });
+  }
 
   renameMaterial(courseId: any, materialTD: Material, body: any) {
     return this.http
@@ -121,5 +151,21 @@ export class MaterilasService {
           return of({ errorMsg: err.error.error });
         })
       );
+  }
+  logAccessMaterialDashboard(materialId: string): Observable<any> {
+    return this.http.post(
+      `${this.API_URL}/materials/${materialId}/log-dashboard`,
+      {
+        materialId,
+      }
+    );
+  }
+  logZoomPDF(payload): Observable<string> {
+    return this.http.post<string>(
+      `${this.API_URL}/courses/${payload.courseId}/materials/${payload.materialId}/pdf-zoom`,
+      {
+        payload,
+      }
+    );
   }
 }

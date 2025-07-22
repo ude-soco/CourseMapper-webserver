@@ -36,3 +36,65 @@
   background-color: #ea580c;
   border-radius: 50%;
 }
+.material-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* Tailwind's gap-2 */
+}
+
+.material-container {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto; /* Allows items to shrink and grow as necessary */
+  max-width: 100%; /* Ensure items do not overflow the container */
+}
+.material-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px; /* Adjust as necessary */
+ /* cursor: pointer; */
+
+}
+
+.material-full-name {
+  cursor: pointer;
+
+}
+
+.collapse-arrow {
+  cursor: pointer;
+  /* margin-left: 5px;
+  display: inline-block; */
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.items-center {
+  align-items: center;
+}
+:host ::ng-deep .p-tabview .p-tabview-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* Optional: Adds some space between the tabs */
+}
+
+:host ::ng-deep .p-tabview .p-tabview-nav li {
+  /* flex: 1 1 auto; Allows the tabs to shrink and grow */
+  max-width: 100%; /* Ensure items do not overflow the container */
+}
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.button-container button {
+  width: 45%;
+}

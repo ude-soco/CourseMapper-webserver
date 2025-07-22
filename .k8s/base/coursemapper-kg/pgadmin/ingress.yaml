@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+  - host: pgadmin.$(FQDN)
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: /
+        backend:
+          service:
+            name: pgadmin
+            port:
+              number: 80
+  tls:
+  - secretName: pgadmin-tls-certificate
+    hosts:
+    - pgadmin.$(FQDN)

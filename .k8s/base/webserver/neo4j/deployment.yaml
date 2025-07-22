@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neo4j
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+      - name: leader
+        image: neo4j
+        ports:
+        - containerPort: 7474
+        - containerPort: 7687
+        env:
+        - name: NEO4J_AUTH
+          value: "neo4j/password"
+        resources:
+          requests:
+            cpu: 12m
+            memory: 1100Mi
+          limits:
+            cpu: 4
+            memory: 1.5Gi
+        volumeMounts:
+        - name: data
+          mountPath: "/data"
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: neo4j

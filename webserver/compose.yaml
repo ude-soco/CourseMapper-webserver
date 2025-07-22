@@ -31,21 +31,24 @@ services:
     image: ${IMAGE_NAME_PREFIX:-socialcomputing/}coursemapper-webserver-webserver:${IMAGE_TAG:-latest}
     build: .
     environment:
-    - PORT=8080
-    - COOKIE_SECRET=secret
-    - JWT_SECRET=secret
-    - PASS=adminpassword
-    - MONGO_DB=mongodb://mongo:27017/coursemapper
-    - NEO4J_URI="bolt://neo4j:7687"
-    - NEO4J_USER="neo4j"
-    - NEO4J_PASSWORD="password"
-    - REDIS_HOST="redis"
-    - REDIS_PORT="6379"
-    - REDIS_DATABASE="0"
-    - REDIS_PASSWORD=
+      PORT: 8080
+      COOKIE_SECRET: secret
+      JWT_SECRET: secret
+      EMAIL: admin@soco.com
+      PASS: adminpassword
+      WEBAPP_URL: http://localhost:8000
+      MONGO_DB: mongodb://mongo:27017/coursemapper
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DATABASE: 0
+      REDIS_PASSWORD: ""
     volumes:
-    - webserver-uploads-pdfs:/app/public/uploads/pdfs
-    - webserver-uploads-videos:/app/public/uploads/videos
+      - webserver-uploads-images:/app/public/uploads/images
+      - webserver-uploads-pdfs:/app/public/uploads/pdfs
+      - webserver-uploads-videos:/app/public/uploads/videos
     depends_on:
       mongo:
         condition: service_healthy
@@ -57,5 +60,6 @@ services:
 volumes:
   mongo:
   neo4j-data:
+  webserver-uploads-images:
   webserver-uploads-pdfs:
   webserver-uploads-videos:

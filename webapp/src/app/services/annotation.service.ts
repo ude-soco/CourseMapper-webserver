@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { Annotation } from 'src/app/models/Annotations';
 import { environment } from 'src/environments/environment';
 import { Reply } from '../models/Reply';
@@ -12,10 +12,13 @@ import { BlockingNotifications } from '../models/BlockingNotification';
 export class AnnotationService {
   constructor(private http: HttpClient) {}
 
+  // public scrollToAnnotation: EventEmitter<string> = new EventEmitter<string>();
+
   postAnnotation(
     annotation: Annotation,
-    mentionedUsers: { userId: string; name: string; email: string }[]
+    mentionedUsers: { userId: string; name: string; username: string }[]
   ): Observable<{ response: BlockingNotifications }> {
+    // Make the HTTP post request
     return this.http.post<{ response: BlockingNotifications }>(
       `${environment.API_URL}/courses/${annotation.courseId}/materials/${annotation.materialId}/annotation`,
       { annotation, mentionedUsers }
@@ -30,11 +33,30 @@ export class AnnotationService {
       `${environment.API_URL}/courses/${courseID}/materials/${materialId}/getAnnotations`
     );
   }
+  hideAnnotations(payload): Observable<string> {
+    return this.http.post<string>(
+      `${environment.API_URL}/courses/${payload.courseID}/materials/${payload.materialId}/hideAnnotations`,
+      payload
+    );
+  }
+
+  unhideAnnotations(payload): Observable<string> {
+    return this.http.post<string>(
+      `${environment.API_URL}/courses/${payload.courseID}/materials/${payload.materialId}/unhideAnnotations`,
+      payload
+    );
+  }
+  filterAnnotations(payload): Observable<string> {
+    return this.http.post<string>(
+      `${environment.API_URL}/courses/${payload.courseID}/materials/${payload.materialId}/filter-annotations`,
+      payload
+    );
+  }
 
   postReply(
     annotation: Annotation,
     reply: Reply,
-    mentionedUsers: { userId: string; name: string; email: string }[]
+    mentionedUsers: { userId: string; name: string; username: string }[]
   ): Observable<Reply> {
     return this.http.post<Reply>(
       `${environment.API_URL}/courses/${annotation.courseId}/annotations/${annotation._id}/reply`,
