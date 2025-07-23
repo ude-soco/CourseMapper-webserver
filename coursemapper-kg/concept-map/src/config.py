@@ -1,4 +1,4 @@
-     import os
+import os
 
 class Config:
     PIPELINES = os.getenv('PIPELINES', 'concept-map,modify-graph,expand-material').split(',')
@@ -19,7 +19,7 @@ class Config:
     NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD', 'password')
     NEO4J_SAVE_TO_DB = os.getenv('NEO4J_SAVE_TO_DB', 'true').lower() == 'true'
 
-    DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://dbpedia-spotlight-en.soco.ude.systems/rest/annotate')
+    DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://dbpedia-spotlight-en.soco.inko.cloud/rest/annotate')
     # Uncomment the line below to use the official DBpedia Spotlight API
     # DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://api.dbpedia-spotlight.org/en/annotate')
     DBPEDIA_SPOTLIGHT_CONFIDENCE = float(os.getenv('DBPEDIA_SPOTLIGHT_CONFIDENCE', '0.35'))
