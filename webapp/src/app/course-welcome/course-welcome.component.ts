@@ -156,10 +156,16 @@ export class CourseWelcomeComponent implements OnInit, CanComponentDeactivate  {
       }
       this.topicChannelService.fetchTopics(course._id).subscribe((res) => {
         this.selectedCourse = res.course;
-        this.Users = course.users;
-        
+        this.Users = res.course.users;
+        //console.log('Users in course:', this.Users);
+        let userModerator = this.Users.find(
+          (user) => user.role.name === 'moderator'
+        );
+    if (!userModerator) {
+      throw new Error(`Moderator not found for course with id ${course._id}`);
+    }
         // TODO: Bad implementation to get the moderator, i.e., course.users[0].userId
-        this.buildCardInfo(course.users[0].userId, course);
+        this.buildCardInfo(userModerator.userId, course);
       });
 
       this.sanitizeDescription(this.courseDescription);

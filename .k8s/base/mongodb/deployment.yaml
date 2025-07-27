@@ -26,10 +26,10 @@ spec:
         resources:
           requests:
             memory: 128Mi
-            cpu: 10m
+            cpu: 500m
           limits:
             memory: 512Mi
-            cpu: 2
+            cpu: 1150m
             ephemeral-storage: 1Gi
       containers:
       - name: mongodb

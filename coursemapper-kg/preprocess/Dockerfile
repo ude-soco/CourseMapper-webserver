@@ -1,22 +1,34 @@
-# syntax=docker/dockerfile:1.6
+# syntax=docker/dockerfile:1.15
 FROM python:3.11
 
 # Set the working directory
 WORKDIR /app
 
-# Copy Pipfile and Pipfile.lock
-COPY Pipfile Pipfile.lock ./
+# Install APT packages
+ENV DEBIAN_FRONTEND=noninteractive
+ENV BUILD_DEPS="postgresql-common"
+ENV RUNTIME_DEPS="lbzip2 postgresql-client-16 rclone"
+RUN --mount=type=cache,sharing=private,target=/var/cache/apt \
+    --mount=type=cache,sharing=private,target=/var/lib/apt <<EOF
+  rm -f /etc/apt/apt.conf.d/docker-clean
+  echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+  apt-get update -yq &&
+	apt-get install -y --no-install-recommends $BUILD_DEPS &&
+	
+	# Add PostgreSQL package source (runs `apt-get update`)
+	/usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y &&
 
-# Install the required packages
-RUN apt-get update && apt install -y postgresql-common
-RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		lbzip2 \
-		postgresql-client-16 \
-		rclone \
-		&& rm -rf /var/lib/apt/lists/*
-RUN pip install --no-color pipenv==2023.12.1
+	apt-get install -y --no-install-recommends $RUNTIME_DEPS &&
+	rm -rf /var/lib/apt/lists/*
+EOF
+
+# Install Python packages
+COPY Pipfile Pipfile.lock ./
+RUN pip install --no-color --disable-pip-version-check --no-cache-dir pipenv==2023.12.1
 RUN pipenv install --deploy
+
+# Remove build dependencies
+RUN	apt-get remove -yq $BUILD_DEPS
 
 # Copy config files
 COPY config/rclone.conf /root/.config/rclone/rclone.conf

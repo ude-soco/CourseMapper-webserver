@@ -28,6 +28,9 @@ spec:
           httpGet:
             path: /api/healthz
             port: 8080
+          timeoutSeconds: 30
+          failureThreshold: 5
+          periodSeconds: 60
         env:
         - name: PORT
           value: "8080"
@@ -39,6 +42,13 @@ spec:
           value: $(REDIS_SERVICE)
         - name: REDIS_PORT
           value: "6379"
+        - name: MEMORY_REQUEST
+          valueFrom:
+            resourceFieldRef:
+              divisor: "1Mi"
+              resource: requests.memory
+        - name: NODE_OPTIONS
+          value: "--max-old-space-size=$(MEMORY_REQUEST)"
         envFrom:
         - secretRef:
             name: webserver
@@ -54,11 +64,11 @@ spec:
           subPath: videos
         resources:
           requests:
-            memory: 360Mi
+            memory: 2Gi
             cpu: 100m
           limits:
-            memory: 1Gi
-            cpu: "1"
+            memory: 2.5Gi
+            cpu: "1.15"
             ephemeral-storage: 1Gi
       volumes:
       - name: webserver-uploads
