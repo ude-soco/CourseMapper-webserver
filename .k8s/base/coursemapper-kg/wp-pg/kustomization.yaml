@@ -1,8 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-commonLabels:
-  app.kubernetes.io/component: coursemapper-kg-wp-pg
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/component: coursemapper-kg-wp-pg
 
 resources:
 - deployment.yaml
