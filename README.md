@@ -6,7 +6,7 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 ## 🚀 Get Started
 
-#### Live instances
+#### 🌎 Live instances
 
 - Production:
   [coursemapper.de](https://coursemapper.de/)
@@ -19,14 +19,14 @@ CourseMapper is a collaborative course annotation and analytics platform that fo
 
 *Note:* Stable [releases](https://github.com/ude-soco/CourseMapper-webserver/releases) are currently not running in production.
 
-#### Build and run
+#### 🐳 Compose
 
-- `make up` to run the application using _Docker Compose_
-- `make tilt` to automatically rebuild during development using _Tilt_
-- `make mounted` to run processes using _Docker Compose_, but mount source code from host machine
-- see the manual below to install dependencies and run processes _locally, without containers_
-
-Visit the [proxy service on port 8000](http://localhost:8000/) to use the application.
+1. Set up `.env` file (see `.env.dist`)
+2. Build and run
+   - `make up` to run the application using _Docker Compose_
+   - `make tilt` to automatically rebuild during development using _Tilt_
+   - `make mounted` to run processes using _Docker Compose_, but mount source code from host machine
+3. Visit the [proxy service on port 8000](http://localhost:8000/) to use the application.
 
 ## 🖥️ Application stack
 
