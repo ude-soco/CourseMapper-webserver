@@ -2,11 +2,10 @@ const fs = require("fs");
 const helpers = require("../helpers/helpers");
 const db = require("../models");
 const Course = db.course;
+
 const remove = (req, res) => {
   const fileName = req.params.name;
   const directoryPath = "public/uploads/pdfs/";
-  
-
   fs.unlink(directoryPath + fileName, (err) => {
     if (err) {
       res.status(500).send({
@@ -18,6 +17,7 @@ const remove = (req, res) => {
     });
   });
 };
+
 const removeImg = async (req, res) => {
   const fileName = req.params.name;
   const courseData = req.body;

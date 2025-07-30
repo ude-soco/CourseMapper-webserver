@@ -145,7 +145,7 @@ export const newAnnotation = async (req, res, next) => {
   }
 
   req.params.annotationId = newAnnotation._id;
-  //when user makes a new annotation, make the user automatically start following it
+  // When user makes a new annotation, make the user automatically start following it
   req.locals = {
     ...req.locals,
     user: foundUser,
