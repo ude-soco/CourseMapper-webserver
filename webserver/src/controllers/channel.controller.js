@@ -48,130 +48,6 @@ export const getChannel = async (req, res) => {
       "materials",
       "-__v"
     );
-    /*     foundChannel = await BlockingNotifications.aggregate([
-      {
-        $match: {
-          courseId: ObjectId(courseId),
-          userId: ObjectId(userId),
-        },
-      },
-      {
-        $project: {
-          courseId: 0,
-          isAnnotationNotificationsEnabled: 0,
-          isReplyAndMentionedNotificationsEnabled: 0,
-          isCourseUpdateNotificationsEnabled: 0,
-          userId: 0,
-          topics: 0,
-        },
-      },
-      {
-        $set: {
-          channel: {
-            $first: {
-              $filter: {
-                input: "$channels",
-                cond: {
-                  $eq: ["$$this.channelId", ObjectId(channelId)],
-                },
-              },
-            },
-          },
-        },
-      },
-      {
-        $set: {
-          materials: {
-            $filter: {
-              input: "$materials",
-              cond: {
-                $eq: ["$$this.channelId", ObjectId(channelId)],
-              },
-            },
-          },
-        },
-      },
-      {
-        $unset: "channels",
-      },
-      {
-        $lookup: {
-          from: "channels",
-          localField: "channel.channelId",
-          foreignField: "_id",
-          as: "lookedUpChannel",
-        },
-      },
-      {
-        $set: {
-          lookedUpChannel: {
-            $first: "$lookedUpChannel",
-          },
-        },
-      },
-      {
-        $lookup: {
-          from: "materials",
-          localField: "materials.materialId",
-          foreignField: "_id",
-          as: "lookedUpMaterials",
-        },
-      },
-      {
-        $addFields: {
-          lookUpMaterialIds: {
-            $map: {
-              input: "$lookedUpMaterials",
-              in: "$$this._id",
-            },
-          },
-        },
-      },
-
-      {
-        $addFields: {
-          materials: {
-            $map: {
-              input: "$materials",
-              in: {
-                $mergeObjects: [
-                  "$$this",
-                  {
-                    $arrayElemAt: [
-                      "$lookedUpMaterials",
-                      {
-                        $indexOfArray: [
-                          "$lookUpMaterialIds",
-                          "$$this.materialId",
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          lookedUpMaterials: 0,
-          lookUpMaterialIds: 0,
-        },
-      },
-      {
-        $set: {
-          "lookedUpChannel.materials": "$materials",
-        },
-      },
-      {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: ["$channel", "$lookedUpChannel"],
-          },
-        },
-      },
-    ]); */
     if (!foundChannel) {
       return res.status(404).send({
         error: `Channel with id ${channelId} doesn't exist!`,
@@ -197,7 +73,6 @@ export const getChannel = async (req, res) => {
       .status(500)
       .send({ message: "Error finding notification settings" });
   }
-
   return res.status(200).send({ channel: foundChannel, notificationSettings });
 };
 

@@ -23,9 +23,11 @@
         [show-all]="false"
         [page]="currentPDFPage$ | async"
         [zoom]="pdfZoom$ | async"
+        (error)="onPdfLoadError($event)"
       >
         <!--         (after-load-complete)="afterLoadComplete($event)" -->
       </pdf-viewer>
+    
       <app-pdf-annotation-summary
         #annotationSummary
         [annotationId]="selectedNoteId"
