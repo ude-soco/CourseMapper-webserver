@@ -15,6 +15,8 @@ export class PdfviewService {
   totalpages$=this.totalPages.asObservable()
   private firstPageNumber=new BehaviorSubject(0)
   firstPageNumber$=this.firstPageNumber.asObservable()
+  private pdfErrorSubject = new BehaviorSubject<boolean>(false);
+  pdfError$ = this.pdfErrorSubject.asObservable();
   @Output() currentPageNumberEvent: EventEmitter<any> = new EventEmitter();
   constructor() { }
   
@@ -34,6 +36,13 @@ export class PdfviewService {
   }
   setFirstPageNumber(numb:number){
     this.firstPageNumber.next(numb)
+  }
+  emitError() {
+    this.pdfErrorSubject.next(true);
+  }
+  
+  clearError() {
+    this.pdfErrorSubject.next(false);
   }
 
 }
