@@ -370,14 +370,18 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     });
   }
   onPdfLoadError(error: any) {
-    console.error('PDF Load Error:', error);
-    this.pdfViewService.emitError();
+    //console.error('PDF Load Error:', error);
+    const materialId = this.extractMaterialIdFromUrl(this.docURL);
+    if (materialId) {
+      this.pdfViewService.emitError(materialId);
+    }
+  
   }
-  // extractMaterialIdFromUrl(url: string): string | null {
-  //   // Example: /api/public/uploads/pdfs/6886010b1152d6b2ee79e612.pdf
-  //   const match = url.match(/\/([\w\d]+)\.pdf$/);
-  //   return match ? match[1] : null;
-  // }
+  extractMaterialIdFromUrl(url: string): string | null {
+    // Example: /api/public/uploads/pdfs/6886010b1152d6b2ee79e612.pdf
+    const match = url.match(/\/([\w\d]+)\.pdf$/);
+    return match ? match[1] : null;
+  }
   pagechanging(e: any) {
     this.store.dispatch(
       AnnotationActions.setCurrentPdfPage({ pdfCurrentPage: e.first + 1 })
