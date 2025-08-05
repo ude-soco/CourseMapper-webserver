@@ -99,7 +99,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
   @Output() selectedToolEvent: EventEmitter<string> = new EventEmitter();
   cmSelected = false;
-
+  showPdfErrorMessage = false;
   showDialog: boolean = false;
 
   showModeratorPrivileges: boolean;
@@ -119,6 +119,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
   > = null;
   isResetMaterialNotificationsButtonEnabled: boolean;
   lastMaterialClickedNotificationSettingSubscription: Subscription;
+  pdfErrorMaterialId: string;
   constructor(
     private indicatorService: IndicatorService,
     public courseService: CourseService,
@@ -227,6 +228,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
               if (this.selectedChannel._id === this.channels['_id']) {
                 this.materials = this.channels['materials'];
                 this.materials.forEach((material) => {
+                  
                   this.showFullMap[material._id] = false;
                 });
               } else {
@@ -285,6 +287,15 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.lastTimeCourseMapperOpened$ = this.store.select(
       getLastTimeCourseMapperOpened
     );
+    this.pdfViewService.pdfError$.subscribe((materialId) => {
+      this.pdfErrorMaterialId = materialId;
+      if (materialId) {
+        this.showPdfErrorMessage = true;
+      }
+      
+    });
+
+    
   }
   toggleFullMaterialName(materialId: string, event: MouseEvent): void {
     // event.preventDefault();
@@ -304,7 +315,9 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (words.length <= limit) return text;
     return words.slice(0, limit).join(' ') + '...';
   }
-
+  dismissError() {
+    this.pdfViewService.clearError();
+  }
   getMaterialActivityIndicator(materialId: string) {
     return combineLatest([
       this.allNotifications$,
@@ -396,6 +409,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.intervalService.stopInterval();
     // if (this.tabIndex == -1 && this.showModeratorPrivileges) {
     if (this.tabIndex == -1) {
+      this.showPdfErrorMessage = false;
       this.isMaterialSelected = false;
 
       this.router.navigate([
@@ -413,6 +427,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.selectedMaterial = this.materials[this.tabIndex];
 
       this.setShowDialog();
+
 
       this.updateSelectedMaterial();
       this.materialService
@@ -478,6 +493,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     // }
     if (!this.selectedMaterial) return;
     switch (this.selectedMaterial.type) {
+      
       case 'pdf':
         this.pdfViewService.setPageNumber(1);
         let url =
@@ -533,6 +549,14 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
     // e.index1 = e.index - 1;
 
     // this.selectedMaterial = this.materials[e.index1];
+   
+    if(  this.pdfErrorMaterialId == this.selectedMaterial._id) {
+      this.showPdfErrorMessage =true
+    }
+    else {    
+this.showPdfErrorMessage = false; // Reset the error message if the material ID doesn't match
+    }
+    
     if (this.selectedMaterial.type == 'video' && this.selectedMaterial.url) {
       this.materialService.deleteMaterial(this.selectedMaterial).subscribe({
         next: (data) => {
@@ -565,7 +589,7 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         },
       });
     } else if (
-      (this.selectedMaterial.type == 'pdf' && this.selectedMaterial.url) ||
+      (this.selectedMaterial.type == 'pdf' && this.selectedMaterial.url && !this.showPdfErrorMessage) ||
       (this.selectedMaterial.type == 'video' && this.selectedMaterial.url == '')
     ) {
       this.materialService.deleteFile(this.selectedMaterial).subscribe({
@@ -599,6 +623,8 @@ export class MaterialComponent implements OnInit, OnDestroy, AfterViewChecked {
         ]);
 
         // e.index = 1
+        this.pdfViewService.clearError();
+        this.showPdfErrorMessage = false;
         this.showInfo('Material successfully deleted!');
       },
       error: (err) => {
