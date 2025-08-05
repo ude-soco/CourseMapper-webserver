@@ -108,10 +108,6 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator added successfully!`,
-  //   indicator: indicator,
-  // });
 };
 
 /**
@@ -169,9 +165,6 @@ export const deleteIndicator = async (req, res, next) => {
     success: `Indicator deleted successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator deleted successfully!`,
-  // });
 };
 
 /**
@@ -259,7 +252,6 @@ export const resizeIndicator = async (req, res, next) => {
     success: `Indicator resized successfully!`,
   };
   next();
-  //return res.status(200).send();
 };
 
 /**
@@ -315,10 +307,6 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicators updated successfully!`,
-  //   indicators: user.indicators,
-  // });
 };
 
 export const getAllUsers = async (req, res) => {
@@ -407,7 +395,6 @@ export async function updateUserConcepts(props) {
   } catch (err) {
     return res.status(500).send({ error: err });
   }
-  // console.log(updatedDocument)
   await foundUser.updateOne(updatedDocument);
 }
 

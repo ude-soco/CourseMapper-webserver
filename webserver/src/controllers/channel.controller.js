@@ -204,8 +204,7 @@ export const newChannel = async (req, res, next) => {
   return next();
 };
 
-//TODO - update the course after the channel has been deleted
-//in the below method
+// :TODO: update the course after the channel has been deleted in the below method
 /**
  * @function deleteChannel
  * Delete a channel controller
@@ -489,10 +488,6 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator added successfully!`,
-  //   indicator: indicator,
-  // });
 };
 
 /**
@@ -559,9 +554,6 @@ export const deleteIndicator = async (req, res, next) => {
     success: `Indicator deleted successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator deleted successfully!`,
-  // });
 };
 
 /**
@@ -666,7 +658,6 @@ export const resizeIndicator = async (req, res, next) => {
     success: `Indicator resized successfully!`,
   };
   next();
-  //return res.status(200).send();
 };
 
 /**
@@ -727,8 +718,4 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicators updated successfully!`,
-  //   indicators: foundChannel.indicators,
-  // });
 };

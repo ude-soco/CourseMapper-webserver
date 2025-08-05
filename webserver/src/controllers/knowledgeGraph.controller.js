@@ -10,7 +10,8 @@ const Course = db.course;
 
 const neo4j = require("../graph/neo4j");
 const redis = require("../graph/redis");
-// TODO Issue #640: Use better file names
+
+// :TODO: Issue #640: Use better file names
 
 // User identification for the logging system
 const findUserById = async (userId) => {
