@@ -113,74 +113,33 @@
           </div>
         </div>
 
-        <p-tabPanel 
-          *ngIf="!recievedVideoResultIsEmpty"
-          [cache]="true" 
-          header="Videos" 
-          leftIcon="pi pi-video"
-        >
-          <div class="mt-1 w-full" id="cro_viedo_list">
-            <div
-              *ngIf="resourcesPagination?.nodes?.videos?.total_items > 0, else elseBlockRsVideos"
-            >
-            </div>
-              <p-scrollPanel styleClass="scroll_panel_list">
-                <app-card-video-list
-                  [notUnderstoodConcepts]="concepts"
-                  [videoElements]="resourcesPagination?.nodes?.videos?.content"
-                  [userId]="userId"
-                  (backButtonClicked)="logUserViewedRecommendedVideos()"
-                  [currentMaterial]="currentMaterial"
-                ></app-card-video-list>
-              </p-scrollPanel>
-          </div>
-          <ng-template #elseBlockRsVideos>
-            <div *ngIf="resourcesPagination?.nodes?.videos?.total_items == 0; else elseBlockRsVideos2">
-              <div class="flex flex-col items-center justify-center">
-                No Video Materials Found
-              </div>
-            </div>
-            <ng-template #elseBlockRsVideos2>
-              <div class="flex flex-col items-center justify-center">
-                <div>
-                  <p-progressSpinner
-                        [style]="{ width: '80px', height: '80px' }"
-                        styleClass="custom-spinner"
-                        strokeWidth="5"
-                        fill="var(--surface-ground)"
-                        animationDuration=".5s"
-                  ></p-progressSpinner>
-                </div>
-                <h4 class="my-auto mt-4">Loading Video Materials</h4>
-              </div>
-            </ng-template>
-          </ng-template>
-        </p-tabPanel>
-
-        <p-tabPanel 
-          [cache]="true" header="Articles" leftIcon="pi pi-book"
-        >
+      <p-tabPanel 
+        [cache]="true" 
+        header="Videos" 
+        leftIcon="pi pi-video"
+      >
         <div class="mt-1 w-full" id="cro_viedo_list">
           <div
-            *ngIf="resourcesPagination?.nodes?.articles?.total_items > 0, else elseBlockRsArticles"
+            *ngIf="resourcesPagination?.nodes?.videos?.total_items > 0, else elseBlockRsVideos"
           >
           </div>
             <p-scrollPanel styleClass="scroll_panel_list">
-              <app-card-article-list
+              <app-card-video-list
                 [notUnderstoodConcepts]="concepts"
-                [articleElements]="resourcesPagination?.nodes?.articles?.content"
+                [videoElements]="resourcesPagination?.nodes?.videos?.content"
                 [userId]="userId"
+                (backButtonClicked)="logUserViewedRecommendedVideos()"
                 [currentMaterial]="currentMaterial"
-              ></app-card-article-list>
+              ></app-card-video-list>
             </p-scrollPanel>
         </div>
-        <ng-template #elseBlockRsArticles>
-          <div *ngIf="resourcesPagination?.nodes?.articles?.total_items == 0; else elseBlockRsArticles2">
+        <ng-template #elseBlockRsVideos>
+          <div *ngIf="resourcesPagination?.nodes?.videos?.total_items == 0; else elseBlockRsVideos2">
             <div class="flex flex-col items-center justify-center">
-              No Articles Materials Found
+              No Video Materials Found
             </div>
           </div>
-          <ng-template #elseBlockRsArticles2>
+          <ng-template #elseBlockRsVideos2>
             <div class="flex flex-col items-center justify-center">
               <div>
                 <p-progressSpinner
@@ -191,10 +150,50 @@
                       animationDuration=".5s"
                 ></p-progressSpinner>
               </div>
-              <h4 class="my-auto mt-4">Loading Articles Materials</h4>
+              <h4 class="my-auto mt-4">Loading Video Materials</h4>
             </div>
           </ng-template>
         </ng-template>
+      </p-tabPanel>
+
+      <p-tabPanel 
+        [cache]="true" header="Articles" leftIcon="pi pi-book"
+      >
+      <div class="mt-1 w-full" id="cro_viedo_list">
+        <div
+          *ngIf="resourcesPagination?.nodes?.articles?.total_items > 0, else elseBlockRsArticles"
+        >
+        </div>
+          <p-scrollPanel styleClass="scroll_panel_list">
+            <app-card-article-list
+              [notUnderstoodConcepts]="concepts"
+              [articleElements]="resourcesPagination?.nodes?.articles?.content"
+              [userId]="userId"
+              [currentMaterial]="currentMaterial"
+            ></app-card-article-list>
+          </p-scrollPanel>
+      </div>
+      <ng-template #elseBlockRsArticles>
+        <div *ngIf="resourcesPagination?.nodes?.articles?.total_items == 0; else elseBlockRsArticles2">
+          <div class="flex flex-col items-center justify-center">
+            No Articles Materials Found
+          </div>
+        </div>
+        <ng-template #elseBlockRsArticles2>
+          <div class="flex flex-col items-center justify-center">
+            <div>
+              <p-progressSpinner
+                    [style]="{ width: '80px', height: '80px' }"
+                    styleClass="custom-spinner"
+                    strokeWidth="5"
+                    fill="var(--surface-ground)"
+                    animationDuration=".5s"
+              ></p-progressSpinner>
+            </div>
+            <h4 class="my-auto mt-4">Loading Articles Materials</h4>
+          </div>
+        </ng-template>
+      </ng-template>
       </p-tabPanel>
 
       <!-- display resources saved and offer filtering possibility -->
@@ -248,7 +247,7 @@
           </div>
 
           <!-- Right: Search input -->
-          <div class="flex p-field p-fluid">
+          <!-- <div class="flex p-field p-fluid">
             <span class="p-float-label">
               <input
                 id="search-input"
@@ -261,10 +260,43 @@
               <i class="pi pi-search search-icon" *ngIf="!showSearchIconPinner"></i>
               <i class="pi pi-spin pi-spinner search-icon" *ngIf="showSearchIconPinner"></i>
             </span>
+          </div> -->
+          <div class="flex p-field p-fluid">
+            <span class="p-float-label search-container">
+              <input
+                id="search-input"
+                type="text"
+                pInputText
+                [(ngModel)]="filteringParamsSavedTab.text"
+                placeholder=" "
+                (input)="filteringResourcesSaved()" />
+              <label for="search-input">Search for videos/articles</label>
+              <i
+                *ngIf="filteringParamsSavedTab.text"
+                class="pi pi-times close-icon"
+                (click)="clearSearch()">
+              </i>
+            </span>
           </div>
+
         </div>
 
         <!-- display resources filtered -->
+        <div *ngIf="!areResourcesLoaded && !(filteringResourcesFound?.videos.length > 0 || filteringResourcesFound?.articles.length > 0)">
+          <div class="flex flex-col items-center justify-center">
+            <div>
+              <p-progressSpinner
+                    [style]="{ width: '80px', height: '80px' }"
+                    styleClass="custom-spinner"
+                    strokeWidth="5"
+                    fill="var(--surface-ground)"
+                    animationDuration=".5s"
+              ></p-progressSpinner>
+            </div>
+            <h4 class="my-auto mt-4">Loading saved Materials</h4>
+          </div>
+        </div>
+
         <div class="flex flex-col items-center justify-center mt-6">
           <div *ngIf="filteringParamsSavedTab?.content_type === 'video' && filteringResourcesFound?.videos.length === 0">
             No videos found
