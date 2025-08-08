@@ -11,7 +11,6 @@ import { ResourcesPagination, RatingResource, UserResourceFilterParamsResult, Us
 })
 export class MaterialsRecommenderService {
   apiURL = environment.API_URL
-  api_PYTHON_SERVER_RS = environment.PYTHON_SERVER_RS
   recommendedConcepts: any
   recommendedMaterials: any
   recommendedMaterialsRating: any

@@ -229,7 +229,7 @@
 
           <!-- Middle: MultiSelect -->
           <div class="flex justify-center text-xs">
-            <p-multiSelect 
+            <!-- <p-multiSelect 
               [options]="conceptsModifiedByUser"
               [(ngModel)]="conceptModifiedByUserSelected"
               optionLabel="name"
@@ -243,26 +243,12 @@
               [style]="{ width: '16rem', 'border-radius': '0.5rem', 'font-size': '12px' }"
               [panelStyle]="{ width: '16rem' }"
               [showClear]="false">
-            </p-multiSelect>
+            </p-multiSelect> -->
           </div>
 
           <!-- Right: Search input -->
-          <!-- <div class="flex p-field p-fluid">
-            <span class="p-float-label">
-              <input
-                id="search-input"
-                type="text"
-                pInputText
-                [(ngModel)]="filteringParamsSavedTab.text"
-                placeholder=" "
-                (input)="filteringResourcesSaved()" />
-              <label for="search-input-videos-articles">Search for videos/articles</label>
-              <i class="pi pi-search search-icon" *ngIf="!showSearchIconPinner"></i>
-              <i class="pi pi-spin pi-spinner search-icon" *ngIf="showSearchIconPinner"></i>
-            </span>
-          </div> -->
           <div class="flex p-field p-fluid">
-            <span class="p-float-label search-container">
+            <!-- <span class="p-float-label search-container">
               <input
                 id="search-input"
                 type="text"
@@ -276,7 +262,7 @@
                 class="pi pi-times close-icon"
                 (click)="clearSearch()">
               </i>
-            </span>
+            </span> -->
           </div>
 
         </div>

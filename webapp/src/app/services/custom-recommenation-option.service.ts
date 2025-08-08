@@ -11,7 +11,6 @@ import { HTTPOptions } from '../config/config';
   providedIn: 'root'
 })
 export class CustomRecommendationOptionService {
-  api_PYTHON_SERVER_RS = environment.PYTHON_SERVER_RS;
   LEAF_URL = `${environment.API_URL}/recommendation/setting`;
 
   constructor(public router: Router, private http: HttpClient) { }
@@ -22,11 +21,6 @@ export class CustomRecommendationOptionService {
   public setResultaTabValue(value: string) {
     this.isResultTabSubject.next(value);
   }
-
-  // updateFactorWeight(data): Observable<any>{
-  //   return this.http.post<any>(`${this.api_PYTHON_SERVER_RS}/setting/update_factor_weights`, data, HTTPOptions);
-  //   // return this.http.post<any>(`${this.LEAF_URL}/update_factor_weights`, data, HTTPOptions);
-  // }
 
   getConceptsModifiedByUserIdAndMid(mid: string, user_id: string): Observable<Neo4jResult> {
     return this.http.get<Neo4jResult>(`${this.LEAF_URL}/get_concepts_modified_by_user_id_and_mid?user_id=${user_id}&mid=${mid}`);
