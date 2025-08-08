@@ -6,13 +6,15 @@
             <h4 class="text-[#0277BD] mr-3">
               Recommendation based on the following concepts:
             </h4>
-            <div class="flex flex-wrap gap-1 w-9/12"> 
+      <!--       <div class="flex flex-wrap gap-1 w-9/12">  -->
+              <div class="flex flex-wrap gap-1 w-full">
+
               <button
-                *ngFor="let concept of allConceptsObj"
-                class="dislike-button {{concept?.status === 'notUnderstood' ? 'bg-[#D32F2F]' : concept?.status === 'understood' ? 'bg-[#689F38]':  'bg-[#2196F3]'}}
-                text-white px-2 mx-1 border border-transparent rounded-full"
-              >
+              *ngFor="let concept of allConceptsObj; let i = index"
+               class="dislike-button text-white px-2 mx-1 border border-transparent rounded-full" [ngStyle]="{ 'background-color': this.dnuColor[i] }">
+
                 {{ concept?.name }}
+                
                 <button
                   #notUnderstoodConcept
                   class="bg-transparent hover focus:outline-none cursor-pointer"
@@ -76,7 +78,6 @@
                       [style.pointer-events]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key)  ? 'none' : 'auto'"
                       [style.opacity]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 0.3 : 1"
                       [style.cursor]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 'not-allowed' : 'pointer'">
-                      
                       <div>
                         <p-radioButton 
                           [inputId]="sort_factor.key" 
@@ -128,9 +129,11 @@
                 <app-card-video-list
                   [notUnderstoodConcepts]="concepts"
                   [videoElements]="resourcesPagination?.nodes?.videos?.content"
+                  [dnuColors]="dnuColor"
                   [userId]="userId"
                   (backButtonClicked)="logUserViewedRecommendedVideos()"
                   [currentMaterial]="currentMaterial"
+                  [resourcesPagination]="resourcesPagination"
                 ></app-card-video-list>
               </p-scrollPanel>
           </div>
@@ -167,9 +170,11 @@
           </div>
             <p-scrollPanel styleClass="scroll_panel_list">
               <app-card-article-list
-                [notUnderstoodConcepts]="concepts"
+                [concepts]="concepts"
                 [articleElements]="resourcesPagination?.nodes?.articles?.content"
+                [dnuColors]="dnuColor"
                 [userId]="userId"
+                [resourcesPagination]="resourcesPagination"
                 [currentMaterial]="currentMaterial"
               ></app-card-article-list>
             </p-scrollPanel>
@@ -286,7 +291,7 @@
           </div>
           <div *ngIf="filteringResourcesFound?.articles.length > 0">
               <app-card-article-list
-              [notUnderstoodConcepts]="concepts"
+              [concepts]="concepts"
               [articleElements]="filteringResourcesFound?.articles"
               [userId]="userId"
               [resultTabType]="'saved'"

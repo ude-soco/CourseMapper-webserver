@@ -1,6 +1,15 @@
 <p-toast key="resource_bookmark_article" position="bottom-left"></p-toast>
+ 
+<div class="mb-6 border-b border-b-4 border-gray-300 flex flex-row">
+  <!-- Colored Band Component -->
+  <app-colored-band
+  [document_dnu_similarity_colorband]="coloredBandData.document_dnu_similarity_colorband"
+  [tags]="coloredBandData.tags">
+ </app-colored-band>
 
-<div class="mb-6 border-b border-b-4 border-gray-300">
+
+  <!-- Main Card Content -->
+  <div class="flex-1 pl-2">
     <div class="flex flex-col p-0">
       <span class="items-center flex flex-row justify-between">
         <h2 
@@ -32,7 +41,7 @@
                 <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
               </div>
             </div>
-            
+           
             <div>
               <div class="my-auto" (click)="addToBookmark()" *ngIf="!isBookmarkFill">
                 <i class="pi pi-bookmark" style="font-size: 1.2rem; color: #000000"></i>
@@ -42,7 +51,7 @@
               </div>
             </div>
           </div>
-
+ 
           <div class="text-[#0288d1] flex flex-row gap-2 mt-1 text-sm" *ngIf="resultTabType === 'saved'">
             <div class="flex flex-row gap-2 m-auto mb-2" *ngIf="resultTabType !== 'saved'">
               <div class="my-auto opacity-75">Similarity score:</div>
@@ -55,7 +64,7 @@
                 <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
               </div>
             </div>
-            
+           
             <div>
               <div class="my-auto" (click)="addToBookmark()" *ngIf="!isBookmarkFill">
                 <i class="pi pi-bookmark" style="font-size: 1.2rem; color: #000000"></i>
@@ -66,50 +75,167 @@
             </div>
           </div>
         </div>
-
+ 
       </span>
-      <div *ngIf="article.keyphrases" class="flex flex-row mb-3 mt-6">
-        <p class="mr-2 font-semibold italic">Keyphrases: </p>
-        <div *ngFor="let concept of article.keyphrases.slice(0, 5)" pTooltip="Main keyphrases extracted from this article"
-             class=" text-xs uppercase bg-gray-200 text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept}}</div>
-      </div>
-      <div class="flex flex-row">
-        <p *ngIf="article.abstract" class="mr-2 font-semibold italic">Abstract: </p>
-        <p class="text-base text-gray-600" *ngIf="(article.abstract.length <= ABSTRACT_MAX_LENGTH) && userCanExpand">{{article.abstract}}</p>
-        <p class="text-base text-gray-600" *ngIf="(article.abstract.length > ABSTRACT_MAX_LENGTH) && userCanExpand">
-          {{article.abstract.substring(0, ABSTRACT_MAX_LENGTH)}}... <a class="italic" (click)="expand()">
-            <svg
+
+      <div *ngIf="article.keyphrases " class="flex flex-row mb-3 mt-6">
+        <p class="mr-2 font-semibold">Keyphrases: </p>
+<!--         <div *ngFor="let concept of article.keyphrases.slice(0, 5)" pTooltip="Main keyphrases extracted from this article"
+             class=" text-xs uppercase bg-gray-200 text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept[0]}}</div>
+      </div> -->
+<div *ngFor="let concept of article.keyphrases.slice(0, 5)"
+     pTooltip="Main keyphrases extracted from this article"
+     class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">
+  {{ cleanKeyphrase(concept[0]) }}
+  </div>
+</div>
+
+
+ 
+      <div class="flex flex-row"  #abstractContainer>
+          <p *ngIf="article.abstract" class="mr-2 font-semibold">Abstract: </p>
+ 
+  <p    class="text-base text-gray-600"
+            *ngIf="(article.abstract.length <= ABSTRACT_MAX_LENGTH) && userCanExpand" >
+ 
+            <ng-container *ngFor="let part of abstractParts">
+              <span
+                *ngIf="part.isKeyphrase"
+                class="highlight-keyphrase"
+                [style.color]="part.keyphraseMeta.color"
+                style="cursor: pointer;"
+                (click)="showPopup(part.text, $event.clientX, $event.clientY, $event)">
+                {{ part.text }}
+              </span>
+              <span *ngIf="!part.isKeyphrase">{{ part.text }}</span>
+            </ng-container>
+ </p>
+ <p class="text-base text-gray-600" *ngIf="article.abstract.length > ABSTRACT_MAX_LENGTH">
+  <ng-container *ngIf="userCanExpand; else fullAbstract">
+    <ng-container *ngFor="let part of abstractPartsTruncated">
+      <span *ngIf="part.isKeyphrase"
+            class="highlight-keyphrase"
+            [style.color]="part.keyphraseMeta?.color"
+            style="cursor: pointer;"
+            (click)="showPopup(part.text, $event.clientX, $event.clientY, $event)">
+        {{ part.text }}
+      </span>
+      <span *ngIf="!part.isKeyphrase">{{ part.text }}</span>
+    </ng-container>
+    ... <a class="italic" (click)="expand()">
+      <svg
               xmlns="http://www.w3.org/2000/svg" 
               width="16" 
               height="16" 
               fill="currentColor" 
-              class="bi bi-plus-square"
+               class="bi bi-plus-square"
               viewBox="0 0 16 16">
               <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2
                0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
             </svg>
             <em>Expand</em></a>
-        </p>
-        <p class="text-base text-gray-600" *ngIf="(article.abstract.length > ABSTRACT_MAX_LENGTH) && !userCanExpand">
-          {{article.abstract}} <a class="italic" (click)="expand()"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+  </ng-container>
+
+  <ng-template #fullAbstract>
+    <ng-container *ngFor="let part of abstractParts">
+      <span *ngIf="part.isKeyphrase"
+            class="highlight-keyphrase"
+            [style.color]="part.keyphraseMeta?.color"
+            style="cursor: pointer;"
+            (click)="showPopup(part.text, $event.clientX, $event.clientY, $event)">
+        {{ part.text }}
+      </span>
+      <span *ngIf="!part.isKeyphrase">{{ part.text }}</span>
+    </ng-container>
+    <a class="italic" (click)="expand()">
+ <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                                    height="16" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                class="feather feather-minus-square"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="8" y1="12" x2="16" y2="12"></line></svg><em>Collapse</em></a>
-        </p>
+                           <line x1="8" y1="12" x2="16" y2="12"></line></svg><em>Collapse</em></a>
+
+  </ng-template>
+ </p>
+
+<div *ngIf="popupVisible"
+     [style.position]="'fixed'"
+     [style.left.px]="popupX"
+     [style.top.px]="popupY"
+     (clickOutside)="hidePopup()" 
+     class="popup-box">
+  <p>{{ popupText }}</p>
+</div>
+
       </div>
-    </div>
+ 
     <div class="flex flex-row justify-between">
       <div class="py-3 pl-7">
         <app-rating 
           [element]="article" 
-          [notUnderstoodConcepts]="notUnderstoodConcepts" 
+          [concepts]="concepts" 
           [currentMaterial]="currentMaterial"
         >
         </app-rating>
       </div>
+   
+      <!-- Button container -->
+      <div class="flex flex-row items-center gap-4">
+        <!-- View in Wikipedia button (keeps its original size) -->
+        <div class="py-3 pl-7">
+        <div class="flex flex-row px-3 py-5 justify-center">
+          <div class="flex items-center">
+            <button class="inline-flex bg-transparent hover:bg-[#0277BD] text-[#0277BD] hover:text-white py-2 px-4 border border-[#0277BD] hover:border-transparent rounded" (click)="openArticle(article)">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" height="16" fill="currentColor" 
+                class="bi bi-arrow-up-right-circle-fill" 
+                viewBox="0 0 16 16">
+                <path d="M0 8a8 8 0 1 0 16 0A8 8 0 0 0 0 8zm5.904 2.803a.5.5 0 1 1-.707-.707L9.293 6H6.525a.5.5 0 1 1 0-1H10.5a.5.5 0 0 1 .5.5v3.975a.5.5 0 0 1-1 0V6.707l-4.096 4.096z"/>
+              </svg>
+              <span class="text-sm ml-2 italic">View on Wikipedia</span>
+            </button>
+          </div>
+        </div>
+       </div>
+        <!-- WHY? Button -->
+        <button (click)="toggleWhy()" class="bg-[#3F51B5] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#2C387E] flex items-center space-x-2">
+        <!-- Three Bar Chart SVG Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 10v8M12 6v12M18 14v4" />
+          </svg>
+          <span>Why this article?</span>
+        </button>
+      
+      </div>
+    </div>
+   
+    <!-- Explanation section (only visible when WHY? is clicked) -->
+    <div *ngIf="isWhyExpanded" class="border mt-4 p-4 bg-white rounded-md">
+      <p class="text-gray-700"> This word cloud diagram shows the main extracted keywords from this recommended article.<br>
+                                You can hover over each keyword to see its similarity to all DNUs.</p>
+        <!--  components here as needed -->
+    <app-word-cloud
+    [keyphrasesImportanceTuple]="article.keyphrases"
+    [concepts]="concepts"
+    [keyphrases_dnu_similarity_score]="this.article.keyphrases_dnu_similarity_score"
+    [dnuColors]="dnuColors">
+  </app-word-cloud>
+   
+ 
+ 
+    </div>
 
+    <!--    <div class="flex flex-row justify-between">
+      <div class="py-3 pl-7">
+        <app-rating 
+          [element]="article" 
+          [concepts]="concepts" 
+          [currentMaterial]="currentMaterial"
+        >
+        </app-rating>
+      </div>
+ 
       <div class="py-3 pl-7">
         <div class="flex flex-row px-3 py-5 justify-center">
           <div class="flex items-center">
@@ -126,5 +252,23 @@
           </div>
         </div>
       </div>
-    </div>
+ 
+     
+    <button (click)="toggleWhy()" class="bg-[#3F51B5] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#2C387E] flex items-center space-x-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 10v8M12 6v12M18 14v4" />
+       </svg>
+       <span>WHY?</span>
+     </button>
+ 
+       <div *ngIf="isWhyExpanded" class="border mt-4 p-4 bg-gray-100 rounded-md">
+      <h3 class="font-bold">Explanation:</h3>
+      <p class="text-gray-700">This section will contain additional explanation components.</p>
+   
+     
+       </div>
+ 
+     </div> -->
+ 
   </div>
+</div>

@@ -3,6 +3,8 @@ export interface VideoElementModel {
     title: string;
     thumbnail: string;
     keyphrases?: string[];
+    keyphrases_dnu_similarity_score?:any[];
+    document_dnu_similarity?:any[];
     description?: string;
     description_full: string;
     views: string;

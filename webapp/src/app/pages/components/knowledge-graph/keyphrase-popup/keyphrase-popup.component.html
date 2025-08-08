@@ -1,0 +1,24 @@
+<!-- <div class="popup-container" *ngIf="clickedKeyphrase">
+  <div class="header">
+    <span>
+      The top three similarity scores between your interests and selected keyword
+    </span>
+    <span class="close" (click)="close()">X</span>
+  </div>
+  <canvas #barChartCanvas></canvas>
+</div>
+
+ -->
+
+
+ <div
+  class="popup-container"
+  *ngIf="visible"
+  [ngStyle]="{ top: position.y + 'px', left: position.x + 'px' }"
+>
+  <div class="popup-content">
+    <h4>{{ keyphrase }}</h4>
+    <p>Additional info or a chart here.</p>
+    <button (click)="close()">Close</button>
+  </div>
+</div>

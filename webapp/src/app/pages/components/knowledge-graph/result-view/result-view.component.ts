@@ -11,6 +11,7 @@ import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { Material } from 'src/app/models/Material';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.reducer';
+
 interface MaterialModel {
   name: string;
   code: string;
@@ -28,6 +29,7 @@ interface PageEvent {
   pageCount: number;
 }
 
+
 @Component({
   selector: 'app-result-view',
   templateUrl: './result-view.component.html',
@@ -35,6 +37,7 @@ interface PageEvent {
 })
 export class ResultViewComponent {
   currentPdfPage: number;
+
   private conceptFromChipObj: any = null;
   private didNotUnderstandConceptsObj: any[];
   private understoodConceptsObj: any[];
@@ -109,6 +112,18 @@ export class ResultViewComponent {
   paginatorPage: number = 0;
   paginatorRows: number = 10;
   rowsPerPageOptions = [10, 30, 50];
+  dnuColor = [
+    '#F06292', // pink[300]
+    '#BA68C8', // purple[300]
+    '#7986CB', // indigo[300]
+    '#64B5F6', // blue[300]
+    '#4DD0E1', // cyan[300]
+    '#4DB6AC', // teal[300]
+    '#81C784', // green[300]
+    '#DCE775', // lime[300]
+    '#FFD54F', // amber[300]
+    '#A1887F', // brown[300]
+  ];
 
   @Input() currentMaterial?: Material;
   subscriptions: Subscription = new Subscription(); // Manage subscriptions
@@ -154,6 +169,7 @@ export class ResultViewComponent {
   ngOnInit(): void {
     console.log('MaterialModels.MODEL_1', MaterialModels.MODEL_1);
     this.setLeftPanelMWinWidth();
+   
 
     this.materialModels = [
       { name: 'Model 1', code: MaterialModels.MODEL_1 },
@@ -228,6 +244,8 @@ export class ResultViewComponent {
   }
 
   ngAfterViewInit() {
+       console.log('all concepts object:', this.allConceptsObj);
+    console.log('concepts:', this.concepts);
   }
 
   ngOnChanges() {
@@ -523,4 +541,30 @@ export class ResultViewComponent {
       console.error('Error logging activity:', error);
     }
   }
+
+  /*
+  generateConceptColor(): String {
+    hexValues = [pink[300], purple[300], indigo[300], blue[300], cyan[300], teal[300], green[300], lime[300], amber[300], brown[300]];
+
+  }
+  */
+
+/*   generateRandomRGB(indexcolor: number): string {
+    const hexValues = [
+      '#F06292', // pink[300]
+      '#BA68C8', // purple[300]
+      '#7986CB', // indigo[300]
+      '#64B5F6', // blue[300]
+      '#4DD0E1', // cyan[300]
+      '#4DB6AC', // teal[300]
+      '#81C784', // green[300]
+      '#DCE775', // lime[300]
+      '#FFD54F', // amber[300]
+      '#A1887F', // brown[300]
+    ];
+    console.log(indexcolor)
+    return hexValues[indexcolor] || '#A1887F'; // Default color if index is out of range
+
+  
+} */
 }

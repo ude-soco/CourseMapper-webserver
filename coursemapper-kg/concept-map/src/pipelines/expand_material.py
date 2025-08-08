@@ -137,7 +137,7 @@ class ExpandMaterialPipeline:
             graph_db.update_concept_node(concept_node) 
     
             
-        
+            push_log_message(f'Getting expanded pages')
             # Get expanded concepts
             concept_page = self._wikipedia_service.get_page(concept_node.name)
             if concept_page is None:
@@ -151,7 +151,8 @@ class ExpandMaterialPipeline:
                 pl.Series(name='summary', values=[page.summary for page in expanded_pages if page is not None], dtype=pl.Utf8),
             ])
             expansion_df = expansion_df.unique(subset=['title'])
-
+            push_log_message(f'Expanded pages found')
+            push_log_message(f'Expanded pages {expansion_df}')
             ## Step: Expanded Concept Weighting
             # Get expanded concept embeddings
             expanded_concept_embeddings = self._wikipedia_service.get_page_embeddings(self._embedding_service, expansion_df['title'].to_list(), 'page')

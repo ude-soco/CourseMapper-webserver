@@ -38,4 +38,34 @@ a{
     display: inline-block;
     vertical-align: middle;
   }
+  .word-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
   
+  .keyphrase {
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .keyphrase:hover {
+    transform: scale(1.1);
+  }
+  .clickable-keyphrase {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  
+  .popup-box {
+  position: relative;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-radius: 4px;
+  z-index: 1000;
+}

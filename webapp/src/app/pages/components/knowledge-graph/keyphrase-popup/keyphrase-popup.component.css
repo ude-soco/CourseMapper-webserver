@@ -1,0 +1,59 @@
+/* .popup-container {
+  position: absolute ; 
+  top: 100px;      
+  left: 800px;
+  background: #fff !important;
+  border-radius: 12px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 1rem;
+  width: 360px;
+  z-index: 1000;
+  transition: opacity 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 1000;  this will appear above other elements with lower z-index 
+  opacity: 1 !important;
+  border: 2px solid red;
+
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.close {
+  cursor: pointer;
+  color: #888;
+  font-weight: bold;
+}
+
+.close:hover {
+  color: #000;
+}
+
+canvas {
+  background-color: rgba(255, 0, 0, 0.2);  light red to help visualize 
+  width: 100% !important;
+  height: 250px !important;
+}
+ */
+
+ .popup-container {
+  position: fixed;
+  z-index: 9999;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 300px; 
+}
+
+.popup-content h4 {
+  margin: 0 0 8px;
+}
