@@ -16,13 +16,14 @@ class WikipediaService:
         logger.info("Get Wikipedia Articles")
 
         response = wikipedia.search(concepts, top_n)
+
         data = []
         w_data = []
 
         for title in response:
             try:
-                page = wikipedia.page(title)
-                content = page.content
+                page = wikipedia.page(title) # auto_suggest=False
+                # content = page.content
                 abstract = page.summary
                 url = page.url
                 # thumbnail_url = page.images[0] if len(page.images) > 0 else ""
@@ -34,7 +35,8 @@ class WikipediaService:
                 # print("w_data", data)
 
             except (PageError, DisambiguationError) as e:
-                logger.error("title {} raised a PageError".format(title), e)
+                # logger.error("title {} raised a PageError".format(title), e)
+                pass
             finally:
                 # w_data = pd.DataFrame(data, columns=["id", "text", "abstract", "title", "thumbnail_url"])
                 w_data = pd.DataFrame(

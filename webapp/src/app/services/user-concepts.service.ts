@@ -20,7 +20,7 @@ export class UserConceptsService {
       `${this.backendEndpointURL}/users/user-concepts/${userID}`,
       { headers: this.httpHeader }
     );
-    console.log(this.userConcepts)
+    // console.log(this.userConcepts)
     return this.userConcepts;
   }
 

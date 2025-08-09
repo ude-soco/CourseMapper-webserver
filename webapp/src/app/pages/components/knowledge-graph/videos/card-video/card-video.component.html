@@ -1,61 +1,113 @@
-<div class="mb-8 grid-cols-1 lg:flex border-b border-b-4 border-gray-300">
-  <div
-    class="items-center image-video flex-col sm:w-fit sm:h-fit bg-transparent bg-cover text-center"
-  >
-    <img
-      (click)="readVideo(videoElement)"
-      class="object-cover max-w-sm md:max-w-lg rounded"
-      [src]="videoElement.thumbnail"
-      alt="tailwind logo"
-    />
-    <app-rating
-      [element]="videoElement"
-      [notUnderstoodConcepts]="notUnderstoodConcepts"
-      [currentMaterial]="currentMaterial"
-    ></app-rating>
-  </div>
-  <div class="bg-white sm:w-50 px-4 pb-4 flex flex-col">
-    <div class="text-gray-900 items-center font-bold flex flex-row text-xl">
-      <h2
-        class="title-video text-xl font-bold inline-block"
-        (click)="readVideo(videoElement)"
-        [class.active]="isActive"
-        [innerHTML]="videoElement.title"
-      ></h2>
-      <span
-        pTooltip="Similarity between the concepts not understood and the content of this video"
-        class="text-sm font-semibold flex-none w-40 text-center py-1 px-2 rounded bg-white text-[#0277BD] border mx-4 last:mr-0 mr-1"
-      >
-        Similarity Score: {{ videoElement.similarity_score | percent }}
-      </span>
-    </div>
-    <p class="text-sm text-gray-600 my-2 items-center">
-      {{ videoElement.views | number }} views -
-      {{ videoElement.publish_time | dateAgo }}
-    </p>
-    <div *ngIf="videoElement.keyphrases" class="flex flex-row mb-3 mt-6">
-      <p class="mr-2 font-semibold italic">Keyphrases:</p>
-      <div
-        *ngFor="let concept of videoElement.keyphrases.slice(0, 5)"
-        pTooltip="Main keyphrases extracted from this video"
-        class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl"
-      >
-        {{ concept }}
+<p-toast key="resource_bookmark_video" position="bottom-left"></p-toast>
+
+<div class="border-b-4 border-gray-300 mb-6">
+  <div class="flex flex-col">
+    <div class="flex flex-row gap-2">
+      <div class="flex flex-col gap-1">
+        <div>
+          <img 
+            (click)="readVideo(videoElement)" 
+            class="object-cover max-w-sm md:max-w-lg rounded" 
+            [src]=videoElement.thumbnail 
+            alt="tailwind logo" 
+            width="300px"
+          />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-row justify-between">
+          <div class="w-full">
+            <div>
+              <h3 class="title-video text-lg font-bold inline-block break-normal flex-wrap w-11/12" 
+                (click)="readVideo(videoElement)" 
+                [class.active]="isActive"  
+                [innerHTML] = padStringToLength(videoElement?.title)>
+              </h3>
+            </div>
+          </div>
+
+          <div class="w-3.5/12 text-sm ml-auto">
+            <div class="text-[#0288d1] flex flex-row gap-2 mt-1 w-48" *ngIf="resultTabType !=='saved'">
+              <div class="flex flex-row gap-2 m-auto" *ngIf="resultTabType !== 'saved'">
+                <div class="my-auto opacity-75">Similarity score:</div>
+                <div class="my-auto font-bold">{{ videoElement.similarity_score | percent }}</div>
+                <div
+                  class="my-auto"
+                  pTooltip="This score refers to how similar is this video with the concepts used to get recommendations"
+                  tooltipPosition="top"
+                >
+                  <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
+                </div>
+              </div>
+              <div>
+                <div class="my-auto" (click)="addToBookmark()" *ngIf="!videoElement?.is_bookmarked_fill">
+                  <i class="pi pi-bookmark" style="font-size: 1.2rem; color: #000000"></i>
+                </div>
+                <div class="my-auto" (click)="addToBookmark()" *ngIf="videoElement?.is_bookmarked_fill">
+                  <i class="pi pi-bookmark-fill" style="font-size: 1.2rem; color: #0277BD"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-[#0288d1] flex flex-row gap-2 mt-1" *ngIf="resultTabType ==='saved'">
+              <div class="flex flex-row gap-2 m-auto" *ngIf="resultTabType !== 'saved'">
+                <div class="my-auto opacity-75">Similarity score:</div>
+                <div class="my-auto font-bold">{{ videoElement.similarity_score | percent }}</div>
+                <div
+                  class="my-auto"
+                  pTooltip="This score refers to how similar is this video with the concepts used to get recommendations"
+                  tooltipPosition="top"
+                >
+                  <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
+                </div>
+              </div>
+              <div>
+                <div class="my-auto" (click)="addToBookmark()" *ngIf="!videoElement?.is_bookmarked_fill">
+                  <i class="pi pi-bookmark" style="font-size: 1.2rem; color: #000000"></i>
+                </div>
+                <div class="my-auto" (click)="addToBookmark()" *ngIf="videoElement?.is_bookmarked_fill">
+                  <i class="pi pi-bookmark-fill" style="font-size: 1.2rem; color: #0277BD"></i>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div *ngIf="videoElement.keyphrases" class="flex flex-row">
+          <p class="mr-2 font-semibold">Keyphrases: </p>
+          <div class="flex flex-wrap gap-1">
+            <div *ngFor="let concept of videoElement.keyphrases.slice(0, 5)" pTooltip="Main keyphrases extracted from this video"
+                class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">{{concept}}</div>
+          </div>
+        </div>
+
+        <div class="flex flex-row gap-2 flex-wrap gap-4">
+          <div><span class="font-bold">Created at:</span> {{ videoElement.publish_time | dateAgo }}</div>
+          <div><span class="font-bold">Likes:</span> {{ videoElement.like_count | number }} </div>
+          <div><span class="font-bold">Views:</span> {{ videoElement.views | number }}</div>
+        </div>
+        <div><span class="font-bold">Author:</span> {{ videoElement.channel_title}} </div>
+        <div class="">
+          <span class="font-semibold">Description: </span>
+          <span id="video_description">
+            {{ videoElement.description }}
+          </span>
+        </div>
       </div>
     </div>
-    <div class="flex flex-row">
-      <p
-        *ngIf="videoElement.description_full"
-        class="mr-2 font-semibold italic"
-      >
-        Description:
-      </p>
-      <p
-        class="text-gray-700 text-base line-clamp"
-        [innerHTML]="videoElement.description_full | linkify"
-      ></p>
-      <!--<p class="text-gray-700 text-base" *ngIf="videoElement.description_full.length > DESCRIPTION_MAX_LENGTH" [innerHTML]="videoElement.description_full.substring(0, DESCRIPTION_MAX_LENGTH)+'...' | linkify"></p>
-      -->
+
+    <div class="flex flex-row justify-between">
+      <div class="text-xs">
+        <app-rating 
+          [element]="videoElement" 
+          [notUnderstoodConcepts]="notUnderstoodConcepts"
+          [currentMaterial]="currentMaterial"
+        >
+        </app-rating>
+      </div>
+      <div></div>
     </div>
   </div>
 </div>

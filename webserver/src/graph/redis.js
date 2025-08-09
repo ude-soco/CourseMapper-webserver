@@ -5,7 +5,9 @@ const socketio = require("../socketio");
 const redis = {}
 const listeners = {};
 
-const pipelines = ['concept-map', 'modify-graph', 'expand-material', 'concept-recommendation', 'resource-recommendation'];
+const pipelines = ['concept-map', 'modify-graph', 'expand-material', 'concept-recommendation', 'resource-recommendation',
+  , 'get_resources_by_main_concepts'
+];
 const jobTimeout = 30;
 
 export async function connect(host, port, database, password) {

@@ -1,28 +1,31 @@
 <div class="p-10">
-  <ng-template [ngIf]="!showVideo" [ngIfElse]="watchvideo">
-    <div class="" *ngFor="let videoElement of videoElements">
-      <app-card-video
+    <ng-template [ngIf]="!showVideo" [ngIfElse]="watchvideo">
+      <div class="" *ngFor="let videoElement of videoElements">
+        <app-card-video 
+          [notUnderstoodConcepts]="notUnderstoodConcepts" 
+          (onWatchVideo)="readVideo($event)" 
+          [videoElement]="videoElement" 
+          [userId]="userId"
+          [resultTabType]="resultTabType"
+          (resourceRemovedEvent)="onResourceRemovedEvent($event)"
+          [currentMaterial]="currentMaterial"
+        >
+        </app-card-video>
+      </div>
+    </ng-template>
+    <ng-template #watchvideo>
+      <app-watch-video
+        [video]="video" 
         [notUnderstoodConcepts]="notUnderstoodConcepts"
-        (onWatchVideo)="readVideo($event)"
-        [videoElement]="videoElement"
         [currentMaterial]="currentMaterial"
-      ></app-card-video>
-    </div>
-  </ng-template>
-  <ng-template #watchvideo>
-    <app-watch-video
-      [video]="video"
-      [notUnderstoodConcepts]="notUnderstoodConcepts"
-      [currentMaterial]="currentMaterial"
-    ></app-watch-video>
-    <button
-      id="backToList"
-      pButton
-      type="button"
-      (click)="goBack()"
-      icon="pi pi-chevron-left"
-      pTooltip="Go back to list"
-      class="bg-[#0277BD] p-button-rounded"
-    ></button>
-  </ng-template>
-</div>
+      ></app-watch-video>
+      <button id="backToList"
+              pButton
+              type="button"
+              (click)="goBack()"
+              icon="pi pi-chevron-left"
+              pTooltip="Go back to list"
+              class="bg-[#0277BD] p-button-rounded"
+      ></button>
+    </ng-template>
+  </div>

@@ -1,23 +1,27 @@
 <div class="video" autoscroll="true">
-  <iframe
-    title="IFrame Title"
-    [src]="safeURL"
-    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen
-  ></iframe>
-  <div
-    class="bg-white sm:w-50 px-3 py-4 flex mb-3 flex-col border-b border-l border-r rounded-b"
-  >
-    <div class="flex flex-row text-gray-900 items-center justify-between">
-      <div class="title-video">
-        <h2
-          class="text-xl font-bold truncate inline-flex"
-          [innerHTML]="video.title"
-        ></h2>
-        <span
-          pTooltip="Similarity between the concepts not understood and the content of this video"
-          class="text-sm font-semibold inline-flex items-center py-1 px-2 rounded bg-white text-[#0277BD] border mx-4 last:mr-0 mr-1"
-        >
+    <iframe title="IFrame Title" [src]="safeURL" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen class="max-w-4xl m-auto"></iframe>
+    <div class="bg-white sm:w-50
+                px-3 py-4 flex mb-3 flex-col border-b border-l border-r rounded-b">
+      <div class="flex flex-row text-gray-900 items-center justify-between">
+        <div class="title-video">
+          <!-- <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video.title"></h2> -->
+
+          <div *ngIf="video?.title.length < 45; else videoTitlElse">
+            <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video.title"></h2>
+          </div>
+          <ng-template #videoTitlElse>
+            <div>
+              <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video?.title.substring(0, 45)"></h2>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold truncate inline-flex" [innerHTML] = "video.title.substring(45)"></h2>
+            </div>
+          </ng-template>
+
+
+          <span pTooltip="Similarity between the concepts not understood and the content of this video"
+                class="text-sm font-semibold inline-flex items-center py-1 px-2 rounded bg-white text-[#0277BD] border mx-4 last:mr-0 mr-1">
           Similarity Score: {{ video.similarity_score | percent }}
         </span>
       </div>

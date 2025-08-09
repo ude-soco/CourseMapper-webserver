@@ -1,118 +1,427 @@
-<p-tabView (activeIndexChange)="tabChanged($event)">
-  <span class="flex flex-row">
-    <h4 class="text-[#0277BD] mr-3">
-      Recommendation based on the following concepts:
-    </h4>
-    <button
-      *ngFor="let concept of allConceptsObj"
-      class="dislike-button {{
-        concept.status === 'understood'
-          ? 'bg-[#689F38]'
-          : concept.status === 'notUnderstood'
-          ? 'bg-[#D32F2F]'
-          : 'bg-[#2196F3]'
-      }}
-        text-white px-2 mx-1 border border-transparent rounded-full"
-    >
-      {{ concept.name }}
-      <button
-        #notUnderstoodConcept
-        class="bg-transparent hover focus:outline-none cursor-pointer"
-        (click)="setChipConcept(concept); menu.toggle($event)"
-      >
-        <svg class="w-1 h-1 mt-0.5 ml-1.5">
-          <circle
-            cx="2.5"
-            cy="2.5"
-            r="2"
-            style="fill: white; stroke: #495057; stroke: width 0.5px"
-          />
-        </svg>
-        <svg class="w-1 h-1 mt-0.5 ml-1.5">
-          <circle
-            cx="2.5"
-            cy="2.5"
-            r="2"
-            style="fill: white; stroke: #495057; stroke: width 0.5px"
-          />
-        </svg>
-        <svg class="w-1 h-1 mt-0.5 ml-1.5">
-          <circle
-            cx="2.5"
-            cy="2.5"
-            r="2"
-            style="fill: white; stroke: #495057; stroke: width 0.5px"
-          />
-        </svg>
-        <p-menu
-          #menu
-          id="notUnderstood_menu"
-          [model]="
-            concept.status === 'notUnderstood'
-              ? chipMenuU
-              : concept.status === 'understood'
-              ? chipMenuDNU
-              : chipMenuNew
-          "
-          [popup]="true"
-          appendTo="body"
-        ></p-menu>
-      </button>
-    </button>
+<div class="flex flex-col gap-1">
+  <div>
+    <p-tabView (activeIndexChange)="tabChanged($event)" [activeIndex]="activeIndex" [style]="{'minWidth':'65rem'}">
+        <div class="flex flex-row justify-between" *ngIf="activeIndex !== 2">
+          <span class="flex flex-col">
+            <h4 class="text-[#0277BD] mr-3">
+              Recommendation based on the following concepts:
+            </h4>
+            <div class="flex flex-wrap gap-1 w-9/12"> 
+              <button
+                *ngFor="let concept of allConceptsObj"
+                class="dislike-button {{concept?.status === 'notUnderstood' ? 'bg-[#D32F2F]' : concept?.status === 'understood' ? 'bg-[#689F38]':  'bg-[#2196F3]'}}
+                text-white px-2 mx-1 border border-transparent rounded-full"
+              >
+                {{ concept?.name }}
+                <button
+                  #notUnderstoodConcept
+                  class="bg-transparent hover focus:outline-none cursor-pointer"
+                  (click)="setChipConcept(concept); menu.toggle($event)"
+                >
+                  <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                    <circle
+                      cx="2.5"
+                      cy="2.5"
+                      r="2"
+                      style="fill: white; stroke: #495057; stroke: width 0.5px"
+                    />
+                  </svg>
+                  <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                    <circle
+                      cx="2.5"
+                      cy="2.5"
+                      r="2"
+                      style="fill: white; stroke: #495057; stroke: width 0.5px"
+                    />
+                  </svg>
+                  <svg class="w-1 h-1 mt-0.5 ml-1.5">
+                    <circle
+                      cx="2.5"
+                      cy="2.5"
+                      r="2"
+                      style="fill: white; stroke: #495057; stroke: width 0.5px"
+                    />
+                  </svg>
+                  <p-menu
+                    #menu
+                    id="notUnderstood_menu"
+                    [model]="concept?.status === 'notUnderstood' ? chipMenuU : concept?.status === 'understood' ? chipMenuDNU : chipMenuNew"
+                    [popup]="true"
+                    appendTo="body"
+                  ></p-menu>
+                </button>
+              </button>
+            </div>
+          </span>
 
-    <!-- <div
-        id="materialModelDropdown"
-        class="p-field-dropdown"
-        style="display: block;margin-left: auto;margin-right: 0;"
-      >
-        <p-dropdown
-          [options]="materialModels"
-          [(ngModel)]="selectedMaterialModel"
-          optionLabel="name"
-          optionValue="code"
-          (onChange)="loadResultForSelectedModel(selectedMaterialModel)"
-        ></p-dropdown>
-      </div> -->
-  </span>
+          <div id="cro_sorting" class="w-3/12"></div>
+          
+          <div id="cro_sorting" class="w-3/12" (click)="op.toggle($event, targetEl)">
+            <div #targetEl class="border-solid border-2 border-[#cecece] p-4 w-72">
+              <div  class="flex flex-row justify-between" >
+                <div>Sort by</div>
+                <div>
+                  <span class="pi pi-chevron-up" *ngIf="orderUpIcon"></span>
+                  <span class="pi pi-chevron-down" *ngIf="!orderUpIcon"></span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- sort factor keys -->
+            <p-overlayPanel [style]="{'width':'18rem'}" (onShow)="handleOnShowOnHide()" (onHide)="handleOnShowOnHide()" #op>
+              <ng-template pTemplate="content">
+                <div class="flex flex-col text-sm">
+                  <ng-template ngFor let-sort_factor [ngForOf]="factorSortingKeys" let-i="index">
+                    <div class="flex flex-row space-x-2"
+                      [style.pointer-events]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key)  ? 'none' : 'auto'"
+                      [style.opacity]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 0.3 : 1"
+                      [style.cursor]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 'not-allowed' : 'pointer'">
+                      
+                      <div>
+                        <p-radioButton 
+                          [inputId]="sort_factor.key" 
+                          name="sort_factor" 
+                          value="{{ sort_factor.key }}" 
+                          [(ngModel)]="selectedFactorSortingKeys"
+                          (onClick)="sortResourcesByKeys(sort_factor, true, false)">
+                        </p-radioButton>
+                      </div>
+                      
+                      <div class="flex-grow">
+                        <div class="flex flex-row justify-between items-center">
+                          <div class="mr-2">
+                            <label [for]="sort_factor.key">{{ sort_factor.name }}</label>
+                          </div>
+                          
+                          <div>
+                            <button (click)="sortResourcesByKeys(sort_factor, false, true)"
+                              class="bg-blue-300 hover:bg-blue-400 text-white font-bold rounded cursor-pointer py-1 px-3">
+                              {{ sort_factor.orderText }}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div *ngIf="i !== factorSortingKeys.length - 1" style="height: 2rem;">
+                      <p-divider></p-divider>
+                    </div>
+                  </ng-template>
+                </div>
+              </ng-template>
+            </p-overlayPanel>
+          </div>
+        </div>
 
-  <p-tabPanel
-    *ngIf="!recievedVideoResultIsEmpty"
-    [cache]="true"
-    header="Videos"
-    leftIcon="pi pi-video"
-  >
-    <app-card-video-list
-      [notUnderstoodConcepts]="concepts"
-      [videoElements]="videos"
-      (backButtonClicked)="logUserViewedRecommendedVideos()"
-      [currentMaterial]="currentMaterial"
-    ></app-card-video-list>
-  </p-tabPanel>
-  <p-tabPanel
-    *ngIf="recievedVideoResultIsEmpty"
-    header="Videos"
-    leftIcon="pi pi-video"
-  >
-    <h4>No Recommended videos for the selected Concepts</h4>
-  </p-tabPanel>
-  <p-tabPanel
-    [cache]="true"
-    *ngIf="!recievedArticleResultIsEmpty"
-    header="Articles"
-    leftIcon="pi pi-book"
-  >
-    <app-card-article-list
-      [notUnderstoodConcepts]="concepts"
-      [articleElements]="articles"
-      [currentMaterial]="currentMaterial"
-    ></app-card-article-list>
-  </p-tabPanel>
-  <p-tabPanel
-    *ngIf="recievedArticleResultIsEmpty"
-    header="Articles"
-    leftIcon="pi pi-book"
-  >
-    <h4>No Recommended articles for the selected Concepts</h4>
-  </p-tabPanel>
-</p-tabView>
-<p-toast position="bottom-left" key="rating"></p-toast>
+      <p-tabPanel 
+        [cache]="true" 
+        header="Videos" 
+        leftIcon="pi pi-video"
+      >
+        <div class="mt-1 w-full" id="cro_viedo_list">
+          <div
+            *ngIf="resourcesPagination?.nodes?.videos?.total_items > 0, else elseBlockRsVideos"
+          >
+          </div>
+            <p-scrollPanel styleClass="scroll_panel_list">
+              <app-card-video-list
+                [notUnderstoodConcepts]="concepts"
+                [videoElements]="resourcesPagination?.nodes?.videos?.content"
+                [userId]="userId"
+                (backButtonClicked)="logUserViewedRecommendedVideos()"
+                [currentMaterial]="currentMaterial"
+              ></app-card-video-list>
+            </p-scrollPanel>
+        </div>
+        <ng-template #elseBlockRsVideos>
+          <div *ngIf="resourcesPagination?.nodes?.videos?.total_items == 0; else elseBlockRsVideos2">
+            <div class="flex flex-col items-center justify-center">
+              No Video Materials Found
+            </div>
+          </div>
+          <ng-template #elseBlockRsVideos2>
+            <div class="flex flex-col items-center justify-center">
+              <div>
+                <p-progressSpinner
+                      [style]="{ width: '80px', height: '80px' }"
+                      styleClass="custom-spinner"
+                      strokeWidth="5"
+                      fill="var(--surface-ground)"
+                      animationDuration=".5s"
+                ></p-progressSpinner>
+              </div>
+              <h4 class="my-auto mt-4">Loading Video Materials</h4>
+            </div>
+          </ng-template>
+        </ng-template>
+      </p-tabPanel>
+
+      <p-tabPanel 
+        [cache]="true" header="Articles" leftIcon="pi pi-book"
+      >
+      <div class="mt-1 w-full" id="cro_viedo_list">
+        <div
+          *ngIf="resourcesPagination?.nodes?.articles?.total_items > 0, else elseBlockRsArticles"
+        >
+        </div>
+          <p-scrollPanel styleClass="scroll_panel_list">
+            <app-card-article-list
+              [notUnderstoodConcepts]="concepts"
+              [articleElements]="resourcesPagination?.nodes?.articles?.content"
+              [userId]="userId"
+              [currentMaterial]="currentMaterial"
+            ></app-card-article-list>
+          </p-scrollPanel>
+      </div>
+      <ng-template #elseBlockRsArticles>
+        <div *ngIf="resourcesPagination?.nodes?.articles?.total_items == 0; else elseBlockRsArticles2">
+          <div class="flex flex-col items-center justify-center">
+            No Articles Materials Found
+          </div>
+        </div>
+        <ng-template #elseBlockRsArticles2>
+          <div class="flex flex-col items-center justify-center">
+            <div>
+              <p-progressSpinner
+                    [style]="{ width: '80px', height: '80px' }"
+                    styleClass="custom-spinner"
+                    strokeWidth="5"
+                    fill="var(--surface-ground)"
+                    animationDuration=".5s"
+              ></p-progressSpinner>
+            </div>
+            <h4 class="my-auto mt-4">Loading Articles Materials</h4>
+          </div>
+        </ng-template>
+      </ng-template>
+      </p-tabPanel>
+
+      <!-- display resources saved and offer filtering possibility -->
+      <p-tabPanel header="Saved" leftIcon="pi pi-bookmark">
+
+        <div class="flex flex-row justify-between items-center w-full gap-4">
+          <!-- Left side: Content type radios -->
+          <div class="flex flex-row items-center gap-4">
+            <div>Content type:</div>
+            <div class="flex flex-row gap-4">
+              <div class="flex flex-row items-center">
+                <p-radioButton 
+                  name="video" 
+                  value="video" 
+                  [(ngModel)]="filteringParamsSavedTab.content_type" 
+                  inputId="video"
+                  (onClick)="onContentTypeChange($event)">
+                </p-radioButton>
+                <label for="video" class="ml-1">Video</label>
+              </div>
+              <div class="flex flex-row items-center">
+                <p-radioButton 
+                  name="article" 
+                  value="article" 
+                  [(ngModel)]="filteringParamsSavedTab.content_type" 
+                  inputId="article"
+                  (onClick)="onContentTypeChange($event)">
+                </p-radioButton>
+                <label for="article" class="ml-1">Article</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Middle: MultiSelect -->
+          <div class="flex justify-center text-xs">
+            <!-- <p-multiSelect 
+              [options]="conceptsModifiedByUser"
+              [(ngModel)]="conceptModifiedByUserSelected"
+              optionLabel="name"
+              [filter]="true"
+              filterBy="name"
+              placeholder="Search a Concept"
+              emptyFilterMessage="No Concept found"
+              (onChange)="onChangeConceptsModifiedByUser($event)"
+              [resetFilterOnHide]="true"
+              [displaySelectedLabel]="false"
+              [style]="{ width: '16rem', 'border-radius': '0.5rem', 'font-size': '12px' }"
+              [panelStyle]="{ width: '16rem' }"
+              [showClear]="false">
+            </p-multiSelect> -->
+          </div>
+
+          <!-- Right: Search input -->
+          <div class="flex p-field p-fluid">
+            <!-- <span class="p-float-label search-container">
+              <input
+                id="search-input"
+                type="text"
+                pInputText
+                [(ngModel)]="filteringParamsSavedTab.text"
+                placeholder=" "
+                (input)="filteringResourcesSaved()" />
+              <label for="search-input">Search for videos/articles</label>
+              <i
+                *ngIf="filteringParamsSavedTab.text"
+                class="pi pi-times close-icon"
+                (click)="clearSearch()">
+              </i>
+            </span> -->
+          </div>
+
+        </div>
+
+        <!-- display resources filtered -->
+        <div *ngIf="!areResourcesLoaded && !(filteringResourcesFound?.videos.length > 0 || filteringResourcesFound?.articles.length > 0)">
+          <div class="flex flex-col items-center justify-center">
+            <div>
+              <p-progressSpinner
+                    [style]="{ width: '80px', height: '80px' }"
+                    styleClass="custom-spinner"
+                    strokeWidth="5"
+                    fill="var(--surface-ground)"
+                    animationDuration=".5s"
+              ></p-progressSpinner>
+            </div>
+            <h4 class="my-auto mt-4">Loading saved Materials</h4>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-center justify-center mt-6">
+          <div *ngIf="filteringParamsSavedTab?.content_type === 'video' && filteringResourcesFound?.videos.length === 0">
+            No videos found
+          </div>
+          <div *ngIf="filteringParamsSavedTab?.content_type === 'article' && filteringResourcesFound?.articles.length === 0">
+            No articles found
+          </div>
+        </div>
+        <div>
+          <div *ngIf="filteringResourcesFound?.videos.length > 0">
+              <app-card-video-list
+              [notUnderstoodConcepts]="concepts"
+              [videoElements]="filteringResourcesFound?.videos"
+              [userId]="userId"
+              [resultTabType]="'saved'"
+              (backButtonClicked)="logUserViewedRecommendedVideos()"
+              [currentMaterial]="currentMaterial"
+              ></app-card-video-list>
+          </div>
+          <div *ngIf="filteringResourcesFound?.articles.length > 0">
+              <app-card-article-list
+              [notUnderstoodConcepts]="concepts"
+              [articleElements]="filteringResourcesFound?.articles"
+              [userId]="userId"
+              [resultTabType]="'saved'"
+              [currentMaterial]="currentMaterial"
+              ></app-card-article-list>
+          </div>
+        </div>
+      </p-tabPanel>
+
+    </p-tabView>
+    <p-toast position="bottom-left" key="rating"></p-toast>
+  </div>
+
+  <!-- Pagination UI -->
+  <div>
+    <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
+
+      <div 
+        class="flex flex-row"
+        *ngIf="activeIndex === 0"
+      >
+        <div class="my-auto mx-1 text-color" *ngIf="resourcesPagination?.nodes?.videos?.total_items">
+          Total Videos: {{resourcesPagination?.nodes?.videos?.total_items}}
+        </div>
+        <p-paginator
+          [rows]="paginatorRows" 
+          [totalRecords]="resourcesPagination?.nodes?.videos?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginatorV2($event)" 
+          [rowsPerPageOptions]="rowsPerPageOptions"
+          [pageLinkSize]="3"
+        >
+        </p-paginator>
+      </div>
+
+      <div 
+        class="flex flex-row"
+        *ngIf="activeIndex === 1"
+      >
+      <div class="my-auto mx-1 text-color" *ngIf="resourcesPagination?.nodes?.videos?.total_items">
+        Total Articles: {{resourcesPagination?.nodes?.articles?.total_items}}
+      </div>
+        <p-paginator
+          [rows]="paginatorRows" 
+          [totalRecords]="resourcesPagination?.nodes?.articles?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginatorV2($event)"
+          [rowsPerPageOptions]="rowsPerPageOptions"
+          [pageLinkSize]="3"
+        >
+        </p-paginator>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div *ngIf="false">
+    <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
+      <div 
+        class="flex flex-row"
+        *ngIf="activeIndex === 0"
+      >
+        <div class="my-auto mx-1 text-color">Videos per page: </div>
+        <p-dropdown [options]="options" optionLabel="label" optionValue="value" [(ngModel)]="rowsPaginator" (ngModelChange)="firstPaginator = 0" />
+        <p-paginator 
+          [first]="firstPaginator" 
+          [rows]="rowsPaginator" 
+          [totalRecords]="resourcesPagination?.nodes?.videos?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginator($event, 0)" 
+          [showCurrentPageReport]="true" 
+          currentPageReportTemplate="{first} - {last} of {totalRecords}" 
+          [showPageLinks]="false" 
+          [showFirstLastIcon]="false"
+          >
+        </p-paginator>
+      </div>
+
+      <div 
+        class="flex flex-row"
+        *ngIf="activeIndex === 1"
+      >
+        <div class="my-auto mx-1 text-color">Articles per page: </div>
+        <p-dropdown [options]="options" optionLabel="label" optionValue="value" [(ngModel)]="rowsPaginator" (ngModelChange)="firstPaginator = 0" />
+        <p-paginator 
+          [first]="firstPaginator" 
+          [rows]="rowsPaginator" 
+          [totalRecords]="resourcesPagination?.nodes?.articles?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginator($event, 1)" 
+          [showCurrentPageReport]="true" 
+          currentPageReportTemplate="{first} - {last} of {totalRecords}" 
+          [showPageLinks]="false" 
+          [showFirstLastIcon]="false"
+          >
+        </p-paginator>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="false">
+    <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
+      <div>
+        <p-paginator
+          *ngIf="activeIndex === 0"
+          [rows]="paginatorRows" 
+          [totalRecords]="resourcesPagination?.nodes?.videos?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginatorV2($event)" 
+          [rowsPerPageOptions]="rowsPerPageOptions"
+        ></p-paginator>
+
+        <p-paginator
+          *ngIf="activeIndex === 1"
+          [rows]="paginatorRows" 
+          [totalRecords]="resourcesPagination?.nodes?.articles?.total_items" 
+          (onPageChange)="onPageChangeResourcesPaginatorV2($event)"
+          [rowsPerPageOptions]="rowsPerPageOptions"
+        ></p-paginator>
+      </div>
+    </div>
+  </div>
+
+</div>

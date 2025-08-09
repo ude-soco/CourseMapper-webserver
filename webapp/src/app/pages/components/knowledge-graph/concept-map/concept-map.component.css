@@ -290,10 +290,10 @@
   max-height: 30%;
   overflow-y: auto;
 }
-:host ::ng-deep #recommendationButton {
+/* :host ::ng-deep #recommendationButton {
   position: absolute;
-  /* white-space: normal; */
-  /* word-wrap: break-word; */
+  /* white-space: normal; 
+  /* word-wrap: break-word; 
   color: #ffffff;
   background: #eb590d;
   border: #eb590d;
@@ -328,7 +328,7 @@
   left: 1;
   margin-top: 0.5rem;
   z-index: 12;
-}
+} */
 #conceptsCategoryButton {
   position: absolute;
   margin-top: 0.5rem;
@@ -499,7 +499,6 @@
 .p-dialog-content {
 display: flex;
 flex-direction: column;
-
 }
 
 #materialKgControlPanel {
@@ -510,6 +509,77 @@ padding-right: 1rem;
 float: right;
 }
 
+
+:host ::ng-deep #view_dnus .p-accordion-tab {
+  border: 2px solid #0288d1;
+}
+
+:host ::ng-deep .p-accordion-header.accordionTab1 .p-accordion-header.accordionTab2 {
+  font-size: 12px;
+  background-color: #e9ecef;
+  color: #747d84;
+} 
+
+:host ::ng-deep .p-sidebar-header{
+  display: none;
+}
+
+:host ::ng-deep .p-sidebar-footer{
+  display: none;
+}
+
+:host ::ng-deep #recommendationButton {
+  background: #eb590d;
+  border: #eb590d;
+  border-radius: 30px;
+}
+
+:host ::ng-deep .graphSection {
+  /* width: 72em; */
+} 
+
+#hideNonUnderstoodPanel {
+  /* position: absolute;
+  left: 612px;
+  float: right;
+  top: 50%;
+  z-index: 12; */
+  color: #ffffff;
+  background: #A8A9AA;
+  border-radius: 16px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.125rem;
+  padding-right: 0.125rem;
+  font-size: 2px;
+}
+
+#showNonUnderstoodPanel {
+  position: absolute;
+  background-color: #ffffff;
+  color: #2196F3;
+  border: 1px solid #2196F3;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  /* left: 1;
+  margin-top: 0.5rem; */
+  margin-left: 1%;
+  z-index: 12;
+}
+
+@media only screen and (max-width: 2200px) {
+  :host ::ng-deep .graphSection {
+    width: 72em;
+  } 
+}
+
+@media only screen and (max-width: 1800px) {
+  :host ::ng-deep .graphSection {
+    width: 110em;
+  } 
+}
 /* ::ng-deep .custom-close-btn {
 position: absolute;
 

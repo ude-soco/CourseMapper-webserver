@@ -1,9 +1,13 @@
-<div class="grid p-8 gap-8 sm:grid-cols-1">
-  <app-card-article
-    [notUnderstoodConcepts]="notUnderstoodConcepts"
-    *ngFor="let article of articleElements"
-    [article]="article"
-    [currentMaterial]="currentMaterial"
-    (onClick)="(article.id)"
-  ></app-card-article>
+<div class="grid p-8 gap-8 sm:grid-cols-1 ">
+    <app-card-article 
+      [notUnderstoodConcepts]="notUnderstoodConcepts" 
+      *ngFor="let article of articleElements" 
+      [article]="article" 
+      (onClick)="article.id" 
+      [userId]="userId"
+      [resultTabType]="resultTabType"
+      (resourceRemovedEvent)="onResourceRemovedEvent($event)"
+      [currentMaterial]="currentMaterial"
+    >
+    </app-card-article>
 </div>

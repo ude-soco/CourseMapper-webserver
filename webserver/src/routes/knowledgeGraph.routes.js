@@ -1,5 +1,6 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/knowledgeGraph.controller");
+const recommendationController = require("../controllers/recommendation.controller"); 
 const logger = require("../activity-logger/logger-middlewares/knowledge-graph-logger");
 
 module.exports = function (app) {
@@ -91,10 +92,22 @@ module.exports = function (app) {
     controller.publishConceptMap
   );
 
-  app.post(
-    "/api/courses/:courseId/materials/:materialId/concept-recommendation",
-    [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getConcepts
+  // app.post(
+  //   "/api/courses/:courseId/materials/:materialId/concept-recommendation",
+  //   [authJwt.verifyToken, authJwt.isEnrolled],
+  //   controller.getConcepts
+  // );
+
+  // app.post(
+  //   "/api/courses/:courseId/materials/:materialId/resource-recommendation",
+  //   [authJwt.verifyToken, authJwt.isEnrolled],
+  //   controller.getResources
+  // );
+
+  app.get(
+    "/api/wikipedia/search",
+    [authJwt.verifyToken],
+    controller.searchWikipedia
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/concept-recommendation/log",
@@ -123,15 +136,69 @@ module.exports = function (app) {
     logger.markConceptAsNotUnderstoodLogger
   );
   app.post(
-    "/api/courses/:courseId/materials/:materialId/resource-recommendation",
-    [authJwt.verifyToken, authJwt.isEnrolled],
-    controller.getResources
+    "/api/recommendation/user_resources/filter",
+    [authJwt.verifyToken],
+    recommendationController.filterUserResourcesSavedBy
   );
 
   app.get(
-    "/api/wikipedia/search",
+    "/api/recommendation/user_resources/get_rids_from_user_saves",
     [authJwt.verifyToken],
-    controller.searchWikipedia
+    recommendationController.getRidsFromUserResourcesSaved
+  );
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_by_cids",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsByCids
+  );
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_modified_by_user_id",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsModifiedByUserId
+  );
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_modified_by_user_id_and_mid",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsModifiedByUserIdAndMid
+  );
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_modified_by_user_id_and_slide_id",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsModifiedByUserIdAndSlideId
+  );
+
+  app.get(
+    "/api/recommendation/setting/get_concepts_modified_by_user_from_saves",
+    [authJwt.verifyToken],
+    recommendationController.getConceptsModifiedByUserFromSaves
+  );
+
+  app.post(
+    "/api/recommendation/save_or_remove_resources",
+    [authJwt.verifyToken],
+    recommendationController.SaveOrRemveUserResources
+  );
+
+  app.post(
+    "/api/recommendation/rating_resource",
+    [authJwt.verifyToken],
+    recommendationController.ratingResource
+  );
+
+  app.post(
+    "/api/recommendation/get_concepts",
+    [authJwt.verifyToken],
+    recommendationController.getConcepts
+  );
+
+  app.post(
+    "/api/recommendation/get_resources",
+    [authJwt.verifyToken],
+    recommendationController.getResources
   );
 
   app.post(
@@ -220,13 +287,13 @@ module.exports = function (app) {
     logger.viewAllRecommendedArticlesLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/mark-helpful",
+    "/api/materials/:materialId/recommended-article/mark-helpful",
     [authJwt.verifyToken],
     controller.rateArticle,
     logger.markArticleAsHelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/mark-not-helpful",
+    "/api/materials/:materialId/recommended-article/mark-not-helpful",
     [authJwt.verifyToken],
     controller.rateArticle,
     logger.markArticleAsUnhelpfulLogger
@@ -245,13 +312,13 @@ module.exports = function (app) {
   );
 
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/un-mark-helpful",
+    "/api/materials/:materialId/recommended-article/un-mark-helpful",
     [authJwt.verifyToken],
     controller.rateArticle,
     logger.unmarkArticleAsHelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/un-mark-not-helpful",
+    "/api/materials/:materialId/recommended-article/un-mark-not-helpful",
     [authJwt.verifyToken],
     controller.rateArticle,
     logger.unmarkArticleAsUnhelpfulLogger
@@ -269,13 +336,13 @@ module.exports = function (app) {
     logger.unmarkVideoAsUnhelpfulLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/abstract/log-expand",
+    "/api/materials/:materialId/recommended-article/abstract/log-expand",
     [authJwt.verifyToken],
     controller.expandedArticleAbstract,
     logger.expandArticleAbstractLogger
   );
   app.post(
-    "/api/materials/:materialId/recommended-article/:title/abstract/log-collapse",
+    "/api/materials/:materialId/recommended-article/abstract/log-collapse",
     [authJwt.verifyToken],
     controller.collapsedArticleAbstract,
     logger.collapseArticleAbstractLogger
@@ -283,7 +350,7 @@ module.exports = function (app) {
 
   // This endpoint is for the recommended Articles part.
   app.post(
-    "/api/materials/:materialId/recommended-articles/:title/log",
+    "/api/materials/:materialId/recommended-articles/log",
     [authJwt.verifyToken],
     controller.viewFullWikipediaArticle,
     logger.viewFullArticleRecommendedArticleLogger
