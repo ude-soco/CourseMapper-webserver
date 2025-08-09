@@ -25,6 +25,8 @@ export class CardVideoListComponent {
   public notUnderstoodConcepts: string[];
   public showVideo = false;
   public video: VideoElementModel;
+  @Input() userId: string;
+  @Input() resultTabType: string = "";
   @Input() currentMaterial?: Material;
 
   @Output() backButtonClicked: EventEmitter<void> = new EventEmitter();
@@ -40,5 +42,9 @@ export class CardVideoListComponent {
   goBack(): void {
     this.showVideo = !this.showVideo;
     this.backButtonClicked.emit(); // Notify the parent
+  }
+
+  onResourceRemovedEvent(rid: string) {
+    this.videoElements = this.videoElements.filter(video => video.rid !== rid);
   }
 }

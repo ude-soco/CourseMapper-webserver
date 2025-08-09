@@ -1,0 +1,293 @@
+<p-toast key="cro_concept_removed" position="bottom-left"></p-toast>
+
+
+<div class="flex flex-col space-y-4 mt-1" id="cro_content">
+  <div class="flex flex-row flex-wrap space-x-4 text-[#0288d1] ml-6" (click)="showCRO()">
+    
+    <div class="flex flex-row my-auto cursor-pointer active:bg-blue-700">
+      <span class="pi pi-chevron-up" *ngIf="isCustomRecOptionDisplayed"></span>
+      <span class="pi pi-chevron-down" *ngIf="!isCustomRecOptionDisplayed"></span>
+    </div>
+
+    <span>Customize your recommendations</span>
+    
+    <!-- <span class="pi pi-chevron-up my-auto" *ngIf="isCustomRecOptionDisplayed"></span>
+    <span class="pi pi-chevron-down my-auto" *ngIf="!isCustomRecOptionDisplayed"></span> -->
+  </div>
+
+  <div class="w-full border-2 rounded-md border-[#0288d1]" *ngIf="isCustomRecOptionDisplayed">
+    <div class="flex flex-col space-y-1 m-2">
+      <!-- titel with concept rec -->
+      <div class="flex flex-wrap space-x-2 text-[#0288d1] justify-between">
+        <div>Select concepts to be used for recommendation</div>
+        <!-- (up to 5 concepts) -->
+        <div
+          class="mt-auto"
+          pTooltip="Here you can select which concepts should be used to provide recommendations" 
+          tooltipPosition="top" 
+        >
+          <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
+        </div>
+      </div>
+      
+      <!-- category radio selection -->
+      <div class="flex flex-wrap justify-between gap-3">
+        <div class="flex align-items-center ml-4">
+          <div class="flex flex-row gap-1">
+            <p-radioButton name="current slide" inputId="current_slide" value="1" [(ngModel)]="croForm.category" (onClick)="setCROcategory($event)"></p-radioButton>
+            <label for="ingredient1" class="my-auto">Current Slide</label>
+            <div
+              class="mt-1"
+              class="my-auto"
+              pTooltip="Use Not Understood concepts from this slide only" 
+              tooltipPosition="bottom" 
+            >
+              <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
+            </div>
+          </div>
+        </div>
+        <div class="flex align-items-center">
+            <div class="flex flex-row gap-1">
+              <p-radioButton name="all slides" inputId="all_slides" value="2" [(ngModel)]="croForm.category" (onClick)="setCROcategory($event)"></p-radioButton>
+              <label for="ingredient1" class="my-auto">All Slides</label>
+              <div
+                class="mt-1"
+                class="my-auto"
+                pTooltip="Use Not Understood concepts from the whole PDF material" 
+                tooltipPosition="bottom" 
+              >
+                <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
+              </div>
+            </div>
+        </div>
+        <div class="flex align-items-center mr-4">
+            <div class="flex flex-row gap-1">
+              <p-radioButton name="select manually" inputId="select_manually" value="3" [(ngModel)]="croForm.category" (onClick)="setCROcategory($event)"></p-radioButton>
+              <label for="ingredient1" class="my-auto">Select manually</label>
+              <div
+                class="mt-1"
+                class="my-auto"
+                pTooltip="Manually select concepts to get recommendations" 
+                tooltipPosition="bottom" 
+              >
+                <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- case radio=3 then dropdown for selecting a concepts -->
+      <div class="flex justify-center text-xs" id="search_concept_category_3">
+        <p-multiSelect 
+        *ngIf="croForm?.category === '3'" 
+        [options]="CROconceptsManually"
+        [(ngModel)]="cro_concept_selected"
+        optionLabel="name"
+        [filter]="true"
+        filterBy="name"
+        placeholder="Search a Concept"
+        emptyFilterMessage="No Concept found"
+        (onChange)="setSelectManuallyOnChangeMultiSelect($event)"
+        styleClass="select_manually"
+        [resetFilterOnHide]="true"
+        [displaySelectedLabel]="false"
+        [style]="{ minWidth: '24rem', 'border-radius': '0.5rem', maxWidth: '25rem', 'font-size': '12px' }"
+        [showClear]="false"
+        >
+        </p-multiSelect>
+      </div>
+
+      <!-- concept presentation -->
+      <div  *ngFor="let cro of croForm?.concepts; index as i">
+        <div class="min-w-fit flex flex-row justify-between h-10 text-[12px]" id="{{'concept_body_' + i}}" *ngIf="cro?.visible" >
+          <div id="{{'concept_name_' + i}}" class="my-auto flex-initial w-56">
+            Concept {{i +1}} : <span class="text-[#0288d1]">{{ cro?.name }}</span>
+          </div>
+          <div id="{{'concept_weight_' + i}}" class="flex flex-wrap gap-3">
+            <div class="text-[12px] my-auto">weight</div>
+            <div class="w-24">
+              <div class="flex flex-wrap justify-between text-[10px]">
+                <div>0</div>
+                <!-- <div *ngIf="cro?.weight">{{cro?.weight}}</div> -->
+                <div>{{cro?.weight | number:'1.2-2'}}</div>
+                <div>1</div>
+              </div>
+              <div class="mt-2"><p-slider [(ngModel)]="cro.weight" [min]="0" [step]="0.01" [max]="1"></p-slider></div>
+            </div>
+          </div>
+          <div 
+            id="{{'concept_status_' + i}}" 
+            class="my-auto"
+            >
+            <p-checkbox [binary]="true" inputId="{{'concept_' + i}}"
+              pTooltip="This concept will be included in the recommendation if you check this checkbox" 
+              tooltipPosition="right"
+              [(ngModel)]="cro.status"
+              (onChange)="setStatus($event, cro)"
+              *ngIf="croForm.category == '1' || croForm.category == '2'" 
+            >
+            </p-checkbox>
+            <span class="pi pi-minus-circle cursor-pointer active:bg-red-700" 
+              style="color: #FF0000;"
+              pTooltip="This concept will be excluded in the recommendation if you click this button" 
+              tooltipPosition="right"
+              (click)="removeSelectManuallyOnChange(i, cro?.cid)"
+              *ngIf="croForm.category == '3'" 
+            >
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div  *ngFor="let cro of processedCustomers$ | async; index as i">
+        <div>{{ cro.name }} {{ cro.weight }}</div>
+      </div> -->
+
+
+      <!-- show less or more concept -->
+      <div *ngIf="!(croForm?.concepts.length < 6)" class="font-bold">
+        <div 
+          *ngIf="seeMore"
+          class="flex flex-row flex-wrap space-x-4 justify-center"
+        >
+          <div>Show Less</div>
+          <div (click)="displaySeeMore()">
+            <div class="mt-auto text-[#0288d1] cursor-pointer active:bg-blue-700">
+              <span class="pi pi-chevron-up" style="font-size: 1.2rem"></span>
+            </div>
+          </div>
+        </div>
+        
+        <div 
+          *ngIf="!seeMore"
+          class="flex flex-row flex-wrap space-x-4 justify-center"
+        >
+          <div>Show More</div>
+          <div (click)="displaySeeMore()">
+            <div class="mt-auto text-[#0288d1] cursor-pointer active:bg-blue-700">
+              <span class="pi pi-chevron-down" style="font-size: 1.2rem"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- models algo -->
+      <div class="!mt-3">
+        <div class="text-[#0288d1]">How should be the recommendations generated:</div>
+        <div class="flex flex-col gap-2 text-[11.5px] mt-2">
+          <div class="flex flex-row">
+            <p-radioButton name="model_1" value="1" [(ngModel)]="croForm.recommendation_type" inputId="model_1"></p-radioButton>
+            <label for="model_1" class="ml-1">Comparing only Keyphrases from articles and videos with not understood concepts</label>
+          </div>
+          <div class="flex flex-row">
+            <p-radioButton name="model_2" value="2" [(ngModel)]="croForm.recommendation_type" inputId="model_2"></p-radioButton>
+            <label for="model_2" class="ml-1">Comparing whole content of articles and videos with not understood concepts</label>
+          </div>
+          <div class="flex flex-row"
+            [style.pointer-events]="deactivateAlgo3and4 === true ? 'none' : 'auto'"
+            [style.opacity]="deactivateAlgo3and4 === true ? 0.3 : 1"
+            [style.cursor]="deactivateAlgo3and4 === true ? 'not-allowed' : 'pointer'"
+          >
+            <p-radioButton name="model_3" value="3" [(ngModel)]="croForm.recommendation_type" inputId="model_3"></p-radioButton>
+            <label for="model_3" class="ml-1">Comparing only Keyphrases from articles and videos with main concepts from the current slide</label>
+          </div>
+          <div class="flex flex-row"
+            [style.pointer-events]="deactivateAlgo3and4 === true   ? 'none' : 'auto'"
+            [style.opacity]="deactivateAlgo3and4 === true ? 0.3 : 1"
+            [style.cursor]="deactivateAlgo3and4 === true ? 'not-allowed' : 'pointer'"
+          >
+            <p-radioButton name="model_4" value="4" [(ngModel)]="croForm.recommendation_type" inputId="model_4"></p-radioButton>
+            <label for="model_4" class="ml-1">Comparing whole content of articles and videos with whole content of the current slide</label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ranking Factor Weights -->
+      <div class="!mt-3" *ngIf="croForm?.concepts?.length > 0">
+        <div class="flex flex-row gap-3 text-[#0288d1]">
+          <div class="mt-1" class="my-auto">Factors impacting the ranking of recommendations</div>
+          <div 
+            class="mt-1"
+            class="my-auto"
+            pTooltip="Changing the weights of the factors will impact the order of the provided recommendations (articles/videos)"
+            tooltipPosition="top"
+          >
+            <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
+          </div>
+        </div>
+
+        <div class="flex flex-row justify-between">
+          <div>Factors</div>
+          <div class="ml-16">Weights</div>
+          <div class="mr-4">Impact on ranking</div>
+        </div>
+
+        <div *ngFor="let factor of factor_weights?.original; index as i">
+          <div class="flex flex-col text-[10px] mt-2"
+          >
+            <div 
+              class="flex flex-row justify-between"
+              [style.pointer-events]="factor.deactivated === true  ? 'none' : 'auto'"
+              [style.opacity]="factor.deactivated === true ? 0.3 : 1"
+              [style.cursor]="factor.deactivated === true ? 'not-allowed' : 'pointer'"
+            >
+              
+              <div class="flex flex-row gap-2">
+                <div class="mt-4">
+                  <p-checkbox [binary]="true" inputId="binary" 
+                  [(ngModel)]="factor.checked" 
+                  (onChange)="activateOrNotFactorWeight($event, i)"
+                  >
+                  </p-checkbox>
+                </div>
+
+                <div class="mt-3.5">
+                  {{ factor.title }} 
+                </div>
+              </div>
+
+              <div class="flex flex-row gap-6" id="{{ 'factor_weight_'+i }}"
+                [style.pointer-events]="factor.checked != true  ? 'none' : 'auto'"
+                [style.opacity]="factor.checked != true ? 0.3 : 1"
+                [style.cursor]="factor.checked != true ? 'not-allowed' : 'pointer'"
+              >
+                <div>
+                  <div class="w-28 mt-auto mb-auto">
+                    <div class="flex flex-wrap justify-between text-[9px]">
+                      <div>0</div>
+                      <div>{{ factor.value | number:'1.2-2' }}</div>
+                      <div>1</div>
+                    </div>
+                    <div class="mt-2"><p-slider 
+                      [(ngModel)]="factor.value" 
+                      [min]="0" [step]="0.01" [max]="1"
+                      (onChange)="updateFactorWeight()"
+                      >
+                    </p-slider></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="w-28 mt-auto mb-auto">
+                    <div class="raning_progress_bar">
+                      <p-progressBar 
+                        [value]="factor_weights?.normalized[factor.key] * 100 | number: '1.0-0'" 
+                        [showValue]="true"
+                        [color]="'#0288d1'"
+                        [style]="{ height: '25px', borderRadius: '5px'}"
+                      >
+                      </p-progressBar>
+                      <!-- <div class="raning_progress_bar_value">{{ factor_weights?.normalized[factor.key] * 100 | number: '1.0-0' }}%</div> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

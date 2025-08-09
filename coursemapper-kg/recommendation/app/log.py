@@ -22,7 +22,7 @@ class LOG(Logger):
         self.addHandler(self.get_console_handler())
         if log_file:
             self.addHandler(self.get_file_handler())
-        # self.addHandler(self.get_redis_handler())
+        self.addHandler(self.get_redis_handler())
         self.propagate = False
 
     def get_console_handler(self):

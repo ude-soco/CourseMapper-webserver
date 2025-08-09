@@ -11,6 +11,7 @@ from .recommendation_type import RecommendationType
 from ..kwp_extraction.dbpedia.concept_tagging import DBpediaSpotlight
 from .wikipedia_service import WikipediaService
 from .youtube_service import YoutubeService
+import json
 
 from log import LOG
 
@@ -21,16 +22,19 @@ def compute_combined_similatity(data, alpha, recommendation_type, with_user):
     logger.info("Compute Fused Cosine Similarities")
     if with_user:
         data[recommendation_type] = (1 - alpha) * data[
-            RecommendationType.DYNAMIC_DOCUMENT_BASED
-        ] + data[RecommendationType.DYNAMIC_KEYPHRASE_BASED] * alpha
+            RecommendationType.PKG_BASED_DOCUMENT_VARIANT
+        ] + data[RecommendationType.PKG_BASED_KEYPHRASE_VARIANT] * alpha
     else:
         data[recommendation_type] = (1 - alpha) * data[
-            RecommendationType.STATIC_DOCUMENT_BASED
-        ] + data[RecommendationType.STATIC_KEYPHRASE_BASED] * alpha
+            RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
+        ] + data[RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT] * alpha
     return data
 
-
 def sort_by_similarity_type(data, similarity_type):
+    '''
+        sort results by similarity score
+        sorted_data = sort_by_similarity_type(data, recommendation_type)
+    '''
     logger.info("Sort Results")
 
     sorted_data = data.sort_values(
@@ -39,106 +43,60 @@ def sort_by_similarity_type(data, similarity_type):
 
     return sorted_data
 
-
 def compute_cosine_similarity_with_embeddings(embedding1, embedding2):
     return util.pytorch_cos_sim(embedding1, embedding2).item()
 
 
-def compute_dynamic_document_based_similarity(
-    data, recommendation_type, user_embedding
-):
-    cosine_similarities = []
-
-    for document_embedding in data["document_embedding"]:
-        tensor = get_tensor_from_embedding(document_embedding)
-
-        cosine_similarity = compute_cosine_similarity_with_embeddings(
-            tensor, user_embedding
-        )
-        cosine_similarities.append(cosine_similarity)
-
-    data[recommendation_type] = cosine_similarities
-
-    return data
-
-
 def get_tensor_from_embedding(embedding):
+    '''
+        Tranform embedding to tensor
+    '''
     embedding_array = [float(i) for i in embedding]
     embedding_array = np.array(embedding_array)
     embedding_tensor = torch.from_numpy(embedding_array).float()
     return embedding_tensor
 
 
-def compute_dynamic_keyphrase_based_similarity(
-    data, recommendation_type, user_embedding
-):
+def compute_similarity(embedding_type: str, data, embedding_tensor):
+    ''' 
+        Compute Cosine Similarities
+    '''
+    logger.info(f"Computing Cosine Similarities with {embedding_type}")
+
     cosine_similarities = []
-
-    for keyphrase_embedding in data["keyphrase_embedding"]:
-        embedding_array = [float(i) for i in keyphrase_embedding]
-        embedding_array = np.array(embedding_array)
-        tensor = torch.from_numpy(embedding_array).float()
-
+    for embedding in data[embedding_type]:
+        tensor = get_tensor_from_embedding(embedding)
         cosine_similarity = compute_cosine_similarity_with_embeddings(
-            tensor, user_embedding
+            tensor, embedding_tensor
         )
         cosine_similarities.append(cosine_similarity)
-
-    data[recommendation_type] = cosine_similarities
-
-    return data
-
-
-def compute_document_based_similarity(
-    data, slide_document_embedding, recommendation_type
-):
-    logger.info("Compute Document-Based Cosine Similarities")
-    cosine_similarities = []
-
-    slide_document_embedding_array = slide_document_embedding.split(",")
-    slide_document_embedding_tensor = get_tensor_from_embedding(
-        slide_document_embedding_array
-    )
-
-    for document_embedding in data["document_embedding"]:
-        tensor = get_tensor_from_embedding(document_embedding)
-        cosine_similarity = compute_cosine_similarity_with_embeddings(
-            slide_document_embedding_tensor, tensor
-        )
-        cosine_similarities.append(cosine_similarity)
-
-    data[recommendation_type] = cosine_similarities
-
+    data["similarity_score"] = cosine_similarities
     return data
 
 
 def retrieve_keyphrases(data):
+    '''
+        Retrieve keyphrases
+    '''
     logger.info("Add relevant columns for keyphrases")
 
-    resource_keyphrases_infos = []
-    resource_keyphrases = []
-    keyphrase_counts = []
+    for index, row in data.iterrows():
+        if len(row["keyphrases"]) < 1:
+            text = row["text"]
+            pos = {"NOUN", "PROPN", "ADJ"}
+            extractor = SingleRank()
+            extractor.load_document(input=text, language="en")
+            extractor.candidate_selection(pos=pos)
+            extractor.candidate_weighting(window=10, pos=pos)
+            keyphrases_infos = extractor.get_n_best(n=15)
+            keyphrases = [keyphrase[0] for keyphrase in keyphrases_infos]
 
-    logger.info(data)
-    for index, text in enumerate(data["text"]):
-        pos = {"NOUN", "PROPN", "ADJ"}
-        extractor = SingleRank()
-        extractor.load_document(input=text, language="en")
-        extractor.candidate_selection(pos=pos)
-        extractor.candidate_weighting(window=10, pos=pos)
-        keyphrases_infos = extractor.get_n_best(n=15)
-        keyphrases = [keyphrase[0] for keyphrase in keyphrases_infos]
-
-        keyphrase_counts.append(len(keyphrases))
-        resource_keyphrases.append(keyphrases)
-        resource_keyphrases_infos.append(keyphrases_infos)
-        index += 1
-    data["keyphrase_counts"] = keyphrase_counts
-    data["keyphrases"] = resource_keyphrases
-    data["keyphrases_infos"] = resource_keyphrases_infos
+            keyphrases_infos_modified  = [list(item) for item in keyphrases_infos]
+            data.at[index, 'keyphrases_infos'] = json.dumps(keyphrases_infos_modified)
+            # data.at[index, 'keyphrases_infos'] = keyphrases_infos
+            data.at[index, 'keyphrases'] = keyphrases
 
     return data
-
 
 class Recommender:
     def __init__(self, embedding_model):
@@ -146,43 +104,46 @@ class Recommender:
         self.wikipedia_service = WikipediaService()
         self.dbpedia = DBpediaSpotlight()
         if not embedding_model:
-            embedding_model = "sentence-transformers/msmarco-distilbert-base-tas-b"
+            # embedding_model = "sentence-transformers/msmarco-distilbert-base-tas-b"
+            embedding_model = "all-mpnet-base-v2"
         self.embedding = SentenceTransformer(embedding_model)
 
-    def canditate_selection(self, query, video):
+    def canditate_selection(self, query, video, result_type="records", top_n_videos=2, top_n_articles=2):
+        '''
+            query: string to query API content
+            video: content type with True for video and False for wikipedia content
+            result_type: which form to deliver the resources crawled: records (list of dict)
+            top_n_videos: number of content to get from YouTube API
+            top_n_articles: number of content to get from Wikipedia API
+        '''
         data: pd.DataFrame
+        # top_n = 2 # 15
 
         if video:
             start_time = time.time()
-            data = self.youtube_service.get_videos(query)
+            data = self.youtube_service.get_videos(query, top_n=top_n_videos)
             end_time = time.time()
             print("Get Videos Execution time: ", end_time - start_time, flush=True)
         else:
             start_time = time.time()
-            data = self.wikipedia_service.get_articles(query)
+            data = self.wikipedia_service.get_articles(query, top_n=top_n_articles)
             end_time = time.time()
             print("Get Articles Execution time: ", end_time - start_time, flush=True)
 
+        if result_type == "records":
+            return data.to_dict('records')
         return data
 
-    def recommend(
-        self,
-        not_understood_concept_list,
-        slide_concepts=[],
-        slide_weighted_avg_embedding_of_concepts="",
-        slide_document_embedding="",
-        user_embedding="",
-        top_n=10,
-        video=True,
-        recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
-    ):
+    def _get_data(self, recommendation_type, not_understood_concept_list, slide_concepts, video):
         # If personalized recommendation, use DNU concepts to query Youtube and Wikipedia
         if (
             recommendation_type != RecommendationType.WITHOUT_EMBEDDING
             and recommendation_type != RecommendationType.COMBINED_STATIC
-            and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
-            and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
+            and recommendation_type != RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT
+            and recommendation_type != RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT
         ):
+            logger.info("# If personalized recommendation, use DNU concepts to query Youtube and Wikipedia")
+
             query = " ".join(not_understood_concept_list)
             data = self.canditate_selection(query=query, video=video)
             if isinstance(data, list) and data.empty:
@@ -190,6 +151,8 @@ class Recommender:
 
         # Else use top 5 concepts from slide
         else:
+            logger.info("# Else use top 5 concepts from slide")
+
             i = 0
             while i < 5:
                 top_n_concepts = 5 - i
@@ -206,295 +169,147 @@ class Recommender:
                     if len(data.index) >= 5:
                         break
                 i += 1
-        # Without embedding Not yet supported
-        if recommendation_type == RecommendationType.WITHOUT_EMBEDDING:
-            return data
-        # if Model 4
-        elif recommendation_type == RecommendationType.STATIC_DOCUMENT_BASED:
+
+        if data.empty == False:
+            logger.info(f"canditate_selection shape -> {data.shape}")
+        return data
+
+    def recommend(
+        self,
+        recommendation_type=RecommendationType.WITHOUT_EMBEDDING,
+        data:pd.DataFrame=None,
+        slide_weighted_avg_embedding_of_concepts="",
+        slide_document_embedding="",
+        user_embedding="",
+        top_n=10,
+        video=True,
+        not_understood_concept_list=[],
+        slide_concepts=[],
+    ):
+        '''
+            Apply recommendation algorithms
+            data: resources in DataFrame
+            are_embedding_values_present: False (not empty) | True (empty) (
+                if the resource contains key values: keyphrase_embedding | document_embedding)
+        '''
+        logger.info("Applying the recommendation algorithm Selected")
+
+        # Model 1
+        if recommendation_type == RecommendationType.PKG_BASED_KEYPHRASE_VARIANT:
+            logger.info("Algorithm Model 1: Starting Processing")
             start_time = time.time()
-
-            # Step 1: compute document embedding for resources
-            data = self.compute_document_based_embeddings(data)
-
-            end_time = time.time()
-            print(
-                "Retrieve term-based embeddings Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-            start_time = time.time()
-
-            # Step 2: compute similarities between slide document embeddings and resources document embeddings
-            logger.info("Compute Cosine Similarities")
-            data = compute_document_based_similarity(
-                data, slide_document_embedding, recommendation_type
-            )
-
-            end_time = time.time()
-            print(
-                "Compute term-based similarity Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            start_time = time.time()
-
-            # Step 3: sort results
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
-
-            end_time = time.time()
-
-            print(
-                "Compute term-based Sort Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            return sorted_data.head(top_n)
-        # If Model 3
-        elif recommendation_type == RecommendationType.STATIC_KEYPHRASE_BASED:
-            start_time = time.time()
+            
+            # Tranform embedding to tensor
+            user_tensor = get_tensor_from_embedding(user_embedding.split(","))
 
             # Step 1: Retrieve Keyphrases
             data = retrieve_keyphrases(data)
 
-            end_time = time.time()
-            print(
-                "Retrieve keyphrases Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            start_time = time.time()
-
             # Step 2: compute keyphrase-based embedding for resources
             data = self.compute_keyphrase_based_embeddings(data)
-            end_time = time.time()
-            print(
-                "Retrieve keyphrase-based embedding Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-            start_time = time.time()
-
-            # Step 3: compute keyphrase-based similarity between slide weighted average keyphrase embeddings and
+            
+            # Step 3: compute keyphrase-based similarity between user embeddings and
             # resources weighted average keyphrase embeddings
-            logger.info("Compute Cosine Similarities")
-            data = compute_keyphrase_based_similarity(
-                data, slide_weighted_avg_embedding_of_concepts, recommendation_type
-            )
-            end_time = time.time()
-            print(
-                "Retrieve keyphrase-based embedding Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
+            data = compute_similarity(embedding_type="keyphrase_embedding", data=data, embedding_tensor=user_tensor)
+            
+            total_time = time.time() - start_time
+            logger.info(f"Algorithm Model 1: Execution time {str(total_time)}")
+            return data
+        
+        # If Model 2
+        elif recommendation_type == RecommendationType.PKG_BASED_DOCUMENT_VARIANT:
             start_time = time.time()
 
-            # Step 4: sort results by similarity score
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
+            # Transform embedding to tensor
+            user_tensor = get_tensor_from_embedding(user_embedding.split(","))
+            
+            # Step 1: compute document embedding for resources
+            data = self.compute_document_based_embeddings(data)
+                
+            # Step 2: compute similarities between user embeddings and resources document embeddings
+            data = compute_similarity(embedding_type="document_embedding", data=data, embedding_tensor=user_tensor)
 
-            end_time = time.time()
-            print(
-                "Retrieve keyphrase-based embeddings Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            return sorted_data.head(top_n)
-
-        # Model 1
-        elif recommendation_type == RecommendationType.DYNAMIC_KEYPHRASE_BASED:
+            total_time = time.time() - start_time
+            logger.info(f"Algorithm Model 2: Execution time {str(total_time)}")
+            return data 
+    
+        # If Model 3
+        elif recommendation_type == RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT:
             start_time = time.time()
 
             # Tranform embedding to tensor
-            user_embedding_array = user_embedding.split(",")
-            user_tensor = get_tensor_from_embedding(user_embedding_array)
+            slide_weighted_avg_embedding_of_concepts_embedding = get_tensor_from_embedding(slide_weighted_avg_embedding_of_concepts)
 
             # Step 1: Retrieve Keyphrases
             data = retrieve_keyphrases(data)
-            end_time = time.time()
-            print(
-                "Retrieve keyphrases Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            start_time = time.time()
 
             # Step 2: compute keyphrase-based embedding for resources
             data = self.compute_keyphrase_based_embeddings(data)
-            end_time = time.time()
-            print(
-                "Retrieve keyphrase-based embeddings Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
 
-            start_time = time.time()
-
-            # Step 3: compute keyphrase-based similarity between user embeddings and
+            # Step 3: compute keyphrase-based similarity between slide weighted average keyphrase embeddings and
             # resources weighted average keyphrase embeddings
-            logger.info("Compute Cosine Similarities")
-            data = compute_dynamic_keyphrase_based_similarity(
-                data, recommendation_type, user_embedding=user_tensor
-            )
-            end_time = time.time()
-            print(
-                "Retrieve keyphrase-based similarity Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
+            data = compute_similarity(embedding_type="keyphrase_embedding", data=data, embedding_tensor=slide_weighted_avg_embedding_of_concepts_embedding)
 
+            total_time = time.time() - start_time
+            logger.info(f"Algorithm Model 3: Execution time {str(total_time)}")
+            return data # sorted_data.head(top_n)
+
+        # if Model 4
+        elif recommendation_type == RecommendationType.CONTENT_BASED_DOCUMENT_VARIANT:
+            # Compute term-based
             start_time = time.time()
 
-            # Step 4: sort results by similarity score
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
-
-            end_time = time.time()
-            print(
-                "Retrieve keyphrase-based sorted data Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            return sorted_data.head(top_n)
-        # If Model 2
-        elif recommendation_type == RecommendationType.DYNAMIC_DOCUMENT_BASED:
             # Transform embedding to tensor
-            user_embedding_array = user_embedding.split(",")
-            user_embedding_array = [float(i) for i in user_embedding_array]
-            user_embedding_array = np.array(user_embedding_array)
-            user_tensor = torch.from_numpy(user_embedding_array).float()
-            start_time = time.time()
+            slide_document_embedding_tensor = get_tensor_from_embedding(slide_document_embedding.split(","))
 
             # Step 1: compute document embedding for resources
             data = self.compute_document_based_embeddings(data)
-            end_time = time.time()
-            print(
-                "Retrieve term-based embeddings Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-            start_time = time.time()
 
-            # Step 2: compute similarities between user embeddings and resources document embeddings
-            logger.info("Compute Cosine Similarities")
-            data = compute_dynamic_document_based_similarity(
-                data, recommendation_type, user_embedding=user_tensor
-            )
-            end_time = time.time()
-            print(
-                "Retrieve user document-based similarity Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-            start_time = time.time()
+            # Step 2: compute similarities between slide document embeddings and resources document embeddings
+            data = compute_similarity(embedding_type="document_embedding", data=data, embedding_tensor=slide_document_embedding_tensor)
 
-            # Step 3: sort results
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
+            total_time = time.time() - start_time
+            logger.info(f"Algorithm Model 4: Execution time {str(total_time)}")
+            return data
 
-            end_time = time.time()
-            print("Sort result Execution time: ", end_time - start_time, flush=True)
-
-            return sorted_data.head(top_n)
-        # If Combined Dynamic Model.
-        # TODO this model was Ignored during the evalution. Can be considered in future works
-        elif recommendation_type == RecommendationType.COMBINED_DYNAMIC:
-            start_time = time.time()
-
-            user_embedding_array = user_embedding.split(",")
-            user_embedding_array = [float(i) for i in user_embedding_array]
-            user_embedding_array = np.array(user_embedding_array)
-            user_tensor = torch.from_numpy(user_embedding_array).float()
-
-            data = retrieve_keyphrases(data)
-            data = self.compute_keyphrase_based_embeddings(data)
-            data = self.compute_document_based_embeddings(data)
-
-            logger.info("Compute Cosine Similarities")
-            data = compute_dynamic_keyphrase_based_similarity(
-                data, recommendation_type, user_embedding=user_tensor
-            )
-            data = compute_dynamic_document_based_similarity(
-                data, recommendation_type, user_embedding=user_tensor
-            )
-            data = compute_combined_similatity(
-                data, 0.5, recommendation_type, with_user=True
-            )
-
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
-
-            end_time = time.time()
-            print(
-                "Retrieve combined similarity with user embeddings Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            return sorted_data.head(top_n)
-
-        # If Combined Static Model.
-        # TODO Ignored during the evalution. Can be considered in future works
-        elif recommendation_type == RecommendationType.COMBINED_STATIC:
-            start_time = time.time()
-
-            data = retrieve_keyphrases(data)
-            data = self.compute_keyphrase_based_embeddings(data)
-            data = self.compute_document_based_embeddings(data)
-
-            logger.info("Compute Cosine Similarities")
-            data = compute_document_based_similarity(
-                data, slide_document_embedding, recommendation_type
-            )
-            data = self.slide_weighted_avg_embedding_of_concepts(
-                data, slide_weighted_avg_embedding_of_concepts, recommendation_type
-            )
-            data = compute_combined_similatity(
-                data, 0.5, recommendation_type, with_user=False
-            )
-
-            sorted_data = sort_by_similarity_type(data, recommendation_type)
-
-            end_time = time.time()
-            print(
-                "Retrieve combined similarity without user embeddings Execution time: ",
-                end_time - start_time,
-                flush=True,
-            )
-
-            return sorted_data.head(top_n)
 
     def compute_keyphrase_based_embeddings(self, data):
-        logger.info("Add relevant Columns for keyphrase-based embeddings")
+        '''
+            Compute keyphrase-based embedding for resources
+        '''
+        logger.info("Add relevant Columns for keyphrase embeddings")
+        # print(data["keyphrases_infos"].head(5))
 
-        resource_keyphrase_embeddings = []
+        def do(row):
+            if len(row["keyphrase_embedding"]) < 1:
+                keyphrase_infos = row["keyphrases_infos"]
+                keyphrases_avg_embedding = (
+                    self.compute_weighted_avg_embedding_of_keyphrases(
+                        keyphrase_infos
+                    ).tolist()
+                )
+                return keyphrases_avg_embedding
+            else:
+                return row["keyphrase_embedding"]
 
-        for index, keyphrase_infos in enumerate(data["keyphrases_infos"]):
-            keyphrases_avg_embedding = (
-                self.compute_weighted_avg_embedding_of_keyphrases(
-                    keyphrase_infos
-                ).tolist()
-            )
-
-            resource_keyphrase_embeddings.append(keyphrases_avg_embedding)
-
-        data["keyphrase_embedding"] = resource_keyphrase_embeddings
-
+        data['keyphrase_embedding'] = data.apply(do, axis=1)
         return data
 
     def compute_document_based_embeddings(self, data):
+        '''
+            Compute document embedding for resources
+            Retrieve term-based embeddings
+        '''
         logger.info("Add relevant Columns for document embeddings")
-        resource_document_based_embeddings = []
+        def do(row):
+            if len(row["document_embedding"]) < 1:
+                text = row["text"]
+                value = self.embedding.encode(text)
+                return value.tolist()
+            else:
+                return row["document_embedding"]
 
-        for index, text in enumerate(data["text"]):
-            logger.info(text)
-            embedding = self.embedding.encode(text)
-
-            resource_document_based_embeddings.append(embedding)
-
-        data["document_embedding"] = resource_document_based_embeddings
-
+        data['document_embedding'] = data.apply(do, axis=1)
         return data
 
     def compute_cosine_similarity_with_text(self, text1, text2):
@@ -521,17 +336,18 @@ class Recommender:
         np.seterr("raise")
         embedding_list = []
         weight_sum = 0
+        keyphrase_infos = json.loads(keyphrase_infos)
         for keyphrase in keyphrase_infos:
             embedding = self.embedding.encode(keyphrase[0])
             embedding_list.append(embedding * keyphrase[1])
             weight_sum += keyphrase[1]
         if len(embedding_list) != 0:
             vectors = np.sum(embedding_list, axis=0)
-            print("Lenght: %s", len(embedding_list))
-            print("Weight Sum: %s", weight_sum)
+            # print("Lenght: %s", len(embedding_list))
+            # print("Weight Sum: %s", weight_sum)
             # dividing by the sum of weights
             average_embedding = vectors / weight_sum
-            print("average_embedding: %s", type(average_embedding))
+            # print("average_embedding: %s", type(average_embedding))
             return average_embedding
         else:
             return 0

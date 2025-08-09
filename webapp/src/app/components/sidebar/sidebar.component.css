@@ -1,8 +1,8 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
 
-@layer components {
+/* @layer components { */
   .sidebar-icon {
     @apply relative flex items-center justify-center h-14 w-14 my-1.5 mx-auto bg-sky-700 text-white hover:bg-sky-900 rounded-3xl shadow-lg hover:rounded-md transition-all cursor-pointer;
   }
@@ -25,8 +25,8 @@
   .icon-button-badge {
     @apply absolute top-10 right-[-6px] w-6 h-6 flex justify-center bg-orange-600 text-white rounded-full shadow-lg;
   }
-}
-
+/* 
+} */
 .sidebar-icon.show-activity-indicator::after {
   content: '';
   position: absolute;

@@ -13,5 +13,11 @@ export class CardArticleListComponent {
   @Input()
   public notUnderstoodConcepts: string[];
   public article!: ArticleElementModel;
+  @Input() userId: string;
+  @Input() resultTabType: string = "";
   @Input() currentMaterial?: Material;
+
+  onResourceRemovedEvent(rid: string) {
+    this.articleElements = this.articleElements.filter(article => article.rid !== rid);
+  }
 }

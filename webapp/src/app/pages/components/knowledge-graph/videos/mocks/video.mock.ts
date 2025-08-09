@@ -2,7 +2,7 @@ import {VideoElementModel} from '../models/video-element.model';
 
 export const videoMock: VideoElementModel[] = [
   {
-    id: 'wTZUHiLUY94',
+    id: 0, // 'wTZUHiLUY94',
     title: 'Introduction to Recommender Systems',
     keyphrases: ['Recommender Systems'],
     thumbnail: 'https://i.ytimg.com/vi/gxXn9LDAdcU/hqdefault.jpg',
@@ -11,12 +11,12 @@ export const videoMock: VideoElementModel[] = [
     publish_time: '2020-01-01T08:00:05Z',
     uri: 'https://www.youtube.com/embed/gxXn9LDAdcU?autoplay=1',
     similarity_score: 0.95,
-    helpful_counter: 9,
-    not_helpful_counter: 2,
+    helpful_count: 9,
+    not_helpful_count: 2,
     duration: '4:37',
   },
   {
-    id: 'n3RKsY2H-NE',
+    id: 1, // 'n3RKsY2H-NE',
     title: 'How Recommender Systems Work (Netflix/Amazon)',
     keyphrases: ['Recommender Systems', 'Machine Learning'],
     thumbnail: 'https://i.ytimg.com/vi/n3RKsY2H-NE/hqdefault.jpg',
@@ -25,12 +25,12 @@ export const videoMock: VideoElementModel[] = [
     publish_time: '2020-02-28T13:36:11Z',
     uri: 'https://www.youtube.com/embed/n3RKsY2H-NE?autoplay=1',
     similarity_score: 0.90,
-    helpful_counter: 5,
-    not_helpful_counter: 0,
+    helpful_count: 5,
+    not_helpful_count: 0,
     duration: '8:18'
   },
   {
-    id: 'BthUPVwA59s',
+    id: 2, // 'BthUPVwA59s',
     title: 'Recommendation systems overview (Building recommendation systems with TensorFlow)',
     keyphrases: ['Recommender Systems', 'Machine Learning'],
     thumbnail: 'https://i.ytimg.com/vi/BthUPVwA59s/hqdefault.jpg',
@@ -39,12 +39,12 @@ export const videoMock: VideoElementModel[] = [
     publish_time: '2021-06-29T16:19:47Z',
     uri: 'https://www.youtube.com/embed/wTZUHiLUY94?autoplay=1',
     similarity_score: 0.90,
-    helpful_counter: 5,
-    not_helpful_counter: 0,
+    helpful_count: 5,
+    not_helpful_count: 0,
     duration: '8:18'
   },
   {
-    id: 'U-yq3I9QugQ',
+    id: 3, //  'U-yq3I9QugQ',
     title: 'Recommender System in 6 Minutes',
     keyphrases: ['Recommender Systems', 'Machine Learning'],
     thumbnail: 'https://i.ytimg.com/vi/U-yq3I9QugQ/hqdefault.jpg',
@@ -53,12 +53,12 @@ export const videoMock: VideoElementModel[] = [
     publish_time: '2019-09-14T10:59:17Z',
     uri: 'https://www.youtube.com/embed/U-yq3I9QugQ?autoplay=1',
     similarity_score: 0.90,
-    helpful_counter: 4,
-    not_helpful_counter: 2,
+    helpful_count: 4,
+    not_helpful_count: 2,
     duration: '6:41'
   },
   {
-    id: '1JRrCEgiyHM',
+    id: 4, // '1JRrCEgiyHM',
     title: 'Lecture 41 — Overview of Recommender Systems | Stanford University',
     keyphrases: ['Recommender Systems', 'Machine Learning'],
     thumbnail: 'https://i.ytimg.com/vi/1JRrCEgiyHM/hqdefault.jpg',
@@ -67,8 +67,8 @@ export const videoMock: VideoElementModel[] = [
     publish_time: '2016-04-13T18:48:37Z',
     uri: 'https://www.youtube.com/embed/1JRrCEgiyHM?autoplay=1',
     similarity_score: 0.87,
-    helpful_counter: 2,
-    not_helpful_counter: 0,
+    helpful_count: 2,
+    not_helpful_count: 0,
     duration: '16:52'
   }
 ];
