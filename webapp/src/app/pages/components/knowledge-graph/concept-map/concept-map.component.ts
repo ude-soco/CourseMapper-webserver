@@ -5,8 +5,8 @@ import {
   EventEmitter,
   ChangeDetectorRef,
   ViewChild,
-  Renderer2, 
-  
+  Renderer2,
+
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -718,7 +718,7 @@ export class ConceptMapComponent {
       conceptSlides: new FormControl(null),
     });
 
-    // window.addEventListener('resize', this.setResponsiveWidthKnowledgeGraph);
+    this.setResponsiveWidthKnowledgeGraph();
   }
 
   ngAfterViewChecked() {
@@ -831,7 +831,22 @@ export class ConceptMapComponent {
       this.changeDetectorRef.detectChanges();
     }
     this.cyWidth = window.innerWidth * 0.9;
+
+    this.setResponsiveWidthKnowledgeGraph()
   }
+
+  setResponsiveWidthKnowledgeGraph() {
+    console.warn("window.innerWidth ", window.innerWidth)
+    let knowledgeGraph = document.getElementById('graphSection');
+    if (knowledgeGraph && knowledgeGraph.style) {
+      if (window.innerWidth < 2700) {
+        knowledgeGraph.style.width = '75%';
+      } else if (window.innerWidth > 2700) {
+        knowledgeGraph.style.width = '85%';
+      }
+    }
+  }
+
 
   //? This is responsible for setting the chip concept from the first section of the not understood concept list
   setChipConcept(concept: any): void {
@@ -877,7 +892,7 @@ export class ConceptMapComponent {
         this.slideKgWidth = slideKgDialogDiv.offsetWidth;
       }
       // knowledgeGraph.style.width = this.slideKgWidth + 'px';
-      this.setResponsiveWidthKnowledgeGraph(knowledgeGraph);
+      this.setResponsiveWidthKnowledgeGraph();
 
     }, 2);
   }
@@ -891,12 +906,6 @@ export class ConceptMapComponent {
       knowledgeGraph.style.marginLeft = 0 + 'rem';
       knowledgeGraph.style.width = slideKgDialogDiv.offsetWidth + 'px';
     }, 2);
-  }
-  
-  setResponsiveWidthKnowledgeGraph(knowledgeGraph) {
-    if (knowledgeGraph && knowledgeGraph.style) {
-      knowledgeGraph.style.width = '75%';
-    }
   }
 
   async getConceptMapData() {
@@ -1911,7 +1920,7 @@ export class ConceptMapComponent {
       key: 'emptyList',
       severity: 'warn',
       summary: 'Empty Not Understood Concepts List',
-      detail: 'Select not understood concept(s) from the graph!',
+      detail: 'Mark some concept(s) as not understood first to get recommendations',
     });
   }
   displayMessage(message: string): void {
