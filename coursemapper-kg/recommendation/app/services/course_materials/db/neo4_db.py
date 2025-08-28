@@ -2509,26 +2509,6 @@ class NeoDataBase:
                 query,
                 cids=cids
             ).data()
-
-            # Decreasing the recommendation number during testing
-            result_ = []
-            count_recs = 9
-            count_articles = 0
-            count_videos = 0
-            for item in result:
-                print("item _labels ->", item["labels"])
-
-                if "Article" in item["labels"]:
-                    if count_articles <= count_recs:
-                        result_.append(item)
-                        count_articles +=1
-
-                if "Video" in item["labels"]:
-                    if count_videos <= count_recs:
-                        result_.append(item)
-                        count_videos += 1
-            result = result_
-
             result = self.resources_wrapper_from_query(data=result)
         return result
 
