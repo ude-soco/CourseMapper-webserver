@@ -1,0 +1,11 @@
+<div class="vline">
+    <div
+      *ngFor="let band of bands"
+      [style.background-color]="band.color"
+      [style.height.%]="band.height"
+      class="align-items-center flex items-center justify-center text-[10px] text-white font-semibold"
+    >
+      {{ band.label }}
+    </div>
+  </div>
+  
