@@ -21,8 +21,6 @@ class Recommendation:
 
     def recommend(self,concept_list,user,top_n):
         
-        logger.debug(f'User Embedding: {user}')
-        print(f'User Embedding: {user}')
         user_embedding_str = user[0]["u"]["embedding"].split(',')
         list2 = []
         for j in user_embedding_str:

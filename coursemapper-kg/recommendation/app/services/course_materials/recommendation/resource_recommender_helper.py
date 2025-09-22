@@ -341,7 +341,7 @@ def rank_resources(resources: list, weights: dict = None, recommendation_type=No
             resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
         
         resources_videos = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_videos)
-        resources_videos = remove_keys_from_resources(resources=resources_videos, recommendation_type=recommendation_type)
+        #resources_videos = remove_keys_from_resources(resources=resources_videos, recommendation_type=recommendation_type)
 
         # articles items
         resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
@@ -349,7 +349,7 @@ def rank_resources(resources: list, weights: dict = None, recommendation_type=No
             resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
         
         resources_articles = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_articles)
-        resources_articles = remove_keys_from_resources(resources=resources_articles, recommendation_type=recommendation_type)
+        #resources_articles = remove_keys_from_resources(resources=resources_articles, recommendation_type=recommendation_type)
 
     return {
         "articles": get_paginated_resources(resources_articles, pagination_params), # resources_articles[: top_n_resources],

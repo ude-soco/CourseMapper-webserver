@@ -16,7 +16,7 @@ export class CardArticleListComponentTextual {
 
   public article!: ArticleElementModel;
 
-  @Input() public dnuColors!: string[];
+  @Input() public conceptColors!: string[];
   @Input() userId: string;
   @Input() resultTabType: string = "";
 

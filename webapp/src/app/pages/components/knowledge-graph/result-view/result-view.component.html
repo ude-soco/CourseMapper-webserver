@@ -33,7 +33,7 @@
               <button
                 *ngFor="let concept of allConceptsObj; let i = index"
                 class="dislike-button text-white px-2 mx-1 border border-transparent rounded-full"
-                [ngStyle]="{ 'background-color': this.dnuColor[i] }">
+                [ngStyle]="{ 'background-color': this.conceptColor[i] }">
                 {{ concept?.name }}
 
                 <button
@@ -168,9 +168,9 @@
             <div *ngIf="resourcesPagination?.nodes?.videos?.total_items > 0; else elseBlockRsVideos_textual"></div>
             <p-scrollPanel styleClass="scroll_panel_list">
               <app-card-video-list-textual
-                [notUnderstoodConcepts]="concepts"
+                [concepts]="concepts"
                 [videoElements]="videoElementsTextual"
-                [dnuColors]="dnuColor"
+                [conceptColors]="conceptColor"
                 [userId]="userId"
                 (backButtonClicked)="logUserViewedRecommendedVideos()"
                 [currentMaterial]="currentMaterial"
@@ -206,7 +206,7 @@
               <app-card-article-list-textual
                 [concepts]="concepts"
                 [articleElements]="articleElementsTextual"
-                [dnuColors]="dnuColor"
+                [conceptColors]="conceptColor"
                 [userId]="userId"
                 [resourcesPagination]="resourcesPagination"
                 [currentMaterial]="currentMaterial">
@@ -242,9 +242,9 @@
             <div *ngIf="resourcesPagination?.nodes?.videos?.total_items > 0; else elseBlockRsVideos_visual"></div>
             <p-scrollPanel styleClass="scroll_panel_list">
               <app-card-video-list-visual
-                [notUnderstoodConcepts]="concepts"
+                [concepts]="concepts"
                 [videoElements]="videoElementsVisual"
-                [dnuColors]="dnuColor"
+                [conceptColors]="conceptColor"
                 [userId]="userId"
                 (backButtonClicked)="logUserViewedRecommendedVideos()"
                 [currentMaterial]="currentMaterial"
@@ -280,7 +280,7 @@
               <app-card-article-list-visual
                 [concepts]="concepts"
                 [articleElements]="articleElementsVisual"
-                [dnuColors]="dnuColor"
+                [conceptColors]="conceptColor"
                 [userId]="userId"
                 [resourcesPagination]="resourcesPagination"
                 [currentMaterial]="currentMaterial">
@@ -341,7 +341,7 @@
 
           <!-- Middle: MultiSelect -->
           <div class="flex justify-center text-xs">
-            <p-multiSelect
+            <!-- <p-multiSelect 
               [options]="conceptsModifiedByUser"
               [(ngModel)]="conceptModifiedByUserSelected"
               optionLabel="name"
@@ -355,12 +355,12 @@
               [style]="{ width: '16rem', 'border-radius': '0.5rem', 'font-size': '12px' }"
               [panelStyle]="{ width: '16rem' }"
               [showClear]="false">
-            </p-multiSelect>
+            </p-multiSelect> -->
           </div>
 
           <!-- Right: Search input -->
           <div class="flex p-field p-fluid">
-            <span class="p-float-label">
+            <span class="p-float-label search-container">
               <input
                 id="search-input"
                 type="text"
@@ -368,11 +368,15 @@
                 [(ngModel)]="filteringParamsSavedTab.text"
                 placeholder=" "
                 (input)="filteringResourcesSaved()" />
-              <label for="search-input-videos-articles">Search for videos/articles</label>
-              <i class="pi pi-search search-icon" *ngIf="!showSearchIconPinner"></i>
-              <i class="pi pi-spin pi-spinner search-icon" *ngIf="showSearchIconPinner"></i>
+              <label for="search-input">Search for videos/articles</label>
+              <i
+                *ngIf="filteringParamsSavedTab.text"
+                class="pi pi-times close-icon"
+                (click)="clearSearch()">
+              </i>
             </span>
           </div>
+
         </div>
 
         <!-- display resources filtered -->
@@ -388,7 +392,7 @@
         <div>
           <div *ngIf="filteringResourcesFound?.videos.length > 0">
             <app-card-video-list-visual
-              [notUnderstoodConcepts]="concepts"
+              [concepts]="concepts"
               [videoElements]="filteringResourcesFound?.videos"
               [userId]="userId"
               [resultTabType]="'saved'"

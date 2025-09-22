@@ -11,36 +11,19 @@ import { ResourcesPagination } from 'src/app/models/croForm';
 })
 export class CardArticleListComponentVisual {
   @Input() public articleElements: ArticleElementModel[] = [];
- 
   @Input() public concepts: any[];
 
   public article!: ArticleElementModel;
-
-  @Input() public dnuColors!: string[];
+  @Input() public conceptColors!: string[];
   @Input() userId: string;
-  @Input() resultTabType: string = "";
 
-  popupVisible = false;
-  popupX = 0;
-  popupY = 0;
-  selectedKeyphrase: string | null = null;
+  @Input() resultTabType: string = "";
   selectedArticle: ArticleElementModel | null = null;
   @Input() currentMaterial?: Material;
- @Input() resourcesPagination: ResourcesPagination
+  @Input() resourcesPagination: ResourcesPagination
  
   onResourceRemovedEvent(rid: string) {
     this.articleElements = this.articleElements.filter(article => article.rid !== rid);
   }
   
-  onKeyphraseClicked(article: ArticleElementModel, event: { keyphrase: string, clientX: number, clientY: number }) {
-    this.selectedKeyphrase = event.keyphrase;
-    this.popupX = event.clientX;
-    this.popupY = event.clientY;
-    this.selectedArticle = article;
-    this.popupVisible = true;
-  }
-  
-  closePopup = () => {
-    this.popupVisible = false;
-  };
 }

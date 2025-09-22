@@ -2,12 +2,12 @@
     <ng-template [ngIf]="!showVideo" [ngIfElse]="watchvideo">
       <div class="" *ngFor="let videoElement of videoElements">
         <app-card-video-textual 
-          [notUnderstoodConcepts]="notUnderstoodConcepts" 
+          [concepts]="concepts" 
           (onWatchVideo)="readVideo($event)" 
           [videoElement]="videoElement" 
           [userId]="userId"
           [resultTabType]="resultTabType"
-          [dnuColors]="dnuColors"
+          [conceptColors]="conceptColors"
           (resourceRemovedEvent)="onResourceRemovedEvent($event)"
           [currentMaterial]="currentMaterial"
           [resourcesPagination]="resourcesPagination"
@@ -18,7 +18,7 @@
     <ng-template #watchvideo>
       <app-watch-video
         [video]="video" 
-        [notUnderstoodConcepts]="notUnderstoodConcepts"
+        [concepts]="concepts"
         [currentMaterial]="currentMaterial"
       ></app-watch-video>
       <button id="backToList"

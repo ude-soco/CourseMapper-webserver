@@ -6,23 +6,14 @@
   [userId]="userId"
   (onClick)="article.id" 
   [resultTabType]="resultTabType"
-  [dnuColors]="dnuColors"
+  [conceptColors]="conceptColors"
   (resourceRemovedEvent)="onResourceRemovedEvent($event)"
       [currentMaterial]="currentMaterial"
-  (keyphraseClicked)="onKeyphraseClicked(article, $event)"> 
+  
+   [resourcesPagination]="resourcesPagination"> 
 </app-card-article-visual>
 
-<!-- <app-keyphrase-popup
-  *ngIf="popupVisible && selectedArticle"
-  [clickedKeyphrase]="selectedKeyphrase"
-  [concepts]="concepts"
-  [keyphrasesImportanceTuple]="selectedArticle.keyphrases"
-  [keyphrases_dnu_similarity_score]="selectedArticle.keyphrases_dnu_similarity_score"
-  [dnuColors]="dnuColors"
-  [style.position]="'fixed'"
-  [style.left.px]="popupX"
-  [style.top.px]="popupY"
-  [close]="closePopup">
-</app-keyphrase-popup> -->
 
+
+ 
 </div>

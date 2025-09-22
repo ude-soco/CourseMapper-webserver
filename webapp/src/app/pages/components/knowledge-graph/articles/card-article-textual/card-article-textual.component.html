@@ -256,16 +256,7 @@
       <p class="text-gray-700"> 
         “The following keyphrases extracted from the article (ordered based on their importance to the article) are similar to the concepts used to generate the recommendations, as follows:”
       </p>
-        <!--  components here as needed -->
-    
-    <!--
-      <app-word-cloud
-      [keyphrasesImportanceTuple]="article.keyphrases"
-      [concepts]="concepts"
-      [keyphrases_dnu_similarity_score]="this.article.keyphrases_dnu_similarity_score"
-      [dnuColors]="dnuColors">
-      </app-word-cloud>
-    -->
+     
       <div *ngFor="let item of getTopKeyphrasesWithSimilarities(); let i = index" class="mb-3">
         <p class="text-base font-semibold text-gray-800">
           {{ i + 1 }}. <strong>{{ item.phrase }}</strong> (<strong>{{ item.weight }}%</strong>)
@@ -278,52 +269,7 @@
         </ul>
       </div>
   
-    </div>
-
-    <!--    <div class="flex flex-row justify-between">
-      <div class="py-3 pl-7">
-        <app-rating 
-          [element]="article" 
-          [concepts]="concepts" 
-          [currentMaterial]="currentMaterial"
-        >
-        </app-rating>
-      </div>
- 
-      <div class="py-3 pl-7">
-        <div class="flex flex-row px-3 py-5 justify-center">
-          <div class="flex items-center">
-            <button class="inline-flex bg-transparent hover:bg-[#0277BD] text-[#0277BD] hover:text-white py-2 px-4 border border-[#0277BD] hover:border-transparent rounded" (click)="openArticle(article)">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="16" height="16" fill="currentColor" 
-                class="bi bi-arrow-up-right-circle-fill" 
-                viewBox="0 0 16 16">
-                <path d="M0 8a8 8 0 1 0 16 0A8 8 0 0 0 0 8zm5.904 2.803a.5.5 0 1 1-.707-.707L9.293 6H6.525a.5.5 0 1 1 0-1H10.5a.5.5 0 0 1 .5.5v3.975a.5.5 0 0 1-1 0V6.707l-4.096 4.096z"/>
-              </svg>
-              <span class="text-sm ml-2 italic">View on Wikipedia</span>
-            </button>
-          </div>
-        </div>
-      </div>
- 
-     
-    <button (click)="toggleWhy()" class="bg-[#3F51B5] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#2C387E] flex items-center space-x-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 10v8M12 6v12M18 14v4" />
-       </svg>
-       <span>WHY?</span>
-     </button>
- 
-       <div *ngIf="isWhyExpanded" class="border mt-4 p-4 bg-gray-100 rounded-md">
-      <h3 class="font-bold">Explanation:</h3>
-      <p class="text-gray-700">This section will contain additional explanation components.</p>
-   
-     
-       </div>
- 
-     </div> -->
- 
+    </div> 
   </div>
 </div>
 

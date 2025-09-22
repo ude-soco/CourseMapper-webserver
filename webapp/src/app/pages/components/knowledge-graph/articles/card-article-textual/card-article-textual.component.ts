@@ -33,8 +33,7 @@ export class CardArticleComponentTextual {
     private sanitizer: DomSanitizer,
     private materialsRecommenderService: MaterialsRecommenderService,
     private renderer: Renderer2,
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone,
+
     private messageService: MessageService,
     private store: Store<State>
   ) {
@@ -51,7 +50,7 @@ export class CardArticleComponentTextual {
   textualSimilarityInfo: string[] = [];
 
   @Input() article!: ArticleElementModel;
-  @Input() public dnuColors!: string[];
+  @Input() public conceptColors!: string[];
  
   @Input() public concepts: { name: string }[] = [];
 
@@ -101,16 +100,7 @@ export class CardArticleComponentTextual {
     popupPosition: { x: number; y: number } = { x: 0, y: 0 };
     @ViewChild('abstractContainer', { static: true }) abstractContainer!: ElementRef;
 
-/*   coloredBandData = {
-    interests_similarity: this.article.document_dnu_similarity,
-    tags: [  
-      { text: 'AI', color: '#4caf50' },
-      { text: 'Biology', color: '#2196f3' },
-      { text: 'Psychology', color: '#ff9800' }
-    ]
-  }; */
 
-  //
   get topKeyphrasesTextual(): { phrase: string, weight: number }[] {
     if (!this.keyphrasesImportanceTuple) return [];
 
@@ -133,7 +123,6 @@ export class CardArticleComponentTextual {
 
     if (!rawTuples || !similarityScores) return [];
 
-    // اطمینان از اینکه آرایه واقعا [string, number] هست
     const keyphrases: [string, number][] = rawTuples.map((tuple: any) => [tuple[0], tuple[1]]);
 
     const sortedTuples = [...keyphrases].sort((a, b) => b[1] - a[1]);
@@ -172,7 +161,7 @@ export class CardArticleComponentTextual {
       }, {}),
       tags: this.concepts.map((concept, index) => ({
         text: concept.name,
-        color: this.dnuColors[index] || '#cccccc'
+        color: this.conceptColors[index] || '#cccccc'
       }))
     };
     console.log("coloredBandData:", this.coloredBandData);
@@ -185,7 +174,7 @@ export class CardArticleComponentTextual {
     this.abstractPartsTruncated = this.truncateParts(this.abstractParts, this.ABSTRACT_MAX_LENGTH);
 
     console.log("DNU Names:", this.notUnderstoodConceptsNames);
-    console.log("DNU Colors:", this.dnuColors);
+    console.log("DNU Colors:", this.conceptColors);
 
   }
   ngAfterViewInit(){
@@ -305,8 +294,9 @@ export class CardArticleComponentTextual {
   } 
  getColorForDnu(dnu: string): string {
   const index = this.notUnderstoodConceptsNames.indexOf(dnu);
-  return index !== -1 ? this.dnuColors[index] : 'red';
+  return index !== -1 ? this.conceptColors[index] : 'red';
   }
+
 
 escapeRegex(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
@@ -314,9 +304,14 @@ escapeRegex(text: string): string {
 
 cleanKeyphrase(kp: string): string {
   return kp
-    .replace(/\\[a-zA-Z]+\s*/g, '')  // Remove LaTeX commands like \displaystyle
-    .replace(/[{}]/g, '')            // Remove braces
-    .trim();
+    // --- LaTeX cleanup ---
+    .replace(/\\[a-zA-Z]+\s*/g, '')  // remove LaTeX commands like \frac, \alpha, \displaystyle
+    .replace(/[{}]/g, '')            // remove LaTeX braces
+
+    // --- General text normalization ---
+    .toLowerCase()                   // make case-insensitive
+    .replace(/\s+/g, ' ')            // collapse multiple spaces/tabs/newlines into one space
+    .trim();                         // remove leading/trailing spaces
 }
 
 cleanTextForLatex(text: string): string {
@@ -335,51 +330,104 @@ cleanTextForLatex(text: string): string {
 
     // Collapse multiple spaces
     .replace(/\s{2,}/g, ' ')
-    
+
     .trim();
 }
 
-generateParts(text: string, keyphrases: string[], keyphrases_dnu_similarity_score: any[]) {
+generateKeyphraseVariants(kp: string): string[] {
+  const variants = new Set<string>();
+
+  const base = kp.toLowerCase().trim();
+
+  // normalize multiple spaces
+  const collapsed = base.replace(/\s+/g, ' ');
+  variants.add(collapsed);
+
+  // hyphen/space variants
+  variants.add(collapsed.replace(/\s*-\s*/g, '-'));   // no space hyphen
+  variants.add(collapsed.replace(/\s*-\s*/g, ' - ')); // spaced hyphen
+  variants.add(collapsed.replace(/\s*-\s*/g, ' '));   // no hyphen
+
+  // diacritic-insensitive variant
+  variants.add(collapsed.normalize("NFD").replace(/[\u0300-\u036f]/g, ''));
+
+  // plural form (add s at end of last word)
+  const pluralForm = collapsed.replace(/(\b\w+)$/, '$1s');
+  variants.add(pluralForm);
+
+  // singular form (if already ends with s, drop it)
+  if (collapsed.endsWith('s')) {
+    variants.add(collapsed.slice(0, -1));
+  }
+
+  return Array.from(variants);
+}
+
+generateParts(
+  text: string,
+  keyphrases: string[],
+  keyphrases_dnu_similarity_score: any[]
+) {
   this.abstractParts = [];
 
-  // 🧼 Clean LaTeX-style formatting from the abstract text
-  text = this.cleanTextForLatex(text);
+  const cleanedAbstract = this.cleanTextForLatex(text);
+  console.log("🔎 Original abstract:", text);
+  console.log("🧹 Cleaned abstract:", cleanedAbstract);
 
-  if (!text || !keyphrases || keyphrases.length === 0) {
-    this.abstractParts = [{ text, isKeyphrase: false }];
+  if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
+    this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
     return;
   }
 
-  const normalizedKeyphrases: { text: string, dnu: string }[] = keyphrases.map((kp, i) => {
+  const expandedKeyphrases: { text: string; dnu: string; original: string }[] = [];
+
+  keyphrases.forEach((kp, i) => {
     const raw = Array.isArray(kp) ? kp[0] : kp;
-    return {
-      text: this.cleanKeyphrase(raw),
-      dnu: Object.keys(keyphrases_dnu_similarity_score[i])[0]
-    };
+    const cleaned = this.cleanKeyphrase(raw);
+    const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
+
+    const variants = this.generateKeyphraseVariants(cleaned);
+
+    let foundVariantInAbstract = false;
+    variants.forEach(v => {
+      const regex = new RegExp(`\\b${this.escapeRegex(v)}\\b`, "gi");
+      if (regex.test(cleanedAbstract)) {
+        foundVariantInAbstract = true;
+      }
+
+      expandedKeyphrases.push({
+        text: v,
+        dnu,
+        original: cleaned,
+      });
+    });
+
+    if (!foundVariantInAbstract) {
+      console.warn(`⚠️ No match in video description for keyphrase: "${cleaned}"`);
+    }
   });
 
   const matches: { index: number; length: number; kp: string; dnu: string }[] = [];
 
-  normalizedKeyphrases.forEach(({ text: kp, dnu }) => {
+  expandedKeyphrases.forEach(({ text: kp, dnu, original }) => {
     if (!kp) return;
 
-    const wordBoundaryRegex = new RegExp(`\\b${this.escapeRegex(kp)}\\b`, 'gi');
-
+    const regex = new RegExp(`\\b${this.escapeRegex(kp)}\\b`, "gi");
     let match: RegExpExecArray | null;
-    while ((match = wordBoundaryRegex.exec(text)) !== null) {
+    while ((match = regex.exec(cleanedAbstract)) !== null) {
       matches.push({
         index: match.index,
         length: match[0].length,
-        kp,
-        dnu
+        kp: original,
+        dnu,
       });
     }
   });
 
-  // Sort matches to prefer earlier and longer ones
+  // Sort by position and length
   matches.sort((a, b) => a.index - b.index || b.length - a.length);
 
-  // Filter out overlapping matches
+  // Filter overlapping matches
   const filteredMatches: typeof matches = [];
   let lastIndex = -1;
   for (const match of matches) {
@@ -389,61 +437,113 @@ generateParts(text: string, keyphrases: string[], keyphrases_dnu_similarity_scor
     }
   }
 
-  // Build parts array
+  // Build abstract parts array
   let currentIndex = 0;
   for (const match of filteredMatches) {
     if (match.index > currentIndex) {
       this.abstractParts.push({
-        text: text.slice(currentIndex, match.index),
-        isKeyphrase: false
+        text: cleanedAbstract.slice(currentIndex, match.index),
+        isKeyphrase: false,
       });
     }
 
     this.abstractParts.push({
-      text: text.slice(match.index, match.index + match.length),
+      text: cleanedAbstract.slice(match.index, match.index + match.length),
       isKeyphrase: true,
       keyphraseMeta: {
-        dnu: match.dnu,
+        concept: match.dnu,
+        originalKeyphrase: match.kp,
         color: this.getColorForDnu(match.dnu),
         tooltip: `This keyphrase is the most similar to the “${match.dnu}”.`
-      }
+      },
     });
+    
 
     currentIndex = match.index + match.length;
   }
 
   // Add remaining non-keyphrase text
-  if (currentIndex < text.length) {
+  if (currentIndex < cleanedAbstract.length) {
     this.abstractParts.push({
-      text: text.slice(currentIndex),
-      isKeyphrase: false
+      text: cleanedAbstract.slice(currentIndex),
+      isKeyphrase: false,
     });
   }
 }
 
-  truncateParts(parts: { text: string, isKeyphrase: boolean, keyphraseMeta?: any }[], maxLength: number) {
+
+truncateParts(
+  parts: { text: string, isKeyphrase: boolean, keyphraseMeta?: any }[],
+  maxLength: number
+) {
   const result: typeof this.abstractParts = [];
   let count = 0;
 
   for (const part of parts) {
     const partLength = part.text.length;
+
+    // If adding this part exceeds maxLength
     if (count + partLength > maxLength) {
-      // Stop before cutting off a keyphrase
-      if (!part.isKeyphrase) {
+      if (part.isKeyphrase) {
+        // Always include full keyphrase even if it slightly exceeds maxLength
+        result.push(part);
+      } else {
+        // Truncate non-keyphrase text to fit remaining length
         const remaining = maxLength - count;
         if (remaining > 0) {
           result.push({ ...part, text: part.text.slice(0, remaining) });
         }
       }
-      break;
+      break; // Stop after truncating
     }
 
+    // Add part fully
     result.push(part);
     count += partLength;
   }
 
   return result;
 }
+
+
+
+
+/* getSimilarityScoresAlignedToFixedYaxisPopUp(clickedKeyphrase: string): number[] {
+  if (!clickedKeyphrase) return [];
+
+  // Find the original keyphrase associated with the clicked variant
+  let originalKeyphrase = clickedKeyphrase;
+
+  // Search in abstractParts to get the originalKeyphrase
+  const part = this.abstractParts.find(
+    p => p.isKeyphrase && p.text === clickedKeyphrase && p.keyphraseMeta?.originalKeyphrase
+  );
+  if (part?.keyphraseMeta?.originalKeyphrase) {
+    originalKeyphrase = part.keyphraseMeta.originalKeyphrase;
+  }
+
+  const cleanedKey = this.cleanKeyphrase(originalKeyphrase);
+
+  // Find index in videoElement.keyphrases
+  const index = this.videoElement.keyphrases.findIndex(tuple => {
+    const candidate = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
+    return this.cleanKeyphrase(candidate) === cleanedKey;
+  });
+
+  if (index === -1) {
+    console.warn(`Keyphrase "${clickedKeyphrase}" (original: "${originalKeyphrase}") not found in article.keyphrases (after cleaning).`);
+    return [];
+  }
+
+  const similarityObject = this.videoElement.keyphrases_dnu_similarity_score[index];
+  return this.conceptsNames.map(dnu =>
+    similarityObject && Object.prototype.hasOwnProperty.call(similarityObject, dnu)
+      ? similarityObject[dnu]
+      : 0
+  );
+} */
+
+ 
 
 
  showPopup(text: string, clientX: number, clientY: number, event: MouseEvent) {

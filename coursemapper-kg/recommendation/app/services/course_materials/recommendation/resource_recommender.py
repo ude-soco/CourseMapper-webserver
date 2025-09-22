@@ -81,8 +81,8 @@ class ResourceRecommenderService:
             results.append(rrh.parallel_crawling_resources(function=recommender.canditate_selection, 
                                                             concept_updated=concept_updated,
                                                             result_type="records",
-                                                            top_n_videos=50,
-                                                            top_n_articles=15
+                                                            top_n_videos=10,
+                                                            top_n_articles=10
                                                         ))
         
         if recommendation_type:
@@ -157,10 +157,9 @@ class ResourceRecommenderService:
             resources=recommender.concept_keyphrase_similarities(resources_df,rec_params["concepts"],rec_params["mid"])
             resources=recommender.concept_document_similarities(resources_df,rec_params["concepts"],rec_params["mid"])
             resources = resources_df.to_dict(orient='records')
-            
-            
-           # resources=post_retrieve_keyphrases(resources)
-            
+
+            # resources=post_retrieve_keyphrases(resources)
+
             self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
 
             # insert attribute "is_bookmarked_fill" for resource saved by the user
@@ -178,6 +177,7 @@ class ResourceRecommenderService:
                             "concepts": rec_params["concepts"], 
                             "nodes": resources_dict
                         }
+        
         return result_final
 
     def _get_resources(self, data_rec_params: dict, data_default: dict=None, top_n = 5):

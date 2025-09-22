@@ -20,15 +20,13 @@ import { ResourcesPagination } from 'src/app/models/croForm';
 export class CardVideoListComponentVisual {
   @ViewChild('videoPlayer', { static: false }) videoplayer: ElementRef;
 
-  @Input()
-  public videoElements: VideoElementModel[] = [];
-  @Input()
-  public notUnderstoodConcepts: any[];
+  @Input() public videoElements: VideoElementModel[] = [];
+  @Input() public concepts: any[];
   public showVideo = false;
   public video: VideoElementModel;
   @Input() userId: string;
   @Input() resultTabType: string = "";
-  @Input() public dnuColors!: string[];
+  @Input() public conceptColors!: string[];
   @Input() currentMaterial?: Material;
   @Input() resourcesPagination: ResourcesPagination
 

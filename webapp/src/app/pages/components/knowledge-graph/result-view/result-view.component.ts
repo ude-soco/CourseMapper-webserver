@@ -136,7 +136,7 @@ export class ResultViewComponent {
     mids: [],
     slider_numbers: []
   }
-  isLoadingResource = true;
+  areResourcesLoaded = false;
   ridsUserSaves = [];
   conceptsModifiedByUser: Concept[] = [];
   conceptModifiedByUserSelected: any | undefined;
@@ -144,7 +144,7 @@ export class ResultViewComponent {
   paginatorPage: number = 0;
   paginatorRows: number = 10;
   rowsPerPageOptions = [10, 30, 50];
-  dnuColor = [
+  conceptColor = [
     '#F06292', // pink[300]
     '#BA68C8', // purple[300]
     '#7986CB', // indigo[300]
@@ -261,9 +261,11 @@ export class ResultViewComponent {
     this.didNotUnderstandConceptsObj =
       this.slideConceptservice.commonDidNotUnderstandConcepts;
     this.didNotUnderstandConceptsObj.forEach((el) => {
-      this.allConceptsObj = this.allConceptsObj.map((e) =>
-        e.id === el.id ? el : e
-      );
+      if (this.allConceptsObj) {
+        this.allConceptsObj = this.allConceptsObj.map((e) =>
+          e.id === el.id ? el : e
+        );
+      }
     });
 
     this.understoodConceptsObj =
@@ -301,10 +303,11 @@ export class ResultViewComponent {
 
   loadResultForSelectedModel() {
     this.allConceptsObj = this.resourcesPagination?.concepts;
-    this.allConceptsObj.forEach(concept => {
-      concept["status"] = "notUnderstood"
-    });
-    this.concepts = this.allConceptsObj;
+    if (this.allConceptsObj) {
+      this.allConceptsObj.forEach(concept => {
+        concept["status"] = "notUnderstood"
+      });
+      this.concepts = this.allConceptsObj;
 
     const videos = this.resourcesPagination?.nodes?.videos?.content || [];
     const articles = this.resourcesPagination?.nodes?.articles?.content || [];
@@ -336,30 +339,31 @@ export class ResultViewComponent {
     }
 
   }
+}
 
   tabChanged(tab) {
     this.activeIndex = tab;
     this.setLeftPanelMWinWidth();
     this.deactivateDnuInteraction();
-
+ 
     // Pause videos (if any) when changing tabs
     document.querySelectorAll('iframe').forEach((iframe) => {
       const result = iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
     });
-
+ 
     if (tab === 0) {
       this.logUserViewedRecommendedVideos();
     } else if (tab === 1) {
       this.logUserViewedRecommendedArticles();
     }
-
+ 
     if (this.activeIndex === 2) {
       this.getRidsFromUserSaves();
       this.getConceptsModifiedByUserFromSaves();
     }
     this.closeVideoFrame();
     this.deactivateSortingKeys();
-
+ 
     this.croService.setResultaTabValue(this.activeIndex.toString());
     if (this.activeIndex === 0 || this.activeIndex === 1) {
       this.selectedFactorSortingKeys = null;
@@ -389,7 +393,7 @@ export class ResultViewComponent {
 
   filteringResourcesSaved() {
     this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 3 ? true : false;
-    if (this.filteringParamsSavedTab.text.length > 3) {
+    if (this.filteringParamsSavedTab.text.length >= 3) {
       this.getUserResources(this.filteringParamsSavedTab);
     } else {
       this.filteringResourcesFound = { articles: [], videos: [] };
@@ -411,12 +415,14 @@ export class ResultViewComponent {
   }
 
   getUserResources(params) {
+    this.areResourcesLoaded = false;
     this.filteringResourcesFound = { articles: [], videos: [] };
     this.materialsRecommenderService.filterUserResourcesSavedBy(params)
       .subscribe({
         next: (data: UserResourceFilterResult) => {
           this.filteringResourcesFound = data;
           this.showSearchIconPinner = false;
+          this.areResourcesLoaded = true;
         },
         error: (err) => {
           console.log(err);
@@ -592,6 +598,10 @@ export class ResultViewComponent {
     }
   }
 
+  clearSearch() {
+    this.filteringParamsSavedTab.text = '';
+    this.getUserResources(this.filteringParamsSavedTab);
+  }
   /*
   generateConceptColor(): String {
     hexValues = [pink[300], purple[300], indigo[300], blue[300], cyan[300], teal[300], green[300], lime[300], amber[300], brown[300]];

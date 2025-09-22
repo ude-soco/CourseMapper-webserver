@@ -5,7 +5,7 @@
   <!--Removed Colored Band Component -->
   
   <!-- Main Content -->
-  <div class="flex flex-row flex-1 gap-6 p-4 w-64">
+  <div class="flex flex-row flex-1 gap-6 p-4 w-full">
 
   <!-- Thumbnail Column -->
   <div class="flex-none">
@@ -38,7 +38,7 @@
               <span class="custom-close" (click)="videoSimilarityPopup.hide()">×</span>
               <div class="text-sm text-gray-700">
                 <p>
-                  This video is {{ (videoElement?.similarity_score * 100) | number:'1.0-0' }}% similar to the concepts used to generate recommendations.
+                  This video is <strong>{{ (videoElement?.similarity_score * 100) | number:'1.0-0' }}%</strong> similar to the concepts used to generate recommendations.
                 </p>
 
                 <div *ngIf="coloredBandData?.document_dnu_similarity_colorband">
@@ -124,7 +124,7 @@
       <div class="py-3 pl-7">
         <app-rating 
           [element]="videoElement" 
-          [concepts]="notUnderstoodConcepts"
+          [concepts]="concepts"
           [currentMaterial]="currentMaterial">
         </app-rating>
       </div>
@@ -141,17 +141,22 @@
     </div>
 
     <!-- Explanation section -->
-    <div *ngIf="isWhyExpanded" class="visualization-section">
-      <p class="text-gray-700">
-        This word cloud diagram shows the main extracted keywords from this recommended article.<br>
-        You can hover over each keyword to see its similarity to all DNUs.
+    <div *ngIf="isWhyExpanded" class="border mt-4 p-4 bg-white rounded-md">
+     <p class="text-gray-700">
+        The following keyphrases extracted from the video (ordered based on their importance to the video) are similar to the concepts used to generate the recommendations, as follows:
       </p>
-      <app-word-cloud
-        [keyphrasesImportanceTuple]="videoElement.keyphrases"
-        [concepts]="notUnderstoodConcepts"
-        [keyphrases_dnu_similarity_score]="videoElement.keyphrases_dnu_similarity_score"
-        [dnuColors]="dnuColors">
-      </app-word-cloud>
+
+      <div *ngFor="let item of getTopKeyphrasesWithSimilarities(); let i = index" class="mb-3">
+        <p class="text-base font-semibold text-gray-800">
+          {{ i + 1 }}. <strong>{{ item.phrase }}</strong> (<strong>{{ item.weight }}%</strong>)
+        </p>
+
+        <ul class="list-disc ml-6 text-sm text-gray-700">
+          <li *ngFor="let sim of item.similarities">
+            <strong>{{ (sim.score * 100) | number:'1.0-0' }}%</strong> – “{{ sim.dnu }}”
+          </li>
+        </ul>
+      </div>
     </div>
 
   </div>

@@ -316,4 +316,8 @@
   <!-- <app-concept-map #conceptMap [material]="selectedMaterial">
   </app-concept-map> -->
   <!-- (loading)="passLoadingStatus($event)" -->
+  <div *ngIf="pdfErrorMaterialId === selectedMaterial?._id && this.showPdfErrorMessage" class="alert alert-danger alert-dismissible fade show w-100 mt-3" role="alert">
+    🚫 This PDF could not be loaded. The file may be missing or corrupted. Please delete this material from the three dot menu with the material name and try uploading the PDF file again. 
+   
+  </div>
 </ng-container>

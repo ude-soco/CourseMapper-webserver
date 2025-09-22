@@ -74,3 +74,14 @@
 .p-multiselect-panel {
   width: 16rem;
 }
+
+/* -- */
+
+.close-icon {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: gray;
+}

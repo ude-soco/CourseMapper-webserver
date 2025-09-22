@@ -224,6 +224,8 @@ class Recommender:
             
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 1: Execution time {str(total_time)}")
+
+            
             return data
         
         # If Model 2
@@ -232,6 +234,9 @@ class Recommender:
 
             # Transform embedding to tensor
             user_tensor = get_tensor_from_embedding(user_embedding.split(","))
+
+            # Retrieve Keyphrases
+            data = retrieve_keyphrases(data)
 
             # compute keyphrase embeddings for concept-keyphrase similarity
             data = self.compute_keyphrase_based_embeddings(data)
@@ -244,8 +249,9 @@ class Recommender:
 
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 2: Execution time {str(total_time)}")
-            return data 
-    
+
+            return data
+
         # If Model 3
         elif recommendation_type == RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT:
             start_time = time.time()
@@ -278,6 +284,9 @@ class Recommender:
             # Transform embedding to tensor
             slide_document_embedding_tensor = get_tensor_from_embedding(slide_document_embedding.split(","))
 
+            # Retrieve Keyphrases
+            data = retrieve_keyphrases(data)
+            
             # compute keyphrase embeddings for concept-keyphrase similarity
             data = self.compute_keyphrase_based_embeddings(data)
 
@@ -289,6 +298,7 @@ class Recommender:
 
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 4: Execution time {str(total_time)}")
+        
             return data
 
 
@@ -297,15 +307,15 @@ class Recommender:
             Compute keyphrase-based embedding for resources
         '''
         logger.info("Add relevant Columns for keyphrase embeddings")
-        # print(data["keyphrases_infos"].head(5))
+        
 
         def do(row):
-            if len(row["keyphrase_embedding"]) < 1 or len(row.get("individual_keyphrase_embeddings", [])) < 1:
+            if (len(row["keyphrase_embedding"]) < 1 or len(row.get("individual_keyphrase_embeddings", [])) < 1) and row.get("keyphrases_infos") is not None:
                 keyphrase_infos = row["keyphrases_infos"]
                 avg_embedding, individual_embeddings = self.compute_weighted_avg_embedding_of_keyphrases(keyphrase_infos)
                 return pd.Series([avg_embedding.tolist(), individual_embeddings])
             else:
-                print("length of embedding list: ",len(row["individual_keyphrase_embeddings"]))
+                
                 return row["keyphrase_embedding"],row["individual_keyphrase_embeddings"]
 
         data[["keyphrase_embedding", "individual_keyphrase_embeddings"]] = data.apply(do, axis=1)
@@ -354,7 +364,6 @@ class Recommender:
         individual_embeddings_list=[]
         weight_sum = 0
         keyphrase_infos = json.loads(keyphrase_infos)
-        print("length of keyphrase info",len(keyphrase_infos))
         for keyphrase in keyphrase_infos:
             embedding = self.embedding.encode(keyphrase[0])
             embedding_list.append(embedding * keyphrase[1])
@@ -367,7 +376,6 @@ class Recommender:
             # dividing by the sum of weights
             average_embedding = vectors / weight_sum
             # print("average_embedding: %s", type(average_embedding))
-            print("length of embedding list: ",len(individual_embeddings_list))
             return average_embedding,individual_embeddings_list
         else:
             return 0,[] 
@@ -471,8 +479,6 @@ class Recommender:
         data["keyphrases"] = data.apply(self._process_keyphrases_infos, axis=1)
         data["keyphrases_dnu_similarity_score"]=keyphrases_dnu_similarity_score
         data["document_dnu_similarity"]=document_dnu_similarity
-        print(data.info())
-        print(data.iloc[1])
 
         return data
 

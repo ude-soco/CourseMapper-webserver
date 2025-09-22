@@ -70,9 +70,7 @@ class YoutubeService:
                 logger.error(e)
                 if i == retry_count - 1:
                     raise  # re-raise the exception if all retries fail
-                delay = retry_delay * (
-                    2**i
-                )  # use a backoff algorithm to increase the delay
+                delay = retry_delay * (2 ** i)  # use a backoff algorithm to increase the delay
                 time.sleep(delay)
                 logger.info("New Try")
 
@@ -85,7 +83,6 @@ class YoutubeService:
                     raise e
         raise Exception("All API keys have exceeded their quota.")
 
-
     def get_videos(self, concepts, top_n=15):
         logger.info("Get Videos")
         # logger.info(concepts)
@@ -96,57 +93,36 @@ class YoutubeService:
         retry_count = 3
         retry_delay = 5
 
-        """
-        for i in range(retry_count):
-            try:
-                # your code that makes the YouTube API request
-                request = self.youtube.search().list(
-                    part="snippet",
-                    maxResults=top_n,
-                    type="video",
-                    q=concepts,
-                    relevanceLanguage="en",
-                )
-
-                response = request.execute()
-                break  # exit the loop if the request succeeds
-            except (ConnectionAbortedError, ConnectionResetError, timeout) as e:
-                logger.error("Error while getting the videos")
-                logger.error(e)
-                if i == retry_count - 1:
-                    raise  # re-raise the exception if all retries fail
-                delay = retry_delay * (
-                    2**i
-                )  # use a backoff algorithm to increase the delay
-                time.sleep(delay)
-                logger.info("New Try")
-        """
-
         # Switching keys
-        response, youtube_api_sinlge = self.search_youtube_videos(developer_keys=self.DEVELOPER_KEYS, query=concepts, top_n=top_n)
+        response, youtube_api_sinlge = self.search_youtube_videos(
+            developer_keys=self.DEVELOPER_KEYS, query=concepts, top_n=top_n
+        )
 
         if len(response["items"]) == 0:
             logger.info("No Video found for this input")
             return []
         else:
             df_items = pd.DataFrame(response["items"])
+
+            # Build id frame and keep your rename to "id"
             df_ids_list = df_items["id"].to_list()
             df_ids = pd.DataFrame(df_ids_list)
             df_ids.rename(columns={"videoId": "id"}, inplace=True)
 
+            # Build snippet frame
             df_snippet_list = df_items["snippet"].to_list()
             df_snippet = pd.DataFrame(df_snippet_list)
-            # df_snippet["text"] = pd.DataFrame(df_snippet["title"] + ". " + df_snippet["description"])
-            # df_snippet["text"] = df_snippet["text"].str.lower()
-            # df_snippet["text"] = pd.DataFrame(df_snippet["title"])
-            # df_snippet["query"] = concepts
+
+            # Avoid join collision if both have "channelId"
+            if "channelId" in df_ids.columns and "channelId" in df_snippet.columns:
+                df_ids = df_ids.drop(columns=["channelId"])
 
             for index, id in enumerate(df_ids["id"]):
                 # try:
-                #    df_snippet["text"][index] = df_snippet["text"][index] + ". " + get_subtitles(id)
+                #     df_snippet["text"][index] = df_snippet["text"][index] + ". " + get_subtitles(id)
                 # except (NoTranscriptFound, TranscriptsDisabled) as e:
-                #    logger.error("No transcript found in english or transcript disabled for this video "
-                #                 "https://www.youtube.com/watch?v={} ".format(id))
+                #     logger.error("No transcript found in english or transcript disabled for this video "
+                #                  "https://www.youtube.com/watch?v={} ".format(id))
 
                 try:
                     duration, views, description = self.get_video_details(youtube_api_sinlge, id)
@@ -159,7 +135,10 @@ class YoutubeService:
                 except Exception as e:
                     logger.error("Error while getting the videos details", e)
 
+            # Keep your join, now safe from column overlap
             video_data = df_ids.join(df_snippet)
+
+            # Assign lists (same behavior as before, now lengths aligned)
             video_data["duration"] = pd.Series(duration_list)
             video_data["views"] = pd.Series(view_list)
             video_data["description_full"] = pd.Series(description_list)

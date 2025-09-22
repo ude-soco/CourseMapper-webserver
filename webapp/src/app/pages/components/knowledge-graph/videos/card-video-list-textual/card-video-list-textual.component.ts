@@ -23,12 +23,12 @@ export class CardVideoListComponentTextual {
   @Input()
   public videoElements: VideoElementModel[] = [];
   @Input()
-  public notUnderstoodConcepts: any[];
+  public concepts: any[];
   public showVideo = false;
   public video: VideoElementModel;
   @Input() userId: string;
   @Input() resultTabType: string = "";
-  @Input() public dnuColors!: string[];
+  @Input() public conceptColors!: string[];
   @Input() currentMaterial?: Material;
   @Input() resourcesPagination: ResourcesPagination
 
