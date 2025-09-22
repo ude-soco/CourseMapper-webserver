@@ -104,7 +104,7 @@ export class ResultViewComponent {
     mids: [],
     slider_numbers: []
   }
-  isLoadingResource = true;
+  areResourcesLoaded = false;
   ridsUserSaves = [];
   conceptsModifiedByUser: Concept[] = [];
   conceptModifiedByUserSelected: any | undefined;
@@ -229,9 +229,11 @@ export class ResultViewComponent {
     this.didNotUnderstandConceptsObj =
       this.slideConceptservice.commonDidNotUnderstandConcepts;
     this.didNotUnderstandConceptsObj.forEach((el) => {
-      this.allConceptsObj = this.allConceptsObj.map((e) =>
-        e.id === el.id ? el : e
-      );
+      if (this.allConceptsObj) {
+        this.allConceptsObj = this.allConceptsObj.map((e) =>
+          e.id === el.id ? el : e
+        );
+      }
     });
 
     this.understoodConceptsObj =
@@ -269,21 +271,23 @@ export class ResultViewComponent {
 
   loadResultForSelectedModel() {
     this.allConceptsObj = this.resourcesPagination?.concepts;
-    this.allConceptsObj.forEach(concept => {
-      concept["status"] = "notUnderstood"
-    });
-    this.concepts = this.allConceptsObj;
+    if (this.allConceptsObj) {
+      this.allConceptsObj.forEach(concept => {
+        concept["status"] = "notUnderstood"
+      });
+      this.concepts = this.allConceptsObj;
 
-    if (this.resourcesPagination?.nodes?.videos.total_items > 0) {
-      this.recievedVideoResultIsEmpty = false;
-      this.logUserViewedRecommendedVideos();
-    } else {
-      this.recievedVideoResultIsEmpty = true;
-    }
-    if (this.resourcesPagination?.nodes?.articles.total_items > 0) {
-      this.recievedArticleResultIsEmpty = false;
-    } else {
-      this.recievedArticleResultIsEmpty = true;
+      if (this.resourcesPagination?.nodes?.videos.total_items > 0) {
+        this.recievedVideoResultIsEmpty = false;
+        this.logUserViewedRecommendedVideos();
+      } else {
+        this.recievedVideoResultIsEmpty = true;
+      }
+      if (this.resourcesPagination?.nodes?.articles.total_items > 0) {
+        this.recievedArticleResultIsEmpty = false;
+      } else {
+        this.recievedArticleResultIsEmpty = true;
+      }
     }
   }
 
@@ -339,7 +343,7 @@ export class ResultViewComponent {
 
   filteringResourcesSaved() {
     this.showSearchIconPinner = this.filteringParamsSavedTab.text.length >= 3 ? true : false;
-    if (this.filteringParamsSavedTab.text.length > 3) {
+    if (this.filteringParamsSavedTab.text.length >= 3) {
       this.getUserResources(this.filteringParamsSavedTab);
     } else {
       this.filteringResourcesFound = { articles: [], videos: [] };
@@ -361,12 +365,14 @@ export class ResultViewComponent {
   }
 
   getUserResources(params) {
+    this.areResourcesLoaded = false;
     this.filteringResourcesFound = { articles: [], videos: [] };
     this.materialsRecommenderService.filterUserResourcesSavedBy(params)
       .subscribe({
         next: (data: UserResourceFilterResult) => {
           this.filteringResourcesFound = data;
           this.showSearchIconPinner = false;
+          this.areResourcesLoaded = true;
         },
         error: (err) => {
           console.log(err);
@@ -541,4 +547,10 @@ export class ResultViewComponent {
       console.error('Error logging activity:', error);
     }
   }
+
+  clearSearch() {
+    this.filteringParamsSavedTab.text = '';
+    this.getUserResources(this.filteringParamsSavedTab);
+  }
+
 }

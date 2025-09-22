@@ -70,6 +70,7 @@ import { AnnotationService } from 'src/app/services/annotation.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import * as NotificationActions from '../../../notifications/state/notifications.actions';
 import { Router } from '@angular/router';
+import { MaterilasService } from 'src/app/services/materials.service';
 @Component({
   selector: 'app-pdf-main-annotation',
   templateUrl: './pdf-main-annotation.component.html',
@@ -86,6 +87,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   pdfZoom$: Observable<number>;
   totalPages: number;
   docURL!: string;
+
   subs = new Subscription();
   private API_URL = environment.API_URL;
   private isInitialLoad: boolean = true;
@@ -154,7 +156,7 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
     private socket: Socket,
     private changeDetectorRef: ChangeDetectorRef,
     private slideKgGenerator: SlideKgOrderedService,
-    protected router: Router
+    protected router: Router,
   ) {
     this.getDocUrl();
     this.store.dispatch(AnnotationActions.loadAnnotations());
@@ -365,10 +367,21 @@ export class PdfMainAnnotationComponent implements OnInit, OnDestroy {
   getDocUrl() {
     this.pdfViewService.currentDocURL.subscribe((url) => {
       this.docURL = this.API_URL + url.replace(/\\/g, '/');
-      console.log('this.docURL', this.docURL);
     });
   }
-
+  onPdfLoadError(error: any) {
+    //console.error('PDF Load Error:', error);
+    const materialId = this.extractMaterialIdFromUrl(this.docURL);
+    if (materialId) {
+      this.pdfViewService.emitError(materialId);
+    }
+  
+  }
+  extractMaterialIdFromUrl(url: string): string | null {
+    // Example: /api/public/uploads/pdfs/6886010b1152d6b2ee79e612.pdf
+    const match = url.match(/\/([\w\d]+)\.pdf$/);
+    return match ? match[1] : null;
+  }
   pagechanging(e: any) {
     this.store.dispatch(
       AnnotationActions.setCurrentPdfPage({ pdfCurrentPage: e.first + 1 })

@@ -66,6 +66,7 @@ class GCN:
             dtype=np.float32,
         )
         adj = np.around(adj, 2)
+
         # matrix plus its unit matrix and transpose matrix to obtain the complete adjacency matrix
         adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
 
@@ -122,8 +123,8 @@ class GCN:
 
     def normalize(self, mx):
         rowsum = np.array(mx.sum(1))
-        d_inv = np.power(rowsum, -0.5).flatten()
-        d_inv[np.isinf(d_inv)] = 0.0
+        d_inv = np.power(rowsum, -0.5, where=rowsum != 0).flatten()
+        d_inv[rowsum.flatten() == 0] = 0.0 
         d_mat_inv = sp.diags(d_inv)
         norm_adj = d_mat_inv.dot(mx)
         norm_adj = norm_adj.dot(d_mat_inv)

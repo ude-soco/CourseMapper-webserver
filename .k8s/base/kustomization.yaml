@@ -19,6 +19,9 @@ configMapGenerator:
 - name: ingress
   literals:
   - host=example.org
+- name: dbpedia-spotlight
+  literals: []
+  # - DBPEDIA_SPOTLIGHT_URL=https://example.org/rest/annotate
 
 images:
 - name: coursemapper-kg-concept-map

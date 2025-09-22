@@ -235,7 +235,7 @@
 
           <!-- Middle: MultiSelect -->
           <div class="flex justify-center text-xs">
-            <p-multiSelect 
+            <!-- <p-multiSelect 
               [options]="conceptsModifiedByUser"
               [(ngModel)]="conceptModifiedByUserSelected"
               optionLabel="name"
@@ -249,12 +249,12 @@
               [style]="{ width: '16rem', 'border-radius': '0.5rem', 'font-size': '12px' }"
               [panelStyle]="{ width: '16rem' }"
               [showClear]="false">
-            </p-multiSelect>
+            </p-multiSelect> -->
           </div>
 
           <!-- Right: Search input -->
           <div class="flex p-field p-fluid">
-            <span class="p-float-label">
+            <span class="p-float-label search-container">
               <input
                 id="search-input"
                 type="text"
@@ -262,14 +262,33 @@
                 [(ngModel)]="filteringParamsSavedTab.text"
                 placeholder=" "
                 (input)="filteringResourcesSaved()" />
-              <label for="search-input-videos-articles">Search for videos/articles</label>
-              <i class="pi pi-search search-icon" *ngIf="!showSearchIconPinner"></i>
-              <i class="pi pi-spin pi-spinner search-icon" *ngIf="showSearchIconPinner"></i>
+              <label for="search-input">Search for videos/articles</label>
+              <i
+                *ngIf="filteringParamsSavedTab.text"
+                class="pi pi-times close-icon"
+                (click)="clearSearch()">
+              </i>
             </span>
           </div>
+
         </div>
 
         <!-- display resources filtered -->
+        <div *ngIf="!areResourcesLoaded && !(filteringResourcesFound?.videos.length > 0 || filteringResourcesFound?.articles.length > 0)">
+          <div class="flex flex-col items-center justify-center">
+            <div>
+              <p-progressSpinner
+                    [style]="{ width: '80px', height: '80px' }"
+                    styleClass="custom-spinner"
+                    strokeWidth="5"
+                    fill="var(--surface-ground)"
+                    animationDuration=".5s"
+              ></p-progressSpinner>
+            </div>
+            <h4 class="my-auto mt-4">Loading saved Materials</h4>
+          </div>
+        </div>
+
         <div class="flex flex-col items-center justify-center mt-6">
           <div *ngIf="filteringParamsSavedTab?.content_type === 'video' && filteringResourcesFound?.videos.length === 0">
             No videos found

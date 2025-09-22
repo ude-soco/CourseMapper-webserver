@@ -5,8 +5,8 @@ import {
   EventEmitter,
   ChangeDetectorRef,
   ViewChild,
-  Renderer2, 
-  
+  Renderer2,
+
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -157,6 +157,7 @@ export class ConceptMapComponent {
   courseIsEmpty?: boolean = undefined;
   recommendedConceptType = 'recommended_concept';
   allSelected = false;
+  skippedFirst = true;
 
   tabs = [
     {
@@ -192,36 +193,39 @@ export class ConceptMapComponent {
         }
       },
     },
-    {
-      label: 'Recommended Concepts',
-      icon: 'pi pi-fw pi-external-link',
-      disabled: true,
-      command: (e) => {
-        this.mainConceptsTab = false;
-        this.recommendedConceptsTab = true;
-        //Log the Activity User viewedrecommendedConcepts
-        this.logUserViewedRecommendedConcepts();
-        //if navigating from materials tab
-        if (this.recommendedMaterialsTab) {
-          this.recommendedMaterialsTab = false;
-          //show sidebar on main tab
-          setTimeout(() => {
-            this.showConceptsList();
-          }, 50);
-        } else {
-          this.recommendedMaterialsTab = false;
-          if (this.showConceptsListSidebar) {
-            setTimeout(() => {
-              this.showConceptsList();
-            }, 1);
-          } else {
-            setTimeout(() => {
-              this.hideConceptsList();
-            }, 1);
-          }
-        }
-      },
-    },
+    // {
+    //   //label: '',
+    //   //icon: 'pi pi-fw pi-external-link',
+    //   //disabled: true,
+    //   hidden: true,  
+    //   command: (e) => {
+    //     // this.mainConceptsTab = false;
+    //     // this.recommendedConceptsTab = false;
+    //     // this.skippedFirst = true;
+        
+    //     //Log the Activity User viewedrecommendedConcepts
+    //     //this.logUserViewedRecommendedConcepts();
+    //     //if navigating from materials tab
+    //     // if (this.recommendedMaterialsTab) {
+    //     //   this.recommendedMaterialsTab = false;
+    //     //   //show sidebar on main tab
+    //     //   setTimeout(() => {
+    //     //     this.showConceptsList();
+    //     //   }, 50);
+    //     // } else {
+    //     //   this.recommendedMaterialsTab = false;
+    //     //   if (this.showConceptsListSidebar) {
+    //     //     setTimeout(() => {
+    //     //       this.showConceptsList();
+    //     //     }, 1);
+    //     //   } else {
+    //     //     setTimeout(() => {
+    //     //       this.hideConceptsList();
+    //     //     }, 1);
+    //     //   }
+    //     // }
+    //   },
+    // },
     {
       label: 'Recommended Materials',
       icon: 'pi pi-fw pi-book', //changed the youtube icon to address violation
@@ -320,11 +324,12 @@ export class ConceptMapComponent {
 
         this.kgNodes = null;
         this.recommendedConcepts = null;
-        this.tabs[1].disabled = true;
-        this.tabs[2].disabled = true;
-        this.kgTabsActivated = false;
+         this.tabs[1].disabled = true;
+        // this.tabs[2].disabled = true;
+       this.kgTabsActivated = true;
         this.filteredMapData = null;
         this.resultMaterials = null;
+        
 
         this.concepts1 = null;
         this.concepts2 = null;
@@ -410,7 +415,7 @@ export class ConceptMapComponent {
     this.subscriptions.push(
       this.kgTabs.activateKgTabs().subscribe(() => {
         this.tabs[1].disabled = false;
-        this.tabs[2].disabled = false;
+        // this.tabs[2].disabled = false;
         this.kgTabsActivated = true;
       })
     ); //Activate tabs
@@ -718,7 +723,7 @@ export class ConceptMapComponent {
       conceptSlides: new FormControl(null),
     });
 
-    // window.addEventListener('resize', this.setResponsiveWidthKnowledgeGraph);
+    this.setResponsiveWidthKnowledgeGraph();
   }
 
   ngAfterViewChecked() {
@@ -831,7 +836,22 @@ export class ConceptMapComponent {
       this.changeDetectorRef.detectChanges();
     }
     this.cyWidth = window.innerWidth * 0.9;
+
+    this.setResponsiveWidthKnowledgeGraph()
   }
+
+  setResponsiveWidthKnowledgeGraph() {
+    console.warn("window.innerWidth ", window.innerWidth)
+    let knowledgeGraph = document.getElementById('graphSection');
+    if (knowledgeGraph && knowledgeGraph.style) {
+      if (window.innerWidth < 2700) {
+        knowledgeGraph.style.width = '75%';
+      } else if (window.innerWidth > 2700) {
+        knowledgeGraph.style.width = '85%';
+      }
+    }
+  }
+
 
   //? This is responsible for setting the chip concept from the first section of the not understood concept list
   setChipConcept(concept: any): void {
@@ -877,7 +897,7 @@ export class ConceptMapComponent {
         this.slideKgWidth = slideKgDialogDiv.offsetWidth;
       }
       // knowledgeGraph.style.width = this.slideKgWidth + 'px';
-      this.setResponsiveWidthKnowledgeGraph(knowledgeGraph);
+      this.setResponsiveWidthKnowledgeGraph();
 
     }, 2);
   }
@@ -891,12 +911,6 @@ export class ConceptMapComponent {
       knowledgeGraph.style.marginLeft = 0 + 'rem';
       knowledgeGraph.style.width = slideKgDialogDiv.offsetWidth + 'px';
     }, 2);
-  }
-  
-  setResponsiveWidthKnowledgeGraph(knowledgeGraph) {
-    if (knowledgeGraph && knowledgeGraph.style) {
-      knowledgeGraph.style.width = '75%';
-    }
   }
 
   async getConceptMapData() {
@@ -1443,9 +1457,9 @@ export class ConceptMapComponent {
         this.conceptMapRecommendedData = this.recommendedConcepts;
         this.filteredMapRecData = this.conceptMapRecommendedData;
         this.tabs[1].disabled = true;
-        this.tabs[2].disabled = true;
+        // this.tabs[2].disabled = true;
         this.kgTabsActivated = false;
-
+        
         this.understoodConceptsObj.forEach((concept) => {
           this.allUnderstoodConcepts.push(concept.cid);
         });
@@ -1470,6 +1484,7 @@ export class ConceptMapComponent {
       } catch (err) {
         console.error(err);
       }
+      this.tabIndex = 2;
       this.showRecommendationButtonClicked = true;
       // this.callRecommendationsService.showRecommendationsClicked();
 
@@ -1508,15 +1523,22 @@ export class ConceptMapComponent {
               }, 1);
             }
 
-          this.kgTabs.kgTabsEnable();
+          //this.kgTabs.kgTabsEnable();
+          //this.kgTabsActivated = true;
           this.mainConceptsTab = false;
-          this.recommendedConceptsTab = true;
+          this.recommendedConceptsTab = false;
+          
           //Log the activity User viewed all recommended concepts
           this.logUserViewedRecommendedConcepts();
-          // this.tabs[2].disabled = true;
-          this.recommendedMaterialsTab = false;
+          //this.tabs[2].disabled = false;
+          //this.tabs[1].disabled = false;
+          // this.tabIndex = 2; 
+          //this.tabs[1].disabled = true;
+          //this.recommendedMaterialsTab = true;
+          
           //////////////////////////call material-recommender/////////////////////////
 
+          
           this.setHeightGraphComponent();
           this.isRecommendationButtonDisplayed = false;
           let reqDataFinal = this.croComponent.buildFinalRequestRecMaterial(reqData);
@@ -1529,6 +1551,15 @@ export class ConceptMapComponent {
               this.resourcesPagination = result;
 
                   this.kgTabs.kgTabsEnable();
+                  this.mainConceptsTab = false;
+                  this.recommendedConceptsTab = false;
+                  this.recommendedMaterialsTab = true;
+                 // this.tabs[1].disabled = false;
+                  //this.tabIndex = 2;
+                  //this.tabs[2].disabled = false;
+                  //this.kgTabsActivated = true;
+                  
+                  
                 },
                 complete: () => {
                   this.showRecommendationButtonClicked = false;
@@ -1738,8 +1769,9 @@ export class ConceptMapComponent {
           this.kgNodes = null;
           this.recommendedConcepts = null;
           this.tabs[1].disabled = true;
-          this.tabs[2].disabled = true;
+          // this.tabs[2].disabled = true;
           this.kgTabsActivated = false;
+          
           this.filteredMapData = null;
           this.resultMaterials = null;
 
@@ -1806,7 +1838,7 @@ export class ConceptMapComponent {
     this.recommendedConcepts = null;
     this.slideConceptservice.setUnderstoodConcepts(this.understoodConceptsObj);
     this.tabs[1].disabled = true;
-    this.tabs[2].disabled = true;
+    // this.tabs[2].disabled = true;
     this.kgTabsActivated = false;
     this.filteredMapData = null;
     this.selectedFilterValues = null;
@@ -1911,7 +1943,7 @@ export class ConceptMapComponent {
       key: 'emptyList',
       severity: 'warn',
       summary: 'Empty Not Understood Concepts List',
-      detail: 'Select not understood concept(s) from the graph!',
+      detail: 'Mark some concept(s) as not understood first to get recommendations',
     });
   }
   displayMessage(message: string): void {
