@@ -54,6 +54,38 @@ export class ResultViewComponent {
   recievedVideoResultIsEmpty = true;
   recievedArticleResultIsEmpty = true;
 
+
+  isTextual: boolean = true;
+  recMode: 'textual' | 'visual' = 'textual'; // radio button, default = textual
+
+
+  showTextualConcepts: boolean = false;    
+  
+  textualConceptsLine: string = '';
+
+  revealTextualData(): void {
+    this.showTextualConcepts = !this.showTextualConcepts;
+    if (this.showTextualConcepts) {
+      this.textualConceptsLine = this.allConceptsObj?.map(c => c.name).join(', ');
+    }
+  }                
+
+  onRecModeToggle(e: any): void {
+    this.recMode = e?.checked ? 'textual' : 'visual';
+    if (this.recMode === 'textual') {
+      this.showTextualConcepts = false; 
+    }
+  }
+
+
+  conceptsLabel: string = '';  
+
+  videoElementsTextual: VideoElementModel[] = [];
+  videoElementsVisual: VideoElementModel[] = [];
+
+  articleElementsTextual: ArticleElementModel[] = [];
+  articleElementsVisual: ArticleElementModel[] = [];
+
   @Input() resourcesPagination: ResourcesPagination = null;
   @Input() userId: string;
   activeIndex: number = 0; 
@@ -274,17 +306,35 @@ export class ResultViewComponent {
     });
     this.concepts = this.allConceptsObj;
 
-    if (this.resourcesPagination?.nodes?.videos.total_items > 0) {
-      this.recievedVideoResultIsEmpty = false;
+    const videos = this.resourcesPagination?.nodes?.videos?.content || [];
+    const articles = this.resourcesPagination?.nodes?.articles?.content || [];
+
+    this.videoElementsTextual = JSON.parse(JSON.stringify(videos));
+    this.videoElementsVisual = JSON.parse(JSON.stringify(videos));
+
+    this.articleElementsTextual = JSON.parse(JSON.stringify(articles));
+    this.articleElementsVisual = JSON.parse(JSON.stringify(articles));
+
+    //
+
+    this.recievedVideoResultIsEmpty = !(this.resourcesPagination?.nodes?.videos?.total_items > 0);
+    this.recievedArticleResultIsEmpty = !(this.resourcesPagination?.nodes?.articles?.total_items > 0);
+
+    //
+    if (!this.recievedVideoResultIsEmpty) {
+
+    //if (this.resourcesPagination?.nodes?.videos.total_items > 0) {
+    //  this.recievedVideoResultIsEmpty = false;
       this.logUserViewedRecommendedVideos();
-    } else {
-      this.recievedVideoResultIsEmpty = true;
+    // } else {
+    //   this.recievedVideoResultIsEmpty = true;
+    // }
+    // if (this.resourcesPagination?.nodes?.articles.total_items > 0) {
+    //   this.recievedArticleResultIsEmpty = false;
+    // } else {
+    //   this.recievedArticleResultIsEmpty = true;
     }
-    if (this.resourcesPagination?.nodes?.articles.total_items > 0) {
-      this.recievedArticleResultIsEmpty = false;
-    } else {
-      this.recievedArticleResultIsEmpty = true;
-    }
+
   }
 
   tabChanged(tab) {

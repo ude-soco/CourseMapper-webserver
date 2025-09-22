@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'app-keyphrase-popup',
   templateUrl: './keyphrase-popup.component.html',
-  styleUrls: ['./keyphrase-popup.component.scss']
+  styleUrls: ['./keyphrase-popup.component.css']
 })
 export class KeyphrasePopupComponent {
   @Input() visible = false;

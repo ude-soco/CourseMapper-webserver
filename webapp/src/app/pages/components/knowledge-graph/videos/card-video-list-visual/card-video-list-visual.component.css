@@ -1,0 +1,10 @@
+#backToList{
+    position: absolute;
+    /* left: 29.5%; */
+    top: 50%;
+    z-index: 12;
+  }
+.visualization-section {
+  width: 100%;
+}
+  

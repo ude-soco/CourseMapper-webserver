@@ -1,0 +1,28 @@
+<div class="grid p-8 gap-8 sm:grid-cols-1 ">
+  <app-card-article-textual
+  [concepts]="concepts"
+  *ngFor="let article of articleElements"
+  [article]="article"
+  [userId]="userId"
+  (onClick)="article.id" 
+  [resultTabType]="resultTabType"
+  [dnuColors]="dnuColors"
+  (resourceRemovedEvent)="onResourceRemovedEvent($event)"
+      [currentMaterial]="currentMaterial"
+  (keyphraseClicked)="onKeyphraseClicked(article, $event)"> 
+</app-card-article-textual>
+
+<!-- <app-keyphrase-popup
+  *ngIf="popupVisible && selectedArticle"
+  [clickedKeyphrase]="selectedKeyphrase"
+  [concepts]="concepts"
+  [keyphrasesImportanceTuple]="selectedArticle.keyphrases"
+  [keyphrases_dnu_similarity_score]="selectedArticle.keyphrases_dnu_similarity_score"
+  [dnuColors]="dnuColors"
+  [style.position]="'fixed'"
+  [style.left.px]="popupX"
+  [style.top.px]="popupY"
+  [close]="closePopup">
+</app-keyphrase-popup> -->
+
+</div>

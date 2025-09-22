@@ -1,0 +1,98 @@
+a{
+    color: #0377bd;
+    cursor: pointer;
+  }
+  .image-article {
+    cursor: pointer;
+  }
+  .title-article.active {
+    color: #0377bd;
+    cursor: pointer;
+  }
+  .title-article:hover {
+    color: #0377bd;
+    cursor: pointer;
+  }
+  .like-button.active {
+    color: #FFFFFF;
+    background-color: #0377bd;
+  }
+  .dislike-button.active {
+    color: #FFFFFF;
+    background-color: red;
+    border: white;
+  }
+  
+  a {
+    display: inline-block;
+  }
+  a svg {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  button {
+    display: inline-block;
+  }
+  button svg {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .word-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .keyphrase {
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .keyphrase:hover {
+    transform: scale(1.1);
+  }
+  .clickable-keyphrase {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  
+  .popup-box {
+  position: relative;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+
+:host ::ng-deep .p-overlaypanel.kp-panel {
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  min-width: 300px;
+}
+
+.kp-panel-content {
+  position: relative;
+  padding: 12px;
+}
+
+.custom-close {
+  position: absolute;
+  top: 0;    /* distance from top of panel */
+  right: 0;  /* distance from right of panel */
+  font-size: 35px;
+  font-weight: bold;
+  color: grey;
+  cursor: pointer;
+  z-index: 10; /* make sure it’s above content */
+}
+
+.custom-close:hover {
+  color: black;
+}

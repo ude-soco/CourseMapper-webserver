@@ -1,0 +1,64 @@
+.image-video {
+  cursor: pointer;
+}
+.title-video.active {
+  color: #0377bd;
+  cursor: pointer;
+}
+.title-video:hover {
+  color: #0377bd;
+  cursor: pointer;
+}
+.like-button.active {
+  color: #ffffff;
+  background-color: #0377bd;
+}
+.dislike-button.active {
+  color: #ffffff;
+  background-color: #ff0000;
+  border: white;
+}
+
+.p-checkbox-label-focus {
+  color: green;
+}
+
+.p-checkbox-label-active {
+  color: #0377bd;
+}
+
+.line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+
+/* info tooltip icon */
+.info_tool_tip {
+  font-size: 0.8rem;
+}
+.kp-panel {
+  padding: 0.5rem;
+}
+
+
+.kp-panel-content {
+  position: relative;
+  padding: 12px;
+}
+
+.custom-close {
+  position: absolute;
+  top: 0;    /* distance from top of panel */
+  right: 0;  /* distance from right of panel */
+  font-size: 35px;
+  font-weight: bold;
+  color: grey;
+  cursor: pointer;
+  z-index: 10; /* make sure it’s above content */
+}
+
+.custom-close:hover {
+  color: black;
+}

@@ -13,11 +13,11 @@ import { Material } from 'src/app/models/Material';
 import { ResourcesPagination } from 'src/app/models/croForm';
 
 @Component({
-  selector: 'app-card-video-list',
-  templateUrl: './card-video-list.component.html',
-  styleUrls: ['./card-video-list.component.css'],
+  selector: 'app-card-video-list-textual',
+  templateUrl: './card-video-list-textual.component.html',
+  styleUrls: ['./card-video-list-textual.component.css'],
 })
-export class CardVideoListComponent {
+export class CardVideoListComponentTextual {
   @ViewChild('videoPlayer', { static: false }) videoplayer: ElementRef;
 
   @Input()

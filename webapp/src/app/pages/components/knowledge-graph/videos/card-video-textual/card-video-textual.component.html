@@ -1,0 +1,179 @@
+<p-toast key="resource_bookmark_video" position="bottom-left"></p-toast>
+
+<div class="mb-6 flex flex-row items-stretch border-b-4 border-gray-300">
+  
+  <!--Removed Colored Band Component -->
+  
+  <!-- Main Content -->
+  <div class="flex flex-row flex-1 gap-6 p-4 w-64">
+
+  <!-- Thumbnail Column -->
+  <div class="flex-none">
+    <img 
+      (click)="readVideo(videoElement)" 
+      class="object-cover rounded w-48 cursor-pointer"  
+      [src]="videoElement.thumbnail" 
+      alt="video thumbnail"
+    />
+  </div>
+
+  <!-- Details Column -->
+<div class="flex flex-col flex-1 gap-3">
+    
+    <div class="flex flex-row justify-between">
+      <div class="w-full">
+        <h3 class="title-video text-lg font-bold inline-block break-normal flex-wrap w-11/12" 
+          (click)="readVideo(videoElement)" 
+          [class.active]="isActive"  
+          [innerHTML]="padStringToLength(videoElement?.title)">
+        </h3>
+      </div>
+
+      <!-- Similarity Score and Bookmark -->
+      <div class="w-3.5/12 text-sm ml-auto">
+        <div class="text-[#0288d1] flex flex-row gap-2 mt-1 w-48" *ngIf="resultTabType !=='saved'">
+          <!-- Popup Panel -->
+          <p-overlayPanel #videoSimilarityPopup [showCloseIcon]="false" [dismissable]="true" styleClass="w-96 kp-panel">
+            <div class="kp-panel-content relative">
+              <span class="custom-close" (click)="videoSimilarityPopup.hide()">×</span>
+              <div class="text-sm text-gray-700">
+                <p>
+                  This video is {{ (videoElement?.similarity_score * 100) | number:'1.0-0' }}% similar to the concepts used to generate recommendations.
+                </p>
+
+                <div *ngIf="coloredBandData?.document_dnu_similarity_colorband">
+                  <p class="font-semibold mt-2">Similarity with concept:</p>
+                  <ul class="list-disc pl-5">
+                    <li 
+                      *ngFor="let item of coloredBandData.document_dnu_similarity_colorband | keyvalue"
+                      [innerHTML]="getFormattedSimilarityText(item.key, item.value)">
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </p-overlayPanel>
+
+            <!-- Show Similarity Button -->
+            <button 
+              (click)="videoSimilarityPopup.toggle($event)" 
+              class="bg-[#3F51B5] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#2C387E] flex items-center space-x-2"
+              pTooltip="Shows how similar this video is to the concepts used in recommendations"
+              tooltipPosition="top"
+            >
+              <i class="pi pi-percentage text-white text-sm"></i>
+              <span>Show similarity</span>
+            </button>
+          <div>
+            <div class="my-auto" (click)="addToBookmark()" *ngIf="!videoElement?.is_bookmarked_fill">
+              <i class="pi pi-bookmark" style="font-size: 1.2rem; color: #000000"></i>
+            </div>
+            <div class="my-auto" (click)="addToBookmark()" *ngIf="videoElement?.is_bookmarked_fill">
+              <i class="pi pi-bookmark-fill" style="font-size: 1.2rem; color: #0277BD"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keyphrases -->
+    <div *ngIf="videoElement.keyphrases" class="flex flex-row">
+      <p class="mr-2 font-semibold">Keyphrases: </p>
+      <div class="flex flex-wrap gap-1">
+       <!--  <div *ngFor="let concept of videoElement.keyphrases.slice(0, 5)" 
+            pTooltip="Main keyphrases extracted from this video"
+            class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">
+          {{concept[0]}}
+        </div> -->
+        <div *ngFor="let concept of videoElement.keyphrases.slice(0, 5)" 
+     pTooltip="Main keyphrases extracted from this video"
+     class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">
+  {{ cleanKeyphrase(concept[0]) }}
+</div>
+
+      </div>
+    </div>
+
+    <!-- Meta Info -->
+    <div class="flex flex-row gap-2 flex-wrap gap-4">
+      <div><span class="font-bold">Created at:</span> {{ videoElement.publish_time | dateAgo }}</div>
+      <div><span class="font-bold">Likes:</span> {{ videoElement.like_count | number }} </div>
+      <div><span class="font-bold">Views:</span> {{ videoElement.views | number }}</div>
+    </div>
+    <div><span class="font-bold">Author:</span> {{ videoElement.channel_title }} </div>
+
+    <!-- Description -->
+    <div class="flex flex-row">
+      <p *ngIf="videoElement.description" class="mr-2 font-semibold">Description: </p>
+      <p class="text-base text-gray-600">
+        <ng-container *ngFor="let part of abstractParts">
+          <span *ngIf="part.isKeyphrase" 
+                class="font-bold text-gray-800 cursor-pointer"
+                pTooltip="{{ part.keyphraseMeta?.tooltip }}"
+                tooltipPosition="top"
+                (click)="showTextualSimilarityPopover(part.text, $event)">
+            {{ part.text }}
+          </span>
+          <span *ngIf="!part.isKeyphrase">{{ part.text }}</span>
+        </ng-container>
+      </p>
+    </div>
+
+    <!-- Rating + WHY button -->
+    <div class="flex flex-row justify-between">
+      <div class="py-3 pl-7">
+        <app-rating 
+          [element]="videoElement" 
+          [concepts]="notUnderstoodConcepts"
+          [currentMaterial]="currentMaterial">
+        </app-rating>
+      </div>
+
+      <div class="flex flex-row items-center gap-4">
+        <button (click)="toggleWhy()" class="bg-[#3F51B5] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#2C387E] flex items-center space-x-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M6 10v8M12 6v12M18 14v4" />
+          </svg>
+          <span>Why this video?</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Explanation section -->
+    <div *ngIf="isWhyExpanded" class="visualization-section">
+      <p class="text-gray-700">
+        This word cloud diagram shows the main extracted keywords from this recommended article.<br>
+        You can hover over each keyword to see its similarity to all DNUs.
+      </p>
+      <app-word-cloud
+        [keyphrasesImportanceTuple]="videoElement.keyphrases"
+        [concepts]="notUnderstoodConcepts"
+        [keyphrases_dnu_similarity_score]="videoElement.keyphrases_dnu_similarity_score"
+        [dnuColors]="dnuColors">
+      </app-word-cloud>
+    </div>
+
+  </div>
+  </div>
+</div>
+
+<p-overlayPanel
+  #textualSimilarityPopover
+  appendTo="body"
+  [showCloseIcon]="false"
+  [dismissable]="true"
+  [baseZIndex]="10000"
+  [style]="{ width: '400px' }"
+  styleClass="kp-panel"
+>
+  <div class="kp-panel-content">
+    <span class="custom-close" (click)="textualSimilarityPopover.hide()">×</span>
+    <div class="kp-title">
+      The keyphrase <strong>“{{ selectedKeyphrase }}”</strong> is most similar to the following concepts:
+    </div>
+    <ul class="list-disc text-sm text-gray-800 ml-5">
+      <li *ngFor="let line of textualSimilarityInfo" [innerHTML]="line"></li>
+    </ul>
+  </div>
+</p-overlayPanel>

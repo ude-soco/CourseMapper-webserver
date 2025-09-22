@@ -5,19 +5,28 @@ import { VideoElementModel } from '../models/video-element.model';
 import { Material } from 'src/app/models/Material';
 import { MessageService } from 'primeng/api';
 import { ResourcesPagination } from 'src/app/models/croForm';
-
-
+import { ViewChild } from '@angular/core';
+import { OverlayPanel } from 'primeng/overlaypanel';
 @Component({
-  selector: 'app-card-video',
-  templateUrl: './card-video.component.html',
-  styleUrls: ['./card-video.component.css'],
+  selector: 'app-card-video-textual',
+  templateUrl: './card-video-textual.component.html',
+  styleUrls: ['./card-video-textual.component.css'],
 })
-export class CardVideoComponent {
+
+
+export class CardVideoComponentTextual {
+  
+
   constructor(
     private sanitizer: DomSanitizer,
     private messageService: MessageService,
     private materialsRecommenderService: MaterialsRecommenderService,
   ) {}
+
+  @ViewChild('textualSimilarityPopover', { static: false }) textualSimilarityPopover!: OverlayPanel;
+  selectedKeyphrase: string | null = null;
+  textualSimilarityInfo: string[] = [];
+  
 
   DESCRIPTION_MAX_LENGTH = 450;
   isActive = false;
@@ -282,7 +291,8 @@ generateParts(text: string, keyphrases: string[], keyphrases_dnu_similarity_scor
       isKeyphrase: true,
       keyphraseMeta: {
         dnu: match.dnu,
-        color: this.getColorForDnu(match.dnu)
+        color: this.getColorForDnu(match.dnu),
+        tooltip: `This keyphrase is the most similar to the “${match.dnu}”.`
       }
     });
 
@@ -330,4 +340,36 @@ generateParts(text: string, keyphrases: string[], keyphrases_dnu_similarity_scor
    toggleWhy() {
       this.isWhyExpanded = !this.isWhyExpanded;
 }
+
+  getFormattedSimilarityText(concept: string, score: number): string {
+  const percent = (score * 100).toFixed(0);
+  return `This video is <strong>${percent}%</strong> similar to <strong>“${concept}”</strong>`;
+}
+
+//selectedKeyphrase: string = '';
+//textualSimilarityInfo: string[] = [];
+//popupVisible: boolean = false;
+
+  showTextualSimilarityPopover(keyphrase: string, event: MouseEvent) {
+    this.selectedKeyphrase = keyphrase;
+
+    const index = this.videoElement.keyphrases.findIndex(tuple => tuple[0] === keyphrase);
+    if (index === -1) {
+      console.warn(`Keyphrase "${keyphrase}" not found.`);
+      this.textualSimilarityInfo = ['No similarity information found.'];
+      return;
+    }
+
+    const similarities = this.videoElement.keyphrases_dnu_similarity_score[index];
+
+    this.textualSimilarityInfo = Object.entries(similarities || {}).map(
+      ([dnu, score]: [string, number]) =>
+        `<strong>${(score * 100).toFixed(0)}%</strong> – <strong>“${dnu}”</strong>`
+    );
+
+    this.textualSimilarityPopover.hide();
+    setTimeout(() => {
+      this.textualSimilarityPopover.show(event);
+    }, 50);
+  }
 }

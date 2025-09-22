@@ -41,14 +41,9 @@ class YoutubeService:
     youtube = googleapiclient.discovery.build(
         api_service_name,
         api_version,
-        developerKey="AIzaSyClxnNwQ1x34pGioQazLlGxOjO9Fp2GGTY",
+        developerKey="AIzaSyC1oapI6IfFnMBM1mkzl-tqilcC718vMH0",
     )
-    DEVELOPER_KEYS = [  
-                        "AIzaSyD_CGmR_Voq4DIV5okRaR6G8adoe-ZSZsM",
-                        "AIzaSyClxnNwQ1x34pGioQazLlGxOjO9Fp2GGTY",
-                        "AIzaSyADNntK6m7DbA6eZFYOa9Y8e6IYHykUUFE",
-                        "AIzaSyBphZOn7EJmPMmZwrB71aepaA5Rbuex9MU",
-                        "AIzaSyB2Wck31LUlgsqI7dgTcC2dMeeVXgb9TDI"
+    DEVELOPER_KEYS = [  "AIzaSyC1oapI6IfFnMBM1mkzl-tqilcC718vMH0"
                     ]
 
     def search_youtube_videos(self, developer_keys, query, top_n=50, api_service_name="youtube", api_version="v3"):
@@ -98,8 +93,6 @@ class YoutubeService:
         duration_list = []
         view_list = []
         description_list = []
-        like_count_list = []
-        channel_title_list = []
         retry_count = 3
         retry_delay = 5
 
@@ -156,15 +149,13 @@ class YoutubeService:
                 #                 "https://www.youtube.com/watch?v={} ".format(id))
 
                 try:
-                    duration, views, description, like_count, channel_title = self.get_video_details(youtube_api_sinlge, id)
+                    duration, views, description = self.get_video_details(youtube_api_sinlge, id)
                     duration = re.findall(r"\d+", duration)
                     duration = ":".join(duration)
                     # print(id, duration, views)
                     duration_list.append(duration)
                     view_list.append(views)
                     description_list.append(description)
-                    like_count_list.append(like_count)
-                    channel_title_list.append(channel_title)
                 except Exception as e:
                     logger.error("Error while getting the videos details", e)
 
@@ -172,8 +163,6 @@ class YoutubeService:
             video_data["duration"] = pd.Series(duration_list)
             video_data["views"] = pd.Series(view_list)
             video_data["description_full"] = pd.Series(description_list)
-            video_data["like_count"] = pd.Series(like_count_list)
-            video_data["channel_title"] = pd.Series(channel_title_list)
             video_data["text"] = pd.DataFrame(
                 video_data["title"] + ". " + video_data["description"]
             )
@@ -211,16 +200,6 @@ class YoutubeService:
                 if r["items"][0]["snippet"]["description"]
                 else ""
             )
-            like_count = (
-                r["items"][0]["statistics"]["likeCount"]
-                if r["items"][0]["statistics"]["likeCount"]
-                else 0
-            )
-            channel_title = (
-                r["items"][0]["snippet"]["channelTitle"]
-                if r["items"][0]["snippet"]["channelTitle"]
-                else ""
-            )
 
         except Exception as e:
             # print(e)
@@ -237,8 +216,6 @@ class YoutubeService:
                 if r["items"][0]["snippet"]["description"]
                 else ""
             )
-            like_count = 0
-            channel_title = ""
 
-            return duration, views, description, like_count, channel_title
-        return duration, views, description, like_count, channel_title
+            return duration, views, description
+        return duration, views, description

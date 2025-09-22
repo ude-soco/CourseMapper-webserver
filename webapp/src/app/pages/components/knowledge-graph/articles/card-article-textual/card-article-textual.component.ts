@@ -21,12 +21,13 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.reducer';
 import { Subscription } from 'rxjs';
 import { ResourcesPagination } from 'src/app/models/croForm';
+
 @Component({
-  selector: 'app-card-article',
-  templateUrl: './card-article.component.html',
-  styleUrls: ['./card-article.component.css'],
+  selector: 'app-card-article-textual',
+  templateUrl: './card-article-textual.component.html',
+  styleUrls: ['./card-article-textual.component.css'],
 })
-export class CardArticleComponent {
+export class CardArticleComponentTextual {
   currentPdfPage: number;
   constructor(
     private sanitizer: DomSanitizer,
@@ -44,6 +45,10 @@ export class CardArticleComponent {
       })
     );
   }
+
+  @ViewChild('textualSimilarityPopover', { static: false }) textualSimilarityPopover!: OverlayPanel;
+  selectedKeyphrase: string | null = null;
+  textualSimilarityInfo: string[] = [];
 
   @Input() article!: ArticleElementModel;
   @Input() public dnuColors!: string[];
@@ -105,11 +110,55 @@ export class CardArticleComponent {
     ]
   }; */
 
+  //
+  get topKeyphrasesTextual(): { phrase: string, weight: number }[] {
+    if (!this.keyphrasesImportanceTuple) return [];
 
+    const sorted = [...this.keyphrasesImportanceTuple].sort((a, b) => b[1] - a[1]);
+    return sorted.slice(0, 10).map(([phrase, weight]) => {
+      return {
+        phrase: this.cleanKeyphrase(phrase),
+        weight: Number((weight * 100).toFixed(1)) 
+      };
+    });
+  }
+  ///
+  getTopKeyphrasesWithSimilarities(limit: number = 10): {
+    phrase: string;
+    weight: number;
+    similarities: { dnu: string, score: number }[];
+  }[] {
+    const rawTuples: any[] = this.article?.keyphrases || [];
+    const similarityScores = this.article?.keyphrases_dnu_similarity_score;
+
+    if (!rawTuples || !similarityScores) return [];
+
+    // اطمینان از اینکه آرایه واقعا [string, number] هست
+    const keyphrases: [string, number][] = rawTuples.map((tuple: any) => [tuple[0], tuple[1]]);
+
+    const sortedTuples = [...keyphrases].sort((a, b) => b[1] - a[1]);
+    const topTuples = sortedTuples.slice(0, limit);
+
+    return topTuples.map(([phrase, weight]: [string, number], index: number) => {
+      const rawScores = similarityScores[index];
+      const similarities = Object.entries(rawScores || {}).map(([dnu, score]) => ({ dnu, score: Number(score) }));
+
+      return {
+        phrase: this.cleanKeyphrase(phrase),
+        weight: Number((weight * 100).toFixed(1)),
+        similarities
+      };
+    });
+  }
+    /////
+    
   ngOnInit() {
     console.log(this.article); // In your component
+    ////
 
-/* 
+    
+
+    /* 
     console.log('Not understood concepts object:', this.notUnderstoodConcepts); */
 
     console.log("document_dnu_similarity_colorband:", this.article.document_dnu_similarity);
@@ -355,7 +404,8 @@ generateParts(text: string, keyphrases: string[], keyphrases_dnu_similarity_scor
       isKeyphrase: true,
       keyphraseMeta: {
         dnu: match.dnu,
-        color: this.getColorForDnu(match.dnu)
+        color: this.getColorForDnu(match.dnu),
+        tooltip: `This keyphrase is the most similar to the “${match.dnu}”.`
       }
     });
 
@@ -410,6 +460,38 @@ generateParts(text: string, keyphrases: string[], keyphrases_dnu_similarity_scor
   this.popupVisible = true;
 }
 
+showTextualSimilarityPopover(keyphrase: string, event: MouseEvent) {
+  this.selectedKeyphrase = keyphrase;
+
+  const index = this.article.keyphrases.findIndex(tuple => tuple[0] === keyphrase);
+  if (index === -1) {
+    console.warn(`Keyphrase "${keyphrase}" not found.`);
+    return;
+  }
+
+  const similarities = this.article.keyphrases_dnu_similarity_score[index];
+  
+
+  this.textualSimilarityInfo = Object.entries(similarities).map(
+    ([dnu, score]: [string, number]) =>
+      `<strong>${(score * 100).toFixed(0)}%</strong> - <strong>“${dnu}”</strong>`
+  );
+  
+  this.textualSimilarityPopover.hide(); // Ensure it closes before showing again
+  setTimeout(() => {
+    this.textualSimilarityPopover.show(event);
+  }, 50);
+}
+
+getFormattedSimilarityText(concept: string, value: number): string {
+  const percentage = (value * 100).toFixed(0);
+  return `This article is <strong>${percentage}%</strong> similar to <strong>${concept}</strong>.`;
+}
+
+get similarityText(): string {
+  const score = this.article?.similarity_score ? (this.article.similarity_score * 100).toFixed(0) : '0';
+  return `This article is <strong>${score}%</strong> similar to the concepts used to generate recommendations.`;
+}
 /*  showPopup(text: string, clientX: number, clientY: number, event: MouseEvent) {
   this.popupText = text;
   this.popupVisible = true;

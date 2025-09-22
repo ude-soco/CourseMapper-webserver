@@ -1,5 +1,5 @@
 <div class="grid p-8 gap-8 sm:grid-cols-1 ">
-  <app-card-article
+  <app-card-article-visual
   [concepts]="concepts"
   *ngFor="let article of articleElements"
   [article]="article"
@@ -10,7 +10,7 @@
   (resourceRemovedEvent)="onResourceRemovedEvent($event)"
       [currentMaterial]="currentMaterial"
   (keyphraseClicked)="onKeyphraseClicked(article, $event)"> 
-</app-card-article>
+</app-card-article-visual>
 
 <!-- <app-keyphrase-popup
   *ngIf="popupVisible && selectedArticle"

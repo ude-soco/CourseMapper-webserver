@@ -26,11 +26,15 @@ import { CytoscapeSlideKGComponent } from './cytoscape-slide-kg/cytoscape-slide-
 import {DividerModule} from 'primeng/divider';
 import {RadioButtonModule} from 'primeng/radiobutton';
 import { ResultViewComponent } from './result-view/result-view.component';
-import { CardVideoComponent } from './videos/card-video/card-video.component';
-import { CardVideoListComponent } from './videos/card-video-list/card-video-list.component';
+import { CardVideoComponentVisual } from './videos/card-video-visual/card-video-visual.component';
+import { CardVideoListComponentVisual } from './videos/card-video-list-visual/card-video-list-visual.component';
+import { CardVideoComponentTextual } from './videos/card-video-textual/card-video-textual.component';
+import { CardVideoListComponentTextual } from './videos/card-video-list-textual/card-video-list-textual.component';
 import { WatchVideoComponent } from './videos/watch-video/watch-video.component';
-import { CardArticleComponent } from './articles/card-article/card-article.component';
-import { CardArticleListComponent } from './articles/card-article-list/card-article-list.component';
+import { CardArticleComponentVisual } from './articles/card-article-visual/card-article-visual.component';
+import { CardArticleListComponentVisual } from './articles/card-article-list-visual/card-article-list-visual.component';
+import { CardArticleComponentTextual } from './articles/card-article-textual/card-article-textual.component';
+import { CardArticleListComponentTextual } from './articles/card-article-list-textual/card-article-list-textual.component';
 import { RatingComponent } from './rating/rating.component';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import { DateAgoPipe } from './videos/pipes/date-ago.pipe';
@@ -55,7 +59,7 @@ import { KeyphrasePopupComponent } from './keyphrase-popup/keyphrase-popup.compo
 import { StackedColumnComponentComponent } from './stacked-column-component/stacked-column-component.component';
 import { ColoredBandComponent } from './colored-band/colored-band.component';
 
-
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 import { PaginatorModule } from 'primeng/paginator';
 
@@ -72,11 +76,15 @@ import { PaginatorModule } from 'primeng/paginator';
     CytoscapeSlideComponent,
     CytoscapeSlideKGComponent,
     ResultViewComponent,
-    CardVideoComponent,
-    CardVideoListComponent,
+    CardVideoComponentVisual,
+    CardVideoListComponentVisual,
+    CardVideoComponentTextual,
+    CardVideoListComponentTextual,
     WatchVideoComponent,
-    CardArticleComponent,
-    CardArticleListComponent,
+    CardArticleComponentVisual,
+    CardArticleListComponentVisual,
+    CardArticleComponentTextual,
+    CardArticleListComponentTextual,
     RatingComponent,
     DateAgoPipe,
     LinkifyPipe,
@@ -130,7 +138,10 @@ import { PaginatorModule } from 'primeng/paginator';
     AutoCompleteModule,
     MultiSelectModule,
     PdfViewerModule,
-    PaginatorModule
+    PaginatorModule,
+
+    InputSwitchModule
+
     ],
   exports: [
     ConceptMapComponent,
