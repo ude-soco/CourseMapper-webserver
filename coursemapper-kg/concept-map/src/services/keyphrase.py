@@ -15,7 +15,7 @@ from config import Config
 import logging
 
 
-stanfordcorenlp_file = os.path.abspath("C:\\Users\\farah\\OneDrive\\Desktop\\CourseMapper-webserver\\coursemapper-kg\\concept-map\\stanford-corenlp-full-2018-02-27")
+stanfordcorenlp_file = os.path.abspath("stanford-corenlp-full-2018-02-27")
 
 class KeyphraseService:
     def __init__(self):
@@ -24,7 +24,7 @@ class KeyphraseService:
         ))
         print("model loading done")
         self.tagger_model = StanfordCoreNLPTagger(StanfordCoreNLP(
-            stanfordcorenlp_file, quiet=False, logging_level=logging.DEBUG))
+            stanfordcorenlp_file, quiet=True, logging_level=logging.DEBUG))
 
     def __del__(self):
         if self.tagger_model is not None:
