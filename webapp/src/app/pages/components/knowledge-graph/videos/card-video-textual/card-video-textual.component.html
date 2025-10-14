@@ -38,7 +38,7 @@
               <span class="custom-close" (click)="videoSimilarityPopup.hide()">×</span>
               <div class="text-sm text-gray-700">
                 <p>
-                  This video is <strong>{{ (videoElement?.similarity_score * 100) | number:'1.0-0' }}%</strong> similar to the concepts used to generate recommendations.
+                  This video is overall <strong>{{ (videoElement?.similarity_score * 100) | number:'1.0-0' }}%</strong> similar to the concepts used to generate recommendations.
                 </p>
 
                 <div *ngIf="coloredBandData?.document_dnu_similarity_colorband">

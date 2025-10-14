@@ -590,7 +590,7 @@ getFormattedSimilarityText(concept: string, value: number): string {
 
 get similarityText(): string {
   const score = this.article?.similarity_score ? (this.article.similarity_score * 100).toFixed(0) : '0';
-  return `This article is <strong>${score}%</strong> similar to the concepts used to generate recommendations.`;
+  return `This article is overall <strong>${score}%</strong> similar to the concepts used to generate recommendations.`;
 }
 /*  showPopup(text: string, clientX: number, clientY: number, event: MouseEvent) {
   this.popupText = text;
