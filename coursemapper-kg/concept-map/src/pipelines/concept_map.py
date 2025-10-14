@@ -65,13 +65,13 @@ class ConceptMapPipeline:
         material_node = Node(material_id, material_name, '', 'material', 1, '', '\n\n'.join(pdf_text), True, False, False,False, file_embedding, [], Config.EMBEDDING_MODEL)
         graph.add_node(material_node)
 
-        push_log_message(f'[DEBUG] pages_df shape: {pages_df.shape}')
-        push_log_message(f'[DEBUG] pages_df first row:\n{pages_df.row(0)}')
+        #push_log_message(f'[DEBUG] pages_df shape: {pages_df.shape}')
+        #push_log_message(f'[DEBUG] pages_df first row:\n{pages_df.row(0)}')
 
         for i, (page, page_parts, page_embedding) in enumerate(pages_df.iter_rows()):
             push_log_message(f'Processing page {i+1}/{pages_df.height}')
 
-            push_log_message(f'[DEBUG] Raw text froom page {i+1}:\n{page[:500]}')
+            #push_log_message(f'[DEBUG] Raw text froom page {i+1}:\n{page[:500]}')
 
 
             page_node = Node(f'{material_id}_slide_{i+1}', f'slide_{i+1}', '', 'Slide', 1, '', page, False, False, False,False, page_embedding , page_parts, Config.EMBEDDING_MODEL )

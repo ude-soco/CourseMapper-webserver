@@ -22,9 +22,9 @@ class KeyphraseService:
         self.model = FlairTransformerWordEmbeddings(TransformerWordEmbeddings(
             "squeezebert/squeezebert-mnli", subtoken_pooling="mean", layers="3,5"
         ))
-        print("model loading done")
+        #print("model loading done")
         self.tagger_model = StanfordCoreNLPTagger(StanfordCoreNLP(
-            stanfordcorenlp_file, quiet=True, logging_level=logging.DEBUG))
+            stanfordcorenlp_file, quiet=True))
 
     def __del__(self):
         if self.tagger_model is not None:
