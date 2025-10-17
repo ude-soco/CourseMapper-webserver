@@ -226,6 +226,10 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
         weights: dict containing factors weight
         {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
     """
+    if not resources:
+        logger.warning(f"No resources found for category {category}. Skipping weight calculation.")
+        return []
+    
     now = datetime.now()
     default_weight = 0.001
 
