@@ -1,5 +1,5 @@
 
-<div class="grid-container">
+<!--<div class="grid-container">
   <div class="grid-item">
     <div class="title">
 Distribution of enrolled students in different platforms    </div>
@@ -13,5 +13,144 @@ Distribution of enrolled students in different platforms    </div>
         [labels]="chartOptions.labels"
       ></apx-chart>
     </div>
+  </div>
+</div>-->
+
+<div class="grid-container">
+  <div class="grid-item">
+    <div class="title">Distribution of enrolled students in different platforms</div>
+
+    <div class="chart">
+      <apx-chart
+        #chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [labels]="chartOptions.labels"
+        [colors]="chartOptions.colors"
+        [title]="chartOptions.title"
+        [tooltip]="chartOptions.tooltip">
+      </apx-chart>
+    </div>
+
+    <!-- Courses box -->
+    <div class="courses-box">
+      <div class="courses-box__header">
+        <div class="courses-box__title">
+          List of Courses in
+          <ng-container *ngIf="selectedPlatform; else allLbl">
+            <b>{{ selectedPlatform }}</b> platform
+          </ng-container>
+          <ng-template #allLbl><b>all platforms</b></ng-template>
+        </div>
+
+        <div class="courses-box__controls">
+          <div class="courses-box__search">
+            <input
+              class="search-input"
+              type="search"
+              placeholder="Search courses…"
+              [value]="q"
+              (input)="onSearchInput($any($event.target).value)"
+            />
+          </div>
+
+          <label>Rating:
+            <select (change)="onRatingFilterChange($any($event.target).value)">
+              <option value="all" [selected]="ratingFilter==='all'">All</option>
+              <option value="4+"  [selected]="ratingFilter==='4+'">4+</option>
+              <option value="3+"  [selected]="ratingFilter==='3+'">3+</option>
+            </select>
+          </label>
+          <a *ngIf="selectedPlatform" class="courses-box__reset" (click)="resetPlatform()">Reset</a>
+        </div>
+      </div>
+
+      <div class="courses-list">
+        <!-- header -->
+        <div class="course-row course-row--head">
+          <div></div>
+          <div>
+            Rating
+            <span
+              class="sort-btn"
+              [class.sort-btn--active]="sort==='rating'"
+              (click)="onSortRatingClick()"
+              title="Toggle sort by rating"
+            >
+              <span [style.opacity]="order==='asc' && sort==='rating' ? 1 : 0.3">▲</span>
+              <span [style.opacity]="order==='desc' && sort==='rating' ? 1 : 0.3">▼</span>
+            </span>
+          </div>
+          <div>Course Name</div>
+          <div>
+            Students
+            <span
+              class="sort-btn"
+              [class.sort-btn--active]="sort==='enrolled'"
+              (click)="onSortEnrolledClick()"
+              title="Toggle sort by students"
+            >
+              <span [style.opacity]="order==='asc'  && sort==='enrolled' ? 1 : 0.3">▲</span>
+              <span [style.opacity]="order==='desc' && sort==='enrolled' ? 1 : 0.3">▼</span>
+            </span>
+
+          </div>
+          <div>View Course</div>
+        </div>
+
+        <!-- rows -->
+        <div class="course-row" *ngFor="let c of courses">
+          <div class="course-row__stripe" [style.background]="getStripeColor(c.platform)"></div>
+          <div class="course-row__rating">{{ c.rating ?? '—' }}</div>
+
+          <div class="course-row__title" [title]="c.title">
+            {{ truncate(c.title, 80) }}
+          </div>
+
+          <!-- SAFE numeric rendering: show number OR '—' without piping a non-number -->
+          <div class="course-row__enrolled"
+               [title]="(c?.enrolled ?? 0) | number:'1.0-0'">
+            <ng-container *ngIf="c?.enrolled !== null && c?.enrolled !== undefined; else dash">
+              {{ c.enrolled | number:'1.0-0' }}
+            </ng-container>
+            <ng-template #dash>—</ng-template>
+          </div>
+
+          <div class="course-row__view">
+            <a class="view-link" (click)="openCourseInNewTab(c)" title="Open details in a new tab">
+              View
+              <svg class="icon-search" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="empty" *ngIf="!courses?.length">No courses found.</div>
+      </div>
+
+      <div class="pagination" *ngIf="total > 0">
+        <div class="results-info">
+          Showing {{ startIndex }}–{{ endIndex }} of {{ total | number }}
+        </div>
+
+        <div>
+          <label style="margin-right:8px;">Per page:</label>
+          <select class="page-size" [value]="pageSize" (change)="onPageSizeChange($any($event.target).value)">
+            <option [value]="10">10</option>
+            <option [value]="20">20</option>
+            <option [value]="30">30</option>
+            <option [value]="50">50</option>
+          </select>
+        </div>
+
+        <div>
+          <button class="page-btn" (click)="prevPage()" [disabled]="page<=1">Prev</button>
+          <span style="margin: 0 10px;">Page {{ page }} of {{ pageCount }}</span>
+          <button class="page-btn" (click)="nextPage()" [disabled]="page>=pageCount">Next</button>
+        </div>
+      </div>
+    </div>
+    <!-- /courses box -->
   </div>
 </div>

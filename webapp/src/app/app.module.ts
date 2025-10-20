@@ -144,6 +144,10 @@ import { CarouselForwardButtonComponent } from './pages/components/vis-dashboard
 import { CarouselBackwardButtonComponent } from './pages/components/vis-dashboard/carousel/chevron-buttons/carousel-backward-button/carousel-backward-button.component';
 import { SvgIconVisComponent } from './pages/components/vis-dashboard/svg-icon-vis/svg-icon-vis.component';
 import { PopularTopicsComponent } from './pages/components/vis-dashboard/cards/popular-topics/popular-topics.component';
+import { CoursesPanelComponent } from './pages/components/vis-dashboard/vis-charts-explore/courses-panel/courses-panel.component';
+import { EntityCoursePanelsComponent } from './pages/components/vis-dashboard/vis-charts-compare/entity-course-panels/entity-course-panels.component';
+import { PlatformColorPipe } from './services/vis-dashboard/platform-color.pipe';
+
 
 @NgModule({
   declarations: [
@@ -225,6 +229,9 @@ import { PopularTopicsComponent } from './pages/components/vis-dashboard/cards/p
     PopularTopicsComponent,
     EmailValidationComponent,
     RequestEmailValidationComponent,
+    CoursesPanelComponent,
+    EntityCoursePanelsComponent,
+    PlatformColorPipe,
 
   ],
   imports: [

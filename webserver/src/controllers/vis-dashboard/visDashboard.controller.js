@@ -131,11 +131,17 @@ export const getCoursesByConceptAndPlatform = async (req, res) => {
     const platform = req.params.platform;
     const concept = req.params.concept;
 
-    try {
+    /*try {
         const records = await visDashboardServices.getCoursesByConceptAndPlatform(concept, platform)
         return res.status(200).send(records);
     } catch (err) {
         return res.status(500).send({error: err.message});
+    }*/
+    try {
+        const records = await visDashboardServices.getCoursesByConceptAndPlatform(platform, concept);
+        return res.status(200).send(records);
+    }   catch (err) {
+        return res.status(500).send({ error: err.message });
     }
 };
 
@@ -311,4 +317,135 @@ export const getTopicsByCategory = async (req, res) => {
         return res.status(500).send({error: err.message});
     }
 
+};
+
+// Get courses by teacher for vis by ID? They receive path params and pass them to the service
+export const getCoursesByTeacherForVisById = async (req, res) => {
+  const { teacherId, platform } = req.params;
+  try {
+    const records = await visDashboardServices.getCoursesByTeacherForVis(
+      platform,                                   // 1st arg: platformName
+      { teacherId: Number(teacherId) }            // 2nd arg: options
+    );
+    return res.status(200).send(records);
+  } catch (err) {
+    console.error('[getCoursesByTeacherForVisById]', err);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+// by teacher NAME
+export const getCoursesByTeacherForVisByName = async (req, res) => {
+  const { teacherName, platform } = req.params;
+  try {
+    const records = await visDashboardServices.getCoursesByTeacherForVis(
+      platform,                                   // 1st arg: platformName
+      { teacherName }                             // 2nd arg: options
+    );
+    return res.status(200).send(records);
+  } catch (err) {
+    console.error('[getCoursesByTeacherForVisByName]', err);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+// by institution ID
+export const getCoursesByInstitutionForVisById = async (req, res) => {
+  const { institutionId, platform } = req.params;
+  try {
+    const records = await visDashboardServices.getCoursesByInstitutionForVis(
+      platform,
+      { institutionId: Number(institutionId) }
+    );
+    return res.status(200).send(records);
+  } catch (err) {
+    console.error('[getCoursesByInstitutionForVisById]', err);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+// by institution NAME
+export const getCoursesByInstitutionForVisByName = async (req, res) => {
+  const { institutionName, platform } = req.params;
+  try {
+    const records = await visDashboardServices.getCoursesByInstitutionForVis(
+      platform,
+      { institutionName }
+    );
+    return res.status(200).send(records);
+  } catch (err) {
+    console.error('[getCoursesByInstitutionForVisByName]', err);
+    return res.status(500).send({ error: err.message });
+  }
+};
+// Teachers list with course counts (paginated)
+export const getTeachersByPlatform = async (req, res) => {
+  const platform = req.params.platform;
+  const page      = Math.max(parseInt(req.query.page ?? '1', 10), 1);
+  const pageSize  = Math.max(parseInt(req.query.pageSize ?? '10', 10), 1);
+  const q         = (req.query.q ?? '').toString();
+
+  try {
+    const data = await visDashboardServices.getTeachersByPlatform(platform, { page, pageSize, q });
+    return res.status(200).send(data); // { total, items: [...] }
+  } catch (err) {
+    console.error('[getTeachersByPlatform]', err);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+// Institutions list with course counts (paginated)
+export const getInstitutionsByPlatform = async (req, res) => {
+  const platform = req.params.platform;
+  const page      = Math.max(parseInt(req.query.page ?? '1', 10), 1);
+  const pageSize  = Math.max(parseInt(req.query.pageSize ?? '10', 10), 1);
+  const q         = (req.query.q ?? '').toString();
+
+  try {
+    const data = await visDashboardServices.getInstitutionsByPlatform(platform, { page, pageSize, q });
+    return res.status(200).send(data); // { total, items: [...] }
+  } catch (err) {
+    console.error('[getInstitutionsByPlatform]', err);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getCoursesLite = async (req, res) => {
+  try {
+    const platform   = (req.query.platform || '').trim();           // single platform
+    const platformsQ = (req.query.platforms || '').trim();          // CSV for multi
+    const limit      = Math.max(1, Math.min(200, parseInt(req.query.limit || '50', 10)));
+
+    const platforms = platformsQ
+      ? platformsQ.split(',').map(s => s.trim()).filter(Boolean)
+      : null;
+
+    const rows = await visDashboardServices.getCoursesLite({ platform, platforms, limit });
+    return res.status(200).send(rows);
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getPlatformCourses = async (req, res) => {
+  try {
+    const platform   = (req.query.platform || '').trim();
+    const platformsQ = (req.query.platforms || '').trim();
+    const platforms  = platformsQ ? platformsQ.split(',').map(s => s.trim()).filter(Boolean) : null;
+
+    const page     = Math.max(parseInt(req.query.page ?? '1', 10), 1);
+    const pageSize = Math.max(parseInt(req.query.pageSize ?? '20', 10), 1);
+    const q        = (req.query.q ?? '').toString();
+    const sort     = ['enrolled','rating','name'].includes(req.query.sort) ? req.query.sort : 'enrolled';
+    const order    = (req.query.order === 'asc') ? 'asc' : 'desc';
+    const minRating = Number(req.query.minRating ?? 0) || 0;
+
+    const data = await visDashboardServices.getPlatformCourses({
+      platform, platforms, page, pageSize, q, sort, order, minRating
+    });
+    return res.status(200).send(data); // { total, items: [...] }
+  } catch (err) {
+    console.error('[getPlatformCourses]', err);
+    return res.status(500).send({ error: err.message });
+  }
 };

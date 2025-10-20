@@ -1,0 +1,89 @@
+/* Panel wrapper */
+.panel {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  font-family: Roboto, sans-serif;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Panel header */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.panel-header-title { font-weight: 600; font-size: 16px; }
+.panel-header button {
+  background: none; border: none; color: #2563eb; cursor: pointer; font-size: 14px;
+}
+
+/* Info texts */
+.panel-info { color: #6b7280; font-size: 14px; margin: 4px 0; }
+
+/* Search */
+.panel-search { margin-bottom: 8px; }
+.panel-search input {
+  width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 14px;
+}
+
+/* Header row */
+.panel-list-header {
+  display: grid;
+  grid-template-columns: 64px 1fr 120px 96px;
+  gap: 12px;
+  padding: 6px 0;
+  font-weight: 600;
+  color: #374151;
+}
+.panel-hr { border: 0; border-top: 1px solid #f3f4f6; margin: 4px 0 8px; }
+
+/* Items */
+.panel-course {
+  display: grid;
+  grid-template-columns: 64px 1fr 120px 96px;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid #f3f4f6;
+}
+.panel-course-rating {
+  justify-self: start; display: inline-flex; min-width: 48px;
+  justify-content: center; align-items: center;
+  padding: 2px 8px; border-radius: 9999px;
+  background: #eef2ff; color: #1f2937; font-weight: 600; font-size: 12px;
+}
+.panel-course-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.panel-course-students { text-align: right; color: #374151; }
+.panel-course-view { justify-self: end; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.panel-course-view i { font-size: 20px; color: #2563eb; }
+
+/* Pagination */
+.panel-pagination {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10px;
+  /* one line only */
+  flex-wrap: nowrap;
+}
+.panel-pagination button {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  min-width: 36px;
+}
+.panel-pagination button[disabled] { opacity: 0.5; cursor: not-allowed; }
+.panel-pagination .active { font-weight: 700; background:#f9fafb; }
+
+/* compact “…” jump buttons */
+.panel-pagination .dots {
+  background: #ffffff;
+  border: 1px dashed #e5e7eb;
+}

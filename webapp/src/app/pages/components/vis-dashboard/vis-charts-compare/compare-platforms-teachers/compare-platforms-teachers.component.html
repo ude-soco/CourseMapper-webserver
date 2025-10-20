@@ -1,5 +1,5 @@
 
-<div class="grid-container">
+<!--<div class="grid-container">
   <div class="grid-item">
     <div class="title">
 Distribution of the number of teachers in each platforms    </div>
@@ -18,4 +18,47 @@ Distribution of the number of teachers in each platforms    </div>
   </div>
 
 
+</div>-->
+<div class="grid-container">
+  <div class="grid-item">
+    <div class="title">Distribution of the number of teachers in each platforms</div>
+
+    <div class="chart">
+      <apx-chart
+        #chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [xaxis]="chartOptions.xaxis"
+        [title]="chartOptions.title"
+        [plotOptions]="chartOptions.plotOptions"
+        [tooltip]="chartOptions.tooltip">
+      </apx-chart>
+    </div>
+
+    <!-- PANELS: let the CHILD handle paging of courses -->
+    <app-entity-course-panels
+      [mode]="'teacher'"
+      [platformName]="platformNameForPanels"
+
+      [entities]="leftItems"
+      [selectedEntityId]="selectedTeacher?.id || null"
+      [leftTotal]="leftTotal"
+      [leftPage]="leftPage"
+      [leftPageSize]="leftPageSize"
+      (leftPageChange)="onLeftPageChange($event)"
+      (entitySelected)="onTeacherSelected($event)"
+
+      [courses]="rightItems"
+      [rightTotal]="rightTotal"
+      [rightPage]="rightPage"
+      [rightPageSize]="rightPageSize"
+      (rightPageChange)="onRightPageChange($event)"
+      (courseInspect)="onCourseInspect($event)"
+      (sortCoursesByRating)="onSortCoursesByRating($event)">
+    </app-entity-course-panels>
+  </div>
 </div>
+
+
+
+

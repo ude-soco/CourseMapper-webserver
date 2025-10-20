@@ -1,4 +1,4 @@
-<div class="by-concepts">
+<!--<div class="by-concepts">
   <div><p class="title">Distribution of most popular topics based on course description </p></div>
   <div class="concepts-and-courses">
     <div class="concepts">
@@ -14,6 +14,19 @@
         font="serif"
       >
       </angular-d3-cloud>
+
+      <angular-d3-cloud
+        *ngIf="!isCloudLoading && data?.length"
+        [data]="data"
+        [autoFill]="true"
+        [width]="450"
+        [height]="280"
+        [padding]="5"
+        [rotate]="0"
+        font="serif"
+        (wordClick)="onWorkClick($event)">
+      </angular-d3-cloud>
+
     </div>
 
     <div class="course-list">
@@ -26,6 +39,12 @@
         select a topic to view the list of courses
       </div>
       <div *ngFor="let course of relatedCourses">
+        <div *ngFor="let course of relatedCourses">
+          <span>{{ course.Rank }}</span> - 
+          <a (click)="onCourseClick(course.CourseId)">
+            {{ course.CourseName }}
+          </a>
+        </div>
         <div class="course-link">
           <div>
             <p class="course-name">{{ course.CourseName }}</p>
@@ -38,4 +57,87 @@
       </div>
     </div>
   </div>
+</div>-->
+<div class="by-concepts">
+  <p class="title">Distribution of most popular topics based on course description</p>
+
+  <!-- centered word cloud -->
+  <div class="concepts">
+    <div *ngIf="isCloudLoading">…loading</div>
+
+    <angular-d3-cloud
+      *ngIf="!isCloudLoading && data?.length"
+      [data]="data"
+      [autoFill]="true"
+      [width]="700"
+      [height]="280"
+      [padding]="5"
+      [rotate]="0"
+      font="serif"
+      (wordClick)="onWorkClick($event)">
+    </angular-d3-cloud>
+  </div>
+
+  <!-- nested list UNDER the cloud (same outer card) -->
+  <div class="course-list nested">
+    <!-- header: Rating arrows | Course name | View -->
+    <div class="course-list-header rating-layout">
+      <div class="rating-header">
+        Rating
+        <button
+          type="button"
+          class="sort-btn"
+          [class.active]="sortDir === 'asc'"
+          (click)="toggleSort('asc')"
+          aria-label="Sort rating ascending"
+          title="Sort rating ascending">↑</button>
+        <button
+          type="button"
+          class="sort-btn"
+          [class.active]="sortDir === 'desc'"
+          (click)="toggleSort('desc')"
+          aria-label="Sort rating descending"
+          title="Sort rating descending">↓</button>
+      </div>
+
+      <div class="course-name-header">Course name</div>
+      <div class="course-view-header">View Course</div>
+    </div>
+
+    <hr class="divider" />
+
+    <div *ngIf="!topicClicked" class="hint">
+      Select a topic to view the list of courses
+    </div>
+
+    <div *ngIf="topicClicked" class="course-rows">
+      <div
+        class="course-row rating-layout"
+        *ngFor="let c of sortedCourses; trackBy: trackCourse">
+
+        <!-- col 1: rating (0 when missing) -->
+        <div class="rating-cell" [title]="displayRating(c)">
+          {{ displayRating(c) }}
+        </div>
+
+        <!-- col 2: course name -->
+        <div class="course-name" [title]="c.CourseName">
+          {{ c.CourseName }}
+        </div>
+
+        <!-- col 3: magnifier opens new tab -->
+        <button
+          type="button"
+          class="view-btn"
+          (click)="onCourseClick(c.CourseId)"
+          aria-label="Open course in a new tab">
+          <i class="bx bx-search bx-flip-horizontal"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+
+
+
+

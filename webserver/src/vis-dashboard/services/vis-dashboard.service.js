@@ -340,7 +340,7 @@ export async function getTeacherById(teacherId) {
   return serializeRecords(records);
 }
 
-// Query the database for concepts for a platform: Service
+/*// Query the database for concepts for a platform: Service
 export async function getConceptsByPlatform(platform) {
   //   const { records, summary, keys } = await graphDb.driver.executeQuery(
   //     "MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)\n" +
@@ -361,9 +361,34 @@ export async function getConceptsByPlatform(platform) {
   if (records.length !== 0)
     console.log(`Concepts found for platform: ${platform}`);
   return serializeRecords(records);
+}*/
+// Query the database for concepts for a platform: Service
+export async function getConceptsByPlatform(platform) {
+  //   const { records, summary, keys } = await graphDb.driver.executeQuery(
+  //     "MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)\n" +
+  //       "WHERE toLower(platform.name) = $platform   \n" +
+  //       "\n" +
+  //       "RETURN concept.name AS ConceptName LIMIT 200",
+  //     { platform: platform }
+  //   );
+  const { records } = await graphDb.driver.executeQuery(
+    `
+    MATCH (p:Platform)<-[:AVAILABLE_ON]-(c:Course)-[:CONTAINS_CONCEPT]->(k)
+WHERE (k:Concept OR k:concept)
+  AND toLower(trim(p.name)) CONTAINS toLower(trim($platform))
+RETURN k.name AS ConceptName, count(DISTINCT c) AS Count
+ORDER BY Count DESC
+LIMIT 200
+
+    `,
+    { platform }
+  );
+  if (records.length !== 0)
+    console.log(`Concepts found for platform: ${platform}`);
+  return serializeRecords(records);
 }
 
-// Query the database for courses on concept selection: service
+/*/ Query the database for courses on concept selection: service
 export async function getCoursesByConceptAndPlatform(concept, platform) {
   // const {records, summary, keys} = await graphDb.driver.executeQuery(
   //     'MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)\n' +
@@ -384,7 +409,37 @@ export async function getCoursesByConceptAndPlatform(concept, platform) {
   if (records.length !== 0)
     console.log(`Courses found for concepts and platform`);
   return serializeRecords(records);
+}*/
+// Query the database for courses on concept selection: service
+// Query the database for courses on concept selection: service
+export async function getCoursesByConceptAndPlatform(platform, concept) {
+  const { records } = await graphDb.driver.executeQuery(
+    `
+    MATCH (p:Platform)<-[:AVAILABLE_ON]-(c:Course)-[:CONTAINS_CONCEPT]->(k)
+    WHERE (k:Concept OR k:concept)
+      AND toLower(trim(p.name)) CONTAINS toLower(trim($platform))
+      AND toLower(trim(k.name)) = toLower(trim($concept))
+
+    WITH DISTINCT c,
+         toFloat(replace(coalesce(c.rating,''), ',', '.')) AS r
+
+    RETURN
+      c.course_id AS CourseId,
+      c.name      AS CourseName,
+      CASE
+        WHEN r IS NULL OR r <= 0 THEN 0.0
+        ELSE r
+      END AS Rating
+    ORDER BY Rating DESC, toLower(CourseName)
+    LIMIT 50
+    `,
+    { platform, concept }
+  );
+
+  return serializeRecords(records);
 }
+
+
 
 // Get courses by popularity :services
 export async function getCoursesByPopularityForVis(platformName, datapoints) {
@@ -398,16 +453,28 @@ export async function getCoursesByPopularityForVis(platformName, datapoints) {
   //       `LIMIT ${+datapoints}`,
   //     { platformName: platformName, datapoints: datapoints }
   //   );
-  const { records } = await graphDb.driver.executeQuery(
+  const { records } = await graphDb.driver.executeQuery( //420-421 new
     `
-    MATCH (course:Course)-[:AVAILABLE_ON]->(platform:Platform)
-    WHERE toLower(platform.name) CONTAINS toLower($platformName)
-      AND course.number_of_participants IS NOT NULL
-      AND course.number_of_participants =~ '\\d+'
-    MATCH (teacher:Teacher)-[:TEACHES]->(course)
-    RETURN DISTINCT course.name AS CourseName, course.number_of_participants AS NumberOfParticipants
-    ORDER BY toInteger(course.number_of_participants) DESC
-    LIMIT $datapoints
+    MATCH (c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND c.number_of_participants IS NOT NULL
+
+    WITH c,
+         toInteger(
+           CASE
+             WHEN trim(replace(coalesce(c.number_of_participants,''), ',', '')) = '' THEN 0
+             ELSE replace(c.number_of_participants, ',', '')
+           END
+         ) AS participants
+
+    WHERE participants IS NOT NULL
+
+    RETURN
+      c.course_id AS CourseId,           
+      c.name      AS CourseName,
+      participants AS NumberOfParticipants
+    ORDER BY NumberOfParticipants DESC
+    LIMIT toInteger($datapoints)
     `,
     { platformName, datapoints: Number(datapoints) }
   );
@@ -435,18 +502,25 @@ export async function getCategoryByPopularityForVis(platformName, datapoints) {
   //   );
   const { records } = await graphDb.driver.executeQuery(
     `
-    MATCH (course:Course)-[:AVAILABLE_ON]->(platform:Platform)
-    WHERE course.course_category IS NOT NULL
-      AND toLower(platform.name) = toLower($platformName)
-    WITH course.course_category AS course_category
-    MATCH (m:Course)
-    WHERE m.course_category = course_category
-      AND m.number_of_participants IS NOT NULL
-    WITH course_category, 
-         SUM(toInteger(replace(m.number_of_participants, ',', ''))) AS TotalParticipants
-    RETURN course_category AS CourseCategory, TotalParticipants
+    MATCH (c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) = toLower($platformName)
+      AND c.course_category IS NOT NULL
+      AND c.number_of_participants IS NOT NULL
+
+    WITH c.course_category AS CourseCategory,
+         // sanitize: remove commas, default empty/invalid to 0
+         toInteger(
+           CASE
+             WHEN trim(replace(coalesce(c.number_of_participants,''), ',', '')) = '' THEN 0
+             ELSE replace(c.number_of_participants, ',', '')
+           END
+         ) AS participants
+
+    WITH CourseCategory, sum(participants) AS total
+    RETURN CourseCategory,
+           toFloat(total) AS TotalParticipants     // <-- plain JS numbers
     ORDER BY TotalParticipants DESC
-    LIMIT $datapoints
+    LIMIT toInteger($datapoints)
     `,
     { platformName, datapoints: Number(datapoints) }
   );
@@ -469,11 +543,12 @@ export async function getActiveTeachersForVis(platformName, datapoints) {
   //   );
   const { records } = await graphDb.driver.executeQuery(
     `
-    MATCH (teacher:Teacher)-[:TEACHES]->(course:Course)-[:AVAILABLE_ON]->(platform:Platform)
-    WHERE toLower(platform.name) CONTAINS toLower($platformName)
-    RETURN teacher.name AS TeacherName, COUNT(course) AS NumberOfCourses
+    MATCH (t:Teacher)-[:TEACHES]->(c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)   // keep CONTAINS if you want partial matches
+    RETURN t.name AS TeacherName,
+           toFloat(count(c)) AS NumberOfCourses             // <-- cast so we get plain numbers
     ORDER BY NumberOfCourses DESC
-    LIMIT $datapoints
+    LIMIT toInteger($datapoints)                            // <-- ensure integer
     `,
     { platformName, datapoints: Number(datapoints) }
   );
@@ -495,11 +570,13 @@ export async function getActiveInstitutionsForVis(platformName, datapoints) {
   //   );
   const { records } = await graphDb.driver.executeQuery(
     `
-    MATCH (institution:Institution)-[:OFFERS]->(course:Course)-[:AVAILABLE_ON]->(platform:Platform)
-    WHERE toLower(platform.name) = toLower($platformName)
-    RETURN institution.name AS InstitutionName, COUNT(course) AS NumberOfCourses
+    MATCH (i:Institution)-[:OFFERS]->(c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) = toLower($platformName)
+    RETURN i.name AS InstitutionName,
+           toFloat(count(c)) AS NumberOfCourses
     ORDER BY NumberOfCourses DESC
-    LIMIT $datapoints
+    LIMIT toInteger($datapoints)
+
     `,
     { platformName, datapoints: Number(datapoints) }
   );
@@ -642,9 +719,10 @@ export async function getConceptsByPlatforms(platforms) {
   //   );
   const { records } = await graphDb.driver.executeQuery(
     `
-    MATCH (platform:Platform)<-[:AVAILABLE_ON]-(course:Course)-[:CONTAINS_CONCEPT]->(concept:Concept)
-    WHERE platform.name IN $platforms
-    RETURN DISTINCT concept.name AS ConceptName
+    MATCH (p:Platform)<-[:AVAILABLE_ON]-(c:Course)-[:CONTAINS_CONCEPT]->(k:Concept)
+    WHERE ANY(pl IN $platforms WHERE toLower(trim(p.name)) = toLower(trim(pl)))
+    RETURN DISTINCT k.name AS ConceptName, count(DISTINCT c) AS Count
+    ORDER BY Count DESC
     LIMIT 200
     `,
     { platforms }
@@ -754,12 +832,29 @@ export async function getCourseRatingsPricesForVis(platformName, datapoints) {
   //   );
   const { records, summary, keys } = await graphDb.driver.executeQuery(
     `
-    MATCH (course:course)-[:AVAILABLE_ON]->(platform:platform)
-    WHERE toLower(platform.name) CONTAINS $platformName
-      AND course.price IS NOT NULL
-      AND course.rating IS NOT NULL
-    RETURN DISTINCT course.name AS CourseName, course.price AS CoursePrice, course.rating AS CourseRating
-    LIMIT $datapoints
+    MATCH (c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND c.price  IS NOT NULL
+      AND c.rating IS NOT NULL
+
+    WITH c,
+         toFloat(
+           CASE
+             WHEN toLower(c.price) = 'free' THEN 0
+             WHEN c.price =~ '^[0-9]+(\\.[0-9]+)?$' THEN c.price
+             ELSE replace(replace(replace(replace(c.price,'€',''),'$',''),',','.'),' ','')
+           END
+         ) AS priceNum,
+         toFloat(replace(c.rating, ',', '.')) AS ratingNum
+
+    WHERE priceNum IS NOT NULL AND ratingNum IS NOT NULL
+
+    RETURN c.course_id AS CourseId,
+           c.name AS CourseName,
+           priceNum AS CoursePrice,
+           ratingNum AS CourseRating
+    ORDER BY CourseRating DESC
+    LIMIT toInteger($datapoints)
     `,
     { platformName: platformName, datapoints: +datapoints }
   );
@@ -791,6 +886,357 @@ export async function getTopicsByCategory(course_category) {
     console.log(`Topics found based on category: ${course_category}`);
   return serializeRecords(records);
 }
+
+// Get courses by teacher 
+export async function getCoursesByTeacherForVis(platformName, { teacherId = null, teacherName = null } = {}) {
+  if (!teacherId && !teacherName) {
+    throw new Error("getCoursesByTeacherForVis: teacherId or teacherName is required");
+  }
+
+  const { records } = await graphDb.driver.executeQuery(
+  /*  `
+    MATCH (t:Teacher)-[:TEACHES]->(c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND (
+        ($teacherId IS NOT NULL AND id(t) = $teacherId) OR
+        ($teacherName IS NOT NULL AND toLower(t.name) = toLower($teacherName))
+      )
+
+    // de-dup in case of multiple rels
+    WITH DISTINCT c
+
+    RETURN
+      id(c)                    AS Id,
+      c.course_id              AS CourseId,
+      c.name                   AS CourseName,
+      coalesce(c.rank, 999999) AS Rank,
+      c.language               AS Language,
+      c.level                  AS Level,
+      c.platform               AS Platform
+    ORDER BY Rank, toLower(CourseName)
+    `,*/
+    `
+    MATCH (t:Teacher)-[:TEACHES]->(c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND (
+        ($teacherId IS NOT NULL AND id(t) = $teacherId) OR
+        ($teacherName IS NOT NULL AND toLower(t.name) = toLower($teacherName))
+      )
+    WITH DISTINCT c
+    WITH
+      c,
+      toFloat(
+        CASE
+          WHEN c.rating IS NULL THEN 0
+          WHEN c.rating =~ '^[0-9]+(\\.[0-9]+)?$' THEN c.rating
+          ELSE replace(c.rating, ',', '.')
+        END
+      ) AS ratingNum,
+      toInteger(
+        CASE
+          WHEN c.number_of_participants IS NULL THEN 0
+          WHEN trim(replace(c.number_of_participants, ',', '')) = '' THEN 0
+          ELSE replace(c.number_of_participants, ',', '')
+        END
+      ) AS participants
+    RETURN
+      id(c)           AS Id,
+      c.course_id     AS CourseId,
+      c.name          AS CourseName,
+      ratingNum       AS Rating,
+      participants    AS NumberOfParticipants,
+      c.language      AS Language,
+      c.level         AS Level,
+      c.platform      AS Platform
+    ORDER BY toLower(CourseName)
+    `,
+    { platformName, teacherId, teacherName }
+  );
+
+  return serializeRecords(records);
+}
+
+// Get courses by institution  
+export async function getCoursesByInstitutionForVis(
+  platformName,
+  { institutionId = null, institutionName = null } = {}
+) {
+  if (!institutionId && !institutionName) {
+    throw new Error(
+      "getCoursesByInstitutionForVis: institutionId or institutionName is required"
+    );
+  }
+
+  const { records } = await graphDb.driver.executeQuery(
+  /*  `
+    MATCH (i:Institution)-[:OFFERS]->(c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND (
+        ($institutionId IS NOT NULL AND id(i) = $institutionId) OR
+        ($institutionName IS NOT NULL AND toLower(i.name) = toLower($institutionName))
+      )
+
+    // de-dup in case of multiple rels
+    WITH DISTINCT c
+
+    RETURN
+      id(c)                    AS Id,
+      c.course_id              AS CourseId,
+      c.name                   AS CourseName,
+      coalesce(c.rank, 999999) AS Rank,
+      c.language               AS Language,
+      c.level                  AS Level,
+      c.platform               AS Platform
+    ORDER BY Rank, toLower(CourseName)
+    `,*/
+    `
+     MATCH (i:Institution)-[:OFFERS]->(c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND (
+        ($institutionId IS NOT NULL AND id(i) = $institutionId) OR
+        ($institutionName IS NOT NULL AND toLower(i.name) = toLower($institutionName))
+      )
+    WITH DISTINCT c
+    WITH
+      c,
+      toFloat(
+        CASE
+          WHEN c.rating IS NULL THEN 0
+          WHEN c.rating =~ '^[0-9]+(\\.[0-9]+)?$' THEN c.rating
+          ELSE replace(c.rating, ',', '.')
+        END
+      ) AS ratingNum,
+      toInteger(
+        CASE
+          WHEN c.number_of_participants IS NULL THEN 0
+          WHEN trim(replace(c.number_of_participants, ',', '')) = '' THEN 0
+          ELSE replace(c.number_of_participants, ',', '')
+        END
+      ) AS participants
+    RETURN
+      id(c)           AS Id,
+      c.course_id     AS CourseId,
+      c.name          AS CourseName,
+      ratingNum       AS Rating,
+      participants    AS NumberOfParticipants,
+      c.language      AS Language,
+      c.level         AS Level,
+      c.platform      AS Platform
+    ORDER BY toLower(CourseName)
+     `,
+    { platformName, institutionId, institutionName }
+  );
+
+  return serializeRecords(records);
+}
+
+// Teachers list with course counts (paginated)
+export async function getTeachersByPlatform(
+  platformName,
+  { page = 1, pageSize = 10, q = "" } = {}
+) {
+  const skip = Math.max((Number(page) - 1) * Number(pageSize), 0);
+  const limit = Math.max(Number(pageSize), 1);
+
+  // total count
+  const { records: totalRecs } = await graphDb.driver.executeQuery(
+    `
+    MATCH (t:Teacher)-[:TEACHES]->(:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND ($q = '' OR toLower(t.name) CONTAINS toLower($q))
+    RETURN count(DISTINCT t) AS total
+    `,
+    { platformName, q: q.toLowerCase() }
+  );
+
+  const total = (totalRecs?.[0]?.get?.("total")) ?? 0;
+
+  // page of items
+  const { records } = await graphDb.driver.executeQuery(
+    `
+    MATCH (t:Teacher)-[:TEACHES]->(c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND ($q = '' OR toLower(t.name) CONTAINS toLower($q))
+    WITH t, count(c) AS numCourses
+    RETURN
+      t.name                                        AS TeacherName,
+      coalesce(t.teacher_id, id(t))                 AS TeacherId,
+      toFloat(numCourses)                           AS NumberOfCourses
+    ORDER BY NumberOfCourses DESC, toLower(TeacherName)
+    SKIP toInteger($skip)
+    LIMIT toInteger($limit)
+    `,
+    { platformName, q: q.toLowerCase(), skip, limit }
+  );
+
+  return {
+    total: Number(total) || 0,
+    items: serializeRecords(records),
+  };
+}
+
+// Institutions list with course counts (paginated)
+export async function getInstitutionsByPlatform(
+  platformName,
+  { page = 1, pageSize = 10, q = "" } = {}
+) {
+  const skip = Math.max((Number(page) - 1) * Number(pageSize), 0);
+  const limit = Math.max(Number(pageSize), 1);
+
+  // total count
+  const { records: totalRecs } = await graphDb.driver.executeQuery(
+    `
+    MATCH (i:Institution)-[:OFFERS]->(:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND ($q = '' OR toLower(i.name) CONTAINS toLower($q))
+    RETURN count(DISTINCT i) AS total
+    `,
+    { platformName, q: q.toLowerCase() }
+  );
+
+  const total = (totalRecs?.[0]?.get?.("total")) ?? 0;
+
+  // page of items
+  const { records } = await graphDb.driver.executeQuery(
+    `
+    MATCH (i:Institution)-[:OFFERS]->(c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE toLower(p.name) CONTAINS toLower($platformName)
+      AND ($q = '' OR toLower(i.name) CONTAINS toLower($q))
+    WITH i, count(c) AS numCourses
+    RETURN
+      i.name                                        AS InstitutionName,
+      coalesce(i.institution_id, id(i))             AS InstitutionId,
+      toFloat(numCourses)                           AS NumberOfCourses
+    ORDER BY NumberOfCourses DESC, toLower(InstitutionName)
+    SKIP toInteger($skip)
+    LIMIT toInteger($limit)
+    `,
+    { platformName, q: q.toLowerCase(), skip, limit }
+  );
+
+  return {
+    total: Number(total) || 0,
+    items: serializeRecords(records),
+  };
+}
+
+export async function getCoursesLite({ platform = '', platforms = null, limit = 50 } = {}) {
+  const whereClause = platform
+    ? 'WHERE toLower(p.name) CONTAINS toLower($platform)'
+    : (platforms && platforms.length ? 'WHERE toLower(p.name) IN $platformsLower' : '');
+
+  const query = `
+    MATCH (c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    ${whereClause}
+    WITH c, p,  
+         toFloat(
+           CASE
+             WHEN c.rating IS NULL THEN 0
+             WHEN c.rating =~ '^[0-9]+(\\.[0-9]+)?$' THEN c.rating
+             ELSE replace(c.rating, ',', '.')
+           END
+         ) AS ratingNum,
+         toInteger(
+           CASE
+             WHEN c.number_of_participants IS NULL THEN 0
+             WHEN trim(replace(coalesce(c.number_of_participants,''), ',', '')) = '' THEN 0
+             ELSE replace(c.number_of_participants, ',', '')
+           END
+         ) AS participants
+    RETURN
+      id(c)           AS id,
+      c.course_id     AS courseId,
+      c.name          AS title,
+      p.name          AS platform,
+      ratingNum       AS rating,
+      participants    AS enrolled
+    ORDER BY enrolled DESC, toLower(title)
+    LIMIT toInteger($limit)
+  `;
+
+  const params = {
+    platform,
+    platformsLower: platforms ? platforms.map(s => s.toLowerCase()) : null,
+    limit: Number(limit)
+  };
+
+  const { records } = await graphDb.driver.executeQuery(query, params);
+  return serializeRecords(records); // -> [{id,title,platform,rating,enrolled}]
+}
+
+export async function getPlatformCourses({
+  platform = '', platforms = null, page = 1, pageSize = 20,
+  q = '', sort = 'enrolled', order = 'desc', minRating = 0
+} = {}) {
+  const skip  = Math.max((Number(page) - 1) * Number(pageSize), 0);
+  const limit = Math.max(Number(pageSize), 1);
+
+  const platformClause = platform
+    ? 'toLower(p.name) CONTAINS toLower($platform)'
+    : (platforms && platforms.length ? 'toLower(p.name) IN $platformsLower' : 'true');
+
+  const baseMatch = `
+    MATCH (c:Course)-[:AVAILABLE_ON]->(p:Platform)
+    WHERE ${platformClause}
+      AND ($q = '' OR toLower(c.name) CONTAINS toLower($q))
+  `;
+
+  const calc = `
+    WITH c, p,
+      toFloat(
+        CASE
+          WHEN c.rating IS NULL THEN 0
+          WHEN c.rating =~ '^[0-9]+(\\.[0-9]+)?$' THEN c.rating
+          ELSE replace(c.rating, ',', '.')
+        END
+      ) AS ratingNum,
+      toInteger(
+        CASE
+          WHEN c.number_of_participants IS NULL THEN 0
+          WHEN trim(replace(coalesce(c.number_of_participants,''), ',', '')) = '' THEN 0
+          ELSE replace(c.number_of_participants, ',', '')
+        END
+      ) AS participants
+    WHERE ratingNum >= toFloat($minRating)
+  `;
+
+  // sanitize sort fields for ORDER BY
+  let orderField = 'participants';
+  if (sort === 'rating') orderField = 'ratingNum';
+  if (sort === 'name')   orderField = 'toLower(c.name)';
+  const orderDir = (order === 'asc') ? 'ASC' : 'DESC';
+
+  const totalQuery = `${baseMatch} ${calc} RETURN count(DISTINCT c) AS total`;
+
+  const itemsQuery = `${baseMatch} ${calc}
+    RETURN
+      id(c)        AS id,
+      c.course_id     AS courseId,
+      c.name       AS title,
+      p.name       AS platform,
+      ratingNum    AS rating,
+      participants AS enrolled
+    ORDER BY ${orderField} ${orderDir}, toLower(title) ASC
+    SKIP toInteger($skip)
+    LIMIT toInteger($limit)
+  `;
+
+  const params = {
+    platform,
+    platformsLower: platforms ? platforms.map(s => s.toLowerCase()) : null,
+    q: (q || '').toLowerCase(),
+    minRating: Number(minRating) || 0,
+    skip, limit
+  };
+
+  const { records: totRecs } = await graphDb.driver.executeQuery(totalQuery, params);
+  const total = (totRecs?.[0]?.get?.('total')) ?? 0;
+
+  const { records } = await graphDb.driver.executeQuery(itemsQuery, params);
+  return { total: Number(total) || 0, items: serializeRecords(records) };
+}
+
+
 
 /*
 

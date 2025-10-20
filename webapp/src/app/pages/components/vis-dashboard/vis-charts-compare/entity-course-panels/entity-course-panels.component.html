@@ -1,0 +1,115 @@
+<div class="panels">
+  <!-- LEFT: ENTITIES -->
+  <section class="panel">
+    <header class="panel__header">
+      <span class="panel__title">{{ leftTitle }}</span>
+      <span *ngIf="platformName" class="platform-tag">in {{ platformName }}</span>
+      <span class="view-col">View</span>
+    </header>
+
+    <ng-container *ngIf="entities?.length; else emptyLeft">
+      <ul class="list">
+        <li
+          *ngFor="let e of entities; trackBy: trackEntity"
+          class="row entity-row"
+          [class.active]="e.id === selectedEntityId"
+          [class.has-meta]="e.courseCount !== undefined"
+          [attr.title]="'Show courses for ' + e.name">
+
+          <span class="name">{{ e.name }}</span>
+          <span class="meta" *ngIf="e.courseCount !== undefined">{{ e.courseCount | number }} Courses</span>
+
+          <button
+            type="button"
+            class="icon-btn"
+            (click)="$event.stopPropagation(); onSelectEntity(e)"
+            [attr.aria-label]="'Show courses for ' + e.name">
+            <i class="bx bx-search bx-flip-horizontal"></i>
+          </button>
+        </li>
+      </ul>
+
+      <!-- LEFT PAGINATION -->
+      <div class="pager" *ngIf="leftPages.length > 0">
+        <button class="pbtn" (click)="goLeft(leftPage-1)">‹ Prev</button>
+        <button class="pbtn" (click)="jumpLeftWindow(-1)">…</button>
+        <button *ngFor="let p of leftPages" class="pbtn" [class.active]="p === leftPage" (click)="goLeft(p)">{{ p }}</button>
+        <button class="pbtn" (click)="jumpLeftWindow(1)">…</button>
+        <button class="pbtn" (click)="goLeft(leftPage+1)">Next ›</button>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyLeft>
+      <div class="placeholder">{{ leftPlaceholder }}</div>
+    </ng-template>
+  </section>
+
+  <!-- RIGHT: COURSES -->
+  <section class="panel">
+    <!-- header with search on the right (no extra vertical gap) -->
+    <header class="panel__header panel__header--right">
+      <span class="panel__title">Courses</span>
+      <div class="header-search">
+        <input
+          type="search"
+          class="search"
+          [value]="searchText"
+          (input)="onSearch($event)"
+          placeholder="Search courses…"
+          aria-label="Search courses" />
+      </div>
+      <span class="view-col">View</span>
+    </header>
+
+    <!-- column headers -->
+    <div class="cols cols--head" *ngIf="courses?.length">
+      <div class="col col--rating">
+        <span class="rating-label">Rating</span>
+        <button type="button" class="chev" [class.active]="sortAsc"  (click)="setSort('asc')"  title="Sort rating ascending">▲</button>
+        <button type="button" class="chev" [class.active]="!sortAsc" (click)="setSort('desc')" title="Sort rating descending">▼</button>
+      </div>
+      <div class="col col--name">Course name</div>
+      <div class="col col--students">Students</div>
+      <div class="col col--view">View</div>
+    </div>
+
+    <ng-container *ngIf="courses?.length; else emptyRight">
+      <ul class="list">
+        <li *ngFor="let c of pageCourses; trackBy: trackCourse" class="row course-row" [attr.title]="getCourseName(c)">
+          <div class="col col--rating">
+            <span class="rating-chip" [attr.title]="getCourseRating(c) | number:'1.0-1'">
+              {{ getCourseRating(c) | number:'1.0-1' }}
+            </span>
+          </div>
+
+          <div class="col col--name">
+            <span class="name">{{ truncate(getCourseName(c), NAME_TRUNC) }}</span>
+          </div>
+
+          <div class="col col--students">
+            <span class="students">{{ getCourseStudents(c) | number }}</span>
+          </div>
+
+          <div class="col col--view">
+            <button type="button" class="icon-btn" (click)="onInspectCourse(c)" aria-label="Open course details">
+              <i class="bx bx-search bx-flip-horizontal"></i>
+            </button>
+          </div>
+        </li>
+      </ul>
+
+      <!-- RIGHT PAGINATION -->
+      <div class="pager" *ngIf="rightPages.length > 0">
+        <button class="pbtn" (click)="goRight(rightPage-1)">‹ Prev</button>
+        <button class="pbtn" (click)="jumpRightWindow(-1)">…</button>
+        <button *ngFor="let p of rightPages" class="pbtn" [class.active]="p === rightPage" (click)="goRight(p)">{{ p }}</button>
+        <button class="pbtn" (click)="jumpRightWindow(1)">…</button>
+        <button class="pbtn" (click)="goRight(rightPage+1)">Next ›</button>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyRight>
+      <div class="placeholder">{{ rightPlaceholder }}</div>
+    </ng-template>
+  </section>
+</div>

@@ -1,157 +1,129 @@
+<div class="grid-container">
 
+  <!-- Popular courses (enrolled students) -->
+  <div>
+    <div class="grid-item" *ngIf="hasCoursesEnrolledStudents">
+      <div class="title">
+        Distribution of the most popular courses based on the number of enrolled students
+      </div>
 
- <div class="grid-container">
-   <div>
+      <app-vis-filter-slider
+         [minValue]="5"
+         [maxValue]="20"
+         [step]="1"
+         [unitLabel]="'courses'"
+         [datapointCount]="dataPointCount"
+         (valueChange)="onDataChange($event)">
+      </app-vis-filter-slider>
 
-     <div class="grid-item" *ngIf="hasCoursesEnrolledStudents">
-       <div>
-         <div class="title">
-           Distribution of the most popular courses based on the number of enrolled students
-         </div>
+      <div class="chart" style="text-align:center">
+        <apx-chart
+          *ngIf="coursesChartVisible && hasCoursesEnrolledStudents"
+          #coursesChart
+          [series]="chartOptions.series"
+          [chart]="chartOptions.chart"
+          [xaxis]="chartOptions.xaxis"
+          [yaxis]="chartOptions.yaxis"
+          [title]="chartOptions.title"
+          [plotOptions]="chartOptions.plotOptions"
+          [tooltip]="chartOptions.tooltip">
+        </apx-chart>
 
-         <div >
-           <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
-                                  (valueChange)="onDataChange($event)"
-                                  [datapointCount]="dataPointCount"
-           ></app-vis-filter-slider>
-         </div>
+        <div *ngIf="!hasCoursesEnrolledStudents">
+          No data
+          <app-svg-icon-vis src="/webapp/src/assets/black-star-icon.svg"></app-svg-icon-vis>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Ratings vs price (scatter) -->
+  <div>
+    <div class="title">Correlation between ratings & prices of courses</div>
 
+    <app-vis-filter-slider
+      [minValue]="5"
+      [maxValue]="30"
+      [step]="1"
+      [unitLabel]="'courses'"
+      [datapointCount]="dataPointCount3"
+      (valueChange)="onDataChange3($event)">
+    </app-vis-filter-slider>
 
-       </div>
+    <div class="chart" style="text-align:center">
+      <apx-chart
+        *ngIf="scatterChartVisible"
+        #scatterChart
+        [series]="chartOptions3.series"
+        [chart]="chartOptions3.chart"
+        [xaxis]="chartOptions3.xaxis"
+        [yaxis]="chartOptions3.yaxis"
+        [title]="chartOptions3.title"
+        [tooltip]="chartOptions3.tooltip">
+      </apx-chart>
+    </div>
 
-       <div class="chart">
-         <div style="text-align:center">
+    <!-- Empty/notice message only (no courses panel for the scatter) -->
+    <div *ngIf="!hasPriceAndRatings" style="margin: 8px 0 20px 0; color:#6b7280;">
+      No rating/price data for this platform and range.
+    </div>
+  </div>
 
-           <div *ngIf="hasCoursesEnrolledStudents">
-             <apx-chart
-               [series]="chartOptions.series"
-               [chart]="chartOptions.chart"
-               [xaxis]="chartOptions.xaxis"
-               [yaxis]="chartOptions.yaxis"
-               [title]="chartOptions.title"
-               [plotOptions]="chartOptions.plotOptions"
-             ></apx-chart>
-           </div>
-           <div *ngIf="!hasCoursesEnrolledStudents">
-             No data
-             <app-svg-icon-vis src="/webapp/src/assets/black-star-icon.svg"></app-svg-icon-vis>
-           </div>
+  <!-- Popular categories -->
+  <div>
+    <div class="grid-item" *ngIf="hasCategoriesEnrolledStudents">
+      <div class="title">
+        Distribution of the most popular categories of courses based on the number of enrolled students
+      </div>
 
-         </div>
+      <app-vis-filter-slider
+        [minValue]="5"
+        [maxValue]="20"
+        [step]="1"
+        [unitLabel]="'categories'"
+        [datapointCount]="dataPointCount2"
+        (valueChange)="onDataChange2($event)">
+      </app-vis-filter-slider>
 
-       </div>
-     </div>
- </div>
+      <div class="chart" style="text-align:center">
+        <apx-chart
+          *ngIf="catsChartVisible && hasCategoriesEnrolledStudents"
+          #catsChart
+          [series]="chartOptions2.series"
+          [chart]="chartOptions2.chart"
+          [xaxis]="chartOptions2.xaxis"
+          [yaxis]="chartOptions2.yaxis"
+          [title]="chartOptions2.title"
+          [plotOptions]="chartOptions2.plotOptions"
+          [tooltip]="chartOptions2.tooltip">
+        </apx-chart>
 
+        <div *ngIf="!hasCategoriesEnrolledStudents">
+          No data
+          <app-svg-icon-vis src="/webapp/src/assets/black-star-icon.svg"></app-svg-icon-vis>
+        </div>
+      </div>
 
+      <!-- Category → Courses panel -->
+      <!-- Empty state BEFORE any bar is clicked -->
+      <div *ngIf="!selectedCategory" class="panel" style="margin-top:10px;">
+        <div class="panel-header">
+          <div class="panel-header-title">Courses</div>
+        </div>
+        <div class="panel-info">Select a <strong>category</strong> bar to see related courses.</div>
+      </div>
 
+      <!-- List AFTER a category bar is clicked -->
+      <app-courses-panel
+        *ngIf="selectedCategory"
+        [selectedEntity]="{ name: selectedCategory }"
+        [courses]="coursesForCategory"
+        [loading]="loadingCategory"
+        entityLabel="category"
+        (back)="onCategoryBack()">
+      </app-courses-panel>
 
+    </div>
+  </div>
 
-
-
-
-
-
-   <div  *ngIf="hasPriceAndRatings">
-
-
-     <div >
-       <div class="title">
-         Correlation between ratings & prices of courses
-
-       </div>
-       <div *ngIf="hasPriceAndRatings">
-         <app-vis-filter-slider [minValue]="5" [maxValue]="30" [step]="1"
-                                (valueChange)="onDataChange3($event)"
-                                [datapointCount]="dataPointCount3"
-         ></app-vis-filter-slider>
-
-       </div>
-     </div>
-
-     <div class="chart" >
-       <div style="text-align:center"  *ngIf="hasPriceAndRatings">
-         <apx-chart
-           [series]="chartOptions3.series"
-           [chart]="chartOptions3.chart"
-           [xaxis]="chartOptions3.xaxis"
-           [yaxis]="chartOptions3.yaxis"
-           [title]="chartOptions3.title"
-           [plotOptions]="chartOptions3.plotOptions"
-         ></apx-chart>
-       </div>
-
-       <div *ngIf="!hasPriceAndRatings">
-         No data
-         <app-svg-icon-vis src="/webapp/src/assets/black-star-icon.svg"></app-svg-icon-vis>
-       </div>
-
-     </div>
-
-   </div>
-
-
-
-
-
-
-
-   <div>
-
-     <div class="grid-item" *ngIf="hasCategoriesEnrolledStudents">
-
-       <div>
-         <div class="title">
-           Distribution of the most popular categories of courses
-         </div>
-
-         <div *ngIf="hasCategoriesEnrolledStudents">
-           <app-vis-filter-slider [minValue]="5" [maxValue]="20" [step]="1"
-                                  (valueChange)="onDataChange2($event)"
-                                  [datapointCount]="dataPointCount2"
-           ></app-vis-filter-slider>
-         </div>
-
-
-       </div>
-
-       <div class="chart">
-         <div style="text-align:center">
-
-           <div *ngIf="hasCategoriesEnrolledStudents">
-             <apx-chart
-               [series]="chartOptions2.series"
-               [chart]="chartOptions2.chart"
-               [xaxis]="chartOptions2.xaxis"
-               [title]="chartOptions2.title"
-               [yaxis]="chartOptions2.yaxis"
-               [plotOptions]="chartOptions2.plotOptions"
-             ></apx-chart>
-           </div>
-
-           <div *ngIf="!hasCategoriesEnrolledStudents">
-             No data
-             <app-svg-icon-vis src="/webapp/src/assets/black-star-icon.svg"></app-svg-icon-vis>
-           </div>
-
-         </div>
-       </div>
-
-   </div>
-
-
- </div>
- </div>
-
-
-
-
-
-
-
-
-
-
-
-
+</div>

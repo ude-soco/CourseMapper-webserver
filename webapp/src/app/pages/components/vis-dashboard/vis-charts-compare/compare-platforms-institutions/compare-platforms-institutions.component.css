@@ -1,8 +1,8 @@
 
-.grid-container {
+/*.grid-container {
   display: grid;
   grid-template-columns: 1fr ;
-  gap: 20px; /* Gap between grid items */
+  gap: 20px; /* Gap between grid items /
   border: 2px solid lightgrey;
   padding: 10px;
   border-radius: 10px;
@@ -16,7 +16,7 @@
 }
 
 .chart{
-  /*border: 2px solid lightgrey;*/
+  /*border: 2px solid lightgrey;/
   border-radius: 10px;
   height: 18em;
   width: 100%;
@@ -30,5 +30,34 @@
   margin-top: 1px;
   margin-bottom: 10px;
 
+}*/
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  border: 2px solid #e5e7eb;
+  padding: 10px;
+  border-radius: 10px;
+  height: 100%;
+}
+.grid-item { padding: 5px; }
+
+.chart { border-radius: 10px; height: 18em; width: 100%; }
+
+.title {
+  font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  padding: 1px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+/* make bars clickable like teachers */
+:host ::ng-deep .apexcharts-series path,
+:host ::ng-deep .apexcharts-series rect,
+:host ::ng-deep .apexcharts-xaxis-texts-g,
+:host ::ng-deep .apexcharts-yaxis-texts-g {
+  cursor: pointer;
 }
 

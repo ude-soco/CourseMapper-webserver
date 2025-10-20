@@ -29,3 +29,24 @@
   margin-TOP: 1px;
   margin-bottom: 10px;
 }
+
+/* this guarantees the hand cursor on bars/labels */
+:host ::ng-deep .apexcharts-series path,
+:host ::ng-deep .apexcharts-series rect,
+:host ::ng-deep .apexcharts-xaxis-texts-g,
+:host ::ng-deep .apexcharts-yaxis-texts-g {
+  cursor: pointer;
+}
+/* make scatter dots clickable with a hand cursor */
+:host ::ng-deep .apexcharts-marker,
+:host ::ng-deep .apexcharts-series-markers .apexcharts-marker,
+:host ::ng-deep .apexcharts-series path,
+:host ::ng-deep .apexcharts-series circle {
+  cursor: pointer;
+  pointer-events: all;   /* ensure events fire when markers are on top of gridlines */
+}
+
+:host ::ng-deep .apexcharts-title-text,
+:host ::ng-deep .apexcharts-legend-text {
+  user-select: none;
+}
