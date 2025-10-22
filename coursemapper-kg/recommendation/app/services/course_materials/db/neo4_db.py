@@ -14,7 +14,6 @@ import sys
 #     os.execv(sys.executable, [sys.executable] + sys.argv)
 
 from datetime import datetime
-import traceback
 
 logger = LOG(name=__name__, level=logging.DEBUG)
 
@@ -1882,7 +1881,7 @@ class NeoDataBase:
                         r.keyphrases_infos = $keyphrases_infos
                            
                     ''',
-                    rid=node.get("rid"),
+                    rid=node["rid"],
                     keyphrases=node["keyphrases"] if "keyphrases" in node else [],
                     keyphrase_embedding=node["keyphrase_embedding"] if "keyphrase_embedding" in node else [],
                     document_embedding=node["document_embedding"] if "document_embedding" in node else [],
@@ -1906,30 +1905,30 @@ class NeoDataBase:
                         r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
                         r.updated_at = $updated_at
                     ''',
-                    rid=str(node.get("id")),
-                    uri="https://www.youtube.com/embed/%s?autoplay=1" % str(node.get("id")),
-                    title=str(node.get("title")),
-                    description=str(node.get("description")),
-                    description_full=str(node.get("description_full")),
-                    thumbnail="https://i.ytimg.com/vi/%s/hqdefault.jpg" % str(node.get("id")),
-                    text=str(node.get("text")),
-                    duration=node.get("duration"),
-                    views=node.get("views"),
-                    pub_time=node.get("publishTime"),
+                    rid=node["id"],
+                    uri="https://www.youtube.com/embed/%s?autoplay=1" % node["id"],
+                    title=node["title"],
+                    description=node["description"],
+                    description_full=node["description_full"],
+                    thumbnail="https://i.ytimg.com/vi/%s/hqdefault.jpg" % node["id"],
+                    text=node["text"],
+                    duration=node["duration"],
+                    views=node["views"],
+                    pub_time=node["publishTime"],
                     # similarity_score=node[recommendation_type] if recommendation_type in node.index else 0,
-                    keyphrases=list(node.get("keyphrases", [])),
-                    keyphrase_embedding=list(node.get("keyphrase_embedding",[])),
-                    document_embedding=list(node.get("document_embedding",[])),
-                    helpful_count=node.get("helpful_count", 0),
-                    not_helpful_count=node.get("not_helpful_count", 0),
-                    saves_count=node.get("saves_count", 0),
-                    like_count=node.get("like_count", 0), # Fixes the stubborn 'like_count' error
-                    channel_title=str(node.get("channel_title", "Unknown Channel")),
+                    keyphrases=node["keyphrases"] if "keyphrases" in node else [],
+                    keyphrase_embedding=node["keyphrase_embedding"] if "keyphrase_embedding" in node else [],
+                    document_embedding=node["document_embedding"] if "document_embedding" in node else [],
+                    helpful_count=node["helpful_count"] if "helpful_count" in node else 0,
+                    not_helpful_count=node["not_helpful_count"] if "not_helpful_count" in node else 0,
+                    saves_count=node["saves_count"] if "saves_count" in node else 0,
+                    like_count=node["like_count"],
+                    channel_title=node["channel_title"],
                     updated_at=datetime.now().isoformat(),
-                    keyphrases_infos=str(node.get("keyphrases_infos",""))
+                    keyphrases_infos=node["keyphrases_infos"] if "keyphrases_infos" in node else ""
                 )
         except Exception as e:
-            traceback.print_exc()
+            print(e)
             pass
 
     def create_or_update_wikipedia_resource(self, tx, node, recommendation_type='', 
@@ -2450,19 +2449,11 @@ class NeoDataBase:
                         self.update_rs_btw_resources_and_cm(rids=rids, cid=cid, action=True)
         
         elif resources_form == "list":
-            for i, resource in enumerate(resources_list): # Added enumerate for logging
-            
-            #  FIX: Check if the resource is a dictionary. If not, log and skip.
-                if not isinstance(resource, dict):
-                    logger.error(f"ERROR: Resource at index {i} in resources_list is type {type(resource)}. Skipping to prevent tuple error.")
-                # If you know the tuple structure, you could try to convert it here, 
-                # but skipping the bad data is safer.
-                    continue 
-
-            if "Video" in resource.get("labels", []): # Use .get for labels, just in case
-                self.create_or_update_video_resource(tx, resource, update_embedding_values=True)
-            elif "Article" in resource.get("labels", []):
-                self.create_or_update_wikipedia_resource(tx, resource, update_embedding_values=True)
+            for resource in resources_list:
+                if "Video" in resource["labels"]:
+                    self.create_or_update_video_resource(tx, resource, update_embedding_values=True)
+                elif "Article" in resource["labels"]:
+                    self.create_or_update_wikipedia_resource(tx, resource, update_embedding_values=True)
 
         """
         elif resources_form == "found":
