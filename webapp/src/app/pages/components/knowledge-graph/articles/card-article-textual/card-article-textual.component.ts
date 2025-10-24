@@ -561,28 +561,47 @@ truncateParts(
   this.popupVisible = true;
 }
 
-showTextualSimilarityPopover(keyphrase: string, event: MouseEvent) {
-  this.selectedKeyphrase = keyphrase;
-
-  const index = this.article.keyphrases.findIndex(tuple => tuple[0] === keyphrase);
-  if (index === -1) {
-    console.warn(`Keyphrase "${keyphrase}" not found.`);
+showTextualSimilarityPopover(
+  part: { text: string; keyphraseMeta?: { originalKeyphrase?: string; sourceIndex?: number; similarityData?: any } },
+  event: MouseEvent
+) {
+  if (!part) {
     return;
   }
 
-  const similarities = this.article.keyphrases_dnu_similarity_score[index];
-  
+  const resolvedMeta = part.keyphraseMeta ?? {};
+  const originalKeyphrase = resolvedMeta.originalKeyphrase ?? part.text;
+  const normalizedKeyphrase = this.cleanKeyphrase(originalKeyphrase);
 
+  // Prefer the stored index; fall back to searching
+  let index = typeof resolvedMeta.sourceIndex === 'number'
+    ? resolvedMeta.sourceIndex
+    : this.article.keyphrases.findIndex(tuple => {
+        const raw = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
+        return this.cleanKeyphrase(raw) === normalizedKeyphrase;
+      });
+
+  let similarities = resolvedMeta.similarityData;
+
+  if (!similarities && index >= 0) {
+    similarities = this.article.keyphrases_dnu_similarity_score?.[index];
+  }
+
+  if (!similarities) {
+    console.warn(`Keyphrase "${part.text}" (normalized: "${normalizedKeyphrase}") not found.`);
+    return;
+  }
+
+  this.selectedKeyphrase = originalKeyphrase;
   this.textualSimilarityInfo = Object.entries(similarities).map(
     ([dnu, score]: [string, number]) =>
-      `<strong>${(score * 100).toFixed(0)}%</strong> - <strong>“${dnu}”</strong>`
+      `<strong>${(score * 100).toFixed(0)}%</strong> – <strong>“${dnu}”</strong>`
   );
-  
-  this.textualSimilarityPopover.hide(); // Ensure it closes before showing again
-  setTimeout(() => {
-    this.textualSimilarityPopover.show(event);
-  }, 50);
+
+  this.textualSimilarityPopover.hide();
+  setTimeout(() => this.textualSimilarityPopover.show(event), 50);
 }
+
 
 getFormattedSimilarityText(concept: string, value: number): string {
   const percentage = (value * 100).toFixed(0);

@@ -112,7 +112,7 @@
                 pTooltip="{{ part.keyphraseMeta?.tooltip }}"
                 tooltipPosition="top"
                 [escape]="false"
-                (click)="showTextualSimilarityPopover(part.text, $event)">
+                (click)="showTextualSimilarityPopover(part, $event)">
             {{ part.text }}
           </span>
           <span *ngIf="!part.isKeyphrase">{{ part.text }}</span>

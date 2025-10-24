@@ -126,7 +126,7 @@
                     pTooltip="{{ part.keyphraseMeta?.tooltip }}"
                     [escape]="false"
                     tooltipPosition="top"
-                    (click)="showTextualSimilarityPopover(part.text, $event)">
+                    (click)="showTextualSimilarityPopover(part, $event)">
                 {{ part.text }}
               </span>
               <span *ngIf="!part.isKeyphrase">{{ part.text }}</span>
@@ -150,7 +150,7 @@
             pTooltip="{{ part.keyphraseMeta?.tooltip }}"
             [escape]="false"
             tooltipPosition="top"
-            (click)="showTextualSimilarityPopover(part.text, $event)">
+            (click)="showTextualSimilarityPopover(part, $event)">
         {{ part.text }}
       </span>
       <span *ngIf="!part.isKeyphrase">
@@ -186,7 +186,7 @@
             pTooltip="{{ part.keyphraseMeta?.tooltip }}"
             [escape]="false"
             tooltipPosition="top"
-            (click)="showTextualSimilarityPopover(part.text, $event)">
+            (click)="showTextualSimilarityPopover(part, $event)">
         {{ part.text }}
       </span>
       <span *ngIf="!part.isKeyphrase">{{ part.text }}</span>
