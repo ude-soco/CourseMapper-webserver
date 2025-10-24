@@ -42,7 +42,7 @@
                 </p>
 
                 <div *ngIf="coloredBandData?.document_dnu_similarity_colorband">
-                  <p class="font-semibold mt-2">Similarity with concept:</p>
+                  <p class="font-semibold mt-2">Similarity with each concept:</p>
                   <ul class="list-disc pl-5">
                     <li 
                       *ngFor="let item of coloredBandData.document_dnu_similarity_colorband | keyvalue"
@@ -58,7 +58,7 @@
             <button 
               (click)="videoSimilarityPopup.toggle($event)" 
               class="bg-[#3F51B5] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#2C387E] flex items-center space-x-2"
-              pTooltip="Shows how similar this video is to the concepts used in recommendations"
+              pTooltip="Shows how similar this video is to the concepts used to generate recommendations"
               tooltipPosition="top"
             >
               <i class="pi pi-percentage text-white text-sm"></i>
@@ -185,7 +185,7 @@
   <div class="kp-panel-content">
     <span class="custom-close" (click)="textualSimilarityPopover.hide()">×</span>
     <div class="kp-title">
-      The keyphrase <strong>“{{ selectedKeyphrase }}”</strong> is most similar to the following concepts:
+      The keyphrase <strong>“{{ selectedKeyphrase }}”</strong> is the most similar to the following concepts:
     </div>
     <ul class="list-disc text-sm text-gray-800 ml-5">
       <li *ngFor="let line of textualSimilarityInfo" [innerHTML]="line"></li>
