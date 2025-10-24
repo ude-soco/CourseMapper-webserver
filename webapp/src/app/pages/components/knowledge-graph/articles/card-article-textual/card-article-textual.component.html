@@ -121,10 +121,12 @@
             *ngIf="(article.abstract.length <= ABSTRACT_MAX_LENGTH) && userCanExpand" >
  
             <ng-container *ngFor="let part of abstractParts">
-              <span
-                *ngIf="part.isKeyphrase"
-                class="font-bold text-gray-800 cursor-pointer"
-                (click)="showPopup(part.text, $event.clientX, $event.clientY, $event)">
+              <span *ngIf="part.isKeyphrase" 
+                    class="font-bold text-gray-800 cursor-pointer"
+                    pTooltip="{{ part.keyphraseMeta?.tooltip }}"
+                    [escape]="false"
+                    tooltipPosition="top"
+                    (click)="showTextualSimilarityPopover(part.text, $event)">
                 {{ part.text }}
               </span>
               <span *ngIf="!part.isKeyphrase">{{ part.text }}</span>
