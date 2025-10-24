@@ -464,28 +464,46 @@ truncateParts(
 //textualSimilarityInfo: string[] = [];
 //popupVisible: boolean = false;
 
-  showTextualSimilarityPopover(keyphrase: string, event: MouseEvent) {
-    this.selectedKeyphrase = keyphrase;
+  showTextualSimilarityPopover(partOrKeyphrase: { text: string; isKeyphrase?: boolean; keyphraseMeta?: any } | string, event: MouseEvent) {
+  const part = typeof partOrKeyphrase === 'string'
+    ? { text: partOrKeyphrase, isKeyphrase: true }
+    : partOrKeyphrase;
 
-    const index = this.videoElement.keyphrases.findIndex(tuple => tuple[0] === keyphrase);
-    if (index === -1) {
-      console.warn(`Keyphrase "${keyphrase}" not found.`);
-      this.textualSimilarityInfo = ['No similarity information found.'];
-      return;
-    }
+  if (!part?.text) return;
 
-    const similarities = this.videoElement.keyphrases_dnu_similarity_score[index];
+  const meta = part.keyphraseMeta ?? {};
+  const originalKeyphrase = meta.originalKeyphrase ?? part.text;
+  const normalized = this.cleanKeyphrase(originalKeyphrase);
 
-    this.textualSimilarityInfo = Object.entries(similarities || {}).map(
-      ([dnu, score]: [string, number]) =>
-        `<strong>${(score * 100).toFixed(0)}%</strong> – <strong>“${dnu}”</strong>`
-    );
+  let similarities = meta.similarityData;
+  let index = typeof meta.sourceIndex === 'number' ? meta.sourceIndex : -1;
 
-    this.textualSimilarityPopover.hide();
-    setTimeout(() => {
-      this.textualSimilarityPopover.show(event);
-    }, 50);
+  if (index < 0) {
+    index = (this.videoElement?.keyphrases ?? []).findIndex(tuple => {
+      const raw = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
+      return this.cleanKeyphrase(raw) === normalized;
+    });
   }
+
+  if (!similarities && index >= 0) {
+    similarities = this.videoElement.keyphrases_dnu_similarity_score?.[index];
+  }
+
+  if (!similarities) {
+    console.warn(`Keyphrase "${part.text}" (normalized: "${normalized}") not found.`);
+    return;
+  }
+
+  this.selectedKeyphrase = originalKeyphrase;
+  this.textualSimilarityInfo = Object.entries(similarities).map(
+    ([dnu, score]: [string, number]) =>
+      `<strong>${(score * 100).toFixed(0)}%</strong> – <strong>“${dnu}”</strong>`
+  );
+
+  this.textualSimilarityPopover.hide();
+  setTimeout(() => this.textualSimilarityPopover.show(event), 50);
+}
+
   
 
   getTopKeyphrasesWithSimilarities(limit: number = 10): {
