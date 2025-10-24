@@ -96,3 +96,14 @@ a{
 .custom-close:hover {
   color: black;
 }
+
+
+.tooltip-hint {
+  display: block;
+  margin-top: 2px;
+  text-align: right;
+  font-size: 0.7em !important;
+  color: #cfd8dc;
+  font-style: italic;
+  opacity: 0.9;
+}

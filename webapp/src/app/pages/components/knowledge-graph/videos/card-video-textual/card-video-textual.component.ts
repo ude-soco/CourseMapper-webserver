@@ -352,7 +352,11 @@ generateParts(
         concept: match.dnu,
         originalKeyphrase: match.kp,
         color: this.getColorForDnu(match.dnu),
-        tooltip: `This keyphrase is the most similar to the “${match.dnu}”.`
+        tooltip: `<div class="tooltip-content">
+          This keyphrase is the most similar to the concept <b>“${match.dnu}”</b>.
+          <br>
+          <span class="tooltip-hint">💡 Click on the keyphrase to view details.</span>
+        </div>`
       },
     });
 

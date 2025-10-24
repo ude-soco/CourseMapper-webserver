@@ -29,7 +29,7 @@
                </div>
             
             
-              <!--  Visual Explanation-->
+              <!--  WHAT - Visual Explanation-->
               <button
                 *ngFor="let concept of allConceptsObj; let i = index"
                 class="dislike-button text-white px-2 mx-1 border border-transparent rounded-full"
@@ -54,7 +54,7 @@
               </button>
             </ng-container>
 
-            <!--  Textual Explanation-->
+            <!-- WHAT - Textual Explanation-->
              <ng-container *ngIf="recMode === 'textual'">
               <div class="flex flex-wrap gap-1 w-full">
                 <button
@@ -86,20 +86,20 @@
          
         </span>
 
-        <div id="cro_sorting" class="w-3/12"></div>
+       <div class="flex flex-col items-end w-3/12"> 
+     <!-- Explanation Format Toggle Button -->
+        <div class="flex items-center gap-2 mb-2">
+          <span class="mr-2">Explanation:</span>
+          <span class="text-sm">Visual</span>
+          <p-inputSwitch
+            [(ngModel)]="isTextual"
+            (onChange)="onRecModeToggle($event)">
+          </p-inputSwitch>
+          <span class="text-sm">Textual</span>
+        </div>
 
-        <div id="cro_sorting" class="w-3/12" (click)="op.toggle($event, targetEl)">
-          
-          <div class="flex items-center gap-2">
-            <span class="mr-2">Explanation:</span>
-            <span class="text-sm">Visual</span>
-            <p-inputSwitch
-              [(ngModel)]="isTextual"
-              (onChange)="onRecModeToggle($event)">
-            </p-inputSwitch>
-            <span class="text-sm">Textual</span>
-          </div>
-
+        <div id="cro_sorting" class="w-full" (click)="op.toggle($event, targetEl)">
+     
         
 
           <div #targetEl class="border-solid border-2 border-[#cecece] p-4 w-72">
@@ -159,9 +159,10 @@
           
 
         </div>
+        </div>
       </div>
 
-      <!-- ==========  TEXTUAL  ========== -->
+      <!-- ==========  TEXTUAL Videos Section  ========== -->
       <ng-container *ngIf="recMode === 'textual'">
         <p-tabPanel *ngIf="!recievedVideoResultIsEmpty" [cache]="true" header="Videos" leftIcon="pi pi-video">
           <div class="mt-1 w-full" id="cro_viedo_list">
@@ -199,6 +200,7 @@
           </ng-template>
         </p-tabPanel>
 
+        <!-- ==========  TEXTUAL Articles Section  ========== -->
         <p-tabPanel [cache]="true" header="Articles" leftIcon="pi pi-book">
           <div class="mt-1 w-full" id="cro_viedo_list">
             <div *ngIf="resourcesPagination?.nodes?.articles?.total_items > 0; else elseBlockRsArticles_textual"></div>
