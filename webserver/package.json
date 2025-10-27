@@ -1,6 +1,12 @@
 {
   "name": "coursemapper-webserver",
   "version": "1.0.0",
+  "type": "commonjs", 
+  "description": "...",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "nodemonConfig": {
     "exec": "npm run dev",
     "watch": [

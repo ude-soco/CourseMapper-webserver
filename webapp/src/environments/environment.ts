@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  API_URL: 'http://localhost:8080/api',
+  API_URL: 'http://localhost:4000/api',
   socketConfig: {
-    url: 'http://localhost:8080',
+    url: 'http://localhost:4000',
     options: {
       path: '/api/socket.io',
     },

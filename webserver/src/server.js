@@ -10,7 +10,7 @@ import path from "path";
 import socketio from "./socketio";
 import addErrorHandling from "./middlewares/exceptionHandling";
 
-dotenv.config();
+require('dotenv').config();
 const env = process.env.NODE_ENV || "production";
 const app = express();
 const debug = debugLib("coursemapper-webserver:src/server");
