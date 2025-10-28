@@ -25,6 +25,13 @@ const User = new Schema({
   ],
   understoodConcepts: [], //saves ids for concepts that user understand
   didNotUnderstandConcepts: [], //saves ids for concepts that user did not understand
+  
+  // Map to store concept IDs and their respective timestamps
+  conceptTimestamps: {
+    type: Map,
+    of: Date,
+    default: {}
+  },
 
   indicators: [
     {
@@ -35,7 +42,6 @@ const User = new Schema({
       frameborder: String,
     },
   ], //holds a list of the indicators created in this collection
-
   blockedByUser: [
     { type: Schema.Types.ObjectId, ref: "user", required: true, default: [] },
   ],

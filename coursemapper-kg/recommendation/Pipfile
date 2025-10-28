@@ -18,7 +18,7 @@ numpy = "*"
 pandas = "*"
 scikit-learn = "*"
 sentence-transformers = "*"
-neo4j = "==4.4.5"
+neo4j = "*"
 sparqlwrapper = "*"
 networkx = "*"
 jinja2 = "*"
@@ -32,11 +32,20 @@ protobuf = "*"
 markupsafe = "==1.1.1"
 flair = "*"
 spacy = "*"
-python-dotenv = "*"
+python-dotenv = "==1.0.1"
 gunicorn = "*"
 redis = "*"
+rdflib = "*"
+langdetect = "*"
+bertopic = "*"
+pymongo = "*"
+pipenv = "*"
+
+
+torch-geometric = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.11.5"
+python_version = "3.11"
+python_full_version = "3.11.9"

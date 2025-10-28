@@ -933,6 +933,44 @@
                     </div>
                   </div>
 
+
+                  <!-- Sequence recommendation-->
+                  <div
+                    id="graphSection"
+                    *ngIf="recommendedSequencesTab"
+                    class="dialogContents sidebarShown"
+                  >
+                   <!--progress spinner while loading recommendated concepts-->
+                   <div
+                   class="profile-main-loader ml-2"
+                   *ngIf="this.recommendedSequence=== null"
+                 >
+                   <div class="loader">
+                     <p-progressSpinner
+                       [style]="{ width: '80px', height: '80px' }"
+                       styleClass="custom-spinner"
+                       strokeWidth="8"
+                       fill="var(--surface-ground)"
+                       animationDuration=".5s"
+                     ></p-progressSpinner>
+                   </div>
+                 </div>
+                    <div class="graphSection" id="graphSection">
+                      <app-graph-recommedned
+                    [conceptSequenceMapRecData]="filteredSequenceMapRecData"
+                    [selectedFilterValues]="selectedFilterValues"
+                    [topNConcepts]="selectedTopConcepts"
+                    [filterUpdated]="false"
+                    [materialKnowledgeGraph]="false"
+                    [slideKnowledgeGraph]="true"
+                    [recommenderKnowledgeGraph]="true"
+                    [cyHeight]="cyHeight"
+                  >
+                  </app-graph-recommedned>
+                    </div>
+                  </div>
+
+
                   <!-- generate KG for the learning material first -->
                   <div
                     class="flex-1 flex items-center justify-center ml-2"
@@ -964,6 +1002,7 @@
                       ></p-progressSpinner>
                     </div>
                   </div>
+                  
 
                   <!-- result-->
                   <div *ngIf="recommendedMaterialsTab" class="tab mainConcepts" class="ml-2">

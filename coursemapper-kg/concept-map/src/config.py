@@ -16,10 +16,18 @@ class Config:
 
     NEO4J_URI = os.getenv('NEO4J_URI', 'bolt://localhost:7687')
     NEO4J_USER = os.getenv('NEO4J_USER', 'neo4j')
-    NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD', 'password')
+    NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD', '1234qwer!')
     NEO4J_SAVE_TO_DB = os.getenv('NEO4J_SAVE_TO_DB', 'true').lower() == 'true'
 
+
     DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL')
+    MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
+    MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME")
+
+    #DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://dbpedia-spotlight-en.soco.inko.cloud/rest/annotate')
+    # Uncomment the line below to use the official DBpedia Spotlight API
+    # DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://api.dbpedia-spotlight.org/en/annotate')
+
     DBPEDIA_SPOTLIGHT_CONFIDENCE = float(os.getenv('DBPEDIA_SPOTLIGHT_CONFIDENCE', '0.35'))
     DBPEDIA_SPOTLIGHT_SUPPORT = int(os.getenv('DBPEDIA_SPOTLIGHT_SUPPORT', '5'))
 
@@ -53,4 +61,6 @@ class Config:
                f'TOP_N_KEYPHRASES={Config.TOP_N_KEYPHRASES}\n' \
                f'WEIGHT_THRESHOLD={Config.WEIGHT_THRESHOLD}\n' \
                f'TOP_N_RELATED_CATEGORIES={Config.TOP_N_RELATED_CATEGORIES}\n' \
-               f'TOP_N_RELATED_CONCEPTS={Config.TOP_N_RELATED_CONCEPTS}\n'
+               f'TOP_N_RELATED_CONCEPTS={Config.TOP_N_RELATED_CONCEPTS}\n' \
+               f'MONGO_DB_URI={Config.MONGO_DB_URI}\n' \
+               f'MONGO_DB_NAME={Config.MONGO_DB_NAME}\n' \

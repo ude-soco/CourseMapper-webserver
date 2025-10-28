@@ -30,13 +30,14 @@ export class GraphRecommednedComponent {
   linkTop;
 
   @Input() conceptMapRecData?: any;
+  @Input() conceptSequenceMapRecData?: any;
   @Input() selectedFilterValues?: string[];
   @Input() filterUpdated?: boolean;
   @Input() topNConcepts?: any;
   @Input() materialKnowledgeGraph: boolean;
   @Input() slideKnowledgeGraph: boolean;
   @Input() recommenderKnowledgeGraph: boolean;
-  @Input() cyHeight: any;
+  @Input() cyHeight: any = 500;
 
   newConceptsSubscription: Subscription;
   didNotUnderstandConceptsSubscription: Subscription;

@@ -140,6 +140,16 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     recommendationController.filterUserResourcesSavedBy
   );
+  //   "/api/courses/:courseId/materials/:materialId/sequence-recommendation",
+  //   [authJwt.verifyToken, authJwt.isEnrolled],
+  //   controller.getSequence
+  // );
+
+  // app.post(
+  //   "/api/courses/:courseId/materials/:materialId/resource-recommendation",
+  //   [authJwt.verifyToken, authJwt.isEnrolled],
+  //   controller.getResources
+
 
   app.get(
     "/api/recommendation/user_resources/get_rids_from_user_saves",
@@ -200,7 +210,12 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     recommendationController.getResources
   );
-
+  app.post( 
+  // "/api/courses/:courseId/materials/:materialId/sequence-recommendation",
+  "/api/recommendation/sequence-recommendation",
+  [authJwt.verifyToken, authJwt.isEnrolled],
+  recommendationController.getSequence
+);
   app.post(
     "/api/courses/:courseId/materials/:materialId/main-concepts/log",
     [authJwt.verifyToken],

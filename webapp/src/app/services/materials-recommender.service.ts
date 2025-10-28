@@ -12,9 +12,11 @@ import { ResourcesPagination, RatingResource, UserResourceFilterParamsResult, Us
 export class MaterialsRecommenderService {
   apiURL = environment.API_URL
   recommendedConcepts: any
+recommendedSequenceConcepts: any
   recommendedMaterials: any
   recommendedMaterialsRating: any
   LEAF_URL = `${environment.API_URL}/recommendation`;
+
 
   constructor(private http: HttpClient) {}
 
@@ -35,6 +37,10 @@ export class MaterialsRecommenderService {
       data,
       HTTPOptions
     );
+  }
+  getRecommendedSequenceConcepts(data: any): Observable<any> {
+    this.recommendedSequenceConcepts = this.http.post<any>(`${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/sequence-recommendation`, data, HTTPOptions);
+    return this.recommendedSequenceConcepts
   }
 
   async rateRecommendedMaterials(data: any): Promise<any> {

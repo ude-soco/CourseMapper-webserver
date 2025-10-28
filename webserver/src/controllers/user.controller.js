@@ -366,6 +366,7 @@ export const getUser = async (req, res) => {
 export const getUserConcepts = async (req, res) => {
   let userId = req.params.userId;
 
+  
   let foundUser;
   let results;
   try {
@@ -375,41 +376,78 @@ export const getUserConcepts = async (req, res) => {
         error: `User with id ${userId} doesn't exist!`,
       });
     }
+    results={
+      understoodConcepts: foundUser.understoodConcepts,
+      didNotUnderstandConcepts: foundUser.didNotUnderstandConcepts,
+    }
+   
+    return res.status(200).send(results);
   } catch (err) {
+    console.error('Error in getUserConcepts:', err);
     return res.status(500).send({ error: err });
   }
-  results = {
-    understoodConcepts: foundUser.understoodConcepts,
-    didNotUnderstandConcepts: foundUser.didNotUnderstandConcepts,
-  };
-  return res.status(200).send(results);
+  // finally {
+  //   // Log completed requests for tracking
+  //   console.log(`Request completed for userId: ${userId}`);
+  // }
 };
 
-export async function updateUserConcepts(props) {
-  let userId = props.body.userId;
-  let foundUser;
-  const updatedDocument = {
-    $set: {
-      understoodConcepts: props.body.understoodConcepts,
-      didNotUnderstandConcepts: props.body.didNotUnderstandConcepts,
-    },
-  };
-  try {
-    foundUser = await User.findOne({ _id: props.body.userId }).populate(
-      "courses",
-      "-__v"
-    );
-    if (!foundUser) {
-      return res.status(404).send({
-        error: `User with id ${userId} doesn't exist!`,
+
+  export  const updateUserConcepts = async (req, res) => {
+    const { userId, understoodConcepts, didNotUnderstandConcepts } = req.body;
+  
+    try {
+      // Find the user based on the provided userId
+      let foundUser = await User.findOne({ _id: userId }).populate("courses", "-__v");
+      
+      if (!foundUser) {
+        return res.status(404).send({
+          error: `User with id ${userId} doesn't exist!`,
+        });
+      }
+  
+      // Add new `didNotUnderstandConcepts` items to `conceptTimestamps` with the current date if they don't exist
+      didNotUnderstandConcepts.forEach((conceptId) => {
+        if (!foundUser.conceptTimestamps.has(conceptId)) {
+          foundUser.conceptTimestamps.set(conceptId, new Date());
+        }
       });
+  
+      // Remove any items from `conceptTimestamps` that are no longer in `didNotUnderstandConcepts`
+      foundUser.conceptTimestamps.forEach((_, conceptId) => {
+        if (!didNotUnderstandConcepts.includes(conceptId)) {
+          foundUser.conceptTimestamps.delete(conceptId);
+        }
+      });
+  
+      // Prepare the update document
+      const updatedDocument = {
+        $set: {
+          understoodConcepts: understoodConcepts,
+          didNotUnderstandConcepts: didNotUnderstandConcepts,
+          conceptTimestamps: foundUser.conceptTimestamps, // Include the updated map
+        },
+      };
+  
+      // Update the user's concepts and timestamps in the database
+      const updateResult = await foundUser.updateOne(updatedDocument);
+      
+      // Check if any changes were made
+      if (updateResult.modifiedCount === 0) {
+        return res.status(200).send({
+          message: "No changes made. Check if the concepts are the same as before.",
+        });
+      }
+  
+      // Send success response
+      res.status(200).send({ message: "User concepts updated successfully." });
+    } catch (error) {
+      // Handle any errors during the process
+      console.error('Error updating user concepts:', error);
+      res.status(500).send({ error: error.message });
     }
-  } catch (err) {
-    return res.status(500).send({ error: err });
-  }
-  // console.log(updatedDocument)
-  await foundUser.updateOne(updatedDocument);
-}
+  };
+  
 
 export const getLastTimeCourseMapperOpened = async (req, res) => {
   let userId = req.userId;

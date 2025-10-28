@@ -45,6 +45,7 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ListboxModule } from 'primeng/listbox';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { CardModule } from 'primeng/card';
+import { CytoscapeSequenceRecommendedComponent } from './cytoscape-sequence-recommended/cytoscape-sequence-recommended.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -74,6 +75,7 @@ import { PaginatorModule } from 'primeng/paginator';
     LinkifyPipe,
     SafeHtmlPipe,
     CustomRecommendationOptionComponent,    
+    CytoscapeSequenceRecommendedComponent,    
   ],
   imports: [
     InputTextModule,
@@ -125,6 +127,7 @@ import { PaginatorModule } from 'primeng/paginator';
     CytoscapeRoadsComponent,
     GraphComponent,
     GraphRecommednedComponent,
+    CytoscapeSequenceRecommendedComponent
   ],
 
 })

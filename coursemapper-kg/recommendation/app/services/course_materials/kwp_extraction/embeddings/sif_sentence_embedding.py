@@ -6,6 +6,7 @@ from typing import List, Union
 import numpy as np
 import nltk
 from nltk.corpus import stopwords
+nltk.download('omw-1.4')
 from ..data_representation.document import Document
 from .word_embeddings.base import BaseWordEmbedder
 

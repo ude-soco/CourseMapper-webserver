@@ -4,3 +4,4 @@ compose.yaml
 Dockerfile
 README*
 stanford-corenlp-full-2018-02-27/
+cache/

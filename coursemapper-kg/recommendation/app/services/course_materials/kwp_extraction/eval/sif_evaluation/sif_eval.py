@@ -21,6 +21,7 @@ import pandas as pd
 import read_datasets
 from imports import EVALUATION_CONFIG
 
+nltk.download('omw-1.4')
 
 def calculate_scores(num_c, num_e, num_s):
     P = float(num_c) / float(num_e)
