@@ -68,11 +68,7 @@
           this.resourcesPagination?.recommendation_type === '3')" class="flex flex-row">
       <p class="mr-2 font-semibold">Keyphrases: </p>
       <div class="flex flex-wrap gap-1">
-       <!--  <div *ngFor="let concept of videoElement.keyphrases.slice(0, 5)" 
-            pTooltip="Main keyphrases extracted from this video"
-            class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">
-          {{concept[0]}}
-        </div> -->
+     
         <div *ngFor="let concept of videoElement.keyphrases.slice(0, 5)" 
      pTooltip="Main keyphrases extracted from this video"
      class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">
