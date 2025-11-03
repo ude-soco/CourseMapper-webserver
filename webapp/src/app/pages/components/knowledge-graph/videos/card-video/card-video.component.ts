@@ -1,5 +1,4 @@
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
-import {DomSanitizer,SafeHtml} from '@angular/platform-browser';
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { VideoElementModel } from '../models/video-element.model';
 import { Material } from 'src/app/models/Material';
@@ -85,8 +84,8 @@ export class CardVideoComponent {
       );
       this.abstractPartsTruncated = this.truncateParts(this.abstractParts, this.DESCRIPTION_MAX_LENGTH);
     }
-
-        console.log(this.videoElement);
+  //  For debugging:
+   // console.log(this.videoElement);
   }
   
   public readVideo(videoElement: any): void {
@@ -192,6 +191,13 @@ export class CardVideoComponent {
   return index !== -1 ? this.conceptColors[index] : 'red';
   }
 
+  isURL(text: string): boolean {
+  const trimmed = text.trim();
+
+  // Only treat it as a URL if it starts with http/https/www
+  // Ignore any trailing stuff like " ▷SECURE"
+  return /^(https?:\/\/|www\.)[^\s]+/i.test(trimmed);
+}
 
 escapeRegex(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
@@ -257,7 +263,7 @@ generateKeyphraseVariants(kp: string): string[] {
 
   return Array.from(variants);
 }
-/* 
+
 generateParts(
   text: string,
   keyphrases: string[],
@@ -266,8 +272,9 @@ generateParts(
   this.abstractParts = [];
 
   const cleanedAbstract = this.cleanTextForLatex(text);
+/* //  For debugging:
   console.log("🔎 Original abstract:", text);
-  console.log("🧹 Cleaned abstract:", cleanedAbstract);
+  console.log("🧹 Cleaned abstract:", cleanedAbstract); */
 
   if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
     this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
@@ -281,107 +288,12 @@ generateParts(
     const cleaned = this.cleanKeyphrase(raw);
     const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
 
-    const variants = this.generateKeyphraseVariants(cleaned);
-
-    let foundVariantInAbstract = false;
-    variants.forEach(v => {
-      const regex = new RegExp(this.escapeRegex(v), "gi");
-      if (regex.test(cleanedAbstract)) {
-        foundVariantInAbstract = true;
-      }
-
-      expandedKeyphrases.push({
-        text: v,
-        dnu,
-        original: cleaned,
-      });
-    });
-
-    if (!foundVariantInAbstract) {
-      console.warn(`⚠️ No match in abstract for keyphrase: "${cleaned}"`);
-    }
-  });
-
-  const matches: { index: number; length: number; kp: string; dnu: string }[] = [];
-
-  expandedKeyphrases.forEach(({ text: kp, dnu, original }) => {
-    if (!kp) return;
-
-    const regex = new RegExp(this.escapeRegex(kp), "gi");
-    let match: RegExpExecArray | null;
-    while ((match = regex.exec(cleanedAbstract)) !== null) {
-      matches.push({
-        index: match.index,
-        length: match[0].length,
-        kp: original,
-        dnu,
-      });
-    }
-  });
-
-  matches.sort((a, b) => a.index - b.index || b.length - a.length);
-
-  const filteredMatches: typeof matches = [];
-  let lastIndex = -1;
-  for (const match of matches) {
-    if (match.index >= lastIndex) {
-      filteredMatches.push(match);
-      lastIndex = match.index + match.length;
-    }
-  }
-
-  let currentIndex = 0;
-  for (const match of filteredMatches) {
-    if (match.index > currentIndex) {
-      this.abstractParts.push({
-        text: cleanedAbstract.slice(currentIndex, match.index),
-        isKeyphrase: false,
-      });
-    }
-
-    this.abstractParts.push({
-      text: cleanedAbstract.slice(match.index, match.index + match.length),
-      isKeyphrase: true,
-      keyphraseMeta: {
-        concept: match.dnu,
-        originalKeyphrase: match.kp,
-        color: this.getColorForConcept(match.dnu),
-      },
-    });
-
-    currentIndex = match.index + match.length;
-  }
-
-  if (currentIndex < cleanedAbstract.length) {
-    this.abstractParts.push({
-      text: cleanedAbstract.slice(currentIndex),
-      isKeyphrase: false,
-    });
-  }
-} */
-
-generateParts(
-  text: string,
-  keyphrases: string[],
-  keyphrases_dnu_similarity_score: any[]
-) {
-  this.abstractParts = [];
-
-  const cleanedAbstract = this.cleanTextForLatex(text);
-  console.log("🔎 Original abstract:", text);
-  console.log("🧹 Cleaned abstract:", cleanedAbstract);
-
-  if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
-    this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
+      // Skip keyphrases that look like URLs
+  if (this.isURL(cleaned)) {
+    /* //  For debugging:
+    console.warn(`Skipping URL-like keyphrase: "${cleaned}"`); */
     return;
   }
-
-  const expandedKeyphrases: { text: string; dnu: string; original: string }[] = [];
-
-  keyphrases.forEach((kp, i) => {
-    const raw = Array.isArray(kp) ? kp[0] : kp;
-    const cleaned = this.cleanKeyphrase(raw);
-    const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
 
     const variants = this.generateKeyphraseVariants(cleaned);
 
@@ -399,9 +311,10 @@ generateParts(
       });
     });
 
+   /* //  For debugging:
     if (!foundVariantInAbstract) {
       console.warn(`⚠️ No match in video description for keyphrase: "${cleaned}"`);
-    }
+    } */
   });
 
   const matches: { index: number; length: number; kp: string; dnu: string }[] = [];
@@ -501,25 +414,8 @@ truncateParts(
 }
 
 
-
-  /* getSimilarityScoresAlignedToFixedYaxisPopUp(keyphrase: string): number[] {
-  const index = this.videoElement.keyphrases.findIndex(tuple => tuple[0] === keyphrase);
-  if (index === -1) {
-    console.warn(`Keyphrase "${keyphrase}" not found.`);
-    return [];
-  }
-  const similarityObject = this.videoElement.keyphrases_dnu_similarity_score[index];
-console.log('Similarity object:',this.videoElement.keyphrases_dnu_similarity_score[index]);
-  // Map scores based on fixed Y-axis order
-  return this.conceptsNames.map(dnu => {
-    return similarityObject.hasOwnProperty(dnu) ? similarityObject[dnu] : 0;
-  });
-} */
-
 getSimilarityScoresAlignedToFixedYaxisPopUp(clickedKeyphrase: string): number[] {
   if (!clickedKeyphrase) return [];
-
-  // Find the original keyphrase associated with the clicked variant
   let originalKeyphrase = clickedKeyphrase;
 
   // Search in abstractParts to get the originalKeyphrase
@@ -562,22 +458,19 @@ generatePopupBarChart() {
   const labels = this.conceptsNames;
   const rawScores = this.getSimilarityScoresAlignedToFixedYaxisPopUp(this.selectedKeyphrase);
 
-  console.log('Selected keyphrase:', this.selectedKeyphrase);
+  // Clamp negative scores to 0 and scale
+  const scaledData = rawScores.map(score => Math.max(0, score) * 100);
 
-console.log('DNU Names:', this.conceptsNames);
+  const dynamicBarColors = labels.map((label, index) => this.conceptColors[index] || 'red');
 
-console.log('Raw scores:', rawScores);
-
-
-  const scaledData = rawScores.map(score => score * 100);
-
-  const dynamicBarColors = labels.map(label => {
-    const index = this.conceptsNames.indexOf(label);
-    return index !== -1 ? this.conceptColors[index] : 'red';
-  });
+  // truncate long labels for y-axis
+  const maxLabelLength = 20;
+  const truncatedLabels = labels.map(label =>
+    label.length > maxLabelLength ? label.slice(0, maxLabelLength) + '…' : label
+  );
 
   if (this.popupChart) {
-    this.popupChart.data.labels = labels;
+    this.popupChart.data.labels = truncatedLabels;
     this.popupChart.data.datasets[0].data = scaledData;
     this.popupChart.data.datasets[0].backgroundColor = dynamicBarColors;
     this.popupChart.update('none');
@@ -587,7 +480,7 @@ console.log('Raw scores:', rawScores);
   this.popupChart = new Chart(canvas, {
     type: 'bar',
     data: {
-      labels: labels,
+      labels: truncatedLabels,
       datasets: [{
         label: 'Similarity Score (%)',
         data: scaledData,
@@ -602,21 +495,38 @@ console.log('Raw scores:', rawScores);
       responsive: false,
       maintainAspectRatio: true,
       animation: { duration: 0 },
+      interaction: {
+        mode: 'nearest',   // tooltip shows on nearest bar
+        intersect: true    // only when hovering the bar itself
+      },
       scales: {
         x: {
           beginAtZero: true,
           min: 0,
           max: 100,
           title: { display: true, text: 'Similarity Score (%)', font: { weight: 'bold', size: 14 } },
-          ticks: { stepSize: 20, callback: (value) => Number(value).toFixed(0) },
+          ticks: { stepSize: 20 },
           grid: { display: false }
         },
         y: {
-          title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } },
-          grid: { display: false }
+          grid: { display: false },
+          title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } }
         }
       },
       plugins: {
+       tooltip: {
+  enabled: true,
+  callbacks: {
+    title: (tooltipItems) => {
+      const index = tooltipItems[0].dataIndex;
+      return labels[index]; // full original label
+    },
+    label: (tooltipItem) => {
+      const value = tooltipItem.raw as number; // cast to number
+      return value.toFixed(2) + '%';
+    }
+  }
+},
         datalabels: {
           anchor: 'end',
           align: 'right',
@@ -624,14 +534,13 @@ console.log('Raw scores:', rawScores);
           color: '#000',
           font: { weight: 'bold' }
         },
-        legend: {
-      display: false  // 🔴 Hide the legend
-    },
+        legend: { display: false }
       }
     },
     plugins: [ChartDataLabels]
   });
 }
+
 
 lastTarget: EventTarget | null = null;
 

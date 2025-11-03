@@ -7,7 +7,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { VideoElementModel } from '../models/video-element.model';
-import { videoMock } from '../mocks/video.mock';
 import { Router } from '@angular/router';
 import { Material } from 'src/app/models/Material';
 import { ResourcesPagination } from 'src/app/models/croForm';

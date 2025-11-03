@@ -33,10 +33,15 @@ export class WordCloudComponent implements AfterViewInit {
     this.generateWordCloud();
   }
 
+  isURL(text: string): boolean {
+  const trimmed = text.trim();
+  return /^(https?:\/\/|www\.)[^\s]+/i.test(trimmed);
+}
+
   cleanKeyphrase(kp: string): string {
     return kp
-      .replace(/\\[a-zA-Z]+\s*/g, '')  // remove LaTeX commands
-      .replace(/[{}]/g, '')            // remove braces
+      .replace(/\\[a-zA-Z]+\s*/g, '')  
+      .replace(/[{}]/g, '')            
       .toLowerCase()
       .replace(/\s+/g, ' ')
       .trim();
@@ -77,12 +82,23 @@ export class WordCloudComponent implements AfterViewInit {
       return ((w - minWeight) / (maxWeight - minWeight)) * (maxFont - minFont) + minFont;
     };
 
-    // Build cleaned display list
-    const displayTuples = this.keyphrasesImportanceTuple.map(([phrase, weight]) => {
-      const rawPhrase = Array.isArray(phrase) ? phrase[0] : phrase;
-      const cleaned = this.cleanKeyphrase(rawPhrase);
-      return [cleaned, scaleWeight(weight)]; // scaled font size
-    });
+// Build cleaned display list
+const displayTuples = this.keyphrasesImportanceTuple
+  .map(([phrase, weight]) => {
+    const rawPhrase = Array.isArray(phrase) ? phrase[0] : phrase;
+    const cleaned = this.cleanKeyphrase(rawPhrase);
+
+    // 🧠 Skip URLs (same logic as in card article component)
+    if (this.isURL(cleaned)) {
+    /*   //  For debugging:
+    console.warn(`Skipping URL-like keyphrase in word cloud: "${cleaned}"`); */
+      return null;
+    }
+
+    return [cleaned, scaleWeight(weight)]; // scaled font size
+  })
+  .filter((item): item is [string, number] => !!item); // filter out nulls
+
 
     // Map colors by cleaned keyphrase
     const colorMapping = new Map<string, string>();
@@ -139,7 +155,8 @@ export class WordCloudComponent implements AfterViewInit {
     });
 
     if (index === -1) {
-      console.warn(`Keyphrase "${keyphrase}" not found (after cleaning).`);
+      /* //  For debugging:
+       console.warn(`Keyphrase "${keyphrase}" not found (after cleaning).`); */
       return [];
     }
 
@@ -152,73 +169,90 @@ export class WordCloudComponent implements AfterViewInit {
   }
 
   generateBarChart() {
-    if (!this.barChartCanvas || !this.selectedWord) return;
+  if (!this.barChartCanvas || !this.selectedWord) return;
 
-    const canvas = this.barChartCanvas.nativeElement;
-    canvas.width = 300;
-    canvas.height = 250;
+  const canvas = this.barChartCanvas.nativeElement;
+  canvas.width = 300;
+  canvas.height = 250;
 
-    const labels = this.conceptsNames;
-    const rawScores = this.getSimilarityScoresAlignedToFixedYaxis(this.selectedWord);
-    const scaledData = rawScores.map(score => score * 100);
+  const labels = this.conceptsNames;
+  const rawScores = this.getSimilarityScoresAlignedToFixedYaxis(this.selectedWord);
 
-    const dynamicBarColors = labels.map(label => {
-      const index = this.conceptsNames.indexOf(label);
-      return index !== -1 ? this.conceptColors[index] : 'red';
-    });
+  // Clamp negative scores to 0 and scale to percentage
+  const scaledData = rawScores.map(score => Math.max(0, score) * 100);
 
-    if (this.chart) {
-      this.chart.data.labels = labels;
-      this.chart.data.datasets[0].data = scaledData;
-      this.chart.data.datasets[0].backgroundColor = dynamicBarColors;
-      this.chart.update('none');
-      return;
-    }
+  const dynamicBarColors = labels.map((label, index) => this.conceptColors[index] || 'red');
 
-    this.chart = new Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{
-          label: 'Similarity Score (%)',
-          data: scaledData,
-          backgroundColor: dynamicBarColors,
-          borderWidth: 1,
-          barThickness: 20,
-          categoryPercentage: 0.4
-        }]
+  // Truncate long labels
+  const maxLabelLength = 17;
+  const truncatedLabels = labels.map(label =>
+    label.length > maxLabelLength ? label.slice(0, maxLabelLength) + '…' : label
+  );
+
+  if (this.chart) {
+    this.chart.data.labels = truncatedLabels;
+    this.chart.data.datasets[0].data = scaledData;
+    this.chart.data.datasets[0].backgroundColor = dynamicBarColors;
+    this.chart.update('none');
+    return;
+  }
+
+  this.chart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: truncatedLabels,
+      datasets: [{
+        label: 'Similarity Score (%)',
+        data: scaledData,
+        backgroundColor: dynamicBarColors,
+        borderWidth: 1,
+        barThickness: 20,
+        categoryPercentage: 0.4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: false,
+      maintainAspectRatio: false,
+      animation: { duration: 0 },
+      interaction: {
+        mode: 'nearest',
+        intersect: true
       },
-      options: {
-        indexAxis: 'y',
-        responsive: false,
-        maintainAspectRatio: false,
-        animation: { duration: 0 },
-        scales: {
-          x: {
-            beginAtZero: true,
-            min: 0,
-            max: 100,
-            title: { display: true, text: 'Similarity Score (%)', font: { weight: 'bold', size: 14 } },
-            ticks: { stepSize: 20, callback: (value) => Number(value).toFixed(0) },
-            grid: { display: false }
-          },
-          y: {
-            title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } },
-            grid: { display: false }
-          }
+      scales: {
+        x: {
+          beginAtZero: true,
+          min: 0,
+          max: 100,
+          title: { display: true, text: 'Similarity Score (%)', font: { weight: 'bold', size: 14 } },
+          ticks: { stepSize: 20 },
+          grid: { display: false } // remove vertical grid lines
         },
-        plugins: {
-          datalabels: {
-            anchor: 'end',
-            align: 'right',
-            formatter: (value) => value.toFixed(2) + '%',
-            color: '#000',
-            font: { weight: 'bold' }
-          },
-          legend: { display: false }
+        y: {
+          grid: { display: false }, // remove horizontal grid lines
+          title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } }
         }
       },
-      plugins: [ChartDataLabels]
-    });
-  }
+      plugins: {
+        tooltip: {
+          enabled: true,
+          callbacks: {
+            title: (tooltipItems) => labels[tooltipItems[0].dataIndex],
+            label: (tooltipItem) => (tooltipItem.raw as number).toFixed(2) + '%'
+          }
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'right',
+          formatter: (value) => (value as number).toFixed(2) + '%',
+          color: '#000',
+          font: { weight: 'bold' }
+        },
+        legend: { display: false }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+}
+
 }
