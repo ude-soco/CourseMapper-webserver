@@ -277,10 +277,11 @@ export class ResultViewComponent {
     });
   }
 
+/* //  For debugging: 
   ngAfterViewInit() {
-       console.log('all concepts object:', this.allConceptsObj);
+    console.log('all concepts object:', this.allConceptsObj);
     console.log('concepts:', this.concepts);
-  }
+  } */
 
   ngOnChanges() {
     this.loadResultForSelectedModel();

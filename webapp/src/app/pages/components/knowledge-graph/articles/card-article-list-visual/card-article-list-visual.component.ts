@@ -1,7 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { ArticleElementModel } from '../models/article-element.model';
-import { ArticleMock } from '../mocks/article.mock';
-import { HighlightPipe } from 'src/app/highlight.pipe';
 import { Material } from 'src/app/models/Material';
 import { ResourcesPagination } from 'src/app/models/croForm';
 @Component({

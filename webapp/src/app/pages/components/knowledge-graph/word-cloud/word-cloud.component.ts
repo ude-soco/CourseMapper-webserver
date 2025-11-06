@@ -33,10 +33,15 @@ export class WordCloudComponent implements AfterViewInit {
     this.generateWordCloud();
   }
 
+  isURL(text: string): boolean {
+  const trimmed = text.trim();
+  return /^(https?:\/\/|www\.)[^\s]+/i.test(trimmed);
+}
+
   cleanKeyphrase(kp: string): string {
     return kp
-      .replace(/\\[a-zA-Z]+\s*/g, '')  // remove LaTeX commands
-      .replace(/[{}]/g, '')            // remove braces
+      .replace(/\\[a-zA-Z]+\s*/g, '')  
+      .replace(/[{}]/g, '')            
       .toLowerCase()
       .replace(/\s+/g, ' ')
       .trim();
@@ -77,12 +82,23 @@ export class WordCloudComponent implements AfterViewInit {
       return ((w - minWeight) / (maxWeight - minWeight)) * (maxFont - minFont) + minFont;
     };
 
-    // Build cleaned display list
-    const displayTuples = this.keyphrasesImportanceTuple.map(([phrase, weight]) => {
-      const rawPhrase = Array.isArray(phrase) ? phrase[0] : phrase;
-      const cleaned = this.cleanKeyphrase(rawPhrase);
-      return [cleaned, scaleWeight(weight)]; // scaled font size
-    });
+// Build cleaned display list
+const displayTuples = this.keyphrasesImportanceTuple
+  .map(([phrase, weight]) => {
+    const rawPhrase = Array.isArray(phrase) ? phrase[0] : phrase;
+    const cleaned = this.cleanKeyphrase(rawPhrase);
+
+    // 🧠 Skip URLs (same logic as in card article component)
+    if (this.isURL(cleaned)) {
+    /*   //  For debugging:
+    console.warn(`Skipping URL-like keyphrase in word cloud: "${cleaned}"`); */
+      return null;
+    }
+
+    return [cleaned, scaleWeight(weight)]; // scaled font size
+  })
+  .filter((item): item is [string, number] => !!item); // filter out nulls
+
 
     // Map colors by cleaned keyphrase
     const colorMapping = new Map<string, string>();
@@ -139,7 +155,8 @@ export class WordCloudComponent implements AfterViewInit {
     });
 
     if (index === -1) {
-      console.warn(`Keyphrase "${keyphrase}" not found (after cleaning).`);
+      /* //  For debugging:
+       console.warn(`Keyphrase "${keyphrase}" not found (after cleaning).`); */
       return [];
     }
 
@@ -151,74 +168,115 @@ export class WordCloudComponent implements AfterViewInit {
     );
   }
 
-  generateBarChart() {
-    if (!this.barChartCanvas || !this.selectedWord) return;
+hasPositiveScores = true; 
 
-    const canvas = this.barChartCanvas.nativeElement;
-    canvas.width = 300;
-    canvas.height = 250;
+generateBarChart() {
+  if (!this.barChartCanvas || !this.selectedWord) return;
 
-    const labels = this.conceptsNames;
-    const rawScores = this.getSimilarityScoresAlignedToFixedYaxis(this.selectedWord);
-    const scaledData = rawScores.map(score => score * 100);
+  const canvas = this.barChartCanvas.nativeElement;
+  canvas.width = 300;
+  canvas.height = 250;
 
-    const dynamicBarColors = labels.map(label => {
-      const index = this.conceptsNames.indexOf(label);
-      return index !== -1 ? this.conceptColors[index] : 'red';
-    });
+  const rawScores = this.getSimilarityScoresAlignedToFixedYaxis(this.selectedWord);
+  const originalLabels = this.conceptsNames;
 
-    if (this.chart) {
-      this.chart.data.labels = labels;
-      this.chart.data.datasets[0].data = scaledData;
-      this.chart.data.datasets[0].backgroundColor = dynamicBarColors;
-      this.chart.update('none');
-      return;
+  // Filter out negative scores and corresponding labels/colors
+  const filteredData: number[] = [];
+  const filteredLabels: string[] = [];
+  const filteredColors: string[] = [];
+
+  rawScores.forEach((score, i) => {
+    if (score > 0) {
+      filteredData.push(score * 100); // scale to percentage
+      filteredLabels.push(
+        originalLabels[i].length > 17
+          ? originalLabels[i].slice(0, 17) + '…'
+          : originalLabels[i]
+      );
+      filteredColors.push(this.conceptColors[i] || 'red');
     }
+  });
 
-    this.chart = new Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{
+  // Determine whether to show chart or message
+  this.hasPositiveScores = filteredData.length > 0;
+
+  // Show/hide canvas
+  canvas.style.display = this.hasPositiveScores ? 'block' : 'none';
+
+  // Optional: if all negative, you can show a message in the container
+  const container = canvas.parentElement;
+  if (!this.hasPositiveScores && container) {
+    container.querySelector('.no-bars-msg')?.remove();
+    const msg = document.createElement('div');
+    msg.className = 'no-bars-msg';
+    msg.style.textAlign = 'center';
+    msg.style.padding = '20px';
+    msg.style.fontSize = '14px';
+    msg.innerText = `This keyphrase '${this.selectedWord}' is not at all similar to the concept(s) used in generating recommendations.`;
+    container.appendChild(msg);
+    // destroy chart if exists
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    return;
+  } else if (container) {
+    container.querySelector('.no-bars-msg')?.remove();
+  }
+
+  if (this.chart) {
+    this.chart.data.labels = filteredLabels;
+    this.chart.data.datasets[0].data = filteredData;
+    this.chart.data.datasets[0].backgroundColor = filteredColors;
+    this.chart.update('none');
+    return;
+  }
+
+  this.chart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: filteredLabels,
+      datasets: [
+        {
           label: 'Similarity Score (%)',
-          data: scaledData,
-          backgroundColor: dynamicBarColors,
+          data: filteredData,
+          backgroundColor: filteredColors,
           borderWidth: 1,
           barThickness: 20,
-          categoryPercentage: 0.4
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: false,
-        maintainAspectRatio: false,
-        animation: { duration: 0 },
-        scales: {
-          x: {
-            beginAtZero: true,
-            min: 0,
-            max: 100,
-            title: { display: true, text: 'Similarity Score (%)', font: { weight: 'bold', size: 14 } },
-            ticks: { stepSize: 20, callback: (value) => Number(value).toFixed(0) },
-            grid: { display: false }
-          },
-          y: {
-            title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } },
-            grid: { display: false }
-          }
+          categoryPercentage: 0.4,
         },
-        plugins: {
-          datalabels: {
-            anchor: 'end',
-            align: 'right',
-            formatter: (value) => value.toFixed(2) + '%',
-            color: '#000',
-            font: { weight: 'bold' }
-          },
-          legend: { display: false }
-        }
+      ],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: false,
+      maintainAspectRatio: false,
+      animation: { duration: 0 },
+      interaction: { mode: 'nearest', intersect: true },
+      scales: {
+        x: { beginAtZero: true, min: 0, max: 100, title: { display: true, text: 'Similarity Score (%)', font: { weight: 'bold', size: 14 } }, ticks: { stepSize: 20 }, grid: { display: false } },
+        y: { grid: { display: false }, title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } } },
       },
-      plugins: [ChartDataLabels]
-    });
-  }
+      plugins: {
+        tooltip: {
+          enabled: true,
+          callbacks: {
+            title: (tooltipItems) => filteredLabels[tooltipItems[0].dataIndex],
+            label: (tooltipItem) => (tooltipItem.raw as number).toFixed(2) + '%',
+          },
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'right',
+          formatter: (value) => (value as number).toFixed(2) + '%',
+          color: '#000',
+          font: { weight: 'bold' },
+        },
+        legend: { display: false },
+      },
+    },
+    plugins: [ChartDataLabels],
+  });
+}
+
 }

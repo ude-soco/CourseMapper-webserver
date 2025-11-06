@@ -1,7 +1,7 @@
 .vline {
     display: flex;
     flex-direction: column;
-    width: 20px; /* adjust as needed */
+    width: 20px;
     height: 100%;
     border-right: 1px solid #ccc;
   }
