@@ -1,5 +1,5 @@
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
-import {DomSanitizer,SafeHtml} from '@angular/platform-browser';
+import {DomSanitizer} from '@angular/platform-browser';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { VideoElementModel } from '../models/video-element.model';
 import { Material } from 'src/app/models/Material';
@@ -36,7 +36,6 @@ export class CardVideoComponentTextual {
   @Input()
   public videoElement: VideoElementModel;
   @Input() public concepts: { name: string }[] = [];
-  // @Input() public notUnderstoodConcepts: string[];
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Output() onWatchVideo: EventEmitter<any> = new EventEmitter();
   @Input() userId: string;
@@ -71,7 +70,7 @@ export class CardVideoComponentTextual {
 
 
   ngOnInit(): void {
-    console.log(this.videoElement);
+    // console.log(this.videoElement);
     this.notUnderstoodConceptsNames = this.concepts?.map(dnu => dnu.name) ?? [];
 
     this.coloredBandData = {
@@ -195,71 +194,89 @@ export class CardVideoComponentTextual {
   return index !== -1 ? this.conceptColors[index] : 'red';
   }
 
+ isURL(text: string): boolean {
+    const trimmed = text.trim();
 
-escapeRegex(text: string): string {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
-}
-
-cleanKeyphrase(kp: string): string {
-  return kp
-    // --- LaTeX cleanup ---
-    .replace(/\\[a-zA-Z]+\s*/g, '')  // remove LaTeX commands like \frac, \alpha, \displaystyle
-    .replace(/[{}]/g, '')            // remove LaTeX braces
-
-    // --- General text normalization ---
-    .toLowerCase()                   // make case-insensitive
-    .replace(/\s+/g, ' ')            // collapse multiple spaces/tabs/newlines into one space
-    .trim();                         // remove leading/trailing spaces
-}
-
-cleanTextForLatex(text: string): string {
-  return text
-    // Remove paired patterns like: "F {\displaystyle F}" => "F"
-    .replace(/\b([A-Za-z])\s*\{\s*\\[a-zA-Z]+\s*\1\s*\}/g, '$1')
-
-    // Remove full LaTeX blocks like: {\command ...}
-    .replace(/\{\s*\\[a-zA-Z]+\s*[^{}]*?\}/g, '')
-
-    // Remove standalone LaTeX commands like \displaystyle
-    .replace(/\\[a-zA-Z]+\s*/g, '')
-
-    // Remove stray braces
-    .replace(/[{}]/g, '')
-
-    // Collapse multiple spaces
-    .replace(/\s{2,}/g, ' ')
-
-    .trim();
-}
-
-generateKeyphraseVariants(kp: string): string[] {
-  const variants = new Set<string>();
-
-  const base = kp.toLowerCase().trim();
-
-  // normalize multiple spaces
-  const collapsed = base.replace(/\s+/g, ' ');
-  variants.add(collapsed);
-
-  // hyphen/space variants
-  variants.add(collapsed.replace(/\s*-\s*/g, '-'));   // no space hyphen
-  variants.add(collapsed.replace(/\s*-\s*/g, ' - ')); // spaced hyphen
-  variants.add(collapsed.replace(/\s*-\s*/g, ' '));   // no hyphen
-
-  // diacritic-insensitive variant
-  variants.add(collapsed.normalize("NFD").replace(/[\u0300-\u036f]/g, ''));
-
-  // plural form (add s at end of last word)
-  const pluralForm = collapsed.replace(/(\b\w+)$/, '$1s');
-  variants.add(pluralForm);
-
-  // singular form (if already ends with s, drop it)
-  if (collapsed.endsWith('s')) {
-    variants.add(collapsed.slice(0, -1));
+    // Only treat it as a URL if it starts with http/https/www
+    // Ignore any trailing stuff like " ▷SECURE"
+    return /^(https?:\/\/|www\.)[^\s]+/i.test(trimmed);
   }
 
-  return Array.from(variants);
-}
+  escapeRegex(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+  }
+
+  cleanKeyphrase(kp: string): string {
+    return (
+      kp
+        // --- LaTeX cleanup ---
+        .replace(/\\[a-zA-Z]+\s*/g, '') // remove LaTeX commands like \frac, \alpha, \displaystyle
+        .replace(/[{}]/g, '') // remove LaTeX braces
+
+        .replace(/\s*([|<>=()\-+])\s*/g, '$1') // remove spaces around math symbols
+        // --- General text normalization ---
+        .toLowerCase() // make case-insensitive
+        .replace(/\s+/g, ' ') // collapse multiple spaces/tabs/newlines into one space
+        .trim()
+    ); // remove leading/trailing spaces
+  }
+
+  cleanTextForLatex(text: string): string {
+    return (
+      text
+        // --- Remove invisible Unicode math characters (like ⁡ U+2061) ---
+        .replace(/[\u200B-\u200F\u2060-\u206F]/g, '')
+
+        // Remove paired patterns like: "F {\displaystyle F}" => "F"
+        .replace(/\b([A-Za-z])\s*\{\s*\\[a-zA-Z]+\s*\1\s*\}/g, '$1')
+
+        // Remove full LaTeX blocks like: {\command ...}
+        .replace(/\{\s*\\[a-zA-Z]+\s*[^{}]*?\}/g, '')
+
+        // Remove standalone LaTeX commands like \displaystyle
+        .replace(/\\[a-zA-Z]+\s*/g, '')
+
+        // Remove stray braces
+        .replace(/[{}]/g, '')
+
+        // Remove spaces around math symbols
+        .replace(/\s*([|<>=()\-+])\s*/g, '$1')
+
+        // Collapse multiple spaces
+        .replace(/\s{2,}/g, ' ')
+
+        .trim()
+    );
+  }
+
+  generateKeyphraseVariants(kp: string): string[] {
+    const variants = new Set<string>();
+
+    const base = kp.toLowerCase().trim();
+
+    // normalize multiple spaces
+    const collapsed = base.replace(/\s+/g, ' ');
+    variants.add(collapsed);
+
+    // hyphen/space variants
+    variants.add(collapsed.replace(/\s*-\s*/g, '-')); // no space hyphen
+    variants.add(collapsed.replace(/\s*-\s*/g, ' - ')); // spaced hyphen
+    variants.add(collapsed.replace(/\s*-\s*/g, ' ')); // no hyphen
+
+    // diacritic-insensitive variant
+    variants.add(collapsed.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+    // plural form (add s at end of last word)
+    const pluralForm = collapsed.replace(/(\b\w+)$/, '$1s');
+    variants.add(pluralForm);
+
+    // singular form (if already ends with s, drop it)
+    if (collapsed.endsWith('s')) {
+      variants.add(collapsed.slice(0, -1));
+    }
+
+    return Array.from(variants);
+  }
 
 generateParts(
   text: string,
@@ -269,8 +286,8 @@ generateParts(
   this.abstractParts = [];
 
   const cleanedAbstract = this.cleanTextForLatex(text);
-  console.log("🔎 Original abstract:", text);
-  console.log("🧹 Cleaned abstract:", cleanedAbstract);
+  // console.log("Original abstract:", text);
+  // console.log("Cleaned abstract:", cleanedAbstract);
 
   if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
     this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
@@ -283,6 +300,12 @@ generateParts(
     const raw = Array.isArray(kp) ? kp[0] : kp;
     const cleaned = this.cleanKeyphrase(raw);
     const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
+
+    if (this.isURL(cleaned)) {
+      /*   // For debugging: Skip keyphrases that look like URLs
+      console.warn(`Skipping URL-like keyphrase: "${cleaned}"`); */
+        return;
+      } 
 
     const variants = this.generateKeyphraseVariants(cleaned);
 
@@ -404,47 +427,6 @@ truncateParts(
   return result;
 }
 
-
-
-
-/* getSimilarityScoresAlignedToFixedYaxisPopUp(clickedKeyphrase: string): number[] {
-  if (!clickedKeyphrase) return [];
-
-  // Find the original keyphrase associated with the clicked variant
-  let originalKeyphrase = clickedKeyphrase;
-
-  // Search in abstractParts to get the originalKeyphrase
-  const part = this.abstractParts.find(
-    p => p.isKeyphrase && p.text === clickedKeyphrase && p.keyphraseMeta?.originalKeyphrase
-  );
-  if (part?.keyphraseMeta?.originalKeyphrase) {
-    originalKeyphrase = part.keyphraseMeta.originalKeyphrase;
-  }
-
-  const cleanedKey = this.cleanKeyphrase(originalKeyphrase);
-
-  // Find index in videoElement.keyphrases
-  const index = this.videoElement.keyphrases.findIndex(tuple => {
-    const candidate = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
-    return this.cleanKeyphrase(candidate) === cleanedKey;
-  });
-
-  if (index === -1) {
-    console.warn(`Keyphrase "${clickedKeyphrase}" (original: "${originalKeyphrase}") not found in article.keyphrases (after cleaning).`);
-    return [];
-  }
-
-  const similarityObject = this.videoElement.keyphrases_dnu_similarity_score[index];
-  return this.conceptsNames.map(dnu =>
-    similarityObject && Object.prototype.hasOwnProperty.call(similarityObject, dnu)
-      ? similarityObject[dnu]
-      : 0
-  );
-} */
-
- 
-
-
   showPopup(keyphrase: string, clientX: number, clientY: number) {
       this.keyphraseClicked.emit({ keyphrase, clientX, clientY });
     }
@@ -454,80 +436,117 @@ truncateParts(
 }
 
   getFormattedSimilarityText(concept: string, score: number): string {
-  const percent = (score * 100).toFixed(0);
+  const percent = (score * 100).toFixed(2);
   return `This video is <strong>${percent}%</strong> similar to <strong>“${concept}”</strong>`;
 }
 
-//selectedKeyphrase: string = '';
-//textualSimilarityInfo: string[] = [];
-//popupVisible: boolean = false;
 
-  showTextualSimilarityPopover(partOrKeyphrase: { text: string; isKeyphrase?: boolean; keyphraseMeta?: any } | string, event: MouseEvent) {
-  const part = typeof partOrKeyphrase === 'string'
-    ? { text: partOrKeyphrase, isKeyphrase: true }
-    : partOrKeyphrase;
-
-  if (!part?.text) return;
-
-  const meta = part.keyphraseMeta ?? {};
-  const originalKeyphrase = meta.originalKeyphrase ?? part.text;
-  const normalized = this.cleanKeyphrase(originalKeyphrase);
-
-  let similarities = meta.similarityData;
-  let index = typeof meta.sourceIndex === 'number' ? meta.sourceIndex : -1;
-
-  if (index < 0) {
-    index = (this.videoElement?.keyphrases ?? []).findIndex(tuple => {
-      const raw = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
-      return this.cleanKeyphrase(raw) === normalized;
-    });
+showTextualSimilarityPopover(
+  part: { text: string; keyphraseMeta?: { originalKeyphrase?: string; sourceIndex?: number; similarityData?: any } },
+  event: MouseEvent
+) {
+  if (!part) {
+    return;
   }
+
+  const resolvedMeta = part.keyphraseMeta ?? {};
+  const originalKeyphrase = resolvedMeta.originalKeyphrase ?? part.text;
+  const normalizedKeyphrase = this.cleanKeyphrase(originalKeyphrase);
+
+  // Prefer the stored index; fall back to searching
+  let index = typeof resolvedMeta.sourceIndex === 'number'
+    ? resolvedMeta.sourceIndex
+    : this.videoElement.keyphrases.findIndex(tuple => {
+        const raw = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
+        return this.cleanKeyphrase(raw) === normalizedKeyphrase;
+      });
+
+  let similarities = resolvedMeta.similarityData;
 
   if (!similarities && index >= 0) {
     similarities = this.videoElement.keyphrases_dnu_similarity_score?.[index];
   }
 
   if (!similarities) {
-    console.warn(`Keyphrase "${part.text}" (normalized: "${normalized}") not found.`);
+    console.warn(`Keyphrase "${part.text}" (normalized: "${normalizedKeyphrase}") not found.`);
     return;
   }
 
   this.selectedKeyphrase = originalKeyphrase;
-  this.textualSimilarityInfo = Object.entries(similarities).map(
-    ([dnu, score]: [string, number]) =>
-      `<strong>${(score * 100).toFixed(0)}%</strong> – <strong>“${dnu}”</strong>`
-  );
+
+  const similarityValues = Object.values(similarities) as number[];
+  const allNonPositive = similarityValues.every(score => score <= 0);
+
+  let formattedInfo: string[];
+
+  if (allNonPositive) {
+    formattedInfo = [
+      'This keyphrase is not at all similar to the concept(s) used in generating recommendations.'
+    ];
+  } else {
+    const entries = Object.entries(similarities) as [string, number][];
+    formattedInfo = entries
+      .filter(([_, score]) => score > 0)
+      .map(([dnu, score]) => {
+        return `<strong>${(score * 100).toFixed(2)}%</strong> – <strong>“${dnu}”</strong>`;
+      });
+  }
+
+  this.textualSimilarityInfo = formattedInfo;
 
   this.textualSimilarityPopover.hide();
   setTimeout(() => this.textualSimilarityPopover.show(event), 50);
 }
 
   
+getTopKeyphrasesWithSimilarities(limit: number = 10): {
+  phrase: string;
+  weight: number;
+  similarities: { dnu?: string; score?: number; message?: string }[];
+}[] {
+  const rawTuples: any[] = this.videoElement?.keyphrases || [];
+  const similarityScores = this.videoElement?.keyphrases_dnu_similarity_score;
 
-  getTopKeyphrasesWithSimilarities(limit: number = 10): {
-    phrase: string;
-    weight: number;
-    similarities: { dnu: string, score: number }[];
-  }[] {
-    const rawTuples: any[] = this.videoElement?.keyphrases || [];
-    const similarityScores = this.videoElement?.keyphrases_dnu_similarity_score;
+  if (!rawTuples || !similarityScores) return [];
 
-    if (!rawTuples || !similarityScores) return [];
+  const keyphrases: [string, number][] = rawTuples.map((tuple: any) => [tuple[0], tuple[1]]);
+  const sortedTuples = [...keyphrases].sort((a, b) => b[1] - a[1]);
+  const topTuples = sortedTuples.slice(0, limit);
 
-    const keyphrases: [string, number][] = rawTuples.map((tuple: any) => [tuple[0], tuple[1]]);
+  return topTuples.map(([phrase, weight]: [string, number], index: number) => {
+    const rawScores = similarityScores[index] || {};
+    const entries = Object.entries(rawScores).map(([dnu, score]) => ({ dnu, score: Number(score) }));
 
-    const sortedTuples = [...keyphrases].sort((a, b) => b[1] - a[1]);
-    const topTuples = sortedTuples.slice(0, limit);
+    const allNonPositive = entries.length > 0 && entries.every(s => s.score <= 0);
 
-    return topTuples.map(([phrase, weight]: [string, number], index: number) => {
-      const rawScores = similarityScores[index];
-      const similarities = Object.entries(rawScores || {}).map(([dnu, score]) => ({ dnu, score: Number(score) }));
+    let similarities: { dnu?: string; score?: number; message?: string }[];
 
-      return {
-        phrase: this.cleanKeyphrase(phrase),
-        weight: Number((weight * 100).toFixed(1)),
-        similarities
-      };
-    });
-  }
+    // Case 1 & 2: only one concept OR all ≤ 0
+    if ((entries.length === 1 && entries[0].score <= 0) || allNonPositive) {
+      similarities = [
+        { message: 'This keyphrase is not at all similar to the concept(s) used in generating recommendations.' }
+      ];
+    } 
+    // Case 3: mix of positive and non-positive
+    else {
+      similarities = entries.map(({ dnu, score }) => {
+        if (score <= 0) {
+          return {
+            dnu,
+            message: 'This keyphrase is not at all similar to the concept(s) used in generating recommendations.'
+          };
+        } else {
+          return { dnu, score };
+        }
+      });
+    }
+
+    return {
+      phrase: this.cleanKeyphrase(phrase),
+      weight: Number((weight * 100).toFixed(2)),
+      similarities
+    };
+  });
+}
+
 }

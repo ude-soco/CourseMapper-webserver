@@ -38,7 +38,7 @@
               <span class="custom-close" (click)="videoSimilarityPopup.hide()">×</span>
               <div class="text-sm text-gray-700">
                 <p>
-                  This video is overall <strong>{{ (videoElement?.similarity_score * 100) | number:'1.0-0' }}%</strong> similar to the concepts used to generate recommendations.
+                  This video is overall <strong>{{ (videoElement?.similarity_score * 100) | number:'1.2-2' }}%</strong> similar to the concepts used to generate recommendations.
                 </p>
 
                 <div *ngIf="coloredBandData?.document_dnu_similarity_colorband">
@@ -82,11 +82,6 @@
           this.resourcesPagination?.recommendation_type === '3')" class="flex flex-row">
       <p class="mr-2 font-semibold">Keyphrases: </p>
       <div class="flex flex-wrap gap-1">
-       <!--  <div *ngFor="let concept of videoElement.keyphrases.slice(0, 5)" 
-            pTooltip="Main keyphrases extracted from this video"
-            class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">
-          {{concept[0]}}
-        </div> -->
         <div *ngFor="let concept of videoElement.keyphrases.slice(0, 5)" 
      pTooltip="Main keyphrases extracted from this video"
      class="text-xs uppercase text-chips-txt bg-gray-200 mx-1 p-1 px-2 font-semibold rounded-2xl">
@@ -160,14 +155,21 @@
 
       <div *ngFor="let item of getTopKeyphrasesWithSimilarities(); let i = index" class="mb-3">
         <p class="text-base font-semibold text-gray-800">
-          {{ i + 1 }}. <strong>{{ item.phrase }}</strong> (<strong>{{ item.weight }}%</strong>)
+          {{ i + 1 }}. <strong>{{ item.phrase }}</strong> (<strong>{{ item.weight | number:'1.2-2' }}%</strong>)
         </p>
 
         <ul class="list-disc ml-6 text-sm text-gray-700">
-          <li *ngFor="let sim of item.similarities">
-            <strong>{{ (sim.score * 100) | number:'1.0-0' }}%</strong> – “{{ sim.dnu }}”
-          </li>
-        </ul>
+  <li *ngFor="let sim of item.similarities">
+    <ng-container *ngIf="!sim.message; else noSimilarity">
+              <strong>{{ (sim.score! * 100) | number:'1.2-2' }}%</strong> – “{{ sim.dnu }}”
+    </ng-container>
+    <ng-template #noSimilarity>
+      <span>{{ sim.message }}</span>
+    </ng-template>
+  </li>
+</ul>
+
+
       </div>
     </div>
 

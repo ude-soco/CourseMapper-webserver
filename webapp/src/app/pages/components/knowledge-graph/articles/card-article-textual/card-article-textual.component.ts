@@ -14,8 +14,6 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 import { DomSanitizer,SafeHtml } from '@angular/platform-browser';
 import { MessageService } from 'primeng/api';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
-import { Chart, registerables } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Material } from 'src/app/models/Material';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.reducer';
@@ -108,49 +106,66 @@ export class CardArticleComponentTextual {
     return sorted.slice(0, 10).map(([phrase, weight]) => {
       return {
         phrase: this.cleanKeyphrase(phrase),
-        weight: Number((weight * 100).toFixed(1)) 
+        weight: Number((weight * 100).toFixed(2)) 
       };
     });
   }
-  ///
-  getTopKeyphrasesWithSimilarities(limit: number = 10): {
-    phrase: string;
-    weight: number;
-    similarities: { dnu: string, score: number }[];
-  }[] {
-    const rawTuples: any[] = this.article?.keyphrases || [];
-    const similarityScores = this.article?.keyphrases_dnu_similarity_score;
+  
+ getTopKeyphrasesWithSimilarities(limit: number = 10): {
+  phrase: string;
+  weight: number;
+  similarities: { dnu?: string; score?: number; message?: string }[];
+}[] {
+  const rawTuples: any[] = this.article?.keyphrases || [];
+  const similarityScores = this.article?.keyphrases_dnu_similarity_score;
 
-    if (!rawTuples || !similarityScores) return [];
+  if (!rawTuples || !similarityScores) return [];
 
-    const keyphrases: [string, number][] = rawTuples.map((tuple: any) => [tuple[0], tuple[1]]);
+  const keyphrases: [string, number][] = rawTuples.map((tuple: any) => [tuple[0], tuple[1]]);
+  const sortedTuples = [...keyphrases].sort((a, b) => b[1] - a[1]);
+  const topTuples = sortedTuples.slice(0, limit);
 
-    const sortedTuples = [...keyphrases].sort((a, b) => b[1] - a[1]);
-    const topTuples = sortedTuples.slice(0, limit);
+  return topTuples.map(([phrase, weight]: [string, number], index: number) => {
+    const rawScores = similarityScores[index] || {};
+    const entries = Object.entries(rawScores).map(([dnu, score]) => ({ dnu, score: Number(score) }));
 
-    return topTuples.map(([phrase, weight]: [string, number], index: number) => {
-      const rawScores = similarityScores[index];
-      const similarities = Object.entries(rawScores || {}).map(([dnu, score]) => ({ dnu, score: Number(score) }));
+    const allNonPositive = entries.length > 0 && entries.every(s => s.score <= 0);
 
-      return {
-        phrase: this.cleanKeyphrase(phrase),
-        weight: Number((weight * 100).toFixed(1)),
-        similarities
-      };
-    });
-  }
-    /////
+    let similarities: { dnu?: string; score?: number; message?: string }[];
+
+    // Case 1 & 2: only one concept OR all ≤ 0
+    if ((entries.length === 1 && entries[0].score <= 0) || allNonPositive) {
+      similarities = [
+        { message: 'This keyphrase is not at all similar to the concept(s) used in generating recommendations.' }
+      ];
+    } 
+    // Case 3: mix of positive and non-positive
+    else {
+      similarities = entries.map(({ dnu, score }) => {
+        if (score <= 0) {
+          return {
+            dnu,
+            message: 'This keyphrase is not at all similar to the concept(s) used in generating recommendations.'
+          };
+        } else {
+          return { dnu, score };
+        }
+      });
+    }
+
+    return {
+      phrase: this.cleanKeyphrase(phrase),
+      weight: Number((weight * 100).toFixed(2)),
+      similarities
+    };
+  });
+}
+
     
   ngOnInit() {
-    console.log(this.article); // In your component
-    ////
+    //console.log(this.article); 
 
-    
-
-    /* 
-    console.log('Not understood concepts object:', this.notUnderstoodConcepts); */
-
-    console.log("document_dnu_similarity_colorband:", this.article.document_dnu_similarity);
+   // console.log("document_dnu_similarity_colorband:", this.article.document_dnu_similarity);
     
     this.notUnderstoodConceptsNames = this.concepts?.map(dnu => dnu.name) ?? [];
 
@@ -164,7 +179,7 @@ export class CardArticleComponentTextual {
         color: this.conceptColors[index] || '#cccccc'
       }))
     };
-    console.log("coloredBandData:", this.coloredBandData);
+  //  console.log("coloredBandData:", this.coloredBandData);
     
     this.generateParts(
       this.article.abstract,
@@ -173,13 +188,11 @@ export class CardArticleComponentTextual {
     );
     this.abstractPartsTruncated = this.truncateParts(this.abstractParts, this.ABSTRACT_MAX_LENGTH);
 
-    console.log("DNU Names:", this.notUnderstoodConceptsNames);
-    console.log("DNU Colors:", this.conceptColors);
+ //   console.log("DNU Names:", this.notUnderstoodConceptsNames);
+ //   console.log("DNU Colors:", this.conceptColors);
 
   }
-  ngAfterViewInit(){
-    console.log("coloredBandData:", this.coloredBandData);
-  }
+
 
   @ViewChild('highlightedAbstract', { static: false }) highlightedAbstractRef!: ElementRef;
   @ViewChild('barChartCanvas', { static: false }) barChartCanvas!: ElementRef<HTMLCanvasElement>;
@@ -292,76 +305,90 @@ export class CardArticleComponentTextual {
       this.resourceRemovedEvent.emit(this.article.rid);
     }
   } 
- getColorForDnu(dnu: string): string {
-  const index = this.notUnderstoodConceptsNames.indexOf(dnu);
-  return index !== -1 ? this.conceptColors[index] : 'red';
+
+ isURL(text: string): boolean {
+    const trimmed = text.trim();
+
+    // Only treat it as a URL if it starts with http/https/www
+    // Ignore any trailing stuff like " ▷SECURE"
+    return /^(https?:\/\/|www\.)[^\s]+/i.test(trimmed);
   }
 
-
-escapeRegex(text: string): string {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
-}
-
-cleanKeyphrase(kp: string): string {
-  return kp
-    // --- LaTeX cleanup ---
-    .replace(/\\[a-zA-Z]+\s*/g, '')  // remove LaTeX commands like \frac, \alpha, \displaystyle
-    .replace(/[{}]/g, '')            // remove LaTeX braces
-
-    // --- General text normalization ---
-    .toLowerCase()                   // make case-insensitive
-    .replace(/\s+/g, ' ')            // collapse multiple spaces/tabs/newlines into one space
-    .trim();                         // remove leading/trailing spaces
-}
-
-cleanTextForLatex(text: string): string {
-  return text
-    // Remove paired patterns like: "F {\displaystyle F}" => "F"
-    .replace(/\b([A-Za-z])\s*\{\s*\\[a-zA-Z]+\s*\1\s*\}/g, '$1')
-
-    // Remove full LaTeX blocks like: {\command ...}
-    .replace(/\{\s*\\[a-zA-Z]+\s*[^{}]*?\}/g, '')
-
-    // Remove standalone LaTeX commands like \displaystyle
-    .replace(/\\[a-zA-Z]+\s*/g, '')
-
-    // Remove stray braces
-    .replace(/[{}]/g, '')
-
-    // Collapse multiple spaces
-    .replace(/\s{2,}/g, ' ')
-
-    .trim();
-}
-
-generateKeyphraseVariants(kp: string): string[] {
-  const variants = new Set<string>();
-
-  const base = kp.toLowerCase().trim();
-
-  // normalize multiple spaces
-  const collapsed = base.replace(/\s+/g, ' ');
-  variants.add(collapsed);
-
-  // hyphen/space variants
-  variants.add(collapsed.replace(/\s*-\s*/g, '-'));   // no space hyphen
-  variants.add(collapsed.replace(/\s*-\s*/g, ' - ')); // spaced hyphen
-  variants.add(collapsed.replace(/\s*-\s*/g, ' '));   // no hyphen
-
-  // diacritic-insensitive variant
-  variants.add(collapsed.normalize("NFD").replace(/[\u0300-\u036f]/g, ''));
-
-  // plural form (add s at end of last word)
-  const pluralForm = collapsed.replace(/(\b\w+)$/, '$1s');
-  variants.add(pluralForm);
-
-  // singular form (if already ends with s, drop it)
-  if (collapsed.endsWith('s')) {
-    variants.add(collapsed.slice(0, -1));
+  escapeRegex(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
   }
 
-  return Array.from(variants);
-}
+  cleanKeyphrase(kp: string): string {
+    return (
+      kp
+        // --- LaTeX cleanup ---
+        .replace(/\\[a-zA-Z]+\s*/g, '') // remove LaTeX commands like \frac, \alpha, \displaystyle
+        .replace(/[{}]/g, '') // remove LaTeX braces
+
+        .replace(/\s*([|<>=()\-+])\s*/g, '$1') // remove spaces around math symbols
+        // --- General text normalization ---
+        .toLowerCase() // make case-insensitive
+        .replace(/\s+/g, ' ') // collapse multiple spaces/tabs/newlines into one space
+        .trim()
+    ); // remove leading/trailing spaces
+  }
+
+  cleanTextForLatex(text: string): string {
+    return (
+      text
+        // --- Remove invisible Unicode math characters (like ⁡ U+2061) ---
+        .replace(/[\u200B-\u200F\u2060-\u206F]/g, '')
+
+        // Remove paired patterns like: "F {\displaystyle F}" => "F"
+        .replace(/\b([A-Za-z])\s*\{\s*\\[a-zA-Z]+\s*\1\s*\}/g, '$1')
+
+        // Remove full LaTeX blocks like: {\command ...}
+        .replace(/\{\s*\\[a-zA-Z]+\s*[^{}]*?\}/g, '')
+
+        // Remove standalone LaTeX commands like \displaystyle
+        .replace(/\\[a-zA-Z]+\s*/g, '')
+
+        // Remove stray braces
+        .replace(/[{}]/g, '')
+
+        // Remove spaces around math symbols
+        .replace(/\s*([|<>=()\-+])\s*/g, '$1')
+
+        // Collapse multiple spaces
+        .replace(/\s{2,}/g, ' ')
+
+        .trim()
+    );
+  }
+
+  generateKeyphraseVariants(kp: string): string[] {
+    const variants = new Set<string>();
+
+    const base = kp.toLowerCase().trim();
+
+    // normalize multiple spaces
+    const collapsed = base.replace(/\s+/g, ' ');
+    variants.add(collapsed);
+
+    // hyphen/space variants
+    variants.add(collapsed.replace(/\s*-\s*/g, '-')); // no space hyphen
+    variants.add(collapsed.replace(/\s*-\s*/g, ' - ')); // spaced hyphen
+    variants.add(collapsed.replace(/\s*-\s*/g, ' ')); // no hyphen
+
+    // diacritic-insensitive variant
+    variants.add(collapsed.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+    // plural form (add s at end of last word)
+    const pluralForm = collapsed.replace(/(\b\w+)$/, '$1s');
+    variants.add(pluralForm);
+
+    // singular form (if already ends with s, drop it)
+    if (collapsed.endsWith('s')) {
+      variants.add(collapsed.slice(0, -1));
+    }
+
+    return Array.from(variants);
+  }
 
 generateParts(
   text: string,
@@ -371,8 +398,8 @@ generateParts(
   this.abstractParts = [];
 
   const cleanedAbstract = this.cleanTextForLatex(text);
-  console.log("🔎 Original abstract:", text);
-  console.log("🧹 Cleaned abstract:", cleanedAbstract);
+  // console.log("Original abstract:", text);
+  // console.log("Cleaned abstract:", cleanedAbstract);
 
   if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
     this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
@@ -385,6 +412,12 @@ generateParts(
     const raw = Array.isArray(kp) ? kp[0] : kp;
     const cleaned = this.cleanKeyphrase(raw);
     const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
+
+    if (this.isURL(cleaned)) {
+      /*   // For debugging: Skip keyphrases that look like URLs
+      console.warn(`Skipping URL-like keyphrase: "${cleaned}"`); */
+        return;
+      } 
 
     const variants = this.generateKeyphraseVariants(cleaned);
 
@@ -507,60 +540,6 @@ truncateParts(
 }
 
 
-
-
-/* getSimilarityScoresAlignedToFixedYaxisPopUp(clickedKeyphrase: string): number[] {
-  if (!clickedKeyphrase) return [];
-
-  // Find the original keyphrase associated with the clicked variant
-  let originalKeyphrase = clickedKeyphrase;
-
-  // Search in abstractParts to get the originalKeyphrase
-  const part = this.abstractParts.find(
-    p => p.isKeyphrase && p.text === clickedKeyphrase && p.keyphraseMeta?.originalKeyphrase
-  );
-  if (part?.keyphraseMeta?.originalKeyphrase) {
-    originalKeyphrase = part.keyphraseMeta.originalKeyphrase;
-  }
-
-  const cleanedKey = this.cleanKeyphrase(originalKeyphrase);
-
-  // Find index in videoElement.keyphrases
-  const index = this.videoElement.keyphrases.findIndex(tuple => {
-    const candidate = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
-    return this.cleanKeyphrase(candidate) === cleanedKey;
-  });
-
-  if (index === -1) {
-    console.warn(`Keyphrase "${clickedKeyphrase}" (original: "${originalKeyphrase}") not found in article.keyphrases (after cleaning).`);
-    return [];
-  }
-
-  const similarityObject = this.videoElement.keyphrases_dnu_similarity_score[index];
-  return this.conceptsNames.map(dnu =>
-    similarityObject && Object.prototype.hasOwnProperty.call(similarityObject, dnu)
-      ? similarityObject[dnu]
-      : 0
-  );
-} */
-
- 
-
-
- showPopup(text: string, clientX: number, clientY: number, event: MouseEvent) {
-  const containerRect = this.abstractContainer.nativeElement.getBoundingClientRect();
-
-  const offsetX = 10; // adjust as needed
-  const offsetY = 10;
-
-  this.popupText = text;
-  this.popupPosition = {
-    x: clientX - containerRect.left - offsetX,
-    y: clientY - containerRect.top - offsetY
-  };
-  this.popupVisible = true;
-}
-
 showTextualSimilarityPopover(
   part: { text: string; keyphraseMeta?: { originalKeyphrase?: string; sourceIndex?: number; similarityData?: any } },
   event: MouseEvent
@@ -593,422 +572,53 @@ showTextualSimilarityPopover(
   }
 
   this.selectedKeyphrase = originalKeyphrase;
-  this.textualSimilarityInfo = Object.entries(similarities).map(
-    ([dnu, score]: [string, number]) =>
-      `<strong>${(score * 100).toFixed(0)}%</strong> – <strong>“${dnu}”</strong>`
-  );
+
+  const similarityValues = Object.values(similarities) as number[];
+  const allNonPositive = similarityValues.every(score => score <= 0);
+
+  let formattedInfo: string[];
+
+  if (allNonPositive) {
+    formattedInfo = [
+      'This keyphrase is not at all similar to the concept(s) used in generating recommendations.'
+    ];
+  } else {
+    const entries = Object.entries(similarities) as [string, number][];
+    formattedInfo = entries
+      .filter(([_, score]) => score > 0)
+      .map(([dnu, score]) => {
+        return `<strong>${(score * 100).toFixed(2)}%</strong> – <strong>“${dnu}”</strong>`;
+      });
+  }
+
+  this.textualSimilarityInfo = formattedInfo;
 
   this.textualSimilarityPopover.hide();
   setTimeout(() => this.textualSimilarityPopover.show(event), 50);
 }
 
 
+
+
 getFormattedSimilarityText(concept: string, value: number): string {
-  const percentage = (value * 100).toFixed(0);
+  const percentage = (value * 100).toFixed(2);
   return `This article is <strong>${percentage}%</strong> similar to <strong>${concept}</strong>.`;
 }
 
 get similarityText(): string {
-  const score = this.article?.similarity_score ? (this.article.similarity_score * 100).toFixed(0) : '0';
+  const score = this.article?.similarity_score ? (this.article.similarity_score * 100).toFixed(2) : '0.00';
   return `This article is overall <strong>${score}%</strong> similar to the concepts used to generate recommendations.`;
 }
-/*  showPopup(text: string, clientX: number, clientY: number, event: MouseEvent) {
-  this.popupText = text;
-  this.popupVisible = true;
 
-  // Position the popup a bit below the clicked position
-  this.popupX = clientX;
-  this.popupY = clientY + 20; // 20px below click Y
-} */
-
-/* showPopup(text: string, x: number, y: number, event: MouseEvent) {
-  const offsetX = 10; // pixels to shift left
-  const offsetY = 10; // pixels to shift up
-
-  this.popupText = text;
-  this.popupPosition = {
-    x: x - offsetX,
-    y: y - offsetY,
-  };
-  this.popupVisible = true;
-} */
 
 hidePopup() {
   this.popupVisible = false;
 }
-/* showPopup(keyphrase: string, x: number, y: number) {
-  this.selectedKeyphrase = keyphrase;
-  this.popupPosition = { x, y };
-  this.popupVisible = true;
-} */
-closePopup() {
-  this.popupVisible = false;
-}
-/* showPopup(keyphrase: string, x: number, y: number) {
-  console.log('showpup function works !')
-  if (x == null || y == null) {
-    console.warn('Invalid popup position', x, y);
-    return;
-  }
-
-  this.selectedKeyphrase = keyphrase;
-  this.popupX = 50;  // e.g. 50px from the left
-  this.popupY = 100; // e.g. 100px from the top
-  this.popupVisible = true;
-} */
- 
-/* THISSSSSS showPopup(keyphrase: string, clientX: number, clientY: number) {
-      this.keyphraseClicked.emit({ keyphrase, clientX, clientY });
-    } */
-
-
-/* getFontSize(score: number): number {
-
-      const minSize = 12; // Minimum font size
-      const maxSize = 40; // Maximum font size
-      const minScore = Math.min(...this.article.keyphrases.map(kp => +kp[0])); // Use + to convert to number
-      const maxScore = Math.max(...this.article.keyphrases.map(kp => +kp[1])); // Use + to convert to number
-
-      
-      // Normalize the score and map it to a font size between minSize and maxSize
-      return minSize + ((score - minScore) / (maxScore - minScore)) * (maxSize - minSize);
-    } */
 
     toggleWhy() {
       this.isWhyExpanded = !this.isWhyExpanded;
 }
 
 
-  /*
- getNotUnderstoodConceptNamesYaxis() {
-    this.notUnderstoodConceptsNames = this.concepts?.map(dnu => { 
-      return dnu.name;
-    }) ?? [];
-    
-  }
-
-  getSimilarityScoresXaxis(keyphrase: string): number[] {
-    // Find the index of the keyphrase in keyphrasesImportanceTuple
-    const index = this.keyphrasesImportanceTuple.findIndex(tuple => tuple[0] === keyphrase);
-  
-    // If keyphrase is not found, return an empty list
-    if (index === -1) {
-      console.warn(`Keyphrase "${keyphrase}" not found.`);
-      return [];
-    }
-  
-    // Retrieve the corresponding similarity scores object from the given index
-    const similarityObject = this.keyphrases_dnu_similarity_score[index];
-  
-    // Initialize an empty array to store similarity scores
-    let similarityScoreList: number[] = [];
-  
-    // Loop through each dictionary in the similarityObject and extract the second value (the similarity score)
-    for (let key in similarityObject) {
-      if (similarityObject.hasOwnProperty(key)) {
-        similarityScoreList.push(similarityObject[key]);  // Add similarity score to the list
-      }
-    }
-    console.log('similaity scores list:',similarityScoreList )
-
-    // Return the list of similarity scores
-    return similarityScoreList;
-  }
-
-  
-  generateBarChart() {
-    if (!this.barChartCanvas || !this.selectedKeyphrase) return; // ✨ add this.selectedKeyphrase check
-  
-    const canvas = this.barChartCanvas.nativeElement;
-    canvas.style.width = '300px';
-    canvas.style.height = '250px';
-  
-    const labels = this.getNotUnderstoodConceptNamesYaxis(); // if it's a method or just `this.notUnderstoodConceptsNames`
-    const rawData = this.getSimilarityScoresXaxis(this.selectedKeyphrase);
-    const scaledData = rawData.map(score => score * 100);
-  
-    if (this.chart) {
-      this.chart.data.labels = labels;
-      this.chart.data.datasets[0].data = scaledData;
-      this.chart.update('none');
-      return;
-    }
-  
-    this.chart = new Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels: this.notUnderstoodConceptsNames,
-        datasets: [{
-          label: 'Similarity Score (%)',
-          data: scaledData,
-          backgroundColor: [
-            '#F06292', '#BA68C8', '#7986CB', '#64B5F6',
-            '#4DD0E1', '#4DB6AC', '#81C784', '#DCE775',
-            '#FFD54F', '#A1887F'
-          ],
-          borderWidth: 1,
-          barThickness: 20, // Adjust bar height (default is auto)
-          categoryPercentage: 0.4  // Controls space between bars
-        }]
-      },
-      options: {
-        indexAxis: 'y', // Horizontal bar chart
-        responsive: false,  // ✅ Prevents Chart.js from resizing it
-        maintainAspectRatio: false, // ✅ Keeps the set size
-        animation: { duration: 0 },  // ✅ Disable animations for faster updates
-        scales: {
-          x: {
-            beginAtZero: true,
-            min: 0,
-            max: 100,
-            title: { display: true, text: 'Similarity Score (%)',
-                     font: { weight: 'bold', size: 14 } // Make x-axis title bold
-            },
-            ticks: {
-              stepSize: 20,
-              callback: (value) => Number(value).toFixed(0)
-            },
-            grid: { display: false } // ✅ Remove vertical grid lines
-          },
-          y: {
-            title: { display: true, text: 'DNU Concepts',
-                     font: { weight: 'bold', size: 14 } // Make y-axis title bold
-             },
-            grid: { display: false }, // ✅ Remove horizontal grid lines
-          }
-        },
-        plugins: {
-          datalabels: {
-            anchor: 'end',
-            align: 'right', // ✅ Aligns text to the right of bars
-            formatter: (value) => value.toFixed(2) + '%',
-            color: '#000',
-            font: { weight: 'bold' }
-          }
-        }
-      },
-      plugins: [ChartDataLabels] // ✅ Keep as an array
-    });
-  }
-
-  getNotUnderstoodConceptNamesYaxis() {
-  this.notUnderstoodConceptsNames = this.notUnderstoodConcepts?.map(dnu => { 
-    return dnu.name;
-  }) ?? [];
-  
 }
-
-getSimilarityScoresXaxis(keyphrase: string): number[] {
-  // Find the index of the keyphrase in keyphrasesImportanceTuple
-  const index = this.keyphrasesImportanceTuple.findIndex(tuple => tuple[0] === keyphrase);
-
-  // If keyphrase is not found, return an empty list
-  if (index === -1) {
-    console.warn(`Keyphrase "${keyphrase}" not found.`);
-    return [];
-  }
-
-  // Retrieve the corresponding similarity scores object from the given index
-  const similarityObject = this.keyphrases_dnu_similarity_score[index];
-
-  // Initialize an empty array to store similarity scores
-  let similarityScoreList: number[] = [];
-
-  // Loop through each dictionary in the similarityObject and extract the second value (the similarity score)
-  for (let key in similarityObject) {
-    if (similarityObject.hasOwnProperty(key)) {
-      similarityScoreList.push(similarityObject[key]);  // Add similarity score to the list
-    }
-  }
-  console.log('similaity scores list:',similarityScoreList )
-
-  // Return the list of similarity scores
-  return similarityScoreList;
-}
-
-  generateBarChart() {
-  if (!this.barChartCanvas || !this.selectedKeyphrase) return; // ✨ add this.selectedKeyphrase check
-
-  const canvas = this.barChartCanvas.nativeElement;
-  canvas.style.width = '300px';
-  canvas.style.height = '250px';
-
-  const labels = this.notUnderstoodConceptsNames;
-  const rawData = this.getSimilarityScoresXaxis(this.selectedKeyphrase);
-  const scaledData = rawData.map(score => score * 100);
-
-  if (this.chart) {
-    this.chart.data.labels = labels;
-    this.chart.data.datasets[0].data = scaledData;
-    this.chart.update('none');
-    return;
-  }
-  this.chart = new Chart(canvas, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Similarity Score (%)',
-        data: scaledData,
-        backgroundColor: [
-          '#F06292', '#BA68C8', '#7986CB', '#64B5F6',
-          '#4DD0E1', '#4DB6AC', '#81C784', '#DCE775',
-          '#FFD54F', '#A1887F'
-        ],
-        borderWidth: 1,
-        barThickness: 20, // Adjust bar height (default is auto)
-        categoryPercentage: 0.4  // Controls space between bars
-      }]
-    },
-    options: {
-      indexAxis: 'y', // Horizontal bar chart
-      responsive: false,  // ✅ Prevents Chart.js from resizing it
-      maintainAspectRatio: false, // ✅ Keeps the set size
-      animation: { duration: 0 },  // ✅ Disable animations for faster updates
-      scales: {
-        x: {
-          beginAtZero: true,
-          min: 0,
-          max: 100,
-          title: { display: true, text: 'Similarity Score (%)',
-                   font: { weight: 'bold', size: 14 } // Make x-axis title bold
-          },
-          ticks: {
-            stepSize: 20,
-            callback: (value) => Number(value).toFixed(0)
-          },
-          grid: { display: false } // ✅ Remove vertical grid lines
-        },
-        y: {
-          title: { display: true, text: 'DNU Concepts',
-                   font: { weight: 'bold', size: 14 } // Make y-axis title bold
-           },
-          grid: { display: false }, // ✅ Remove horizontal grid lines
-        }
-      },
-      plugins: {
-        datalabels: {
-          anchor: 'end',
-          align: 'right', // ✅ Aligns text to the right of bars
-          formatter: (value) => value.toFixed(2) + '%',
-          color: '#000',
-          font: { weight: 'bold' }
-        }
-      }
-    },
-    plugins: [ChartDataLabels] // ✅ Keep as an array
-  });
-}
-
-
-   ngAfterViewChecked() {
-    this.attachClickListeners();
-    // Make sure Angular has completed the DOM updates
-    this.cdr.detectChanges();
-  }
-
-  attachClickListeners() {
-    const container = this.highlightedAbstractRef?.nativeElement;
-    if (container) {
-      const clickableElements = container.querySelectorAll('.clickable-kp');
-      clickableElements.forEach((el: HTMLElement) => {
-        // Use Renderer2 to add event listener
-        this.renderer.listen(el, 'click', (event: MouseEvent) => {
-          const keyphrase = el.getAttribute('data-keyphrase');
-          const rect = el.getBoundingClientRect();
-          console.log('Clicked element position:', rect);
-          this.showPopup(keyphrase, rect.left, rect.top);
-        });
-      });
-    }
-  }
- 
-  highlightKeyphrases(text: string, keyphrases: any[],keyphrases_dnu_similarity_score: any[]): SafeHtml {
-    console.log("Keyphrases are", keyphrases);
-    
-    if (!keyphrases || keyphrases.length === 0) {
-      return text;
-    }
-    // Ensure keyphrases are treated as strings
-    const normalizedKeyphrases = keyphrases.map(kp => Array.isArray(kp) ? kp[0] : kp);
-
-    this.notUnderstoodConceptsNames = this.notUnderstoodConcepts?.map(dnu=>{ /* console.log("current dnu:",dnu) 
-                                                                              return dnu.name;}) ?? [];
-    for (let i = 0; i < normalizedKeyphrases.length; i++) {
-      const kp = normalizedKeyphrases[i];
-      const correspondingDnu = keyphrases_dnu_similarity_score[i] 
-                                ? Object.keys(keyphrases_dnu_similarity_score[i])[0] 
-                                : undefined;
-      console.log(this.notUnderstoodConceptsNames);
-      console.log(this.dnuColors);
-      
-      console.log(index); 
-      const index = this.notUnderstoodConceptsNames.indexOf(correspondingDnu);
-                                // Get the corresponding color from dnuColors
-                                
-      const color = index !== -1 ? this.dnuColors[index] : "red"
-
-     text = text.split(kp).join(
-        `<span class="highlight-keyphrase " style="color: ${color};">${kp}</span>`
-      );  
-
-      text = text.split(kp).join(
-        `<span class="highlight-keyphrase clickable-kp" 
-                style="color: ${color}; 
-                cursor: pointer;" 
-                data-keyphrase="${kp}">
-           ${kp}
-         </span>`
-      );
-  }
-    // Mark the returned HTML as safe
-    return this.sanitizer.bypassSecurityTrustHtml(text);
-  }
- 
-  makeKeyphrasesClickable(text: string, keyphrases: any[]): string {
-    if (!keyphrases || keyphrases.length === 0) {
-      return text;
-    }
-  
-    const normalizedKeyphrases = keyphrases.map(kp => Array.isArray(kp) ? kp[0] : kp);
-  
-    for (let i = 0; i < normalizedKeyphrases.length; i++) {
-      const kp = normalizedKeyphrases[i];
-      text = text.split(kp).join(
-        `<span class="clickable-keyphrase" data-clickable style="cursor: pointer; text-decoration: underline;" >${kp}</span>`
-      );
-    }
-  
-    return text; // Note: now returning plain string
-  }
-  attachClickHandlers() {
-    if (!this.highlightedAbstractRef) 
-    {
-      console.log('The highlightedAbstractRef not defined');
-      return;
-    }
-
-    console.log('The highlightedAbstractRef defined');
-    const clickableElements = this.highlightedAbstractRef.nativeElement.querySelectorAll('[data-clickable]');
-
-    clickableElements.forEach((el: HTMLElement) => {
-      this.renderer.listen(el, 'click', (event: MouseEvent) => {
-        const keyword = el.textContent || '';
-        this.showPopup(event, keyword);
-  
-      });
-      });
-  }
-
-
-  showPopup(event: MouseEvent, keyword: string) {
-    this.popupX = event.clientX + 10;
-    this.popupY = event.clientY + 10;
-    this.popupKeyword = keyword;
-    this.popupVisible = true;
-    console.log("Popup should be visible at:", this.popupX, this.popupY, "for", this.popupKeyword);
-  }
- */
-}
-
 
