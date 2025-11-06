@@ -284,55 +284,65 @@ generateParts(
   keyphrases_dnu_similarity_score: any[]
 ) {
   this.abstractParts = [];
-
+ 
   const cleanedAbstract = this.cleanTextForLatex(text);
   // console.log("Original abstract:", text);
   // console.log("Cleaned abstract:", cleanedAbstract);
-
+ 
   if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
     this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
     return;
   }
-
+ 
   const expandedKeyphrases: { text: string; dnu: string; original: string }[] = [];
-
+ 
   keyphrases.forEach((kp, i) => {
     const raw = Array.isArray(kp) ? kp[0] : kp;
     const cleaned = this.cleanKeyphrase(raw);
     const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
-
+ 
+    // Skip keyphrases that have all similarity scores ≤ 0
+    const similarityObj = keyphrases_dnu_similarity_score[i];
+    const hasPositive = Object.values(similarityObj)
+      .filter((v): v is number => typeof v === 'number')
+      .some(v => v > 0);
+    if (!hasPositive) {
+      /* console.warn(`Skipping unrelated keyphrase in textual explanation: "${cleaned}"`); */
+      return;
+    }
+ 
     if (this.isURL(cleaned)) {
       /*   // For debugging: Skip keyphrases that look like URLs
       console.warn(`Skipping URL-like keyphrase: "${cleaned}"`); */
-        return;
-      } 
-
+      return;
+    }
+ 
     const variants = this.generateKeyphraseVariants(cleaned);
-
+ 
     let foundVariantInAbstract = false;
     variants.forEach(v => {
       const regex = new RegExp(`\\b${this.escapeRegex(v)}\\b`, "gi");
       if (regex.test(cleanedAbstract)) {
         foundVariantInAbstract = true;
       }
-
+ 
       expandedKeyphrases.push({
         text: v,
         dnu,
         original: cleaned,
       });
     });
-
+ 
     if (!foundVariantInAbstract) {
-      console.warn(`⚠️ No match in video description for keyphrase: "${cleaned}"`);
+      console.warn(` No match in video description for keyphrase: "${cleaned}"`);
     }
   });
-
+ 
   const matches: { index: number; length: number; kp: string; dnu: string }[] = [];
-
+ 
   expandedKeyphrases.forEach(({ text: kp, dnu, original }) => {
     if (!kp) return;
-
+ 
     const regex = new RegExp(`\\b${this.escapeRegex(kp)}\\b`, "gi");
     let match: RegExpExecArray | null;
     while ((match = regex.exec(cleanedAbstract)) !== null) {
@@ -344,10 +354,10 @@ generateParts(
       });
     }
   });
-
+ 
   // Sort by position and length
   matches.sort((a, b) => a.index - b.index || b.length - a.length);
-
+ 
   // Filter overlapping matches
   const filteredMatches: typeof matches = [];
   let lastIndex = -1;
@@ -357,7 +367,7 @@ generateParts(
       lastIndex = match.index + match.length;
     }
   }
-
+ 
   // Build abstract parts array
   let currentIndex = 0;
   for (const match of filteredMatches) {
@@ -367,7 +377,7 @@ generateParts(
         isKeyphrase: false,
       });
     }
-
+ 
     this.abstractParts.push({
       text: cleanedAbstract.slice(match.index, match.index + match.length),
       isKeyphrase: true,
@@ -376,14 +386,15 @@ generateParts(
         originalKeyphrase: match.kp,
         color: this.getColorForDnu(match.dnu),
         tooltip: `<div class="tooltip-content">
-        This keyphrase is the most similar to the concept <b>“${match.dnu}”</b>. Click on the keyphrase to view more details.
-        </div>`
+          This keyphrase is the most similar to the concept <b>“${match.dnu}”</b>.
+          Click on the keyphrase to view more details.
+</div>`,
       },
     });
-
+ 
     currentIndex = match.index + match.length;
   }
-
+ 
   // Add remaining non-keyphrase text
   if (currentIndex < cleanedAbstract.length) {
     this.abstractParts.push({
@@ -499,54 +510,57 @@ showTextualSimilarityPopover(
 }
 
   
-getTopKeyphrasesWithSimilarities(limit: number = 10): {
+getTopKeyphrasesWithSimilarities(
+  limit: number = 10
+): {
   phrase: string;
   weight: number;
   similarities: { dnu?: string; score?: number; message?: string }[];
 }[] {
   const rawTuples: any[] = this.videoElement?.keyphrases || [];
   const similarityScores = this.videoElement?.keyphrases_dnu_similarity_score;
-
+ 
   if (!rawTuples || !similarityScores) return [];
-
+ 
   const keyphrases: [string, number][] = rawTuples.map((tuple: any) => [tuple[0], tuple[1]]);
   const sortedTuples = [...keyphrases].sort((a, b) => b[1] - a[1]);
   const topTuples = sortedTuples.slice(0, limit);
-
-  return topTuples.map(([phrase, weight]: [string, number], index: number) => {
-    const rawScores = similarityScores[index] || {};
-    const entries = Object.entries(rawScores).map(([dnu, score]) => ({ dnu, score: Number(score) }));
-
-    const allNonPositive = entries.length > 0 && entries.every(s => s.score <= 0);
-
-    let similarities: { dnu?: string; score?: number; message?: string }[];
-
-    // Case 1 & 2: only one concept OR all ≤ 0
-    if ((entries.length === 1 && entries[0].score <= 0) || allNonPositive) {
-      similarities = [
-        { message: 'This keyphrase is not at all similar to the concept(s) used in generating recommendations.' }
-      ];
-    } 
-    // Case 3: mix of positive and non-positive
-    else {
-      similarities = entries.map(({ dnu, score }) => {
-        if (score <= 0) {
-          return {
-            dnu,
-            message: 'This keyphrase is not at all similar to the concept(s) used in generating recommendations.'
-          };
-        } else {
-          return { dnu, score };
-        }
-      });
+ 
+  const result: {
+    phrase: string;
+    weight: number;
+    similarities: { dnu?: string; score?: number; message?: string }[];
+  }[] = [];
+ 
+  for (let i = 0; i < topTuples.length; i++) {
+    const [phrase, weight] = topTuples[i];
+    const rawScores = similarityScores[i] || {};
+    const entries = Object.entries(rawScores).map(([dnu, score]) => ({
+      dnu,
+      score: Number(score),
+    }));
+ 
+    // ✅ Skip keyphrases that have all similarity scores ≤ 0
+    const hasPositive = entries
+      .filter((e): e is { dnu: string; score: number } => typeof e.score === "number")
+      .some((e) => e.score > 0);
+    if (!hasPositive) {
+      /* console.warn(`Skipping unrelated keyphrase in WHY explanation: "${phrase}"`); */
+      continue; // Skip rendering entirely
     }
-
-    return {
+ 
+    // ✅ Only include concepts with positive similarity scores
+    const similarities = entries
+      .filter(({ score }) => score > 0)
+      .map(({ dnu, score }) => ({ dnu, score }));
+ 
+    result.push({
       phrase: this.cleanKeyphrase(phrase),
       weight: Number((weight * 100).toFixed(2)),
-      similarities
-    };
-  });
+      similarities,
+    });
+  }
+ 
+  return result;
 }
-
 }

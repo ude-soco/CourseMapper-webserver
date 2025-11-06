@@ -379,7 +379,7 @@ export class CardArticleComponentVisual {
     const cleaned = this.cleanKeyphrase(raw);
     const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
 
-    // ✅ Skip keyphrases that have no positive similarity scores
+    //  Skip keyphrases that have no positive similarity scores
     const similarityObj = keyphrases_dnu_similarity_score[i];
 const hasPositive = Object.values(similarityObj)
   .filter((v): v is number => typeof v === 'number')
@@ -416,7 +416,7 @@ const hasPositive = Object.values(similarityObj)
 
     /* //  For debugging:
     if (!foundVariantInAbstract) {
-      console.warn(`⚠️ No match in abstract for keyphrase: "${cleaned}"`);
+      console.warn(` No match in abstract for keyphrase: "${cleaned}"`);
     } */
   });
 
