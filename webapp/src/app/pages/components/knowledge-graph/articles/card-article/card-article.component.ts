@@ -558,114 +558,107 @@ export class CardArticleComponent {
     );
   }
 
-  generatePopupBarChart() {
-    if (!this.popupBarChartCanvas || !this.selectedKeyphrase) return;
-
-    const canvas = this.popupBarChartCanvas.nativeElement;
-    canvas.style.width = '300px';
-    canvas.style.height = '250px';
-
-    const labels = this.conceptsNames;
-    const rawScores = this.getSimilarityScoresAlignedToFixedYaxisPopUp(
-      this.selectedKeyphrase
-    );
-
-    // Clamp negative scores to 0 and scale
-    const scaledData = rawScores.map((score) => Math.max(0, score) * 100);
-
-    const dynamicBarColors = labels.map(
-      (label, index) => this.conceptColors[index] || 'red'
-    );
-
-    //truncate long labels for y-axis
-    const maxLabelLength = 20;
-    const truncatedLabels = labels.map((label) =>
-      label.length > maxLabelLength
-        ? label.slice(0, maxLabelLength) + '…'
-        : label
-    );
-
-    if (this.popupChart) {
-      this.popupChart.data.labels = truncatedLabels;
-      this.popupChart.data.datasets[0].data = scaledData;
-      this.popupChart.data.datasets[0].backgroundColor = dynamicBarColors;
-      this.popupChart.update('none');
-      return;
-    }
-
-    this.popupChart = new Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels: truncatedLabels,
-        datasets: [
-          {
-            label: 'Similarity Score (%)',
-            data: scaledData,
-            backgroundColor: dynamicBarColors,
-            borderWidth: 1,
-            barThickness: 20,
-            categoryPercentage: 0.8,
-          },
-        ],
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: false,
-        maintainAspectRatio: true,
-        animation: { duration: 0 },
-        interaction: {
-          mode: 'nearest', // tooltip shows on nearest bar
-          intersect: true, // only when hovering the bar itself
-        },
-        scales: {
-          x: {
-            beginAtZero: true,
-            min: 0,
-            max: 100,
-            title: {
-              display: true,
-              text: 'Similarity Score (%)',
-              font: { weight: 'bold', size: 14 },
-            },
-            ticks: { stepSize: 20 },
-            grid: { display: false },
-          },
-          y: {
-            grid: { display: false },
-            title: {
-              display: true,
-              text: 'Concepts',
-              font: { weight: 'bold', size: 14 },
-            },
-          },
-        },
-        plugins: {
-          tooltip: {
-            enabled: true,
-            callbacks: {
-              title: (tooltipItems) => {
-                const index = tooltipItems[0].dataIndex;
-                return labels[index]; // full original label
-              },
-              label: (tooltipItem) => {
-                const value = tooltipItem.raw as number; // cast to number
-                return value.toFixed(2) + '%';
-              },
-            },
-          },
-          datalabels: {
-            anchor: 'end',
-            align: 'right',
-            formatter: (value) => value.toFixed(2) + '%',
-            color: '#000',
-            font: { weight: 'bold' },
-          },
-          legend: { display: false },
-        },
-      },
-      plugins: [ChartDataLabels],
-    });
-  }
+ hasPositiveScores = true; // add to component class
+ 
+ generatePopupBarChart() {
+   if (!this.popupBarChartCanvas || !this.selectedKeyphrase) return;
+ 
+   const canvas = this.popupBarChartCanvas.nativeElement;
+ 
+   const rawScores = this.getSimilarityScoresAlignedToFixedYaxisPopUp(this.selectedKeyphrase);
+   const originalLabels = this.conceptsNames;
+ 
+   // Filter out negative scores and corresponding labels
+   const filteredData: number[] = [];
+   const filteredLabels: string[] = [];
+   const filteredColors: string[] = [];
+ 
+   rawScores.forEach((score, i) => {
+     if (score > 0) {
+       filteredData.push(score * 100);
+       filteredLabels.push(
+         originalLabels[i].length > 20
+           ? originalLabels[i].slice(0, 20) + '…'
+           : originalLabels[i]
+       );
+       filteredColors.push(this.conceptColors[i] || 'red');
+     }
+   });
+ 
+   // Determine whether to show chart or message
+   this.hasPositiveScores = filteredData.length > 0;
+ 
+   if (!this.hasPositiveScores) {
+     // Destroy existing chart if any
+     if (this.popupChart) {
+       this.popupChart.destroy();
+       this.popupChart = null;
+     }
+     return; // message will be shown via template
+   }
+ 
+   if (this.popupChart) {
+     this.popupChart.data.labels = filteredLabels;
+     this.popupChart.data.datasets[0].data = filteredData;
+     this.popupChart.data.datasets[0].backgroundColor = filteredColors;
+     this.popupChart.update('none');
+     return;
+   }
+ 
+   this.popupChart = new Chart(canvas, {
+     type: 'bar',
+     data: {
+       labels: filteredLabels,
+       datasets: [{
+         label: 'Similarity Score (%)',
+         data: filteredData,
+         backgroundColor: filteredColors,
+         borderWidth: 1,
+         barThickness: 20,
+         categoryPercentage: 0.8,
+       }],
+     },
+     options: {
+       indexAxis: 'y',
+       responsive: false,
+       maintainAspectRatio: true,
+       animation: { duration: 0 },
+       interaction: { mode: 'nearest', intersect: true },
+       scales: {
+         x: {
+           beginAtZero: true,
+           min: 0,
+           max: 100,
+           title: { display: true, text: 'Similarity Score (%)', font: { weight: 'bold', size: 14 } },
+           ticks: { stepSize: 20 },
+           grid: { display: false },
+         },
+         y: {
+           grid: { display: false },
+           title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } },
+         },
+       },
+       plugins: {
+         tooltip: {
+           enabled: true,
+           callbacks: {
+             title: (tooltipItems) => filteredLabels[tooltipItems[0].dataIndex],
+             label: (tooltipItem) => (tooltipItem.raw as number).toFixed(2) + '%',
+           },
+         },
+         datalabels: {
+           anchor: 'end',
+           align: 'right',
+           formatter: (value) => (value as number).toFixed(2) + '%',
+           color: '#000',
+           font: { weight: 'bold' },
+         },
+         legend: { display: false },
+       },
+     },
+     plugins: [ChartDataLabels],
+   });
+ }
 
   lastTarget: EventTarget | null = null;
 

@@ -188,27 +188,34 @@
         </div>
       </div>
 
-      <!-- Pop Up Window when Keyphrases in Description are Clicked  -->
       <p-overlayPanel
-        #kpPopover
-        appendTo="body"
-        [showCloseIcon]="false"
-        [dismissable]="true"
-        [baseZIndex]="10000"
-        [style]="{ width: '450px' }"
-        styleClass="kp-panel"
-      >
-        <div class="kp-panel-content">
-          <span class="custom-close" (click)="kpPopover.hide()">×</span>
-          <div class="kp-title">
-            The top three similarity scores between the concepts used for
-            generating the recommendations and the keyphrase: "{{
-              selectedKeyphrase
-            }}"
-          </div>
-          <canvas #popupBarChartCanvas width="330" height="220"></canvas>
-        </div>
-      </p-overlayPanel>
+  #kpPopover
+  appendTo="body"
+  [showCloseIcon]="false"
+  [dismissable]="true"
+  [baseZIndex]="10000"
+  [style]="{ width: '450px' }"
+  styleClass="kp-panel"
+>
+  <div class="kp-panel-content">
+    <span class="custom-close" (click)="kpPopover.hide()">×</span>
+    <div class="kp-title">
+      The top three similarity scores between the concepts used for
+      generating the recommendations and the keyphrase: "{{ selectedKeyphrase }}"
+    </div>
+
+    <!-- Chart canvas -->
+    <canvas #popupBarChartCanvas width="330" height="220" 
+      [style.display]="hasPositiveScores ? 'block' : 'none'">
+    </canvas>
+
+    <!-- No bars message -->
+    <div *ngIf="!hasPositiveScores" style="text-align:center; font-size:14px; padding:20px;">
+      This keyphrase is not at all similar to the concept(s) used in generating recommendations.
+    </div>
+  </div>
+</p-overlayPanel>
+
     </div>
   </div>
 </div>
