@@ -168,31 +168,66 @@ const displayTuples = this.keyphrasesImportanceTuple
     );
   }
 
-  generateBarChart() {
+hasPositiveScores = true; 
+
+generateBarChart() {
   if (!this.barChartCanvas || !this.selectedWord) return;
 
   const canvas = this.barChartCanvas.nativeElement;
   canvas.width = 300;
   canvas.height = 250;
 
-  const labels = this.conceptsNames;
   const rawScores = this.getSimilarityScoresAlignedToFixedYaxis(this.selectedWord);
+  const originalLabels = this.conceptsNames;
 
-  // Clamp negative scores to 0 and scale to percentage
-  const scaledData = rawScores.map(score => Math.max(0, score) * 100);
+  // Filter out negative scores and corresponding labels/colors
+  const filteredData: number[] = [];
+  const filteredLabels: string[] = [];
+  const filteredColors: string[] = [];
 
-  const dynamicBarColors = labels.map((label, index) => this.conceptColors[index] || 'red');
+  rawScores.forEach((score, i) => {
+    if (score > 0) {
+      filteredData.push(score * 100); // scale to percentage
+      filteredLabels.push(
+        originalLabels[i].length > 17
+          ? originalLabels[i].slice(0, 17) + '…'
+          : originalLabels[i]
+      );
+      filteredColors.push(this.conceptColors[i] || 'red');
+    }
+  });
 
-  // Truncate long labels
-  const maxLabelLength = 17;
-  const truncatedLabels = labels.map(label =>
-    label.length > maxLabelLength ? label.slice(0, maxLabelLength) + '…' : label
-  );
+  // Determine whether to show chart or message
+  this.hasPositiveScores = filteredData.length > 0;
+
+  // Show/hide canvas
+  canvas.style.display = this.hasPositiveScores ? 'block' : 'none';
+
+  // Optional: if all negative, you can show a message in the container
+  const container = canvas.parentElement;
+  if (!this.hasPositiveScores && container) {
+    container.querySelector('.no-bars-msg')?.remove();
+    const msg = document.createElement('div');
+    msg.className = 'no-bars-msg';
+    msg.style.textAlign = 'center';
+    msg.style.padding = '20px';
+    msg.style.fontSize = '14px';
+    msg.innerText = `This keyphrase '${this.selectedWord}' is not at all similar to the concept(s) used in generating recommendations.`;
+    container.appendChild(msg);
+    // destroy chart if exists
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    return;
+  } else if (container) {
+    container.querySelector('.no-bars-msg')?.remove();
+  }
 
   if (this.chart) {
-    this.chart.data.labels = truncatedLabels;
-    this.chart.data.datasets[0].data = scaledData;
-    this.chart.data.datasets[0].backgroundColor = dynamicBarColors;
+    this.chart.data.labels = filteredLabels;
+    this.chart.data.datasets[0].data = filteredData;
+    this.chart.data.datasets[0].backgroundColor = filteredColors;
     this.chart.update('none');
     return;
   }
@@ -200,58 +235,47 @@ const displayTuples = this.keyphrasesImportanceTuple
   this.chart = new Chart(canvas, {
     type: 'bar',
     data: {
-      labels: truncatedLabels,
-      datasets: [{
-        label: 'Similarity Score (%)',
-        data: scaledData,
-        backgroundColor: dynamicBarColors,
-        borderWidth: 1,
-        barThickness: 20,
-        categoryPercentage: 0.4
-      }]
+      labels: filteredLabels,
+      datasets: [
+        {
+          label: 'Similarity Score (%)',
+          data: filteredData,
+          backgroundColor: filteredColors,
+          borderWidth: 1,
+          barThickness: 20,
+          categoryPercentage: 0.4,
+        },
+      ],
     },
     options: {
       indexAxis: 'y',
       responsive: false,
       maintainAspectRatio: false,
       animation: { duration: 0 },
-      interaction: {
-        mode: 'nearest',
-        intersect: true
-      },
+      interaction: { mode: 'nearest', intersect: true },
       scales: {
-        x: {
-          beginAtZero: true,
-          min: 0,
-          max: 100,
-          title: { display: true, text: 'Similarity Score (%)', font: { weight: 'bold', size: 14 } },
-          ticks: { stepSize: 20 },
-          grid: { display: false } // remove vertical grid lines
-        },
-        y: {
-          grid: { display: false }, // remove horizontal grid lines
-          title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } }
-        }
+        x: { beginAtZero: true, min: 0, max: 100, title: { display: true, text: 'Similarity Score (%)', font: { weight: 'bold', size: 14 } }, ticks: { stepSize: 20 }, grid: { display: false } },
+        y: { grid: { display: false }, title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } } },
       },
       plugins: {
         tooltip: {
           enabled: true,
           callbacks: {
-            title: (tooltipItems) => labels[tooltipItems[0].dataIndex],
-            label: (tooltipItem) => (tooltipItem.raw as number).toFixed(2) + '%'
-          }
+            title: (tooltipItems) => filteredLabels[tooltipItems[0].dataIndex],
+            label: (tooltipItem) => (tooltipItem.raw as number).toFixed(2) + '%',
+          },
         },
         datalabels: {
           anchor: 'end',
           align: 'right',
           formatter: (value) => (value as number).toFixed(2) + '%',
           color: '#000',
-          font: { weight: 'bold' }
+          font: { weight: 'bold' },
         },
-        legend: { display: false }
-      }
+        legend: { display: false },
+      },
     },
-    plugins: [ChartDataLabels]
+    plugins: [ChartDataLabels],
   });
 }
 

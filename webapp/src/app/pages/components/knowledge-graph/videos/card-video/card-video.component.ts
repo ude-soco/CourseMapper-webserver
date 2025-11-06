@@ -448,7 +448,7 @@ getSimilarityScoresAlignedToFixedYaxisPopUp(clickedKeyphrase: string): number[] 
   );
 }
 
-hasPositiveScores = true; // add to component class
+hasPositiveScores = true;
 
 generatePopupBarChart() {
   if (!this.popupBarChartCanvas || !this.selectedKeyphrase) return;
