@@ -207,6 +207,7 @@ export class ConceptMapComponent {
         this.mainConceptsTab = false;
         this.recommendedConceptsTab = true;
         this.recommendedSequencesTab = false;
+        this.logUserViewedRecommendedConcepts();
         //if navigating from materials tab
         if (this.recommendedMaterialsTab) {
           this.recommendedMaterialsTab = false;
@@ -1662,11 +1663,11 @@ next: async (resultSequence) => {
             console.log(this.recommendedSequence=== null);
 
             this.kgTabs.kgTabsEnable();
-            this.mainConceptsTab = false;
-            this.recommendedConceptsTab = false;
-            this.recommendedSequencesTab = true;
-            // this.tabs[2].disabled = true;
-            this.recommendedMaterialsTab = false;
+            // this.mainConceptsTab = false;
+            // this.recommendedConceptsTab = false;
+            // this.recommendedSequencesTab = true;
+            // // this.tabs[2].disabled = true;
+            // this.recommendedMaterialsTab = false;
 }             
             })
             //////////////////////////call material-recommender/////////////////////////
@@ -1686,9 +1687,9 @@ next: async (resultSequence) => {
               this.resourcesPagination = result;
 
                   this.kgTabs.kgTabsEnable();
-                  this.mainConceptsTab = false;
-                  this.recommendedConceptsTab = false;
-                  this.recommendedMaterialsTab = true;
+                  // this.mainConceptsTab = false;
+                  // this.recommendedConceptsTab = false;
+                  // this.recommendedMaterialsTab = true;
                  // this.tabs[1].disabled = false;
                   //this.tabIndex = 2;
                   //this.tabs[2].disabled = false;

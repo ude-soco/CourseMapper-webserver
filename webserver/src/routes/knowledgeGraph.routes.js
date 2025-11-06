@@ -211,10 +211,10 @@ module.exports = function (app) {
     recommendationController.getResources
   );
   app.post( 
-  // "/api/courses/:courseId/materials/:materialId/sequence-recommendation",
   "/api/recommendation/sequence-recommendation",
-  [authJwt.verifyToken, authJwt.isEnrolled],
+  [authJwt.verifyToken],
   recommendationController.getSequence
+   // "/api/courses/:courseId/materials/:materialId/sequence-recommendation",
 );
   app.post(
     "/api/courses/:courseId/materials/:materialId/main-concepts/log",

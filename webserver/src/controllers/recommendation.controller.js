@@ -165,6 +165,30 @@ export const getConcepts = async (req, res) => {
     // socketio.getIO().to("recs :").emit("log", { addJob:result, pipeline:'recs_get_concepts'});
 }
 
+export const getSequence = async (req, res) => {
+    console.log("getSequence called");
+    const materialId = req.params.materialId;
+    // const userId = req.userId;
+    // const understood = req.body.understoodConcepts;
+    // const nonUnderstood = req.body.nonUnderstoodConcepts;
+    // const newConcepts = req.body.newConcepts;
+    const body = req.body;
+    socketio.getIO().to("material:"+materialId).emit("log", { called:"sequence recommendation started" } );
+  
+    const result = await redis.addJob('sequence-recommendation', {
+        "materialId": materialId, "data": body}, undefined, (result) => {
+      socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send({ error: result.error });
+      }
+      return res.status(200).send(result.result);
+    });
+    socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'sequence-recommendation'});
+  }
+
 export const getResources = async (req, res) => {
     const body = req.body;
     await redis.addJob("resource-recommendation", {"data": body}, undefined, (result) => {
@@ -177,32 +201,7 @@ export const getResources = async (req, res) => {
         return res.status(200).send(result.result);
     });
 }
-export const getSequence = async (req, res) => {
-    const materialId = req.params.materialId;
-    const userId = req.userId;
-    const understood = req.body.understoodConcepts;
-    const nonUnderstood = req.body.nonUnderstoodConcepts;
-    const newConcepts = req.body.newConcepts;
-    socketio.getIO().to("material:"+materialId).emit("log", { called:"sequence recommendation started" } );
-  
-    const result = await redis.addJob('sequence-recommendation', {
-      materialId,
-      userId,
-      understood,
-      nonUnderstood,
-      newConcepts
-    }, undefined, (result) => {
-      socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
-      if (res.headersSent) {
-        return;
-      }
-      if (result.error) {
-        return res.status(500).send({ error: result.error });
-      }
-      return res.status(200).send(result.result);
-    });
-    socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'sequence-recommendation'});
-  }
+
 // export const getResourcesByMainConcepts = async (req, res) => {
 //     const mid = req.query.mid;
 //     await redis.addJob("get_resources_by_main_concepts", {"mid": mid}, undefined, (result) => {

@@ -26,7 +26,7 @@ def new_getaddrinfo(*args, **kwargs):
 
 socket.getaddrinfo = new_getaddrinfo
 
-override_dns('api.dbpedia-spotlight.org', '134.155.95.34')
+override_dns('api.dbpedia-spotlight.org', '134.155.98.34')
 
 
 def make_parallel_requests(url: str, headers: Dict[str, str], params: List[Any]) -> List[Tuple[dict, requests.Response]]:

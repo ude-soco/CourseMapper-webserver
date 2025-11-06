@@ -172,11 +172,12 @@ def get_concepts(job):
     return resp
 
 def get_sequence_concepts(job):
-    material_id = job["materialId"]
-    user_id = job["userId"]
-    understood = job["understood"]
-    non_understood = job["nonUnderstood"]
-    new_concepts = job["newConcepts"]
+    data = job["data"]
+    material_id = data["materialId"]
+    user_id = data["userId"]
+    understood = data["understoodConcepts"]
+    non_understood = data["nonUnderstoodConcepts"]
+    new_concepts = data["newConcepts"]
     understood = [cid for cid in understood.split(",") if understood]
     non_understood = [cid for cid in non_understood.split(",") if non_understood]
     new_concepts = [cid for cid in new_concepts.split(",") if new_concepts]

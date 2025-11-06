@@ -54,7 +54,7 @@ class DataCleaning():
             lang = detect(text)
             return lang
         except:
-            print(type(text))
+            # print(type(text))
             return ""
         
     def parse_data(self, url):
@@ -138,14 +138,14 @@ class DataCleaning():
                 except:
                     eng_text = ""
                 eng_text_con = self.get_concepts_mentioned(eng_text)
-                print(type(eng_text_con))
+                # print(type(eng_text_con))
                 relrel_con_abs = np.concatenate((relrel_con_abs,eng_text_con))
             except:
                 pass
         relrel_con = self.get_concepts_mentioned(relrel_con)
         relrel_concept = set(relrel_con)
         relrel_concept_abs = set(list(dict.fromkeys(relrel_con_abs)))
-        print(relrel_concept_abs)
+        # print(relrel_concept_abs)
 
 
         category = set(self.get_category(rel_con))
@@ -168,13 +168,13 @@ class DataCleaning():
         return 0
 
     def get_dbpedia_data_simple(self,url_list):
-        print("URL list", url_list)
+        # print("URL list", url_list)
         print("getting dbpedia data...")
         cats = []
         supercats = []
         counter = 0
         for url in url_list:
-            print(f"Processing URL #{counter}: {url}")
+            # print(f"Processing URL #{counter}: {url}")
             try:
                 rel_con = self.parse_data(url)
                 # Get the initial category set
@@ -200,13 +200,13 @@ class DataCleaning():
                     supercat = set()
 
                  # Debugging: Print the shapes or lengths of category and supercat
-                print(f"Category size: {len(category)}")
-                print(f"Supercat size: {len(supercat)}")
+                # print(f"Category size: {len(category)}")
+                # print(f"Supercat size: {len(supercat)}")
                 cats.append(category)
                 supercats.append(supercat)
                 counter +=1
             except Exception as e:
-                print(f"Error processing URL {url}: {e}")
+                # print(f"Error processing URL {url}: {e}")
                 cats.append(set())
                 supercats.append(set())
 
@@ -241,7 +241,7 @@ class DataCleaning():
                 text = soup.find_all('p')[p].get_text()
                 words = words + self.get_concepts_mentioned(text)
             words = list(dict.fromkeys(words))
-            print("words from get_full_article", words)
+            # print("words from get_full_article", words)
             return words
         except Exception as e:
             print(e)
@@ -260,8 +260,8 @@ class DataCleaning():
     def get_abstract(self,line):
         abstract = line.str.replace(r"[\^=/]", "", regex=True)["abstract"]
         abstract = line.str.encode('ascii', 'ignore').str.decode('ascii')["abstract"]
-        
-        print("get_abstract func", abstract)
+
+        # print("get_abstract func", abstract)
         words = self.get_concepts_mentioned(abstract)
         return list(dict.fromkeys(words))
     
@@ -272,7 +272,7 @@ class DataCleaning():
             for word in self.concepts:
                 if word in text:
                     words.append(word)
-            print("words from get_concepts_mentioned", words)        
+            # print("words from get_concepts_mentioned", words)        
             return list(dict.fromkeys(words))
         except:
             return []

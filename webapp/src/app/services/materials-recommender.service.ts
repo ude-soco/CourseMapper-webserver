@@ -31,16 +31,18 @@ recommendedSequenceConcepts: any
     return this.recommendedMaterials
   }
 
+  getRecommendedSequenceConcepts(data: any): Observable<any> {
+    console.log("getRecommendedSequenceConcepts called:");
+    this.recommendedSequenceConcepts = this.http.post<any>(`${this.LEAF_URL}/sequence-recommendation`, data, HTTPOptions);
+    return this.recommendedSequenceConcepts
+  }
+
   getRecommendedConceptsLog(data: any): Observable<any> {
     return this.http.post<any>(
       `${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/concept-recommendation/log`,
       data,
       HTTPOptions
     );
-  }
-  getRecommendedSequenceConcepts(data: any): Observable<any> {
-    this.recommendedSequenceConcepts = this.http.post<any>(`${this.apiURL}/courses/${data.courseId}/materials/${data.materialId}/sequence-recommendation`, data, HTTPOptions);
-    return this.recommendedSequenceConcepts
   }
 
   async rateRecommendedMaterials(data: any): Promise<any> {

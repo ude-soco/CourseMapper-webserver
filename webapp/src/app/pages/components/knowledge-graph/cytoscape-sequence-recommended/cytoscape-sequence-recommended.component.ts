@@ -53,7 +53,7 @@ cytoscape.use(popper);
   styleUrls: ['./cytoscape-sequence-recommended.component.css']
 })
 export class CytoscapeSequenceRecommendedComponent  {
-  @Input() elements: any;
+  @Input() elements_sequence: any; 
   @Input() selectedFilterValues: any;
   @Input() topNConcepts: any;
   @Input() filterUpdated: any;
@@ -104,23 +104,55 @@ export class CytoscapeSequenceRecommendedComponent  {
     };
     this.newConceptsSubscription = slideConceptservice.newConcepts.subscribe(
       (res) => {
+        console.log("New concepts seq received:", res);
         this.newConceptsObj = res;
-        this.elements.nodes.forEach((node) => {
+          console.log("Checking node this.elements_sequence:", this.elements_sequence);
+        this.elements_sequence.nodes.forEach((node) => {
+          console.log("Checking node seq:", node);
           this.newConceptsObj.forEach((obj) => {
+            console.log("Checking obj seq:", obj);
             // if (node.data.cid.toString() === obj.cid.toString()) {
             if (node.data.id.toString() === obj.cid.toString()) {
               node.data.status = 'unread';
             }
+
           });
         });
         this.cy.style(this.showAllStyle);
       }
     );
-    this.didNotUnderstandConceptsSubscription =
+// this.didNotUnderstandConceptsSubscription =
+//   slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
+//     this.didNotUnderstandObj = Array.isArray(res) ? res : [];
+
+//     // Flatten groups
+//     const flatNodes = this.elements_sequence.nodes.flatMap(
+//       (group) => Array.isArray(group?.data) ? group.data : [group?.data].filter(Boolean)
+//     );
+
+//     // Loop through nodes
+//     flatNodes.forEach((node) => {
+//       this.didNotUnderstandObj.forEach((obj) => {
+//         if (String(node.data?.id) === String(obj.cid)) {
+//           // ✅ 1. update your local model
+//           node.data.status = 'notUnderstood';
+
+//           // ✅ 2. update Cytoscape’s live element (required for UI color change)
+//           const cyNode = this.cy.$id(node.data.id);
+//           if (cyNode && !cyNode.empty()) {
+//             cyNode.data('status', 'notUnderstood');
+//           }
+//         }
+//       });
+//     });
+
+//     // ✅ 3. trigger Cytoscape style refresh
+//     this.cy.style().update();
+//   });
+this.didNotUnderstandConceptsSubscription =
       slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
         this.didNotUnderstandObj = res;
-        this.elements.nodes.forEach((node) => {
-
+        this.elements_sequence.nodes.forEach((node) => {
           this.didNotUnderstandObj.forEach((obj) => {
             // if (node.data.cid.toString() === obj.cid.toString()) {
             if (node.data.id.toString() === obj.cid.toString()) {
@@ -133,7 +165,7 @@ export class CytoscapeSequenceRecommendedComponent  {
     this.understoodConceptsSubscription =
       slideConceptservice.understoodConcepts.subscribe((res) => {
         this.understoodObj = res;
-        this.elements.nodes.forEach((node) => {
+        this.elements_sequence.nodes.forEach((node) => {
 
           this.understoodObj.forEach((obj) => {
             // if (node.data.cid.toString() === obj.cid.toString()) {
@@ -151,7 +183,7 @@ export class CytoscapeSequenceRecommendedComponent  {
       selector: 'node',
       style: {
         height: function (elm) {
-          console.log(elm);
+          //console.log(elm);
           if (elm.data().type === 'user') return '100';
           
           else return elm.data().score * 25 + 25;
@@ -227,6 +259,7 @@ export class CytoscapeSequenceRecommendedComponent  {
           this._private.data.notUnderstandTriggered = true;
           this._private.data.understoodTriggered = false;
           this._private.data.unReadTriggered = false;
+           ele.data('status', 'notUnderstood');
           // alert($ele.data('name'))
         },
       },
@@ -237,6 +270,7 @@ export class CytoscapeSequenceRecommendedComponent  {
           this._private.data.notUnderstandTriggered = false;
           this._private.data.understoodTriggered = true;
           this._private.data.unReadTriggered = false;
+          ele.data('status', 'understood');
         },
       },
       {
@@ -246,6 +280,7 @@ export class CytoscapeSequenceRecommendedComponent  {
           this._private.data.notUnderstandTriggered = false;
           this._private.data.understoodTriggered = false;
           this._private.data.unReadTriggered = true;
+          ele.data('status', 'unread');
         },
       },
     ], // function( ele ){ return [ /*...*/ ] }, // a function that returns commands or a promise of commands
@@ -267,7 +302,7 @@ export class CytoscapeSequenceRecommendedComponent  {
   };
 
   ngOnChanges() {
-    console.log(this.elements)
+    console.log(this.elements_sequence)
     this.init();
   }
 
@@ -275,20 +310,20 @@ export class CytoscapeSequenceRecommendedComponent  {
     this._elements = [];
     if (this._elements === undefined || this._elements === null || this._elements === ''){  
     console.log("1111",this._elements)	}
-    this._elements = this.elements;
-    console.log("111222",this.elements)	
+    this._elements = this.elements_sequence;
+    console.log("111222",this.elements_sequence)	
 
     let cy_container = this.renderer.selectRootElement('#cyRecommenderSequence');
-    if (this.elements !== undefined) {
+    if (this.elements_sequence !== undefined) {
        // Check if this.elements is an object and convert it to an array
-  if (typeof this.elements === 'object' && !Array.isArray(this.elements)) {
+  if (typeof this.elements_sequence === 'object' && !Array.isArray(this.elements_sequence)) {
     // Convert object to array of values
-    this._elements = Object.values(this.elements);
+    this._elements = Object.values(this.elements_sequence);
   }
         // Check if elements are defined and valid
-  else if (Array.isArray(this.elements) && this.elements.length > 0) {
+  else if (Array.isArray(this.elements_sequence) && this.elements_sequence.length > 0) {
     // Use the createGraphElements function to generate graph elements
-    this._elements = this.elements;
+    this._elements = this.elements_sequence;
   } else {
     return; // Exit if the input is invalid
   }
@@ -434,7 +469,7 @@ console.log('this.cyHeight:111', JSON.stringify(document.getElementById('cyRecom
             // this.elements.nodes.map((node) => {
             //   node.data.selected = 'u';
             // });
-            this.elements.nodes.forEach((nestedObject) => {
+            this.elements_sequence.nodes.forEach((nestedObject) => {
              
                 nestedObject.data.forEach((node) => {
                   node.selected = 'u'; // Add the 'selected' property to each node
@@ -444,13 +479,13 @@ console.log('this.cyHeight:111', JSON.stringify(document.getElementById('cyRecom
             
 
           
-            this.elements.nodes.some((node) => {
+            this.elements_sequence.nodes.some((node) => {
               if (node.data['cid'] === selectedId) {
                 node.data.selected = 's';
               }
             });
           } else {
-            this.elements.nodes.map((node) => {
+            this.elements_sequence.nodes.map((node) => {
               node.data.selected = 'u';
             });
           }
