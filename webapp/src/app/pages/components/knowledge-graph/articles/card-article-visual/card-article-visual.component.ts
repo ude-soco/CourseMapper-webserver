@@ -352,133 +352,144 @@ export class CardArticleComponentVisual {
   }
 
   generateParts(
-    text: string,
-    keyphrases: string[],
-    keyphrases_dnu_similarity_score: any[]
-  ) {
-    this.abstractParts = [];
+  text: string,
+  keyphrases: string[],
+  keyphrases_dnu_similarity_score: any[]
+) {
+  this.abstractParts = [];
 
-    const cleanedAbstract = this.cleanTextForLatex(text);
-    /* //  For debugging:     
-    console.log('🔎 Original abstract:', text);
-    console.log('🧹 Cleaned abstract:', cleanedAbstract); */
+  const cleanedAbstract = this.cleanTextForLatex(text);
+  /* //  For debugging:     
+  console.log(' Original abstract:', text);
+  console.log(' Cleaned abstract:', cleanedAbstract); */
 
-    if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
-      this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
+  if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
+    this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
+    return;
+  }
+
+  const expandedKeyphrases: {
+    text: string;
+    dnu: string;
+    original: string;
+  }[] = [];
+
+  keyphrases.forEach((kp, i) => {
+    const raw = Array.isArray(kp) ? kp[0] : kp;
+    const cleaned = this.cleanKeyphrase(raw);
+    const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
+
+    // ✅ Skip keyphrases that have no positive similarity scores
+    const similarityObj = keyphrases_dnu_similarity_score[i];
+const hasPositive = Object.values(similarityObj)
+  .filter((v): v is number => typeof v === 'number')
+  .some(v => v > 0);
+
+    if (!hasPositive) {
+      /* // For debugging:
+      console.warn(`Skipping unrelated keyphrase: "${cleaned}"`);
+      */
       return;
     }
 
-    const expandedKeyphrases: {
-      text: string;
-      dnu: string;
-      original: string;
-    }[] = [];
-
-    keyphrases.forEach((kp, i) => {
-      const raw = Array.isArray(kp) ? kp[0] : kp;
-      const cleaned = this.cleanKeyphrase(raw);
-      const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
-
-     
-      if (this.isURL(cleaned)) {
-      /*   // For debugging: Skip keyphrases that look like URLs
+    if (this.isURL(cleaned)) {
+      /* // For debugging: Skip keyphrases that look like URLs
       console.warn(`Skipping URL-like keyphrase: "${cleaned}"`); */
-        return;
-      } 
-
-      const variants = this.generateKeyphraseVariants(cleaned);
-
-      let foundVariantInAbstract = false;
-      variants.forEach((v) => {
-        const regex = new RegExp(this.escapeRegex(v), 'gi');
-        if (regex.test(cleanedAbstract)) {
-          foundVariantInAbstract = true;
-        }
-
-        expandedKeyphrases.push({
-          text: v,
-          dnu,
-          original: cleaned,
-        });
-      });
-
-     /* //  For debugging:
-      if (!foundVariantInAbstract) {
-        console.warn(`⚠️ No match in abstract for keyphrase: "${cleaned}"`);
-      } */
-    });
-
-    const matches: {
-      index: number;
-      length: number;
-      kp: string;
-      dnu: string;
-    }[] = [];
-
-    expandedKeyphrases.forEach(({ text: kp, dnu, original }) => {
-      if (!kp) return;
-
-      let regex: RegExp;
-
-      if (kp.length <= 3) {
-        // For very short keyphrases like "a", "an", "x", use word boundaries & Use custom boundary to avoid including parentheses
-
-        regex = new RegExp(`(?<!\\w)${this.escapeRegex(kp)}(?!\\w)`, 'gi');
-      } else {
-        regex = new RegExp(this.escapeRegex(kp), 'gi');
-      }
-
-      let match: RegExpExecArray | null;
-      while ((match = regex.exec(cleanedAbstract)) !== null) {
-        matches.push({
-          index: match.index,
-          length: match[0].length,
-          kp: original,
-          dnu,
-        });
-      }
-    });
-
-    matches.sort((a, b) => a.index - b.index || b.length - a.length);
-
-    const filteredMatches: typeof matches = [];
-    let lastIndex = -1;
-    for (const match of matches) {
-      if (match.index >= lastIndex) {
-        filteredMatches.push(match);
-        lastIndex = match.index + match.length;
-      }
+      return;
     }
 
-    let currentIndex = 0;
-    for (const match of filteredMatches) {
-      if (match.index > currentIndex) {
-        this.abstractParts.push({
-          text: cleanedAbstract.slice(currentIndex, match.index),
-          isKeyphrase: false,
-        });
+    const variants = this.generateKeyphraseVariants(cleaned);
+
+    let foundVariantInAbstract = false;
+    variants.forEach((v) => {
+      const regex = new RegExp(this.escapeRegex(v), 'gi');
+      if (regex.test(cleanedAbstract)) {
+        foundVariantInAbstract = true;
       }
 
-      this.abstractParts.push({
-        text: cleanedAbstract.slice(match.index, match.index + match.length),
-        isKeyphrase: true,
-        keyphraseMeta: {
-          concept: match.dnu,
-          originalKeyphrase: match.kp,
-          color: this.getColorForConcept(match.dnu),
-        },
+      expandedKeyphrases.push({
+        text: v,
+        dnu,
+        original: cleaned,
       });
+    });
 
-      currentIndex = match.index + match.length;
+    /* //  For debugging:
+    if (!foundVariantInAbstract) {
+      console.warn(`⚠️ No match in abstract for keyphrase: "${cleaned}"`);
+    } */
+  });
+
+  const matches: {
+    index: number;
+    length: number;
+    kp: string;
+    dnu: string;
+  }[] = [];
+
+  expandedKeyphrases.forEach(({ text: kp, dnu, original }) => {
+    if (!kp) return;
+
+    let regex: RegExp;
+
+    if (kp.length <= 3) {
+      // For very short keyphrases like "a", "an", "x", use word boundaries & Use custom boundary to avoid including parentheses
+      regex = new RegExp(`(?<!\\w)${this.escapeRegex(kp)}(?!\\w)`, 'gi');
+    } else {
+      regex = new RegExp(this.escapeRegex(kp), 'gi');
     }
 
-    if (currentIndex < cleanedAbstract.length) {
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(cleanedAbstract)) !== null) {
+      matches.push({
+        index: match.index,
+        length: match[0].length,
+        kp: original,
+        dnu,
+      });
+    }
+  });
+
+  matches.sort((a, b) => a.index - b.index || b.length - a.length);
+
+  const filteredMatches: typeof matches = [];
+  let lastIndex = -1;
+  for (const match of matches) {
+    if (match.index >= lastIndex) {
+      filteredMatches.push(match);
+      lastIndex = match.index + match.length;
+    }
+  }
+
+  let currentIndex = 0;
+  for (const match of filteredMatches) {
+    if (match.index > currentIndex) {
       this.abstractParts.push({
-        text: cleanedAbstract.slice(currentIndex),
+        text: cleanedAbstract.slice(currentIndex, match.index),
         isKeyphrase: false,
       });
     }
+
+    this.abstractParts.push({
+      text: cleanedAbstract.slice(match.index, match.index + match.length),
+      isKeyphrase: true,
+      keyphraseMeta: {
+        concept: match.dnu,
+        originalKeyphrase: match.kp,
+        color: this.getColorForConcept(match.dnu),
+      },
+    });
+
+    currentIndex = match.index + match.length;
   }
+
+  if (currentIndex < cleanedAbstract.length) {
+    this.abstractParts.push({
+      text: cleanedAbstract.slice(currentIndex),
+      isKeyphrase: false,
+    });
+  }
+}
 
   truncateParts(
     parts: { text: string; isKeyphrase: boolean; keyphraseMeta?: any }[],

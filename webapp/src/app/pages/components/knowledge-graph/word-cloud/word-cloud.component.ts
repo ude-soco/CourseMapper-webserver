@@ -67,84 +67,93 @@ export class WordCloudComponent implements AfterViewInit {
   }
 
   generateWordCloud() {
-    if (!this.wordCloudCanvas) return;
+  if (!this.wordCloudCanvas) return;
 
-    const canvas = this.wordCloudCanvas.nativeElement;
-    canvas.width = 300;
-    canvas.height = 250;
+  const canvas = this.wordCloudCanvas.nativeElement;
+  canvas.width = 300;
+  canvas.height = 250;
 
-    const weights = this.keyphrasesImportanceTuple.map(([_, w]) => w);
-    const minWeight = Math.min(...weights);
-    const maxWeight = Math.max(...weights);
+  const weights = this.keyphrasesImportanceTuple.map(([_, w]) => w);
+  const minWeight = Math.min(...weights);
+  const maxWeight = Math.max(...weights);
 
-    const scaleWeight = (w: number, minFont = 10, maxFont = 50) => {
-      if (maxWeight === minWeight) return (minFont + maxFont) / 2;
-      return ((w - minWeight) / (maxWeight - minWeight)) * (maxFont - minFont) + minFont;
-    };
+  const scaleWeight = (w: number, minFont = 10, maxFont = 50) => {
+    if (maxWeight === minWeight) return (minFont + maxFont) / 2;
+    return ((w - minWeight) / (maxWeight - minWeight)) * (maxFont - minFont) + minFont;
+  };
 
-// Build cleaned display list
-const displayTuples = this.keyphrasesImportanceTuple
-  .map(([phrase, weight]) => {
-    const rawPhrase = Array.isArray(phrase) ? phrase[0] : phrase;
-    const cleaned = this.cleanKeyphrase(rawPhrase);
-
-    // 🧠 Skip URLs (same logic as in card article component)
-    if (this.isURL(cleaned)) {
-    /*   //  For debugging:
-    console.warn(`Skipping URL-like keyphrase in word cloud: "${cleaned}"`); */
-      return null;
-    }
-
-    return [cleaned, scaleWeight(weight)]; // scaled font size
-  })
-  .filter((item): item is [string, number] => !!item); // filter out nulls
-
-
-    // Map colors by cleaned keyphrase
-    const colorMapping = new Map<string, string>();
-    for (let i = 0; i < this.keyphrasesImportanceTuple.length; i++) {
-      const rawPhrase = Array.isArray(this.keyphrasesImportanceTuple[i][0])
-        ? this.keyphrasesImportanceTuple[i][0][0]
-        : this.keyphrasesImportanceTuple[i][0];
+  //  Build cleaned display list (with skip logic for irrelevant keyphrases)
+  const displayTuples = this.keyphrasesImportanceTuple
+    .map(([phrase, weight], i) => {
+      const rawPhrase = Array.isArray(phrase) ? phrase[0] : phrase;
       const cleaned = this.cleanKeyphrase(rawPhrase);
-      const correspondingDnu = this.keyphrases_dnu_similarity_score[i]
-        ? Object.keys(this.keyphrases_dnu_similarity_score[i])[0]
-        : undefined;
-      const index = this.conceptsNames.indexOf(correspondingDnu);
-      const color = index !== -1 ? this.conceptColors[index] : 'red';
-      colorMapping.set(cleaned, color);
-    }
 
-    WordCloud(canvas, {
-      list: displayTuples,
-      gridSize: 10,
-      weightFactor: size => size,
-      fontFamily: 'Arial, sans-serif',
-      color: (word) => colorMapping.get(word) || 'red',
-      rotateRatio: 0,
-      rotationSteps: 0,
-      backgroundColor: 'white',
-      hover: (item) => {
-        if (item) {
-          const cleanedWord = item[0];
-          const originalMatch = this.keyphrasesImportanceTuple.find(([phrase]) => {
-            const rawPhrase = Array.isArray(phrase) ? phrase[0][0] ?? phrase[0] : phrase;
-            return this.generateKeyphraseVariants(this.cleanKeyphrase(rawPhrase))
-                       .includes(cleanedWord);
-          });
-
-          const originalWord = originalMatch
-            ? (Array.isArray(originalMatch[0]) ? originalMatch[0][0] : originalMatch[0])
-            : cleanedWord;
-
-          this.ngZone.runOutsideAngular(() => {
-            this.selectedWord = originalWord;
-            this.generateBarChart();
-          });
-        }
+      //  Skip URLs
+      if (this.isURL(cleaned)) {
+        /* console.warn(`Skipping URL-like keyphrase in word cloud: "${cleaned}"`); */
+        return null;
       }
-    });
+
+      //  Skip keyphrases with all similarity scores ≤ 0
+      const similarityObj = this.keyphrases_dnu_similarity_score[i];
+      const hasPositive = Object.values(similarityObj)
+        .filter((v): v is number => typeof v === 'number')
+        .some(v => v > 0);
+      if (!hasPositive) {
+        /* console.warn(`Skipping unrelated keyphrase in word cloud: "${cleaned}"`); */
+        return null;
+      }
+
+      // keep if valid
+      return [cleaned, scaleWeight(weight)] as [string, number];
+    })
+    .filter((item): item is [string, number] => !!item); // filter out nulls
+
+  // Map colors by cleaned keyphrase
+  const colorMapping = new Map<string, string>();
+  for (let i = 0; i < this.keyphrasesImportanceTuple.length; i++) {
+    const rawPhrase = Array.isArray(this.keyphrasesImportanceTuple[i][0])
+      ? this.keyphrasesImportanceTuple[i][0][0]
+      : this.keyphrasesImportanceTuple[i][0];
+    const cleaned = this.cleanKeyphrase(rawPhrase);
+    const correspondingDnu = this.keyphrases_dnu_similarity_score[i]
+      ? Object.keys(this.keyphrases_dnu_similarity_score[i])[0]
+      : undefined;
+    const index = this.conceptsNames.indexOf(correspondingDnu);
+    const color = index !== -1 ? this.conceptColors[index] : 'red';
+    colorMapping.set(cleaned, color);
   }
+
+  WordCloud(canvas, {
+    list: displayTuples,
+    gridSize: 10,
+    weightFactor: size => size,
+    fontFamily: 'Arial, sans-serif',
+    color: (word) => colorMapping.get(word) || 'red',
+    rotateRatio: 0,
+    rotationSteps: 0,
+    backgroundColor: 'white',
+    hover: (item) => {
+      if (item) {
+        const cleanedWord = item[0];
+        const originalMatch = this.keyphrasesImportanceTuple.find(([phrase]) => {
+          const rawPhrase = Array.isArray(phrase) ? phrase[0][0] ?? phrase[0] : phrase;
+          return this.generateKeyphraseVariants(this.cleanKeyphrase(rawPhrase))
+                     .includes(cleanedWord);
+        });
+
+        const originalWord = originalMatch
+          ? (Array.isArray(originalMatch[0]) ? originalMatch[0][0] : originalMatch[0])
+          : cleanedWord;
+
+        this.ngZone.runOutsideAngular(() => {
+          this.selectedWord = originalWord;
+          this.generateBarChart();
+        });
+      }
+    }
+  });
+}
 
   getSimilarityScoresAlignedToFixedYaxis(keyphrase: string): number[] {
     const cleanedKey = this.cleanKeyphrase(keyphrase);

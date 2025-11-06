@@ -272,34 +272,50 @@ generateParts(
   this.abstractParts = [];
 
   const cleanedAbstract = this.cleanTextForLatex(text);
-/* //  For debugging:
-  console.log("🔎 Original abstract:", text);
-  console.log("🧹 Cleaned abstract:", cleanedAbstract); */
+  /* //  For debugging:     
+  console.log(' Original abstract:', text);
+  console.log(' Cleaned abstract:', cleanedAbstract); */
 
   if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
     this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
     return;
   }
 
-  const expandedKeyphrases: { text: string; dnu: string; original: string }[] = [];
+  const expandedKeyphrases: {
+    text: string;
+    dnu: string;
+    original: string;
+  }[] = [];
 
   keyphrases.forEach((kp, i) => {
     const raw = Array.isArray(kp) ? kp[0] : kp;
     const cleaned = this.cleanKeyphrase(raw);
     const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
 
-      // Skip keyphrases that look like URLs
-  if (this.isURL(cleaned)) {
-    /* //  For debugging:
-    console.warn(`Skipping URL-like keyphrase: "${cleaned}"`); */
-    return;
-  }
+    //  Skip keyphrases that have no positive similarity scores
+    const similarityObj = keyphrases_dnu_similarity_score[i];
+const hasPositive = Object.values(similarityObj)
+  .filter((v): v is number => typeof v === 'number')
+  .some(v => v > 0);
+
+    if (!hasPositive) {
+      /* // For debugging:
+      console.warn(`Skipping unrelated keyphrase: "${cleaned}"`);
+      */
+      return;
+    }
+
+    if (this.isURL(cleaned)) {
+      /* // For debugging: Skip keyphrases that look like URLs
+      console.warn(`Skipping URL-like keyphrase: "${cleaned}"`); */
+      return;
+    }
 
     const variants = this.generateKeyphraseVariants(cleaned);
 
     let foundVariantInAbstract = false;
-    variants.forEach(v => {
-      const regex = new RegExp(`\\b${this.escapeRegex(v)}\\b`, "gi");
+    variants.forEach((v) => {
+      const regex = new RegExp(this.escapeRegex(v), 'gi');
       if (regex.test(cleanedAbstract)) {
         foundVariantInAbstract = true;
       }
@@ -311,18 +327,31 @@ generateParts(
       });
     });
 
-   /* //  For debugging:
+    /* //  For debugging:
     if (!foundVariantInAbstract) {
-      console.warn(`⚠️ No match in video description for keyphrase: "${cleaned}"`);
+      console.warn(` No match in abstract for keyphrase: "${cleaned}"`);
     } */
   });
 
-  const matches: { index: number; length: number; kp: string; dnu: string }[] = [];
+  const matches: {
+    index: number;
+    length: number;
+    kp: string;
+    dnu: string;
+  }[] = [];
 
   expandedKeyphrases.forEach(({ text: kp, dnu, original }) => {
     if (!kp) return;
 
-    const regex = new RegExp(`\\b${this.escapeRegex(kp)}\\b`, "gi");
+    let regex: RegExp;
+
+    if (kp.length <= 3) {
+      // For very short keyphrases like "a", "an", "x", use word boundaries & Use custom boundary to avoid including parentheses
+      regex = new RegExp(`(?<!\\w)${this.escapeRegex(kp)}(?!\\w)`, 'gi');
+    } else {
+      regex = new RegExp(this.escapeRegex(kp), 'gi');
+    }
+
     let match: RegExpExecArray | null;
     while ((match = regex.exec(cleanedAbstract)) !== null) {
       matches.push({
@@ -334,10 +363,8 @@ generateParts(
     }
   });
 
-  // Sort by position and length
   matches.sort((a, b) => a.index - b.index || b.length - a.length);
 
-  // Filter overlapping matches
   const filteredMatches: typeof matches = [];
   let lastIndex = -1;
   for (const match of matches) {
@@ -347,7 +374,6 @@ generateParts(
     }
   }
 
-  // Build abstract parts array
   let currentIndex = 0;
   for (const match of filteredMatches) {
     if (match.index > currentIndex) {
@@ -370,7 +396,6 @@ generateParts(
     currentIndex = match.index + match.length;
   }
 
-  // Add remaining non-keyphrase text
   if (currentIndex < cleanedAbstract.length) {
     this.abstractParts.push({
       text: cleanedAbstract.slice(currentIndex),
