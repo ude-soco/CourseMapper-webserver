@@ -27,6 +27,7 @@ import { TopicDashboardComponent } from './pages/components/Dashboards/topic-das
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
+import { PersonalKnowledgeGraphComponent } from './pages/components/knowledge-graph/user-kg/personal-knowledge-graph/personal-knowledge-graph.component';
 import { CanDeactivateService } from './services/can-deactivate.service';
 
 const routes: Routes = [
@@ -34,6 +35,11 @@ const routes: Routes = [
   {
     path: 'user/dashboard',
     component: PersonalDashboardComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'user/personalkg',
+    component: PersonalKnowledgeGraphComponent,
     canActivate: [AuthGuardService],
   },
   {
@@ -56,15 +62,16 @@ const routes: Routes = [
   {
     path: 'restPassword/:token',
     component: ResetPasswordComponent,
-  }, {
+  },
+  {
     path: 'restRequest',
     component: ResetPasswordRequestComponent,
   },
   {
-  path: 'verify/:token',
-  component: RequestEmailValidationComponent,
-},
- 
+    path: 'verify/:token',
+    component: RequestEmailValidationComponent,
+  },
+
   {
     path: 'validateEmail',
     component: EmailValidationComponent,

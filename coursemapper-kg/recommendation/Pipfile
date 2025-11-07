@@ -42,7 +42,7 @@ pymongo = "*"
 pipenv = "*"
 
 
-torch-geometric = "*"
+
 
 [dev-packages]
 

@@ -181,6 +181,17 @@ export const deleteMaterial = async (req, res, next) => {
   }
 };
 
+export const deleteCourse = async (req, res, next) => {
+  const courseId = req.params.courseId;
+
+  try {
+    await neo4j.deleteCourse(courseId);
+    return next();
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
 export const getMaterialSlides = async (req, res) => {
   const materialId = req.params.materialId;
 
@@ -286,6 +297,46 @@ export const setRating = async (req, res) => {
     return res.status(200).send(result);
   } catch (err) {
     return res.status(500).send({ error: err.message });
+  }
+};
+
+export const createCourseNeo4j = async (req, res) => {
+  const { userId, courseId } = req.params;              // Still extracting from the URL path
+  const { courseName } = req.query;                     // Extract from query parameters
+
+  try {
+    const result = await neo4j.createUserCourseRelationship(
+      userId,
+      courseId,
+      courseName,
+      "low"
+    );
+    return res.status(200).send({ success: true, data: result });
+  } catch (err) {
+    console.error("Failed to create user-course relationship:", err);
+    return res.status(500).send({ success: false, error: err.message });
+  }
+};
+
+export const deleteCourseNeo4j = async (req, res) => {
+  const { userId, courseId } = req.params; // Extract parameters from the URL
+
+  if (!userId || !courseId) {
+    return res
+      .status(400)
+      .send({ success: false, error: "userId and courseId are required" });
+  }
+
+  try {
+    const result = await neo4j.deleteUserCourseRelationship(userId, courseId);
+    return res.status(200).send({
+      success: true,
+      message: "Relationship deleted successfully",
+      data: result,
+    });
+  } catch (err) {
+    console.error("Failed to delete user-course relationship:", err);
+    return res.status(500).send({ success: false, error: err.message });
   }
 };
 
@@ -538,12 +589,12 @@ export const searchWikipedia = async (req, res) => {
     const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
     const response = await axios.get(url);
     const searchResults = response.data.query.search;
-     // Add the Wikipedia URL to each search result
-     const resultsWithUrls = searchResults.map(result => {
+    // Add the Wikipedia URL to each search result
+    const resultsWithUrls = searchResults.map((result) => {
       const titleEncoded = encodeURIComponent(result.title);
       return {
         ...result,
-        url: `https://en.wikipedia.org/wiki/${titleEncoded}`
+        url: `https://en.wikipedia.org/wiki/${titleEncoded}`,
       };
     });
     return res.status(200).send({ searchResults: resultsWithUrls });
@@ -552,6 +603,16 @@ export const searchWikipedia = async (req, res) => {
   }
 };
 
+export const getUser = async (req, res) => {
+  const userid = req.params.userId;
+
+  try {
+    const records = await neo4j.getUserNode(userid);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+}
 export const viewFullWikipediaArticle = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;
@@ -666,7 +727,6 @@ export const rateArticle = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error finding material" });
   }
-
   req.locals = {
     user: foundUser,
     articleId: req.body.resourceId,
@@ -678,7 +738,196 @@ export const rateArticle = async (req, res, next) => {
   };
 
   next();
+
 };
+
+export const getSingleUser = async (req, res) => {
+  const userid = req.params.userId;
+
+  try {
+    const records = await neo4j.getSingleUserNode(userid);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getLevelOfEngagement = async (req, res) => {
+  const userid = req.params.userId;
+
+  try {
+    const records = await neo4j.getLevelOfEngagement(userid);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getDNUEngagement = async (req, res) => {
+  const userid = req.params.userId;
+
+  try {
+    const records = await neo4j.getDNUEngagement(userid);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const updateConceptUDNU = async (req, res) => {
+  const { source, target, type } = req.params;
+  try {
+    const records = await neo4j.changeRelationshipTypeUDNU(
+      source,
+      target,
+      type
+    );
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getConceptSlide = async (req, res) => {
+  const { materialId, conceptId } = req.params;
+  try {
+    const records = await neo4j.getConceptSlide(materialId, conceptId);
+    return res.status(200).send({ slideNo: records.slideNo });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getUserRelationships = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const records = await neo4j.getUserRelationships(userId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const deleteRelationship = async (req, res) => {
+  const { rid } = req.params;
+  try {
+    const records = await neo4j.deleteRelationship(rid);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const deleteHasConcept = async (req, res) => {
+  const { courseId } = req.params;
+  try {
+    const records = await neo4j.deleteHasConcept(courseId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const renewConcept = async (req, res) => {
+  const { conceptId } = req.params;
+  try {
+    const records = await neo4j.renewConcept(conceptId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getRelationship = async (req, res) => {
+  const { targetId } = req.params;
+  try {
+    const records = await neo4j.getRelationship(targetId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getHasConcept = async (req, res) => {
+  const { targetId } = req.params;
+  try {
+    const records = await neo4j.getHasConcept(targetId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getRelatedTo = async (req, res) => {
+  const { courseId } = req.params;
+  try {
+    const records = await neo4j.getRelatedTo(courseId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const getHasCategory = async (req, res) => {
+  const { conceptId } = req.params;
+  try {
+    const records = await neo4j.getHasCategory(conceptId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const addCourseIdToMaterial = async (req, res) => {
+  const { materialId } = req.params;
+  try {
+    const records = await neo4j.addCourseIdToMaterial(materialId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+export const createCourseHasConcepts = async (req, res) => {
+  const { courseId } = req.params;
+  try {
+    const records = await neo4j.createCourseHasConcepts(courseId);
+    return res.status(200).send({ records });
+  } catch (err) {
+    return res.status(500).send({ error: err.message });
+  }
+};
+/*
+export const getUser = async (req, res) => {
+  const userid = req.params.userId;
+  console.log("===== getUser STARTED =====");
+  console.log("Received userId:", userid);
+
+  try {
+    if (!(await isAuthorized(req))) {
+      console.log("Authorization failed.");
+      return res.status(403).send({ error: "Unauthorized" });
+    }
+
+    console.log("Calling getUserNode...");
+    
+    // Force call check
+    const result = await neo4j.getUserNode(userid);
+    
+    console.log("getUserNode executed. Result:", result);
+
+    if (!result || result.length === 0) {
+      console.warn("No user found for:", userid);
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    return res.status(200).send({ result });
+  } catch (err) {
+    console.error("Error in getUser:", err);
+    return res.status(500).send({ error: err.message });
+  }
+};*/
+
 export const rateVideo = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;

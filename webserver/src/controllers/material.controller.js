@@ -8,6 +8,22 @@ const Reply = db.reply;
 const Tag = db.tag;
 const Course = db.course;
 
+const neo4j = require("../graph/neo4j");
+
+export const getMaterialById = async (req, res, next) => {
+  const materialId = req.params.materialId;
+  try {
+    const selectedMaterial = await Material.findById(materialId);
+    if (selectedMaterial) {
+      return res.status(200).send(selectedMaterial);
+    } else {
+      return res.status(404).send({ error: "Cannot find material" });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Error finding material" });
+  }
+};
+
 /**
  * @function getMaterial
  * Get details of a material controller
@@ -198,6 +214,15 @@ export const newMaterial = async (req, res, next) => {
   } catch (err) {
     return res.status(500).send({ error: "Error saving channel" });
   }
+  // Call Neo4j function to create the relationship
+  /*
+  try {
+    await neo4j.createCourseMaterialRelationship(courseId, savedMaterial._id.toString(), materialName);
+  } catch (err) {
+    console.error("Failed to create course-material relationship:", err);
+    return res.status(500).send({ error: "Error creating course-material relationship" });
+  }
+  */
 
   req.locals = {
     material: savedMaterial,
@@ -376,13 +401,13 @@ export const editMaterial = async (req, res, next) => {
   foundMaterial.name = materialName;
   foundMaterial.url = materialUrl;
   foundMaterial.type = materialType;
-  
+
   if (materialDesc) {
     foundMaterial.description = materialDesc;
   }
 
   foundMaterial.showDialog = showDialog;
-  
+
   foundMaterial.updatedAt = Date.now();
   foundMaterial = await foundMaterial.save();
   /*  try {

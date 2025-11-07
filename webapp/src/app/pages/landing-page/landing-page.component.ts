@@ -56,6 +56,7 @@ export class LandingPageComponent {
     private messageService: MessageService
   ) {
     this.loggedInUser = this.storageService.isLoggedIn();
+    this.loggedInUser = this.storageService.getUser() !== null;
 
     // const user = this.storageService.getUser();
 

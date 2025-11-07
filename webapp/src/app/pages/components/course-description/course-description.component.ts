@@ -7,6 +7,7 @@ import { Course } from 'src/app/models/Course';
 import { CourseService } from 'src/app/services/course.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { UserServiceService } from 'src/app/services/user-service.service';
+import { Neo4jService } from 'src/app/services/neo4j.service'; 
 import * as AppActions from 'src/app/state/app.actions';
 import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
 
@@ -50,6 +51,7 @@ export class CourseDescriptionComponent {
     private store: Store<State>,
     private userService: UserServiceService,
     private courseService: CourseService,
+    private neo4jService: Neo4jService,
     private router: Router,
     private messageService: MessageService,
     private route: ActivatedRoute,
@@ -133,6 +135,8 @@ export class CourseDescriptionComponent {
               this.socket.emit('join', 'course:' + this.course_enroll._id);
               // this.showInfo(res.success);
               this.showInfo('You are successfully enrolled to the course');
+              // Create user-course relationship
+              this.createRelationship();
             } else {
               this.showError(data.errorMsg);
             }
@@ -154,6 +158,8 @@ export class CourseDescriptionComponent {
                 this.socket.emit('join', 'course:' + this.course_enroll._id);
 
                 this.showInfo('You are successfully enrolled to the course');
+                // Create user-course relationship
+                this.createRelationship();
               } else {
                 this.showError(data.errorMsg);
                 if (data.errorMsg.includes('User already enrolled in course')) {
@@ -182,6 +188,26 @@ export class CourseDescriptionComponent {
       }
     }
   }
+  private createRelationship() {
+    const user = this.storageService.getUser(); // Assuming this returns user info
+    const userId = user.id; // Get the user ID
+    const courseId = this.course_enroll._id; // Get the course ID
+    const courseName = this.course_enroll.name; // Get the course ID
+  
+    // Call the Neo4j service to create the relationship
+    this.neo4jService.createUserCourseRelationship(userId, courseId, courseName).subscribe({
+      next: () => {
+        console.log('User-course relationship created successfully!');
+      },
+      error: (err) => {
+        
+        console.error(err);
+      },
+    });
+  }
+
+ 
+
   GoToCOurse() {
     if (this.isloggedin == true) {
       this.router.navigate(['course', this.course_enroll._id]);

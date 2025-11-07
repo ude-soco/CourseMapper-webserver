@@ -1,3 +1,4 @@
+import { Neo4jService } from 'src/app/services/neo4j.service';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { lastValueFrom, Subscription } from 'rxjs';
@@ -5,8 +6,12 @@ import { ConceptMapService } from 'src/app/services/concept-map-service.service'
 import { ConceptStatusService } from 'src/app/services/concept-status.service';
 import { SlideConceptsService } from 'src/app/services/slide-concepts.service';
 import { Store } from '@ngrx/store';
-import { State } from 'src/app/state/app.reducer';
+import { State, getLoggedInUser } from 'src/app/state/app.reducer';
 import { getCurrentMaterial } from '../../materials/state/materials.reducer';
+import { environment } from 'src/environments/environment';
+import { User } from 'src/app/models/User';
+import { Material } from 'src/app/models/Material';
+
 import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 @Component({
@@ -22,17 +27,20 @@ export class GraphComponent {
   @Input() topNConcepts?: any;
   @Input() materialKnowledgeGraph: boolean;
   @Input() slideKnowledgeGraph: boolean;
+  @Input() userKnowledgeGraph: boolean;
   @Input() recommenderKnowledgeGraph: boolean;
   @Input() cyHeight: any;
   @Input() cyWidth: any;
   @Input() showMaterialKg: boolean;
   @Input() showCourseKg: boolean;
+  @Input() showUserKg: boolean;
   @Input() isDraft: boolean;
 
   @Output() editConcept: EventEmitter<string> = new EventEmitter();
   @Output() conceptDeleted: EventEmitter<string> = new EventEmitter();
   @Output() conceptDeletedBulk: EventEmitter<string[]> = new EventEmitter();
-
+  @Output() slideNumber = new EventEmitter<number>();
+  @Output() sendMaterialId = new EventEmitter<string>();
 
   node_id: string | undefined;
   node_cid: string | undefined;
@@ -40,6 +48,10 @@ export class GraphComponent {
   node_type: string | undefined;
   node_abstract: string | undefined;
   node_wikipedia: string | undefined;
+  node_mid: string | undefined;
+
+  loggedInUser: User;
+  selectedMaterial: Material;
 
   clamped = false;
   abstractDivBottom;
@@ -60,12 +72,19 @@ export class GraphComponent {
   courseId: string;
   subscriptions: Subscription = new Subscription(); // Manage subscriptions
   constructor(
+    // sprivate cdr: ChangeDetectorRef
     private messageService: MessageService, // show toast msgs
     private slideConceptservice: SlideConceptsService, //Change concepts' status on slide_KG [new, understood, did not understand]
     private statusServie: ConceptStatusService, // informs this component when a status has been changed to show a toast msg in case the abstract covers the selected concept
     private conceptMapService: ConceptMapService, // remove concept
-    private store: Store<State>
+    private store: Store<State>,
+    private neo4jService: Neo4jService
   ) {
+    // this.subscriptions.push(
+    //   this.store
+    //     .select(getLoggedInUser)
+    //     .subscribe((user) => (this.loggedInUser = user))
+    // );
     this.newConceptsSubscription = slideConceptservice.newConcepts.subscribe(
       (res) => {
         this.newConceptsObj = res;
@@ -152,14 +171,22 @@ export class GraphComponent {
   }
 
   nodeChange(event: any) {
+    console.log('Node change event received:', event);
     if (event != undefined) {
       this.node_id = event.id;
       this.node_cid = event.cid;
       this.node_name = event.name;
       this.node_type = event.type;
       this.node_abstract = event.abstract;
+      this.node_mid = event.mid;
       this.node_wikipedia = event.wikipedia;
       this.showConceptAbstract = true;
+      console.log('Setting node properties:', {
+        id: this.node_id,
+        name: this.node_name,
+        type: this.node_type,
+        mid: this.node_mid,
+      });
       setTimeout(() => {
         let abstractContainer = document.getElementById(
           'abstractBlockContainer'
@@ -228,10 +255,12 @@ export class GraphComponent {
       this.node_cid = undefined;
       this.node_name = undefined;
       this.node_type = undefined;
+      this.node_mid = undefined;
       this.node_abstract = undefined;
       this.node_wikipedia = undefined;
       this.showConceptAbstract = false;
     }
+    // this.cdr.detectChanges();
   }
 
   goToWikipediaPage(wikipedia: string) {
@@ -325,5 +354,23 @@ export class GraphComponent {
     this.closeAbstractPanel();
   }
 
-
+  async slideRedirect() {
+    try {
+      console.log(this.node_mid, this.node_cid);
+      const record = await this.neo4jService.getConceptSlide(
+        this.node_mid,
+        this.node_cid
+      );
+      this.sendMaterialId.emit(this.node_mid);
+      if (record) {
+        this.closeAbstractPanel();
+        console.log(record);
+        this.slideNumber.emit(record);
+      } else {
+        console.log('Error getting slide number');
+      }
+    } catch (error) {
+      console.log('Error finding slide', error);
+    }
+  }
 }

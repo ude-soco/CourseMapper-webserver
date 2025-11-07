@@ -108,6 +108,29 @@ module.exports = function (app) {
     "/api/wikipedia/search",
     [authJwt.verifyToken],
     controller.searchWikipedia
+      );
+  app.post(
+    "/api/knowledge-graph/user/:userId/course/:courseId/create-relationship",
+    [authJwt.verifyToken],
+    controller.createCourseNeo4j
+  );
+
+  app.delete(
+    "/api/knowledge-graph/user/:userId/course/:courseId/remove-relationship",
+    [authJwt.verifyToken],
+    controller.deleteCourseNeo4j
+  );
+
+  app.delete(
+    "/api/knowledge-graph/delete-course/:courseId",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.deleteCourse
+  );
+
+  app.post(
+    "/api/courses/:courseId/materials/:materialId/concept-recommendation",
+    [authJwt.verifyToken, authJwt.isEnrolled],
+    controller.getConcepts
   );
   app.post(
     "/api/courses/:courseId/materials/:materialId/concept-recommendation/log",
@@ -216,6 +239,101 @@ module.exports = function (app) {
   recommendationController.getSequence
    // "/api/courses/:courseId/materials/:materialId/sequence-recommendation",
 );
+ app.get(
+    "/api/knowledge-graph/get-user/:userId",
+    [authJwt.verifyToken],
+    controller.getUser
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-single-user/:userId",
+    [authJwt.verifyToken],
+    controller.getSingleUser
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-level-of-engagement/:userId",
+    [authJwt.verifyToken],
+    controller.getLevelOfEngagement
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-DNU-engagement/:userId",
+    [authJwt.verifyToken],
+    controller.getDNUEngagement
+  );
+
+  app.put(
+    "/api/knowledge-graph/update-relationship-u-dnu/:source/:target/:type",
+    [authJwt.verifyToken],
+    controller.updateConceptUDNU
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-concept-slide/:materialId/:conceptId",
+    [authJwt.verifyToken],
+    controller.getConceptSlide
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-user-relationships/:userId",
+    [authJwt.verifyToken],
+    controller.getUserRelationships
+  );
+
+  app.delete(
+    "/api/knowledge-graph/delete-relationship/:rid",
+    [authJwt.verifyToken],
+    controller.deleteRelationship
+  );
+
+  app.delete(
+    "/api/knowledge-graph/delete-has-concept/:courseId",
+    [authJwt.verifyToken],
+    controller.deleteHasConcept
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-relationship/:targetId",
+    [authJwt.verifyToken],
+    controller.getRelationship
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-has-concept/:targetId",
+    [authJwt.verifyToken],
+    controller.getHasConcept
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-related-to/:courseId",
+    [authJwt.verifyToken],
+    controller.getRelatedTo
+  );
+
+  app.get(
+    "/api/knowledge-graph/get-has-category/:conceptId",
+    [authJwt.verifyToken],
+    controller.getHasCategory
+  );
+
+  app.post(
+    "/api/knowledge-graph/renew-concept/:conceptId",
+    [authJwt.verifyToken],
+    controller.renewConcept
+  );
+
+  app.put(
+    "/api/knowledge-graph/add-courseId-to-material/:materialId",
+    [authJwt.verifyToken],
+    controller.addCourseIdToMaterial
+  );
+
+  app.post(
+    "/api/knowledge-graph/create-course-concept-relationship/:courseId",
+    [authJwt.verifyToken],
+    controller.createCourseHasConcepts
+  );
   app.post(
     "/api/courses/:courseId/materials/:materialId/main-concepts/log",
     [authJwt.verifyToken],

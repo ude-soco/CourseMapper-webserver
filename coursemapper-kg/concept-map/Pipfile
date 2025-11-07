@@ -23,9 +23,10 @@ rdflib = "*"
 torch-geometric = "*"
 torch = "*"
 bertopic = "*"
+"pdfminer.six" = "==20201018"
 
 [dev-packages]
 
 [requires]
 python_version = "3.11"
-python_full_version = "3.11.5"
+python_full_version = "3.11.9"

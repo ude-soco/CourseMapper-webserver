@@ -22,7 +22,6 @@ import { ByPassUrlSanitizationPipe } from '../pipes/by-pass-url-sanitization.pip
 import { DragulaModule } from 'ng2-dragula';
 import { BackButtonComponent } from '../pages/components/back-button/back-button.component';
 
-
 @NgModule({
   declarations: [
     ButtonComponent,
@@ -38,10 +37,9 @@ import { BackButtonComponent } from '../pages/components/back-button/back-button
     MentionsComponent,
     FooterComponent,
     AddIndicatorComponent,
-   // PopulateDashboardComponent,
+    PopulateDashboardComponent,
     ByPassUrlSanitizationPipe,
-   
-    
+    BackButtonComponent,
   ],
   imports: [
     CommonModule,
@@ -65,8 +63,10 @@ import { BackButtonComponent } from '../pages/components/back-button/back-button
     MentionsComponent,
     FooterComponent,
     AddIndicatorComponent,
-   // PopulateDashboardComponent,
+    // PopulateDashboardComponent,
     ByPassUrlSanitizationPipe,
+    BackButtonComponent,
+    PopulateDashboardComponent,
   ],
 })
 export class SharedComponentsModule {}

@@ -192,8 +192,10 @@ export const getCourse = async (req, res) => {
       .send({ message: "Error finding notification settings" });
   }
 
-    // Find the user within the course's users array
-    const currentUser = foundCourse.users.find((user) => user.userId.toString() === userId);
+  // Find the user within the course's users array
+  const currentUser = foundCourse.users.find(
+    (user) => user.userId.toString() === userId
+  );
 
     // Attach the found user's role to the course data
     const courseWithUserRole = {

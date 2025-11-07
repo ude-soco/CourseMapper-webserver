@@ -9,6 +9,12 @@ module.exports = function (app) {
     next();
   });
 
+  app.get(
+    "/api/material/redirection/personalKg/:materialId",
+    [authJwt.verifyToken],
+    controller.getMaterialById
+  );
+
   // Get details of material
   // Only enrolled users/admin
   app.get(

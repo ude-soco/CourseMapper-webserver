@@ -1,0 +1,63 @@
+<div *ngIf="loggedInUser">
+  <div class="flex flex-row w-full">
+    <div><app-sidebar></app-sidebar></div>
+
+    <div class="w-full">
+      <div class="p-4 bg-gray-200">
+        <div class="flex flex-wrap items-center justify-between gap-5">
+          <div class="flex items-center gap-5">
+            <div>
+              <app-back-button></app-back-button>
+            </div>
+            <div>
+              <p class="flex w-full text-xl font-semibold">
+                Personal Knowledge Graph
+              </p>
+            </div>
+          </div>
+
+          <!-- Checkboxes for different KG views -->
+          <div class="flex items-center gap-4">
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="user-kg"
+                [checked]="showUserKg"
+                (change)="toggleUserKg($event)"
+              />
+              <label class="ml-2" for="user-kg"
+                >Understood and Not Understood Concepts</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="engagement-kg"
+                [checked]="showEngagementKg"
+                (change)="toggleEngagementKg($event)"
+              />
+              <label class="ml-2" for="engagement-kg"
+                >Level of Engagement with Courses</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input type="checkbox" id="interest-kg" />
+              <label class="ml-2" for="interest-kg"
+                >Level of Interest in Concepts</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="w-full max-w-screen-2xl p-4">
+        <app-concept-map-user-kg
+          #conceptMap
+          [user]="loggedInUser"
+        ></app-concept-map-user-kg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast position="bottom-left"></p-toast>

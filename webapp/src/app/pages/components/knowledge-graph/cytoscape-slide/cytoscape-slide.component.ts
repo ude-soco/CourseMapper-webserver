@@ -25,8 +25,10 @@ import { MaterialsRecommenderService } from 'src/app/services/materials-recommen
 import { getCurrentMaterial } from '../../materials/state/materials.reducer';
 import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { Subscription } from 'rxjs';
-import { State } from 'src/app/state/app.reducer';
 import * as $ from 'jquery';
+import { Neo4jService } from 'src/app/services/neo4j.service';
+import { State, getLoggedInUser } from 'src/app/state/app.reducer';
+import { User } from 'src/app/models/User';
 
 cytoscape.use(cxtmenu);
 cytoscape.use(dagre);
@@ -69,6 +71,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   public _elements: any;
   public allElements: any;
   public topElements: any;
+  private subscription: Subscription[] = [];
 
   layout: any;
 
@@ -86,6 +89,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
   showMoreActivated: boolean;
   showLessActivated: boolean;
   chosenElements: any;
+  loggedInUser: User;
 
   constructor(
     private renderer: Renderer2,
@@ -94,8 +98,14 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
     private callRecommendationsService: CallRecommendationsService,
     private messageService: MessageService,
     private materialsRecommenderService: MaterialsRecommenderService,
+    private neo4jService: Neo4jService,
     private store: Store<State>
   ) {
+    this.subscription.push(
+      this.store
+        .select(getLoggedInUser)
+        .subscribe((user) => (this.loggedInUser = user))
+    );
     this.layout = {
       name: 'spread',
       minDist: 70,
@@ -355,6 +365,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
     } else {
       this.disableRecommendationsButton = true;
     }
+    this.refreshNodeStatuses();
   }
   async ngOnChanges() {
     for (let index = 0; index < 2; index++) {
@@ -414,6 +425,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
         if (this._elements !== undefined) {
           this.cy.ready(() => {
             this.render();
+            this.refreshNodeStatuses();
           });
         }
       }
@@ -653,5 +665,120 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
       mainConcepts: this._elements, // Include main concepts
     };
     this.slideConceptservice.logViewLessConcepts(payload).subscribe();
+  }
+
+  async refreshNodeStatuses() {
+    if (!this.elements || !this.elements.nodes) {
+      return;
+    }
+
+    try {
+      const user = await this.neo4jService.getUser(this.loggedInUser.id);
+
+      // Check if user exists in Neo4j
+      if (!user || !user.records || user.records.length === 0) {
+        console.log('No user node found in Neo4j');
+
+        // If no user node, set all concepts to 'unread'
+        this.elements.nodes.forEach((node) => {
+          if (node.data.type !== 'user') {
+            node.data.status = 'unread';
+            this.slideConceptservice.updateNewConcepts(node.data);
+          }
+        });
+
+        // Update the cytoscape graph with default statuses
+        if (this.cy) {
+          this.cy.style(this.showAllStyle);
+        }
+        return;
+      }
+
+      const userId = user.records[0].u.identity;
+      console.log(userId);
+
+      const result = await this.neo4jService.getUserRelationships(userId);
+      console.log('Received relationships from Neo4j:', result);
+
+      const relationships = result.records || result;
+
+      // If no relationships found, set all concepts to 'unread'
+      if (!relationships) {
+        console.log('No relationships found for user');
+
+        this.elements.nodes.forEach((node) => {
+          if (node.data.type !== 'user') {
+            node.data.status = 'unread';
+            this.slideConceptservice.updateNewConcepts(node.data);
+          }
+        });
+
+        // Update the cytoscape graph with default statuses
+        if (this.cy) {
+          this.cy.style(this.showAllStyle);
+        }
+        return;
+      }
+
+      // Update node statuses based on relationship types
+      this.elements.nodes.forEach((node) => {
+        // Skip user nodes
+        if (node.data.type === 'user') {
+          return;
+        }
+
+        const nodeId = parseInt(node.data.id, 10);
+        const parsedRelationships = Array.isArray(result.records)
+          ? result.records
+          : Array.isArray(result)
+          ? result
+          : [];
+
+        console.log('Relationships for processing:', parsedRelationships);
+
+        const rel = parsedRelationships.find((r) => r.target === nodeId);
+        console.log(`Relationship for node ${nodeId}:`, rel);
+        console.log('Node data:', node.data);
+
+        if (rel) {
+          // Map Neo4j relationship type to slide KG status
+          if (rel.type === 'dnu') {
+            node.data.status = 'notUnderstood';
+            console.log('Setting as notUnderstood:', node);
+            this.slideConceptservice.updateDidNotUnderstandConcepts(node.data);
+          } else if (rel.type === 'u') {
+            node.data.status = 'understood';
+            console.log('Setting as understood:', node);
+            this.slideConceptservice.updateUnderstoodConcepts(node.data);
+          }
+        } else {
+          node.data.status = 'unread';
+          console.log('Setting as unread (no relationship):', node.data);
+          this.slideConceptservice.updateNewConcepts(node.data);
+        }
+      });
+
+      // Update the cytoscape graph with new statuses
+      if (this.cy) {
+        this.cy.style(this.showAllStyle);
+      }
+    } catch (error) {
+      console.error('Error in refreshNodeStatuses:', error);
+
+      // set all concepts to 'unread'
+      if (this.elements && this.elements.nodes) {
+        this.elements.nodes.forEach((node) => {
+          if (node.data.type !== 'user') {
+            node.data.status = 'unread';
+            this.slideConceptservice.updateNewConcepts(node.data);
+          }
+        });
+
+        // Update the cytoscape graph with default statuses
+        if (this.cy) {
+          this.cy.style(this.showAllStyle);
+        }
+      }
+    }
   }
 }

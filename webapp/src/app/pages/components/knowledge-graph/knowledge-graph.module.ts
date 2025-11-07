@@ -7,8 +7,8 @@ import { CytoscapeRoadsComponent } from './cytoscape-roads/cytoscape-roads.compo
 import { GraphComponent } from './graph/graph.component';
 import { GraphRecommednedComponent } from './graph-recommedned/graph-recommedned.component';
 // import { PrimengModule } from '../../../modules/primeng/primeng.module';
-import {AccordionModule} from 'primeng/accordion';
-import {MenuItem} from 'primeng/api';
+import { AccordionModule } from 'primeng/accordion';
+import { MenuItem } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -23,8 +23,8 @@ import { BadgeModule } from 'primeng/badge';
 import { MenuModule } from 'primeng/menu';
 import { CytoscapeSlideComponent } from './cytoscape-slide/cytoscape-slide.component';
 import { CytoscapeSlideKGComponent } from './cytoscape-slide-kg/cytoscape-slide-kg.component';
-import {DividerModule} from 'primeng/divider';
-import {RadioButtonModule} from 'primeng/radiobutton';
+import { DividerModule } from 'primeng/divider';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { ResultViewComponent } from './result-view/result-view.component';
 import { CardVideoComponent } from './videos/card-video/card-video.component';
 import { CardVideoListComponent } from './videos/card-video-list/card-video-list.component';
@@ -32,7 +32,7 @@ import { WatchVideoComponent } from './videos/watch-video/watch-video.component'
 import { CardArticleComponent } from './articles/card-article/card-article.component';
 import { CardArticleListComponent } from './articles/card-article-list/card-article-list.component';
 import { RatingComponent } from './rating/rating.component';
-import {OverlayPanelModule} from 'primeng/overlaypanel';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { DateAgoPipe } from './videos/pipes/date-ago.pipe';
 import { LinkifyPipe } from './videos/pipes/linkify.pipe';
 import { SafeHtmlPipe } from './videos/pipes/safehtml.pipe';
@@ -51,9 +51,11 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { PaginatorModule } from 'primeng/paginator';
-
-
-
+import { PersonalKnowledgeGraphComponent } from './user-kg/personal-knowledge-graph/personal-knowledge-graph.component';
+import { SharedComponentsModule } from 'src/app/components/shared-components.module';
+import { CytoscapeUserKgComponent } from './user-kg/cytoscape-user-kg/cytoscape-user-kg.component';
+import { ConceptMapUserKgComponent } from './user-kg/concept-map-user-kg/concept-map-user-kg.component';
+import { GraphUserKgComponent } from './user-kg/graph-user-kg/graph-user-kg.component';
 @NgModule({
   declarations: [
     ConceptMapComponent,
@@ -76,6 +78,10 @@ import { PaginatorModule } from 'primeng/paginator';
     SafeHtmlPipe,
     CustomRecommendationOptionComponent,    
     CytoscapeSequenceRecommendedComponent,    
+    PersonalKnowledgeGraphComponent,
+    CytoscapeUserKgComponent,
+    ConceptMapUserKgComponent,
+    GraphUserKgComponent,
   ],
   imports: [
     InputTextModule,
@@ -118,8 +124,9 @@ import { PaginatorModule } from 'primeng/paginator';
     AutoCompleteModule,
     MultiSelectModule,
     PdfViewerModule,
-    PaginatorModule
-    ],
+    PaginatorModule,
+    SharedComponentsModule,
+  ],
   exports: [
     ConceptMapComponent,
     CytoscapeComponent,
@@ -129,6 +136,5 @@ import { PaginatorModule } from 'primeng/paginator';
     GraphRecommednedComponent,
     CytoscapeSequenceRecommendedComponent
   ],
-
 })
 export class KnowledgeGraphModule {}

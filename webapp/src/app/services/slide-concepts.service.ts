@@ -88,13 +88,17 @@ export class SlideConceptsService {
     this.setNewConcepts(this.commonNewConcepts);
     this.setDidNotUnderstandConcepts(this.commonDidNotUnderstandConcepts);
     this.setUnderstoodConcepts(this.commonUnderstoodConcepts);
-    const data = {
-      concept: concept,
-      materialId: this.currentMaterial._id,
-      courseId: this.currentMaterial.courseId,
-      currentPdfPage: this.currentPdfPage,
-    };
-    this.logMarkConceptAsNew(data).subscribe();
+    if (this.currentMaterial) {
+      const data = {
+        concept: concept,
+        materialId: this.currentMaterial._id,
+        courseId: this.currentMaterial.courseId,
+        currentPdfPage: this.currentPdfPage,
+      };
+      this.logMarkConceptAsNotUnderstood(data).subscribe();
+    } else {
+      console.log('currentMaterial is undefined');
+    }
   }
 
   setDidNotUnderstandConcepts(list: string[]) {
@@ -141,19 +145,24 @@ export class SlideConceptsService {
     this.setNewConcepts(this.commonNewConcepts);
     this.setDidNotUnderstandConcepts(this.commonDidNotUnderstandConcepts);
     this.setUnderstoodConcepts(this.commonUnderstoodConcepts);
-    const data = {
-      concept: concept,
-      materialId: this.currentMaterial._id,
-      courseId: this.currentMaterial.courseId,
-      currentPdfPage: this.currentPdfPage,
-    };
-    this.logMarkConceptAsNotUnderstood(data).subscribe();
+    if (this.currentMaterial) {
+      const data = {
+        concept: concept,
+        materialId: this.currentMaterial._id,
+        courseId: this.currentMaterial.courseId,
+        currentPdfPage: this.currentPdfPage,
+      };
+      this.logMarkConceptAsNotUnderstood(data).subscribe();
+    } else {
+      console.log('currentMaterial is undefined');
+    }
   }
   setUnderstoodConcepts(list: string[]) {
     this.commonUnderstoodConcepts = list;
     this.understoodConcepts.next(list);
   }
   updateUnderstoodConcepts(concept: any) {
+    console.log(this.currentMaterial);
     if (
       this.commonUnderstoodConcepts.some(
         (e) => e.cid.toString() === concept.cid.toString()
@@ -186,13 +195,17 @@ export class SlideConceptsService {
     this.setNewConcepts(this.commonNewConcepts);
     this.setDidNotUnderstandConcepts(this.commonDidNotUnderstandConcepts);
     this.setUnderstoodConcepts(this.commonUnderstoodConcepts);
-    const data = {
-      concept: concept,
-      materialId: this.currentMaterial._id,
-      courseId: this.currentMaterial.courseId,
-      currentPdfPage: this.currentPdfPage,
-    };
-    this.logMarkConceptAsUnderstood(data).subscribe();
+    if (this.currentMaterial) {
+      const data = {
+        concept: concept,
+        materialId: this.currentMaterial._id,
+        courseId: this.currentMaterial.courseId,
+        currentPdfPage: this.currentPdfPage,
+      };
+      this.logMarkConceptAsNotUnderstood(data).subscribe();
+    } else {
+      console.log('currentMaterial is undefined');
+    }
   }
   logMarkConceptAsNew(data: any): Observable<any> {
     return this.http.post<any>(

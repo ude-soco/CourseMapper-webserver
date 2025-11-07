@@ -49,13 +49,13 @@ export class CytoscapeComponent {
   // @Input() showConceptAbstract: boolean;
   @Input() showMaterialKg: boolean;
   @Input() showCourseKg: boolean;
+  @Input() showUserKg: boolean;
   @Input() isDraft: boolean;
 
   @Output() selectedNodeEvent: EventEmitter<object> = new EventEmitter();
   @Output() conceptDeleted?: EventEmitter<string> = new EventEmitter();
   @Output() editConcept?: EventEmitter<string> = new EventEmitter();
   @Output() conceptDeletedBulk?: EventEmitter<string[]> = new EventEmitter();
-
 
   public cy: any;
 
@@ -101,7 +101,7 @@ export class CytoscapeComponent {
         }
       });
     this.layout = {
-      name: 'spread',
+      name: 'spread', // grid for  user
       minDist: 70,
       padding: 50,
     };
@@ -479,6 +479,7 @@ export class CytoscapeComponent {
     this.nodeSelected = false;
     console.log(this.showCourseKg);
     console.log(this.showMaterialKg);
+    console.log(this.showUserKg);
   }
 
   render() {
@@ -595,7 +596,6 @@ export class CytoscapeComponent {
   }
 
   toggleIrrelevantConcepts(cid: string, add: boolean = true) {
-
     //reset after bulk deletion
     if (!this.showBulkDeletion) {
       this.irrelevantConcepts = [];
@@ -614,9 +614,6 @@ export class CytoscapeComponent {
         this.irrelevantConcepts.splice(index, 1);
       }
     }
-
-
-
   }
 
   deleteIrrelevant() {

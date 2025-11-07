@@ -14,6 +14,8 @@ import { Course } from '../models/Course';
 import { CourseImp } from '../models/CourseImp';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CourseService } from '../services/course.service';
+import { Neo4jService } from 'src/app/services/neo4j.service'; 
+import { StorageService } from 'src/app/services/storage.service';
 import { Store, on } from '@ngrx/store';
 import {
   getCourseSelected,
@@ -83,11 +85,13 @@ export class CourseWelcomeComponent implements OnInit, CanComponentDeactivate  {
   public editMode: boolean = false;
 
   constructor(
+    private storageService: StorageService,
     private confirmationService: ConfirmationService,
     private renderer: Renderer2,
     protected courseService: CourseService,
     private store: Store<State>,
     private router: Router,
+    private neo4jService: Neo4jService,
     private indicatorService: IndicatorService,
     private messageService: MessageService,
     private topicChannelService: TopicChannelService,
@@ -143,7 +147,7 @@ export class CourseWelcomeComponent implements OnInit, CanComponentDeactivate  {
             this.toggleEdit('description'); // Edit the description of the course
             this.toggleEdit('image'); // Edit the image of the course
 
-           // Remove the 'edit' query parameter from the URL
+            // Remove the 'edit' query parameter from the URL
             this.router.navigate([], {
               relativeTo: this.route, // Maintain the current route
               queryParams: { edit: null }, // Set 'edit' to null to remove it
@@ -634,6 +638,8 @@ export class CourseWelcomeComponent implements OnInit, CanComponentDeactivate  {
   }
   unEnrolleCourse(course: Course) {
     this.courseService.WithdrawFromCourse(course).subscribe((res) => {
+      const user = this.storageService.getUser(); // Assuming this returns user info
+      const userId = user.id;
       let showInfoError = new ShowInfoError(this.messageService);
       if ('success' in res) {
         // this.showInfoError.showInfo('You have been  withdrewed successfully ');
@@ -652,6 +658,24 @@ export class CourseWelcomeComponent implements OnInit, CanComponentDeactivate  {
         this.store.dispatch(
           NotificationActions.isDeletingCourse({ courseId: course._id })
         );
+        this.neo4jService
+          .removeUserCourseRelationship(userId, course._id)
+          .subscribe({
+            next: () => {
+              console.log(
+                'User-course relationship removed successfully in Neo4j'
+              );
+            },
+            error: (err) => {
+              console.error('Error removing user-course relationship:', err);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to remove course relationship in Neo4j',
+              });
+            },
+          });
+        this.neo4jService.deleteHasConcept(course._id);
         // this.router.navigate(['course-description', course._id]);
         setTimeout(() => {
           this.router.navigate(['course-description', course._id]);

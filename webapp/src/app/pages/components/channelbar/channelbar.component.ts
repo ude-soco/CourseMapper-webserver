@@ -1,3 +1,4 @@
+import { Neo4jService } from 'src/app/services/neo4j.service';
 import { CourseService } from '../../../services/course.service';
 import {
   Component,
@@ -55,7 +56,8 @@ export class ChannelbarComponent implements OnInit {
     private storageService: StorageService,
     private materialKgService: MaterialKgOrderedService,
     private dialogService: DialogService,
-    private location: Location
+    private location: Location,
+    private neo4jservice: Neo4jService
   ) {
     this.route.params.subscribe((params) => {
       if (params['courseID']) {
@@ -300,6 +302,7 @@ export class ChannelbarComponent implements OnInit {
         this.showError(res['errorMsg']);
       }
     });
+    this.neo4jservice.deleteCourse(this.selectedCourse._id);
   }
 
   // onRenameCourse() {
