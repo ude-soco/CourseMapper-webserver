@@ -208,14 +208,16 @@ def _save_graph(tx: ManagedTransaction, graph: Graph):
     for edge in graph.edges:
         if edge.weight is None:
             tx.run(
-                """MATCH (a {uid: $source}), (b {uid: $target})
+                """MATCH (a {uid: $source})
+                   MATCH (b {uid: $target})
                 MERGE (a)-[r:%s]->(b)""" % edge.type,
                 source=edge.source,
                 target=edge.target,
                 relationship=edge.type)
         else:
             tx.run(
-                """MATCH (a {uid: $source}), (b {uid: $target})
+                """MATCH (a {uid: $source})
+                  MATCH (b {uid: $target})
                 MERGE (a)-[r:%s {weight: $weight}]->(b)""" % edge.type,
                 source=edge.source,
                 target=edge.target,

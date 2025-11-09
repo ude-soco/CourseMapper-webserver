@@ -95,7 +95,7 @@ export class SlideConceptsService {
         courseId: this.currentMaterial.courseId,
         currentPdfPage: this.currentPdfPage,
       };
-      this.logMarkConceptAsNotUnderstood(data).subscribe();
+      this.logMarkConceptAsNew(data).subscribe();
     } else {
       console.log('currentMaterial is undefined');
     }
@@ -202,7 +202,7 @@ export class SlideConceptsService {
         courseId: this.currentMaterial.courseId,
         currentPdfPage: this.currentPdfPage,
       };
-      this.logMarkConceptAsNotUnderstood(data).subscribe();
+      this.logMarkConceptAsUnderstood(data).subscribe();
     } else {
       console.log('currentMaterial is undefined');
     }

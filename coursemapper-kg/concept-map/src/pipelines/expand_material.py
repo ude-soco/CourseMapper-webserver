@@ -273,6 +273,10 @@ class ExpandMaterialPipeline:
         relations = list(concept_result) + list(slide_result)
         relationships = []
         for relation in relations:
+            weight = relation.get("weight")
+            if weight is None:
+                print(f"Warning: Missing weight for relation {relation}")
+                continue
             r = {
                 "source": hash(relation["source"] + relation["stype"]),
                 "target": hash(relation["target"] + relation["ttype"]),
