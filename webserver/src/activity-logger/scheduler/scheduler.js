@@ -1,11 +1,12 @@
 const cron = require("node-cron");
+const SCHEDULE_EXPRESSION = process.env.CRON_SCHEDULE_EVERY_SECOND;
 const controller = require("../controller/activity-controller");
 const lrs = require("../lrs/lrs");
 const BATCH_SIZE = 500;
 
 export const ActivityScheduler = () => {
   console.log("Starting xAPI Activity Scheduler...");
-  cron.schedule("* * * * * *", async () => {
+  cron.schedule(SCHEDULE_EXPRESSION, async () => {
     try {
       const statements = await controller.getActivities();
       console.log('xAPI scheduler: fetched statements count =', statements.length);

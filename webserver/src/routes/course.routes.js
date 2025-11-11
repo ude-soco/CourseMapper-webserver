@@ -1,6 +1,7 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/course.controller");
 const logger = require("../activity-logger/logger-middlewares/course-logger");
+const openlapLRS = require("../middlewares/openlap-lrs");
 const { getCourseOriginal } = require("../controllers/course.controller");
 // const controller2 = require("../controllers/user.controller");
 
@@ -39,6 +40,7 @@ module.exports = function (app) {
   app.post(
     "/api/course",
     [authJwt.verifyToken],
+    openlapLRS.createLRSStore,  // NEW: Create LRS store via OpenLAP
     controller.newCourse,
     logger.createCourseLogger
   );
