@@ -51,7 +51,7 @@ export class CardVideoComponent {
   abstractPartsTruncated: { text: string; isKeyphrase: boolean; keyphraseMeta?: any }[] = [];
 
   coloredBandData = {
-    document_dnu_similarity_colorband: {} as { [key: string]: number },
+    document_concept_similarity_colorband: {} as { [key: string]: number },
     tags: [] as { text: string; color: string }[]
   };
 
@@ -66,8 +66,8 @@ export class CardVideoComponent {
     this.getConceptsNames()
 
     this.coloredBandData = {
-      document_dnu_similarity_colorband: this.concepts.reduce((acc, concept, i) => {
-        acc[concept.name] = this.videoElement.document_dnu_similarity[concept.name] || 0;
+      document_concept_similarity_colorband: this.concepts.reduce((acc, concept, i) => {
+        acc[concept.name] = this.videoElement.document_concept_similarity[concept.name] || 0;
         return acc;
       }, {}),
       tags: this.concepts.map((concept, index) => ({
@@ -80,7 +80,7 @@ export class CardVideoComponent {
       this.generateParts(
       this.videoElement.description,
       this.videoElement.keyphrases,
-      this.videoElement.keyphrases_dnu_similarity_score
+      this.videoElement.keyphrases_concept_similarity_score
       );
       this.abstractPartsTruncated = this.truncateParts(this.abstractParts, this.DESCRIPTION_MAX_LENGTH);
     }
@@ -108,7 +108,7 @@ export class CardVideoComponent {
       this.generateParts(
       this.videoElement.description,
       this.videoElement.keyphrases,
-      this.videoElement.keyphrases_dnu_similarity_score
+      this.videoElement.keyphrases_concept_similarity_score
       );
       this.abstractPartsTruncated = this.truncateParts(this.abstractParts, this.DESCRIPTION_MAX_LENGTH);
     }
@@ -267,7 +267,7 @@ generateKeyphraseVariants(kp: string): string[] {
 generateParts(
   text: string,
   keyphrases: string[],
-  keyphrases_dnu_similarity_score: any[]
+  keyphrases_concept_similarity_score: any[]
 ) {
   this.abstractParts = [];
 
@@ -290,10 +290,10 @@ generateParts(
   keyphrases.forEach((kp, i) => {
     const raw = Array.isArray(kp) ? kp[0] : kp;
     const cleaned = this.cleanKeyphrase(raw);
-    const dnu = Object.keys(keyphrases_dnu_similarity_score[i])[0];
+    const dnu = Object.keys(keyphrases_concept_similarity_score[i])[0];
 
     //  Skip keyphrases that have no positive similarity scores
-    const similarityObj = keyphrases_dnu_similarity_score[i];
+    const similarityObj = keyphrases_concept_similarity_score[i];
 const hasPositive = Object.values(similarityObj)
   .filter((v): v is number => typeof v === 'number')
   .some(v => v > 0);
@@ -465,7 +465,7 @@ getSimilarityScoresAlignedToFixedYaxisPopUp(clickedKeyphrase: string): number[] 
     return [];
   }
 
-  const similarityObject = this.videoElement.keyphrases_dnu_similarity_score[index];
+  const similarityObject = this.videoElement.keyphrases_concept_similarity_score[index];
   return this.conceptsNames.map(dnu =>
     similarityObject && Object.prototype.hasOwnProperty.call(similarityObject, dnu)
       ? similarityObject[dnu]
@@ -484,9 +484,9 @@ generatePopupBarChart() {
   const originalLabels = this.conceptsNames;
 
   // Filter out negative scores and corresponding labels
-  const filteredData: number[] = [];
-  const filteredLabels: string[] = [];
-  const filteredColors: string[] = [];
+  let filteredData: number[] = [];
+  let filteredLabels: string[] = [];
+  let filteredColors: string[] = [];
 
   rawScores.forEach((score, i) => {
     if (score > 0) {
@@ -499,6 +499,12 @@ generatePopupBarChart() {
       filteredColors.push(this.conceptColors[i] || 'red');
     }
   });
+
+    // Limit to top 3 scores
+  const topN = 3;
+  filteredData = filteredData.slice(0, topN);
+  filteredLabels = filteredLabels.slice(0, topN);
+  filteredColors = filteredColors.slice(0, topN);
 
   // Determine whether to show chart or message
   this.hasPositiveScores = filteredData.length > 0;
@@ -606,5 +612,27 @@ openKeyphrasePopover(popover: OverlayPanel, event: MouseEvent, part: { text: str
 
    toggleWhy() {
       this.isWhyExpanded = !this.isWhyExpanded;
+}
+ getTooltipText(part: { text: string; isKeyphrase: boolean; keyphraseMeta?: any }): string {
+  if (!part.isKeyphrase || !part.keyphraseMeta?.concept) return '';
+
+  const keyphrase = part.keyphraseMeta.originalKeyphrase || part.text;
+  const concept = part.keyphraseMeta.concept;
+
+  const index = this.videoElement.keyphrases.findIndex((tuple) => {
+    const candidate = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
+    return this.cleanKeyphrase(candidate) === this.cleanKeyphrase(keyphrase);
+  });
+
+  if (index === -1) return '';
+
+  const similarityObj = this.videoElement.keyphrases_concept_similarity_score[index];
+  const score = similarityObj?.[concept] ?? 0;
+
+  if (score <= 0) return '';
+
+  const percentage = (score * 100).toFixed(2);
+  
+  return `The keyphrase "${keyphrase}" is most similar to the concept "${concept}" with a similarity of ${percentage}%.`;
 }
 }

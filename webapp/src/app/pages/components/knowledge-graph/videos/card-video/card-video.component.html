@@ -3,8 +3,8 @@
   <!-- Colored Band -->
   <div class="w-2" *ngIf="resultTabType !== 'saved'">
     <app-colored-band
-      [document_dnu_similarity_colorband]="
-        coloredBandData.document_dnu_similarity_colorband
+      [document_concept_similarity_colorband]="
+        coloredBandData.document_concept_similarity_colorband
       "
       [tags]="coloredBandData.tags"
       [resourceTitle]="videoElement.title"
@@ -118,6 +118,8 @@
               [style.color]="part.keyphraseMeta.color"
               style="cursor: pointer"
               (click)="openKeyphrasePopover(kpPopover, $event, part)"
+              pTooltip="{{ getTooltipText(part) }}"
+              tooltipPosition="top"
             >
               {{ part.text }}
             </span>
@@ -178,8 +180,8 @@
           <app-word-cloud
             [keyphrasesImportanceTuple]="videoElement.keyphrases"
             [concepts]="concepts"
-            [keyphrases_dnu_similarity_score]="
-              videoElement.keyphrases_dnu_similarity_score
+            [keyphrases_concept_similarity_score]="
+              videoElement.keyphrases_concept_similarity_score
             "
             [conceptColors]="conceptColors"
             class="w-full max-w-4xl"

@@ -6,7 +6,7 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./colored-band.component.css'],
 })
 export class ColoredBandComponent implements OnInit {
-  @Input() document_dnu_similarity_colorband: { [key: string]: number } = {};
+  @Input() document_concept_similarity_colorband: { [key: string]: number } = {};
   @Input() tags: { text: string; color: string }[] = [];
   @Input() resourceTitle: string = '';
 
@@ -16,7 +16,7 @@ export class ColoredBandComponent implements OnInit {
   tooltipText: string = ''; // for the whole color band
   ngOnInit(): void {
     const entries = Object.entries(
-      this.document_dnu_similarity_colorband
+      this.document_concept_similarity_colorband
     ).filter(([_, sim]) => sim > 0);
 
     const maxSimilarity = Math.max(...entries.map(([_, sim]) => sim));

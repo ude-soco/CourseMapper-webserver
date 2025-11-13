@@ -461,24 +461,24 @@ class Recommender:
         6. to do: get the max s.c betweeen each keyphrase and one dnu for keyphrase coloring
         """
         logger.info("Extracting keyphrases and adding to DataFrame.")
-        keyphrases_dnu_similarity_score=[]  # list of lists of dictionaries (one to one) first attr is DNU concept and second is similarity score between the dnu and the keyphrase
+        keyphrases_concept_similarity_score=[]  # list of lists of dictionaries (one to one) first attr is DNU concept and second is similarity score between the dnu and the keyphrase
         concept_ids=[concept["cid"] for concept in dnu_concepts]
         concepts_nodes=self.db.get_concepts_nodes(concept_ids,mid)
-        document_dnu_similarity=[]
+        document_concept_similarity=[]
         for index, row in data.iterrows():
             text = row.get("text", "")
             if text:
                 row_keyphrases_dnu_similarities= self.compute_concept_keyphrase_similarity(row,concepts_nodes)
-                keyphrases_dnu_similarity_score.append(row_keyphrases_dnu_similarities)
+                keyphrases_concept_similarity_score.append(row_keyphrases_dnu_similarities)
                 document_similarity=self.compute_concept_document_similarity(row,concepts_nodes)                                                                                    
-                document_dnu_similarity.append(document_similarity) 
+                document_concept_similarity.append(document_similarity) 
             else:
-                keyphrases_dnu_similarity_score.append([])
-                document_dnu_similarity.append([])
+                keyphrases_concept_similarity_score.append([])
+                document_concept_similarity.append([])
 
         data["keyphrases"] = data.apply(self._process_keyphrases_infos, axis=1)
-        data["keyphrases_dnu_similarity_score"]=keyphrases_dnu_similarity_score
-        data["document_dnu_similarity"]=document_dnu_similarity
+        data["keyphrases_concept_similarity_score"]=keyphrases_concept_similarity_score
+        data["document_concept_similarity"]=document_concept_similarity
 
         return data
 
@@ -501,10 +501,10 @@ class Recommender:
         Returns:
             pd.DataFrame: Updated DataFrame with:
                 - 'keyphrases': Truncated keyphrase info.
-                - 'keyphrases_dnu_similarity_score': List of similarity dicts per keyphrase.
+                - 'keyphrases_concept_similarity_score': List of similarity dicts per keyphrase.
         """
         logger.info("Computing keyphrase-to-concept similarity scores.")
-        keyphrases_dnu_similarity_score = []
+        keyphrases_concept_similarity_score = []
 
         concept_ids = [concept["cid"] for concept in concepts]
         concepts_nodes = self.db.get_concepts_nodes(concept_ids, mid)
@@ -513,12 +513,12 @@ class Recommender:
             text = row.get("text", "")
             if text:
                 row_similarities = self.compute_concept_keyphrase_similarity(row, concepts_nodes)
-                keyphrases_dnu_similarity_score.append(row_similarities)
+                keyphrases_concept_similarity_score.append(row_similarities)
             else:
-                keyphrases_dnu_similarity_score.append([])
+                keyphrases_concept_similarity_score.append([])
 
         data["keyphrases"] = data.apply(self._process_keyphrases_infos, axis=1)
-        data["keyphrases_dnu_similarity_score"] = keyphrases_dnu_similarity_score
+        data["keyphrases_concept_similarity_score"] = keyphrases_concept_similarity_score
 
         return data
 
@@ -539,10 +539,10 @@ class Recommender:
 
         Returns:
             pd.DataFrame: Updated DataFrame with:
-                - 'document_dnu_similarity': Dict of similarity scores per document.
+                - 'document_concept_similarity': Dict of similarity scores per document.
         """
         logger.info("Computing document-to-concept similarity scores.")
-        document_dnu_similarity = []
+        document_concept_similarity = []
 
         concept_ids = [concept["cid"] for concept in concepts]
         concepts_nodes = self.db.get_concepts_nodes(concept_ids, mid)
@@ -551,11 +551,11 @@ class Recommender:
             text = row.get("text", "")
             if text:
                 similarity = self.compute_concept_document_similarity(row, concepts_nodes)
-                document_dnu_similarity.append(similarity)
+                document_concept_similarity.append(similarity)
             else:
-                document_dnu_similarity.append([])
+                document_concept_similarity.append([])
 
-        data["document_dnu_similarity"] = document_dnu_similarity
+        data["document_concept_similarity"] = document_concept_similarity
         return data
 
 

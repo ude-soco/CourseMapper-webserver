@@ -16,7 +16,7 @@ export class WordCloudComponent implements AfterViewInit {
 
   @Input() keyphrasesImportanceTuple: any[] = [];
   @Input() public concepts: { name: string }[] = [];
-  @Input() keyphrases_dnu_similarity_score: any[];
+  @Input() keyphrases_concept_similarity_score: any[];
   @Input() public conceptColors!: string[];
 
   selectedWord: string | null = null; 
@@ -95,7 +95,7 @@ export class WordCloudComponent implements AfterViewInit {
       }
 
       //  Skip keyphrases with all similarity scores ≤ 0
-      const similarityObj = this.keyphrases_dnu_similarity_score[i];
+      const similarityObj = this.keyphrases_concept_similarity_score[i];
       const hasPositive = Object.values(similarityObj)
         .filter((v): v is number => typeof v === 'number')
         .some(v => v > 0);
@@ -116,8 +116,8 @@ export class WordCloudComponent implements AfterViewInit {
       ? this.keyphrasesImportanceTuple[i][0][0]
       : this.keyphrasesImportanceTuple[i][0];
     const cleaned = this.cleanKeyphrase(rawPhrase);
-    const correspondingDnu = this.keyphrases_dnu_similarity_score[i]
-      ? Object.keys(this.keyphrases_dnu_similarity_score[i])[0]
+    const correspondingDnu = this.keyphrases_concept_similarity_score[i]
+      ? Object.keys(this.keyphrases_concept_similarity_score[i])[0]
       : undefined;
     const index = this.conceptsNames.indexOf(correspondingDnu);
     const color = index !== -1 ? this.conceptColors[index] : 'red';
@@ -169,7 +169,7 @@ export class WordCloudComponent implements AfterViewInit {
       return [];
     }
 
-    const similarityObject = this.keyphrases_dnu_similarity_score[index];
+    const similarityObject = this.keyphrases_concept_similarity_score[index];
     return this.conceptsNames.map(dnu =>
       similarityObject && Object.prototype.hasOwnProperty.call(similarityObject, dnu)
         ? similarityObject[dnu]

@@ -4,8 +4,8 @@
   <!-- Colored Band Component -->
   <div *ngIf="resultTabType !== 'saved'">
     <app-colored-band
-      [document_dnu_similarity_colorband]="
-        coloredBandData.document_dnu_similarity_colorband
+      [document_concept_similarity_colorband]="
+        coloredBandData.document_concept_similarity_colorband
       "
       [tags]="coloredBandData.tags"
       [resourceTitle]="article.title"
@@ -172,6 +172,8 @@
               [style.color]="part.keyphraseMeta.color"
               style="cursor: pointer"
               (click)="openKeyphrasePopover(kpPopover, $event, part)"
+              pTooltip="{{ getTooltipText(part) }}"
+              tooltipPosition="top"
             >
               {{ part.text }}
             </span>
@@ -193,6 +195,8 @@
                 [style.color]="part.keyphraseMeta?.color"
                 style="cursor: pointer"
                 (click)="openKeyphrasePopover(kpPopover, $event, part)"
+                pTooltip="{{ getTooltipText(part) }}"
+                tooltipPosition="top"
               >
                 {{ part.text }}
               </span>
@@ -228,6 +232,8 @@
                 [style.color]="part.keyphraseMeta?.color"
                 style="cursor: pointer"
                 (click)="openKeyphrasePopover(kpPopover, $event, part)"
+                pTooltip="{{ getTooltipText(part) }}"
+                tooltipPosition="top"
               >
                 {{ part.text }}
               </span>
@@ -402,8 +408,8 @@
           <app-word-cloud
             [keyphrasesImportanceTuple]="article.keyphrases"
             [concepts]="concepts"
-            [keyphrases_dnu_similarity_score]="
-              this.article.keyphrases_dnu_similarity_score
+            [keyphrases_concept_similarity_score]="
+              this.article.keyphrases_concept_similarity_score
             "
             [conceptColors]="conceptColors"
             class="w-full max-w-4xl"
