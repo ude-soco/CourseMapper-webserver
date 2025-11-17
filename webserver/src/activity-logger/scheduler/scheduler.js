@@ -1,49 +1,63 @@
 const cron = require("node-cron");
-const SCHEDULE_EXPRESSION = process.env.CRON_SCHEDULE_EVERY_SECOND;
+const SCHEDULE_EXPRESSION = process.env.CRON_SCHEDULE_EVERY_5_MINUTES;
 const controller = require("../controller/activity-controller");
 const lrs = require("../lrs/lrs");
-const BATCH_SIZE = 500;
 
 export const ActivityScheduler = () => {
   console.log("Starting xAPI Activity Scheduler...");
   cron.schedule(SCHEDULE_EXPRESSION, async () => {
     try {
-      const statements = await controller.getActivities();
-      console.log('xAPI scheduler: fetched statements count =', statements.length);
-      if (statements.length > 0) {
-        if (statements.length > BATCH_SIZE) {
-          const loops = Math.ceil(statements.length / BATCH_SIZE);
-
-          for (let i = 0; i < loops; i++) {
-            const start = i * BATCH_SIZE;
-            const end =
-              start + BATCH_SIZE <= statements.length
-                ? start + BATCH_SIZE
-                : statements.length;
-            const batch = statements.slice(start, end);
-            console.log('xAPI scheduler: sending batch', i + 1, 'of', loops, 'size', batch.length);
-            const sentStatementsIds = await lrs.sendStatementsToLrs(batch);
+      // 1. Handle course-specific activities
+      const syncJobs = await controller.GetActivityByCourseId();
+      console.log('xAPI scheduler: fetched', syncJobs.length, 'course(s) with statements to sync');
+      
+      if (syncJobs.length > 0) {
+        // Process each course's statements separately with its own credentials
+        for (const job of syncJobs) {
+          const { courseId, basicAuth, statements } = job;
+          
+          if (!statements || statements.length === 0) {
+            console.log(`Course ${courseId}: no statements to send`);
+            continue;
+          }
+          
+          // Use course-specific basicAuth if available, otherwise use default from env
+          const authToUse = basicAuth || process.env.LRS_Authorization;
+          const usingDefault = !basicAuth;
+          
+          console.log(`Course ${courseId}: sending ${statements.length} statement(s) to LRS ${usingDefault ? '(using default auth)' : '(using course auth)'}`);
+          
+          try {
+            const sentStatementsIds = await lrs.sendStatementsToLrs(statements, authToUse);
+            
             if (sentStatementsIds && sentStatementsIds.length > 0) {
+              console.log(`Course ${courseId}: ${sentStatementsIds.length} statement(s) sent successfully`);
               await controller.updateActivities(sentStatementsIds);
             } else {
-              console.log('No statement IDs returned from LRS for this batch — skipping DB update.');
+              console.log(`Course ${courseId}: no statement IDs returned from LRS`);
             }
+          } catch (error) {
+            console.error(`Course ${courseId}: error sending statements:`, error.message);
           }
-        } else {
-          console.log('xAPI scheduler: sending single batch size', statements.length);
-          const sentStatementsIds = await lrs.sendStatementsToLrs(statements);
-          
-          // DEBUG: Log what we received
-          console.log('xAPI scheduler: sentStatementsIds type =', typeof sentStatementsIds);
-          console.log('xAPI scheduler: sentStatementsIds is array?', Array.isArray(sentStatementsIds));
-          console.log('xAPI scheduler: sentStatementsIds =', sentStatementsIds);
-          console.log('xAPI scheduler: sentStatementsIds.length =', sentStatementsIds?.length);
+        }
+      }
+      
+      // 2. Handle non-course activities (login, logout, etc.)
+      const nonCourseStatements = await controller.getActivitiesWithoutCourseId();
+      if (nonCourseStatements.length > 0) {
+        console.log(`Global: sending ${nonCourseStatements.length} non-course statement(s) to default LRS`);
+        
+        try {
+          const sentStatementsIds = await lrs.sendStatementsToLrs(nonCourseStatements, null);
           
           if (sentStatementsIds && sentStatementsIds.length > 0) {
+            console.log(`Global: ${sentStatementsIds.length} non-course statement(s) sent successfully`);
             await controller.updateActivities(sentStatementsIds);
           } else {
-            console.log('No statement IDs returned from LRS — skipping DB update.');
+            console.log(`Global: no statement IDs returned from LRS`);
           }
+        } catch (error) {
+          console.error(`Global: error sending non-course statements:`, error.message);
         }
       }
     } catch (err) {

@@ -1,8 +1,7 @@
 const openlapService = require('../services/openlap.service');
 
 /**
- * Middleware to create an LRS store in OpenLAP for a new course
- * Attaches LRS store information to req.lrsStore for the controller to use
+ * Middleware to create an LRS store in OpenLAP for each new course
  */
 const createLRSStore = async (req, res, next) => {
   try {

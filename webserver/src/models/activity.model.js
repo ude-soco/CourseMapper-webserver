@@ -7,6 +7,7 @@ const Activity = new Schema({
   statement: mongoose.Mixed,
   sent: Boolean,
   notificationInfo: mongoose.Mixed,
+  courseId: { type: Schema.Types.ObjectId, ref: "course", required: false, default: null }, // added courseId reference to dynamically link activities to courses
 });
 
 module.exports = mongoose.model("activity", Activity);
