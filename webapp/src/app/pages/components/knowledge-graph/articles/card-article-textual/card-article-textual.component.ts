@@ -600,7 +600,7 @@ showTextualSimilarityPopover(
     formattedInfo = entries
       .filter(([_, score]) => score > 0)
       .map(([dnu, score]) => {
-        return `<strong>${(score * 100).toFixed(2)}%</strong> – <strong>“${dnu}”</strong>`;
+        return `<strong>${(score * 100).toFixed(2)}%</strong> similar to the concept: <strong>“${dnu}”</strong>`;
       });
   }
 

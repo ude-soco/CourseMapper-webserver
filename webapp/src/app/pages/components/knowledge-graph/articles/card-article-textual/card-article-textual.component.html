@@ -253,7 +253,7 @@
         <ul class="list-disc ml-6 text-sm text-gray-700">
   <li *ngFor="let sim of item.similarities">
     <ng-container *ngIf="!sim.message; else noSimilarity">
-      <strong>{{ (sim.score! * 100) | number:'1.2-2' }}%</strong> – “{{ sim.dnu }}”
+      <strong>{{ (sim.score! * 100) | number:'1.2-2' }}%</strong> similar to the concept: “{{ sim.dnu }}”
     </ng-container>
     <ng-template #noSimilarity>
       <span>{{ sim.message }}</span>
