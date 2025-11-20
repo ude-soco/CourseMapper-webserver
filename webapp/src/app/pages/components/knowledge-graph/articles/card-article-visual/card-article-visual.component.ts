@@ -580,9 +580,9 @@ const hasPositive = Object.values(similarityObj)
    const originalLabels = this.conceptsNames;
  
    // Filter out negative scores and corresponding labels
-   const filteredData: number[] = [];
-   const filteredLabels: string[] = [];
-   const filteredColors: string[] = [];
+   let filteredData: number[] = [];
+   let filteredLabels: string[] = [];
+   let filteredColors: string[] = [];
  
    rawScores.forEach((score, i) => {
      if (score > 0) {
@@ -596,6 +596,12 @@ const hasPositive = Object.values(similarityObj)
      }
    });
  
+        // Limit to top 3 scores
+  const topN = 3;
+  filteredData = filteredData.slice(0, topN);
+  filteredLabels = filteredLabels.slice(0, topN);
+  filteredColors = filteredColors.slice(0, topN);
+
    // Determine whether to show chart or message
    this.hasPositiveScores = filteredData.length > 0;
  
@@ -705,4 +711,29 @@ const hasPositive = Object.values(similarityObj)
   toggleWhy() {
     this.isWhyExpanded = !this.isWhyExpanded;
   }
+
+   getTooltipText(part: { text: string; isKeyphrase: boolean; keyphraseMeta?: any }): string {
+  if (!part.isKeyphrase || !part.keyphraseMeta?.concept) return '';
+ 
+  const keyphrase = part.keyphraseMeta.originalKeyphrase || part.text;
+  const concept = part.keyphraseMeta.concept;
+ 
+  const index = this.article.keyphrases.findIndex((tuple) => {
+    const candidate = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
+    return this.cleanKeyphrase(candidate) === this.cleanKeyphrase(keyphrase);
+  });
+ 
+  if (index === -1) return '';
+ 
+  const similarityObj = this.article.keyphrases_dnu_similarity_score[index];
+  const score = similarityObj?.[concept] ?? 0;
+ 
+  if (score <= 0) return '';
+ 
+  const percentage = (score * 100).toFixed(2);
+ 
+  return `The keyphrase "${keyphrase}" is most similar to the concept "${concept}" with a similarity of ${percentage}%.`;
+}
+ 
+
 }

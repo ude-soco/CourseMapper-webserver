@@ -172,6 +172,8 @@
               [style.color]="part.keyphraseMeta.color"
               style="cursor: pointer"
               (click)="openKeyphrasePopover(kpPopover, $event, part)"
+               pTooltip="{{ getTooltipText(part) }}"
+                tooltipPosition="top"
             >
               {{ part.text }}
             </span>
@@ -193,6 +195,8 @@
                 [style.color]="part.keyphraseMeta?.color"
                 style="cursor: pointer"
                 (click)="openKeyphrasePopover(kpPopover, $event, part)"
+                 pTooltip="{{ getTooltipText(part) }}"
+                tooltipPosition="top"
               >
                 {{ part.text }}
               </span>
@@ -228,6 +232,8 @@
                 [style.color]="part.keyphraseMeta?.color"
                 style="cursor: pointer"
                 (click)="openKeyphrasePopover(kpPopover, $event, part)"
+                 pTooltip="{{ getTooltipText(part) }}"
+                tooltipPosition="top"
               >
                 {{ part.text }}
               </span>

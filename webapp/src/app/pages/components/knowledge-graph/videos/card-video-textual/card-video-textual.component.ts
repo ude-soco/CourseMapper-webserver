@@ -68,6 +68,7 @@ export class CardVideoComponentTextual {
     tags: [] as { text: string; color: string }[]
   };
 
+isDescriptionExpanded = false;
 
   ngOnInit(): void {
     // console.log(this.videoElement);
@@ -84,9 +85,9 @@ export class CardVideoComponentTextual {
       }))
     };
 
-     if (this.videoElement?.description && this.videoElement?.keyphrases) {
+     if (this.videoElement?.description_full && this.videoElement?.keyphrases) {
       this.generateParts(
-      this.videoElement.description,
+      this.videoElement.description_full,
       this.videoElement.keyphrases,
       this.videoElement.keyphrases_dnu_similarity_score
       );
@@ -110,18 +111,58 @@ export class CardVideoComponentTextual {
     this.saveOrRemoveParams.user_id = this.userId;
     this.saveOrRemoveParams.rid = this.videoElement?.rid;
     
-    if (this.videoElement?.description && this.videoElement?.keyphrases) {
+    if (this.videoElement?.description_full && this.videoElement?.keyphrases) {
       this.generateParts(
-      this.videoElement.description,
+      this.videoElement.description_full,
       this.videoElement.keyphrases,
       this.videoElement.keyphrases_dnu_similarity_score
       );
       this.abstractPartsTruncated = this.truncateParts(this.abstractParts, this.DESCRIPTION_MAX_LENGTH);
     }
+        this.buildDescriptionParts();
   }
 
+  private buildDescriptionParts(): void {
+  if (!this.videoElement?.description_full) return;
+
+  this.generateParts(
+    this.videoElement.description_full,
+    this.videoElement.keyphrases,
+    this.videoElement.keyphrases_dnu_similarity_score
+  );
+
+  this.abstractPartsTruncated = this.truncateParts(
+    this.abstractParts,
+    this.DESCRIPTION_MAX_LENGTH
+  );
+}
+
+get canExpand(): boolean {
+  return (
+    this.videoElement?.description_full &&
+    this.videoElement.description_full.length > this.DESCRIPTION_MAX_LENGTH
+  );
+}
+
+toggleDescription(): void {
+  const data = {
+    materialId: this.currentMaterial?._id,
+    resourceId: this.videoElement.id,
+    title: this.videoElement.title,
+    description: this.videoElement.description_full
+  };
+
+  if (!this.isDescriptionExpanded) {
+    this.materialsRecommenderService.logExpandAbstract(data).subscribe();
+  } else {
+    this.materialsRecommenderService.logCollapseAbstract(data).subscribe();
+  }
+
+  this.isDescriptionExpanded = !this.isDescriptionExpanded;
+}
+
   showLabelMoreDescription() {
-    if (this.videoElement?.description.length > 0 ) {
+    if (this.videoElement?.description_full.length > 0 ) {
     }
   }
 
@@ -406,37 +447,54 @@ generateParts(
 
 
 truncateParts(
-  parts: { text: string, isKeyphrase: boolean, keyphraseMeta?: any }[],
+  parts: { text: string; isKeyphrase: boolean; keyphraseMeta?: any }[],
   maxLength: number
 ) {
-  const result: typeof this.abstractParts = [];
+  const result: typeof parts = [];
   let count = 0;
 
   for (const part of parts) {
     const partLength = part.text.length;
 
-    // If adding this part exceeds maxLength
-    if (count + partLength > maxLength) {
-      if (part.isKeyphrase) {
-        // Always include full keyphrase even if it slightly exceeds maxLength
-        result.push(part);
-      } else {
-        // Truncate non-keyphrase text to fit remaining length
-        const remaining = maxLength - count;
-        if (remaining > 0) {
-          result.push({ ...part, text: part.text.slice(0, remaining) });
-        }
+    // ---- Case 1: keyphrases are ALWAYS added whole ----
+    if (part.isKeyphrase) {
+      if (count + partLength > maxLength && count > 0) {
+        break; // stop before exceeding limit
       }
-      break; // Stop after truncating
+      result.push(part);
+      count += partLength;
+      continue;
     }
 
-    // Add part fully
-    result.push(part);
-    count += partLength;
+    // ---- Case 2: normal text ----
+    if (count + partLength <= maxLength) {
+      // fits fully
+      result.push(part);
+      count += partLength;
+      continue;
+    }
+
+    // ---- Case 3: text would overflow → split by words only ----
+    const remaining = maxLength - count;
+    if (remaining <= 0) break;
+
+    const words = part.text.split(" ");
+    let rebuilt = "";
+    for (let word of words) {
+      if ((rebuilt + word).length > remaining) break;
+      rebuilt += (rebuilt ? " " : "") + word;
+    }
+
+    if (rebuilt.length > 0) {
+      result.push({ ...part, text: rebuilt });
+    }
+
+    break;
   }
 
   return result;
 }
+
 
   showPopup(keyphrase: string, clientX: number, clientY: number) {
       this.keyphraseClicked.emit({ keyphrase, clientX, clientY });
@@ -499,7 +557,7 @@ showTextualSimilarityPopover(
     formattedInfo = entries
       .filter(([_, score]) => score > 0)
       .map(([dnu, score]) => {
-        return `<strong>${(score * 100).toFixed(2)}%</strong> – <strong>“${dnu}”</strong>`;
+        return `<strong>${(score * 100).toFixed(2)}%</strong> similar to the concept: <strong>“${dnu}”</strong>`;
       });
   }
 

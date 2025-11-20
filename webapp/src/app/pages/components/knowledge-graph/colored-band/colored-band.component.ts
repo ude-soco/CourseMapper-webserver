@@ -34,16 +34,14 @@ export class ColoredBandComponent implements OnInit {
           height: (sim / maxSimilarity) * 100,
           label: `${similarityPercent}%`,
         });
-        tooltipParts.push(`${similarityPercent}% related to concept: "${dnu}"`);
+        tooltipParts.push(`${similarityPercent}% similar to the concept: "${dnu}"`);
       }
     }
 
     if (tooltipParts.length > 0) {
       const contentLabel =
         this.contentType === 'video' ? 'This video' : 'This article';
-      this.tooltipText = `${contentLabel} "${
-        this.resourceTitle
-      }" is ${tooltipParts.join(' and ')}.`;
+      this.tooltipText = `${contentLabel} is ${tooltipParts.join(' and ')}.`;
     }
   }
 

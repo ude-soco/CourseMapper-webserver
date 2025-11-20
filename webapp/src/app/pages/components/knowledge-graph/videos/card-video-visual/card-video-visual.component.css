@@ -1,3 +1,13 @@
+a{
+    color: #0377bd;
+    cursor: pointer;
+    display: inline-block;
+  }
+    a svg {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
 .image-video {
   cursor: pointer;
 }
@@ -108,3 +118,12 @@
   align-items: center;
 }
 
+::ng-deep .p-tooltip {
+  font-size: 0.85rem;
+  background-color: #333;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  max-width: 250px;
+  white-space: normal;
+}
