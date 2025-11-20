@@ -1,3 +1,5 @@
+import time
+import requests
 import numpy as np
 import wikipediaapi
 from html2text import html2text as htt
@@ -23,6 +25,7 @@ class WikipediaPage:
 class WikipediaService:
     def __init__(self):
         self._wiki = wikipediaapi.Wikipedia(Config.WIKIPEDIA_USER_AGENT, 'en')
+        self._wiki._request_kwargs = {"timeout": 30}  # seconds – adjust if needed
         self._use_stored_embeddings = Config.WIKIPEDIA_USE_STORED_EMBEDDINGS
         self._conn = None
         self.wikipedia_fallback = Config.WIKIPEDIA_FALLBACK
@@ -36,38 +39,113 @@ class WikipediaService:
             self._conn = psycopg.connect(Config.WIKIPEDIA_DATABASE_CONNECTION_STRING, row_factory=dict_row)
         return self._conn
 
-    def get_page(self, title: str) -> WikipediaPage | None:
+    # def get_page(self, title: str) -> WikipediaPage | None:
+    #     # Normalize title
+    #     title = htt(title)
+    #     title = title.replace('_', ' ')
+    #     title = title.strip()
+
+    #     # Check if page exists in cache
+    #     conn = self.get_conn()
+    #     if conn is not None:
+    #         with conn.cursor() as cur:
+    #             rows = cur.execute('SELECT title, abstract, links FROM pages WHERE title = %s', (title,)).fetchall()
+    #             if len(rows) == 0:
+    #                 rows = cur.execute('SELECT pages.title, pages.abstract, pages.links FROM pages JOIN redirects ON pages.title = redirects.redirect_to WHERE redirects.title = %s', (title,)).fetchall()
+
+    #             if len(rows) > 0:
+    #                 category_rows = cur.execute('SELECT * FROM page_categories WHERE page_title = %s', (rows[0]['title'],)).fetchall()
+    #                 return WikipediaPage(rows[0]['title'], rows[0]['abstract'], [row['category_name'] for row in category_rows], rows[0]['links'])
+
+    #     if not self.wikipedia_fallback:
+    #         return None
+
+    #     # Check if page exists in Wikipedia
+    #     try:
+    #         page = self._wiki.page(title)
+    #         if not page.exists():
+    #             return None
+    #     except Exception as e:
+    #         return None
+
+    #     page_categories = [(page.title, category.split(':', 1)[1]) for category in page.categories]
+    #     page_links = [link.title for link in page.links.values() if link.namespace == wikipediaapi.Namespace.MAIN]
+    #     return WikipediaPage(page.title, page.summary, [category_name for _, category_name in page_categories], page_links)
+    def get_page(self, title: str, max_retries: int = 3, backoff: float = 2.0) -> WikipediaPage | None:
         # Normalize title
         title = htt(title)
         title = title.replace('_', ' ')
         title = title.strip()
 
-        # Check if page exists in cache
+        # 1) Check if page exists in cache / DB
         conn = self.get_conn()
         if conn is not None:
             with conn.cursor() as cur:
-                rows = cur.execute('SELECT title, abstract, links FROM pages WHERE title = %s', (title,)).fetchall()
+                rows = cur.execute(
+                    'SELECT title, abstract, links FROM pages WHERE title = %s',
+                    (title,)
+                ).fetchall()
+
                 if len(rows) == 0:
-                    rows = cur.execute('SELECT pages.title, pages.abstract, pages.links FROM pages JOIN redirects ON pages.title = redirects.redirect_to WHERE redirects.title = %s', (title,)).fetchall()
+                    rows = cur.execute(
+                        'SELECT pages.title, pages.abstract, pages.links '
+                        'FROM pages JOIN redirects ON pages.title = redirects.redirect_to '
+                        'WHERE redirects.title = %s',
+                        (title,)
+                    ).fetchall()
 
                 if len(rows) > 0:
-                    category_rows = cur.execute('SELECT * FROM page_categories WHERE page_title = %s', (rows[0]['title'],)).fetchall()
-                    return WikipediaPage(rows[0]['title'], rows[0]['abstract'], [row['category_name'] for row in category_rows], rows[0]['links'])
+                    category_rows = cur.execute(
+                        'SELECT * FROM page_categories WHERE page_title = %s',
+                        (rows[0]['title'],)
+                    ).fetchall()
+                    return WikipediaPage(
+                        rows[0]['title'],
+                        rows[0]['abstract'],
+                        [row['category_name'] for row in category_rows],
+                        rows[0]['links'],
+                    )
 
+        # 2) If we are not allowed to call Wikipedia, stop here
         if not self.wikipedia_fallback:
             return None
 
-        # Check if page exists in Wikipedia
-        try:
-            page = self._wiki.page(title)
-            if not page.exists():
-                return None
-        except Exception as e:
-            return None
+        # 3) Try calling Wikipedia with retries and backoff
+        for attempt in range(max_retries):
+            try:
+                page = self._wiki.page(title)
+                if not page.exists():
+                    return None
 
-        page_categories = [(page.title, category.split(':', 1)[1]) for category in page.categories]
-        page_links = [link.title for link in page.links.values() if link.namespace == wikipediaapi.Namespace.MAIN]
-        return WikipediaPage(page.title, page.summary, [category_name for _, category_name in page_categories], page_links)
+                # Accessing summary/categories/links can all hit the network, so keep them inside try
+                page_categories = [
+                    (page.title, category.split(':', 1)[1])
+                    for category in page.categories
+                ]
+                page_links = [
+                    link.title
+                    for link in page.links.values()
+                    if link.namespace == wikipediaapi.Namespace.MAIN
+                ]
+
+                return WikipediaPage(
+                    page.title,
+                    page.summary,
+                    [category_name for _, category_name in page_categories],
+                    page_links,
+                )
+
+            except (requests.exceptions.RequestException, TimeoutError) as e:
+                # Network / timeout-related errors
+                if attempt == max_retries - 1:
+                    # Give up after last attempt – behave like "page not found"
+                    return None
+                # Exponential backoff: 2s, 4s, 8s ...
+                time.sleep(backoff * (2 ** attempt))
+
+            except Exception:
+                # Any other weird error: treat as missing page and don't kill the worker
+                return None
 
     def get_alternative_pages(self, title: str) -> List[WikipediaPage | None]:
         title = htt(title)
