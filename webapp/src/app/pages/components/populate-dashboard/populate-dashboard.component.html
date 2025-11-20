@@ -10,12 +10,22 @@
         </p>
       </div>
       <div>
-        <div class="">
+        <div class="flex gap-2">
+          <button
+            id="createIndicatorBtn"
+            pButton
+            icon="pi pi-external-link"
+            class="button p-button-raised p-button-secondary"
+            (click)="onCreateIndicatorClicked()"
+            label="Create Indicator"
+            pTooltip="Create a new indicator in OpenLAP"
+            tooltipPosition="bottom"
+          ></button>
           <button
             id="addCourseConfirm"
             pButton
             icon="pi pi-plus"
-            class="button p-button-raised float-right btn-add"
+            class="button p-button-raised btn-add"
             color="text-blue-500"
             (click)="onAddIndicatorDialogueClicked()"
             label="Add Indicator"

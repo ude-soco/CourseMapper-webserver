@@ -6,6 +6,7 @@ import { Indicator } from 'src/app/models/Indicator';
 import { IndicatorService } from 'src/app/services/indicator.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-populate-dashboard',
@@ -61,6 +62,13 @@ export class PopulateDashboardComponent {
   onAddIndicatorDialogueClicked() {
     this.toggleAddIndicatordialogue(true);
   }
+  
+  onCreateIndicatorClicked() {
+    // Open OpenLAP indicator pool page in a new tab
+    const openlapUrl = environment.OPENLAP_URL + '/indicator/pool';
+    window.open(openlapUrl, '_blank');
+  }
+  
   toggleAddIndicatordialogue(visibility) {
     this.displayAddIndicatorDialogue = visibility;
   }
