@@ -20,7 +20,7 @@ class FoundAtDBpediaSpotlight:
         self.url = "https://api.dbpedia-spotlight.org/%s/annotate" % lang
         self.sparql = SPARQLWrapper("http://dbpedia.org/sparql")
         self.sparql.setTimeout(60)
-        self.wiki_api = Wikipedia('en')
+        self.wiki_api = Wikipedia(user_agent="CourseMapper/1.0 (https://github.com/ude-soco/CourseMapper; coursemapper@example.com)", language='en')
         self.model = SentenceTransformer('all-mpnet-base-v2')
 
     def kwpAvailable(self, keyphrases):#extract keyphrases for semi-automatic annotations process
