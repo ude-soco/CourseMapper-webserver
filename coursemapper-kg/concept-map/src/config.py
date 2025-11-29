@@ -7,6 +7,9 @@ class Config:
     WIKIPEDIA_FALLBACK = os.getenv('WIKIPEDIA_FALLBACK', 'true').lower() == 'true'
     WIKIPEDIA_DATABASE_CONNECTION_STRING = os.getenv('WIKIPEDIA_DATABASE_CONNECTION_STRING', '')
     WIKIPEDIA_USE_STORED_EMBEDDINGS = os.getenv('WIKIPEDIA_USE_STORED_EMBEDDINGS', 'true').lower() == 'true'
+    WIKIPEDIA_TIMEOUT = int(os.getenv('WIKIPEDIA_TIMEOUT', '30'))  # seconds
+    WIKIPEDIA_MAX_RETRIES = int(os.getenv('WIKIPEDIA_MAX_RETRIES', '3'))
+    WIKIPEDIA_RETRY_DELAY = int(os.getenv('WIKIPEDIA_RETRY_DELAY', '2'))  # seconds
 
     REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
     REDIS_PORT = int(os.getenv('REDIS_PORT', '6379'))
@@ -43,6 +46,9 @@ class Config:
                f'WIKIPEDIA_FALLBACK={Config.WIKIPEDIA_FALLBACK}\n' \
                f'WIKIPEDIA_DATABASE_CONNECTION_STRING={Config.WIKIPEDIA_DATABASE_CONNECTION_STRING}\n' \
                f'WIKIPEDIA_USE_STORED_EMBEDDINGS={Config.WIKIPEDIA_USE_STORED_EMBEDDINGS}\n' \
+               f'WIKIPEDIA_TIMEOUT={Config.WIKIPEDIA_TIMEOUT}\n' \
+               f'WIKIPEDIA_MAX_RETRIES={Config.WIKIPEDIA_MAX_RETRIES}\n' \
+               f'WIKIPEDIA_RETRY_DELAY={Config.WIKIPEDIA_RETRY_DELAY}\n' \
                f'REDIS_HOST={Config.REDIS_HOST}\n' \
                f'REDIS_PORT={Config.REDIS_PORT}\n' \
                f'REDIS_DB={Config.REDIS_DB}\n' \

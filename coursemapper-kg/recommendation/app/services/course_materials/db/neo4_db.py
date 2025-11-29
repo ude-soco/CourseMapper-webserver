@@ -916,7 +916,7 @@ class NeoDataBase:
             logger.error("Failure retrieving or creating user - concept relationship %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
 
     def get_lm_text(self, mid):
         """
@@ -930,8 +930,7 @@ class NeoDataBase:
             return result[0]['text']
         except Exception as e:
             logger.error("Failure retrieving or creating user - %s" % e)
-            session.close()
-            self.close()
+            # Driver should remain open for reuse
 
     def get_or_create_user(self, user_id, username="", user_email=""):
         """
@@ -951,7 +950,7 @@ class NeoDataBase:
             logger.error("Failure retrieving or creating user - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
 
     # def get_or_create_user_v2(self, user):
     #     """
@@ -987,7 +986,7 @@ class NeoDataBase:
             logger.error("Failure retrieving or creating concepts - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
             concepts = []
             relations = []
         return concepts, relations
@@ -1033,7 +1032,7 @@ class NeoDataBase:
             logger.error("Failure retrieving or creating concepts - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
             nodes = []
             relations = []
         return nodes, relations
@@ -1127,7 +1126,7 @@ class NeoDataBase:
             logger.error("Failure retrieving or creating concepts - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
             concepts = []
             relations = []
 
@@ -1200,7 +1199,7 @@ class NeoDataBase:
 
             except Exception as e:
                 logger.error("Failure retrieving or creating Resources - %s" % e)
-                self.close()
+                # Driver should remain open for reuse
                 resources = []
                 relationships = []
 
@@ -1228,7 +1227,7 @@ class NeoDataBase:
             logger.error("Failure retrieving Resources - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
             resources = []
         return resources, relationships
 
@@ -1273,7 +1272,7 @@ class NeoDataBase:
             logger.error("Failure retrieving or creating concepts - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
             concepts = []
             relations = []
 
@@ -1532,7 +1531,7 @@ class NeoDataBase:
             logger.error(e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
 
     
 
@@ -1877,7 +1876,7 @@ class NeoDataBase:
             logger.error("Failure retrieving or creating concepts - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
 
     def relationships_complement(self, data):
         """
@@ -1895,7 +1894,7 @@ class NeoDataBase:
             logger.error("Failure to complement relationships - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
 
     def built_bi_directional_relationships(self, mid):
         """
@@ -1915,7 +1914,7 @@ class NeoDataBase:
             logger.error("Failure built bi-directional relationships - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
 
     def creat_link_between_lm_main_concepts(self, data, mid):
         """
@@ -1932,7 +1931,7 @@ class NeoDataBase:
             logger.error("Failure retrieving or creating concepts - %s" % e)
             tx.rollback()
             session.close()
-            self.close()
+            # Driver should remain open for reuse
 
     def extract_vector_relation(self, mid):
         """

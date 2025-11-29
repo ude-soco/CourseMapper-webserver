@@ -9,6 +9,7 @@ from config import Config
 #from diskcache import Cache
 from bs4 import BeautifulSoup
 import requests
+import time
 
 
 class WikipediaPage:
@@ -25,11 +26,18 @@ class WikipediaPage:
 
 class WikipediaService:
     def __init__(self):
-        self._wiki = wikipediaapi.Wikipedia(Config.WIKIPEDIA_USER_AGENT, 'en')
+        # Initialize Wikipedia API with timeout from config
+        self._wiki = wikipediaapi.Wikipedia(
+            Config.WIKIPEDIA_USER_AGENT, 
+            'en',
+            timeout=Config.WIKIPEDIA_TIMEOUT
+        )
         #self.cache = Cache('./cache')
         self._use_stored_embeddings = Config.WIKIPEDIA_USE_STORED_EMBEDDINGS
         self._conn = None
         self.wikipedia_fallback = Config.WIKIPEDIA_FALLBACK
+        self._max_retries = Config.WIKIPEDIA_MAX_RETRIES
+        self._retry_delay = Config.WIKIPEDIA_RETRY_DELAY
 
     def __del__(self):
         if self._conn is not None and not self._conn.closed:
@@ -70,13 +78,27 @@ class WikipediaService:
         if not self.wikipedia_fallback:
             return None
 
-        # Check if page exists in Wikipedia
-        try:
-            #print("thisc called")
-            page = self._wiki.page(title)
-            if not page.exists():
+        # Check if page exists in Wikipedia with retry logic
+        page = None
+        for attempt in range(self._max_retries):
+            try:
+                #print("thisc called")
+                page = self._wiki.page(title)
+                if not page.exists():
+                    return None
+                break  # Success, exit retry loop
+            except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+                print(f"Timeout/Connection error fetching Wikipedia page '{title}' (attempt {attempt + 1}/{self._max_retries}): {e}")
+                if attempt < self._max_retries - 1:
+                    time.sleep(self._retry_delay)
+                else:
+                    print(f"Failed to fetch Wikipedia page '{title}' after {self._max_retries} attempts")
+                    return None
+            except Exception as e:
+                print(f"Error fetching Wikipedia page '{title}': {e}")
                 return None
-        except Exception as e:
+        
+        if page is None:
             return None
         # Check the cache first
         # try:
@@ -99,9 +121,65 @@ class WikipediaService:
         #     print(f"Error fetching page: {e}")
             
 
-        page_categories = [(page.title, category.split(':', 1)[1]) for category in page.categories]
-        page_links = [link.title for link in page.links.values() if link.namespace == wikipediaapi.Namespace.MAIN]
-        return WikipediaPage(page.title, page.summary, [category_name for _, category_name in page_categories], page_links)
+        # Fetch page data with retry logic for summary and connection handling
+        try:
+            # Get categories with retry
+            page_categories = []
+            for attempt in range(self._max_retries):
+                try:
+                    page_categories = [(page.title, category.split(':', 1)[1]) for category in page.categories]
+                    break
+                except (requests.exceptions.ConnectionError, ConnectionError) as e:
+                    print(f"Connection error fetching categories for '{title}' (attempt {attempt + 1}/{self._max_retries}): {e}")
+                    if attempt < self._max_retries - 1:
+                        time.sleep(self._retry_delay)
+                    else:
+                        print(f"Failed to fetch categories for '{title}'")
+                except Exception as e:
+                    print(f"Error fetching categories for '{title}': {e}")
+                    break
+            
+            # Get links with retry
+            page_links = []
+            for attempt in range(self._max_retries):
+                try:
+                    page_links = [link.title for link in page.links.values() if link.namespace == wikipediaapi.Namespace.MAIN]
+                    break
+                except (requests.exceptions.ConnectionError, ConnectionError) as e:
+                    print(f"Connection error fetching links for '{title}' (attempt {attempt + 1}/{self._max_retries}): {e}")
+                    if attempt < self._max_retries - 1:
+                        time.sleep(self._retry_delay)
+                    else:
+                        print(f"Failed to fetch links for '{title}'")
+                except Exception as e:
+                    print(f"Error fetching links for '{title}': {e}")
+                    break
+            
+            # Try to get summary with retries
+            summary = None
+            for attempt in range(self._max_retries):
+                try:
+                    summary = page.summary
+                    break
+                except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, ConnectionError) as e:
+                    print(f"Connection/Timeout error fetching summary for '{title}' (attempt {attempt + 1}/{self._max_retries}): {e}")
+                    if attempt < self._max_retries - 1:
+                        time.sleep(self._retry_delay)
+                    else:
+                        print(f"Failed to fetch summary for '{title}', using empty summary")
+                        summary = ""
+                except Exception as e:
+                    print(f"Unexpected error fetching summary for '{title}': {e}")
+                    summary = ""
+                    break
+            
+            if summary is None:
+                summary = ""
+                
+            return WikipediaPage(page.title, summary, [category_name for _, category_name in page_categories], page_links)
+        except Exception as e:
+            print(f"Error processing Wikipedia page '{title}': {e}")
+            return None
 
     def get_alternative_pages(self, title: str) -> List[WikipediaPage | None]:
         title = htt(title)
