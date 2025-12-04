@@ -500,4 +500,10 @@ module.exports = function (app) {
     controller.unhidConceptsMaterialKG,
     logger.unhidConceptsMaterialKGLogger
   );
+
+  app.get(
+    "/api/knowledge-graph/get-user-pkg/:userId",
+    [authJwt.verifyToken],
+    controller.getUserPKG
+  );
 };

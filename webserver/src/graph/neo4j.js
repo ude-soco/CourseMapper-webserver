@@ -606,3 +606,57 @@ export async function getHasConcept(targetId) {
     }
   }
 */
+
+
+
+export async function getUserConceptsWithRelationships(conceptIds, topN = null) {
+  if (conceptIds.length === 0) {
+    return [];
+  }
+
+  // Query to get concepts with their associated relationships:
+  // 1. Slide containment: which slides contain each concept (aggregated)
+  // 2. Related concepts: lateral RELATED_TO relationships (aggregated)
+  // 3. Sorted by type priority (main_concept first) then weight
+  // 4. Limited to top N if specified
+  
+  const limitClause = (topN && topN !== 'All') ? `LIMIT ${parseInt(topN)}` : '';
+  
+  const query = `
+    MATCH (c:Concept)
+    WHERE c.cid IN $conceptIds
+    OPTIONAL MATCH (s:Slide)-[]->(c)
+    OPTIONAL MATCH (c)-[:RELATED_TO]->(relatedConcept:Concept)
+    WHERE relatedConcept.cid IN $conceptIds
+    WITH c,
+         COLLECT(DISTINCT {sid: s.sid, name: s.name}) as slides,
+         COLLECT(DISTINCT {cid: relatedConcept.cid, name: relatedConcept.name}) as relatedConcepts
+    RETURN c.cid as cid, 
+           c.name as name, 
+           c.type as type,
+           c.wikipedia as wikipedia, 
+           c.abstract as abstract,
+           c.weight as weight,
+           c.mid as mid,
+           c.initial_embedding as initial_embedding,
+           slides,
+           relatedConcepts
+    ORDER BY 
+      CASE 
+        WHEN c.type = 'main_concept' OR c.type IS NULL THEN 0
+        WHEN c.type = 'related_concept' THEN 1
+        ELSE 2
+      END,
+      c.weight DESC
+    ${limitClause}`;
+  
+  const { records } = await graphDb.driver.executeQuery(
+    query,
+    { conceptIds }
+  );
+  
+  const result = recordsToObjects(records);
+  console.log(`[Personal KG] Neo4j query returned ${result.length} concept records`);
+  
+  return result;
+}

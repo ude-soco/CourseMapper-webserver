@@ -1579,3 +1579,97 @@ export const unhidConceptsMaterialKG = async (req, res, next) => {
 
   next();
 };
+
+
+
+
+export const getUserPKG = async (req, res) => {
+  const userId = req.params.userId;
+  const topN = req.query.topN || null; // Optional: limit number of concepts
+
+  try {
+    // Get user from MongoDB with understood/not understood concepts and enrolled courses
+    const foundUser = await User.findById(userId).populate({
+      path: 'courses.courseId',
+      select: 'name shortName _id'
+    });
+    
+    if (!foundUser) {
+      return res.status(404).send({
+        error: `User with id ${userId} doesn't exist!`,
+      });
+    }
+
+    // Get concept IDs from MongoDB and build status lookup map
+    const understoodConcepts = foundUser.understoodConcepts || [];
+    const didNotUnderstandConcepts = foundUser.didNotUnderstandConcepts || [];
+    
+    // Build a map for O(1) lookup of concept status
+    const conceptStatusMap = new Map();
+    understoodConcepts.forEach(cid => conceptStatusMap.set(cid, 'u'));
+    didNotUnderstandConcepts.forEach(cid => conceptStatusMap.set(cid, 'dnu'));
+    
+    const allConceptIds = [...conceptStatusMap.keys()];
+
+    console.log(`[Personal KG] Loading graph: ${allConceptIds.length} concepts (${understoodConcepts.length} understood, ${didNotUnderstandConcepts.length} not understood)`);
+
+    if (allConceptIds.length === 0) {
+      return res.status(200).send({ 
+        records: [],
+        courses: foundUser.courses.map(c => ({
+          courseId: c.courseId._id,
+          courseName: c.courseId.name,
+          courseShortName: c.courseId.shortName
+        })),
+        materials: []
+      });
+    }
+
+    // Get concept details with relationships from Neo4j (with optional limit)
+    const records = await neo4j.getUserConceptsWithRelationships(allConceptIds, topN);
+
+    // Get unique material IDs from concepts
+    const materialIds = [...new Set(records.map(r => r.mid).filter(Boolean))];
+
+    // Fetch material details from MongoDB
+    const materials = await Material.find({ _id: { $in: materialIds } })
+      .select('_id name type courseId')
+      .populate('courseId', 'name shortName');
+
+    // Create material lookup map
+    const materialMap = {};
+    materials.forEach(m => {
+      materialMap[m._id.toString()] = {
+        materialId: m._id,
+        materialName: m.name,
+        materialType: m.type,
+        courseId: m.courseId._id,
+        courseName: m.courseId.name,
+        courseShortName: m.courseId.shortName
+      };
+    });
+
+    // Enrich records with material/course info and understanding status
+    const enrichedRecords = records.map(record => {
+      const materialInfo = materialMap[record.mid] || {};
+      return {
+        ...record,
+        ...materialInfo,
+        relationshipType: conceptStatusMap.get(record.cid) || 'unknown'
+      };
+    });
+    
+    return res.status(200).send({ 
+      records: enrichedRecords,
+      courses: foundUser.courses.map(c => ({
+        courseId: c.courseId._id,
+        courseName: c.courseId.name,
+        courseShortName: c.courseId.shortName
+      })),
+      materials: Object.values(materialMap)
+    });
+  } catch (err) {
+    console.error('[Personal KG] Error loading user knowledge graph:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};

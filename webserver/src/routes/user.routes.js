@@ -85,4 +85,11 @@ module.exports = function (app) {
     // [authJwt.verifyToken],
     controller.updateUserConcepts
   );
+  
+  
+  app.patch(
+    "/api/users/user-concepts/:userId/concept",
+    [authJwt.verifyToken],
+    controller.updateSingleConceptStatus
+  );
 };

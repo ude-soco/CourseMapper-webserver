@@ -393,6 +393,65 @@ export const getUserConcepts = async (req, res) => {
 };
 
 
+/**
+ * @function updateSingleConceptStatus
+ * Update a single concept's status
+ * 
+ * 
+ * @param {string} req.params.userId - The user ID
+ * @param {string} req.body.conceptId - The concept ID to update
+ * @param {string} req.body.status - The new status: 'u' (understood), 'dnu' (did not understand), or 'new' (remove)
+ */
+export const updateSingleConceptStatus = async (req, res) => {
+  const { userId } = req.params;
+  const { conceptId, status } = req.body;
+
+  if (!conceptId || !status) {
+    return res.status(400).send({ error: 'conceptId and status are required' });
+  }
+
+  if (!['u', 'dnu', 'new'].includes(status)) {
+    return res.status(400).send({ error: 'status must be "u", "dnu", or "new"' });
+  }
+
+  try {
+    const foundUser = await User.findOne({ _id: userId });
+    
+    if (!foundUser) {
+      return res.status(404).send({ error: `User with id ${userId} doesn't exist!` });
+    }
+
+    // Remove concept from both arrays first
+    foundUser.understoodConcepts = foundUser.understoodConcepts.filter(id => id !== conceptId);
+    foundUser.didNotUnderstandConcepts = foundUser.didNotUnderstandConcepts.filter(id => id !== conceptId);
+
+    // Add to appropriate array based on status
+    if (status === 'u') {
+      foundUser.understoodConcepts.push(conceptId);
+      foundUser.conceptTimestamps.delete(conceptId);
+    } else if (status === 'dnu') {
+      foundUser.didNotUnderstandConcepts.push(conceptId);
+      if (!foundUser.conceptTimestamps.has(conceptId)) {
+        foundUser.conceptTimestamps.set(conceptId, new Date());
+      }
+    } else {
+      // status === 'new' - remove from conceptTimestamps too
+      foundUser.conceptTimestamps.delete(conceptId);
+    }
+
+    await foundUser.save();
+
+    res.status(200).send({ 
+      message: 'Concept status updated successfully',
+      conceptId,
+      status
+    });
+  } catch (error) {
+    console.error('Error updating single concept status:', error);
+    res.status(500).send({ error: error.message });
+  }
+};
+
   export  const updateUserConcepts = async (req, res) => {
     const { userId, understoodConcepts, didNotUnderstandConcepts } = req.body;
   
