@@ -56,6 +56,16 @@ import { SharedComponentsModule } from 'src/app/components/shared-components.mod
 import { CytoscapeUserKgComponent } from './user-kg/cytoscape-user-kg/cytoscape-user-kg.component';
 import { ConceptMapUserKgComponent } from './user-kg/concept-map-user-kg/concept-map-user-kg.component';
 import { GraphUserKgComponent } from './user-kg/graph-user-kg/graph-user-kg.component';
+
+// User PKG v2
+import { UserPkgComponent } from './user-pkg/user-pkg.component';
+import { CytoscapePkgComponent } from './user-pkg/cytoscape/cytoscape-pkg.component';
+import { PkgFilterControlsComponent } from './user-pkg/components/filter-controls/filter-controls.component';
+import { PkgConceptDetailsPanelComponent } from './user-pkg/components/concept-details-panel/concept-details-panel.component';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { userPkgReducer, userPkgFeatureKey } from './user-pkg/state/user-pkg.reducer';
+import { UserPkgEffects } from './user-pkg/state/user-pkg.effects';
 @NgModule({
   declarations: [
     ConceptMapComponent,
@@ -82,6 +92,11 @@ import { GraphUserKgComponent } from './user-kg/graph-user-kg/graph-user-kg.comp
     CytoscapeUserKgComponent,
     ConceptMapUserKgComponent,
     GraphUserKgComponent,
+    // User PKG v2 Components
+    UserPkgComponent,
+    CytoscapePkgComponent,
+    PkgFilterControlsComponent,
+    PkgConceptDetailsPanelComponent,
   ],
   imports: [
     InputTextModule,
@@ -126,6 +141,10 @@ import { GraphUserKgComponent } from './user-kg/graph-user-kg/graph-user-kg.comp
     PdfViewerModule,
     PaginatorModule,
     SharedComponentsModule,
+    
+    // User PKG v2 NgRx
+    StoreModule.forFeature(userPkgFeatureKey, userPkgReducer),
+    EffectsModule.forFeature([UserPkgEffects]),
   ],
   exports: [
     ConceptMapComponent,
