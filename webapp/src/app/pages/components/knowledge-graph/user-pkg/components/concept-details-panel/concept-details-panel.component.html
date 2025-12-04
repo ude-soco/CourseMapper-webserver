@@ -1,0 +1,94 @@
+<div *ngIf="visible" 
+     class="absolute top-0 right-0 h-full w-96 bg-white shadow-2xl z-20 overflow-hidden flex flex-col animate-slide-in">
+  <!-- Panel Header -->
+  <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <i class="pi pi-book text-2xl"></i>
+      <h3 class="text-lg font-bold">Concept Details</h3>
+    </div>
+    <button 
+      (click)="onClose()"
+      aria-label="Close concept details panel"
+      title="Close"
+      class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-200">
+      <i class="pi pi-times text-xl"></i>
+    </button>
+  </div>
+  
+  <!-- Concept Name & Abstract -->
+  <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+    <h4 class="text-xl font-bold text-gray-800">{{ concept?.name }}</h4>
+    <p *ngIf="concept?.type" class="text-sm text-gray-600 mt-1">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+        {{ concept.type }}
+      </span>
+    </p>
+    <!-- Wikipedia Abstract -->
+    <p *ngIf="concept?.abstract" class="text-sm text-gray-600 mt-3 line-clamp-4">
+      {{ concept.abstract }}
+    </p>
+    <a *ngIf="concept?.wikipedia" 
+       [href]="concept.wikipedia" 
+       target="_blank" 
+       class="text-blue-600 text-sm hover:underline mt-2 inline-block">
+      <i class="pi pi-external-link mr-1"></i>Read more on Wikipedia
+    </a>
+  </div>
+  
+  <!-- Occurrences List - Only show for main concepts -->
+  <div *ngIf="concept?.type === 'main_concept'" class="flex-1 overflow-y-auto px-6 py-4">
+    <h5 class="text-sm font-semibold text-gray-700 mb-3">Occurrences</h5>
+    
+    <div *ngIf="details.length === 0" class="text-center text-gray-500 py-8">
+      <i class="pi pi-info-circle text-4xl mb-3"></i>
+      <p>No occurrence details available</p>
+    </div>
+    
+    <div *ngIf="details.length > 0" class="space-y-2">
+      <div *ngFor="let detail of details" 
+           class="bg-gray-50 border border-gray-200 rounded-md p-3 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+           (click)="onDetailClick(detail)">
+        <div class="flex items-center gap-2 text-sm">
+          <!-- Understanding Status Icon -->
+          <span *ngIf="detail.relationshipType === 'u'" 
+                class="flex-shrink-0 text-green-600"
+                title="Understood">
+            <i class="pi pi-check-circle"></i>
+          </span>
+          <span *ngIf="detail.relationshipType === 'dnu'" 
+                class="flex-shrink-0 text-red-600"
+                title="Not Understood">
+            <i class="pi pi-times-circle"></i>
+          </span>
+          
+          <!-- Slide name -->
+          <span class="text-blue-600 font-medium hover:underline">
+            {{ detail.slideName }}
+          </span>
+          
+          <span class="text-gray-400">-</span>
+          
+          <!-- Material name -->
+          <span class="text-blue-600 hover:underline truncate">
+            {{ detail.materialName }}
+          </span>
+          
+          <span class="text-gray-400">-</span>
+          
+          <!-- Course name -->
+          <span class="text-blue-600 hover:underline flex-shrink-0">
+            {{ detail.courseName || detail.courseShortName }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Panel Footer - Show location count only for main concepts -->
+  <div *ngIf="concept?.type === 'main_concept'" class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+    <p class="text-xs text-gray-600 text-center">
+      <i class="pi pi-info-circle mr-1"></i>
+      Found in {{ details.length }} location{{ details.length !== 1 ? 's' : '' }}
+    </p>
+  </div>
+</div>

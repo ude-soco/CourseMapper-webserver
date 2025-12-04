@@ -1,0 +1,91 @@
+.user-pkg-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+/* Header */
+.pkg-header {
+  padding: 1rem;
+  background-color: #e5e7eb;
+}
+
+/* Graph Section */
+.graph-section {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 140px);
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+}
+
+/* Graph Wrapper */
+.graph-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+/* Graph Canvas */
+.graph-canvas {
+  height: 100%;
+}
+
+/* Legend */
+.legend-container {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 10;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.legend-dot.understood {
+  background-color: #5CB85C;
+}
+
+.legend-dot.not-understood {
+  background-color: #A94442;
+}
+
+.legend-dot.course {
+  background-color: #333333;
+}
+
+.legend-dot.user {
+  background-color: #9B59B6;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+}

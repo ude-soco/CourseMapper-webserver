@@ -1,0 +1,16 @@
+::ng-deep .custom-dropdown .p-dropdown {
+  border: none;
+  background: transparent;
+  min-width: 120px;
+}
+
+::ng-deep .custom-dropdown-small .p-dropdown {
+  border: none;
+  background: transparent;
+  min-width: 80px;
+}
+
+.search-input {
+  box-shadow: none;
+  background: transparent;
+}

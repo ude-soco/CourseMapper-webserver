@@ -1,0 +1,337 @@
+import { Component, Output, EventEmitter, OnInit, OnDestroy, Renderer2 } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subject, combineLatest } from 'rxjs';
+import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import cytoscape from 'cytoscape';
+import fcose from 'cytoscape-fcose';
+import cxtmenu from 'cytoscape-cxtmenu';
+import * as GraphUtils from './utils/graph.utils';
+import * as CourseNodeUtils from './utils/course-node.utils';
+import * as RelatedConceptsUtils from './utils/related-concepts.utils';
+import * as ContextMenuUtils from './utils/context-menu.utils';
+import { ConceptRecord, ViewMode, CourseInfo } from '../types/user-pkg.types';
+import * as UserPkgSelectors from '../state/user-pkg.reducer';
+
+cytoscape.use(fcose);
+cytoscape.use(cxtmenu);
+
+@Component({
+  selector: 'app-cytoscape-pkg',
+  templateUrl: './cytoscape-pkg.component.html',
+  styleUrls: ['./cytoscape-pkg.component.css']
+})
+export class CytoscapePkgComponent implements OnInit, OnDestroy {
+  @Output() conceptSelected = new EventEmitter<any>();
+  @Output() conceptStatusChanged = new EventEmitter<{concept: any, status: 'u' | 'dnu' | 'new'}>();
+  @Output() courseNodeClicked = new EventEmitter<any>();
+  @Output() edgeClicked = new EventEmitter<any>();
+
+  public cy: any;
+  private conceptsWithVisibleRelated = new Set<string>();
+  private destroy$ = new Subject<void>();
+  
+  // State from store
+  private elements: any;
+  private rawConceptRecords: ConceptRecord[] = [];
+  private courses: CourseInfo[] = [];
+  private currentViewMode: ViewMode = 'knowledge';
+  private currentSearchQuery = '';
+  private currentUnderstandingStatus: 'all' | 'u' | 'dnu' = 'all';
+
+  constructor(
+    private renderer: Renderer2,
+    private store: Store
+  ) {}
+
+  ngOnInit(): void {
+    console.log('[Cytoscape PKG] Component initialized');
+    this.subscribeToStore();
+  }
+
+  private subscribeToStore(): void {
+    // Subscribe to graph data, raw records, and courses together
+    combineLatest([
+      this.store.select(UserPkgSelectors.selectGraphData),
+      this.store.select(UserPkgSelectors.selectRawRecords),
+      this.store.select(UserPkgSelectors.selectCourses)
+    ]).pipe(takeUntil(this.destroy$))
+      .subscribe(([graphData, rawConceptRecords, courses]) => {
+        this.rawConceptRecords = rawConceptRecords;
+        this.courses = courses;
+        
+        if (!graphData) return;
+        
+        const previousNodes = this.elements?.nodes || [];
+        const currentNodes = graphData.nodes || [];
+        
+        const previousNodeIds = new Set(previousNodes.map((n: any) => n.data.id));
+        const currentNodeIds = new Set(currentNodes.map((n: any) => n.data.id));
+        
+        const sameNodes = previousNodeIds.size === currentNodeIds.size &&
+                          [...previousNodeIds].every(id => currentNodeIds.has(id));
+        
+        this.elements = graphData;
+        
+        if (this.cy && previousNodes.length > 0 && sameNodes) {
+          console.log('[Cytoscape PKG] Updating styles only');
+          this.updateGraphStyles();
+        } else if (graphData.nodes.length > 0) {
+          console.log('[Cytoscape PKG] Full re-render');
+          this.render();
+        }
+      });
+
+    // Subscribe to view mode
+    this.store.select(UserPkgSelectors.selectViewMode)
+      .pipe(takeUntil(this.destroy$), distinctUntilChanged())
+      .subscribe(viewMode => {
+        const previousViewMode = this.currentViewMode;
+        this.currentViewMode = viewMode;
+        if (this.cy && previousViewMode !== viewMode) {
+          console.log('[Cytoscape PKG] View mode changed:', viewMode);
+          this.render();
+        }
+      });
+
+    // Subscribe to search query
+    this.store.select(UserPkgSelectors.selectSearchQuery)
+      .pipe(takeUntil(this.destroy$), distinctUntilChanged())
+      .subscribe(query => {
+        this.currentSearchQuery = query;
+        if (this.cy) {
+          this.applyFilters();
+        }
+      });
+
+    // Subscribe to understanding status
+    this.store.select(UserPkgSelectors.selectUnderstandingStatus)
+      .pipe(takeUntil(this.destroy$), distinctUntilChanged())
+      .subscribe(status => {
+        this.currentUnderstandingStatus = status;
+        if (this.cy) {
+          this.applyFilters();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Apply all filters (search query, understanding status) to nodes
+   */
+  private applyFilters(): void {
+    if (!this.cy) return;
+    
+    const query = this.currentSearchQuery?.toLowerCase().trim() || '';
+    const status = this.currentUnderstandingStatus;
+    
+    this.cy.nodes().forEach((node: any) => {
+      const nodeType = node.data('type');
+      const nodeName = node.data('name')?.toLowerCase() || '';
+      
+      // Always show user node
+      if (nodeType === 'user') {
+        node.show();
+        return;
+      }
+      
+      // Check understanding status filter
+      if (status !== 'all') {
+        const nodeStatus = GraphUtils.getNodeStatus(node);
+        if (nodeStatus !== status) {
+          node.hide();
+          return;
+        }
+      }
+      
+      // Check search query filter
+      if (query && !nodeName.includes(query)) {
+        node.hide();
+        return;
+      }
+      
+      node.show();
+    });
+    
+    // Hide/show edges based on connected node visibility
+    this.cy.edges().forEach((edge: any) => {
+      const sourceNode = this.cy.getElementById(edge.data('source'));
+      const targetNode = this.cy.getElementById(edge.data('target'));
+      
+      if (sourceNode.visible() && targetNode.visible()) {
+        edge.show();
+      } else {
+        edge.hide();
+      }
+    });
+  }
+
+
+  render(): void {
+    if (!this.elements || !this.elements.nodes) {
+      console.log('[Cytoscape PKG] No elements to render');
+      return;
+    }
+
+    const container = this.renderer.selectRootElement('#cy-pkg', true);
+    if (!container) {
+      console.error('[Cytoscape PKG] Container #cy-pkg not found');
+      return;
+    }
+
+    if (this.cy) {
+      this.cy.destroy();
+    }
+
+    // Determine what to render based on view mode
+    // Deep clone to avoid mutating frozen NgRx store data
+    let elementsToRender: any;
+    
+    if (this.currentViewMode === 'engagement') {
+      // Create engagement view (user -> courses)
+      const userNode = this.elements.nodes.find((n: any) => n.data.type === 'user');
+      elementsToRender = GraphUtils.createEngagementGraphData(userNode, this.courses);
+    } else {
+      // Deep clone elements for knowledge/interest view
+      elementsToRender = {
+        nodes: this.elements.nodes.map((n: any) => ({ ...n, data: { ...n.data } })),
+        edges: this.elements.edges.map((e: any) => ({ ...e, data: { ...e.data } }))
+      };
+    }
+
+    console.log(`[Cytoscape PKG] Rendering ${elementsToRender.nodes.length} nodes and ${elementsToRender.edges.length} edges (${this.currentViewMode} view)`);
+
+    this.cy = GraphUtils.createGraph(container, elementsToRender);
+    
+    // Apply edge labels based on view mode
+    this.applyEdgeLabels();
+    
+    GraphUtils.applyConcentricLayout(this.cy);
+    this.setupEventListeners();
+    this.initializeContextMenu();
+    
+    // Only restore related concepts in knowledge/interest view
+    if (this.currentViewMode !== 'engagement') {
+      this.restoreRelatedConcepts();
+      this.applyFilters();
+    }
+
+    console.log('[Cytoscape PKG] Graph rendered successfully');
+  }
+
+  /**
+   * Apply edge labels based on current view mode
+   */
+  private applyEdgeLabels(): void {
+    this.cy.edges().forEach((edge: any) => {
+      const edgeType = edge.data('type');
+      const sourceNode = edge.source();
+      const targetNode = edge.target();
+      const sourceType = sourceNode.data('type');
+      const targetType = targetNode.data('type');
+      
+      const label = GraphUtils.getEdgeLabelForViewMode(
+        edgeType, 
+        this.currentViewMode,
+        sourceType,
+        targetType
+      );
+      edge.data('label', label);
+    });
+  }
+
+  private restoreRelatedConcepts(): void {
+    const conceptsToRestore = Array.from(this.conceptsWithVisibleRelated);
+    conceptsToRestore.forEach(conceptId => {
+      const conceptNode = this.cy.getElementById(conceptId);
+      if (conceptNode.length > 0) {
+        RelatedConceptsUtils.toggleRelatedConcepts(this.cy, conceptNode, this.rawConceptRecords);
+      } else {
+        this.conceptsWithVisibleRelated.delete(conceptId);
+      }
+    });
+  }
+
+  private setupEventListeners(): void {
+    // Node click events
+    this.cy.on('tap', 'node', (event: any) => {
+      const node = event.target;
+      const nodeData = node.data();
+      
+      if (nodeData.type === 'course') {
+        this.courseNodeClicked.emit(nodeData);
+      } else if (nodeData.type === 'main_concept' || nodeData.type === 'related_concept') {
+        console.log('[Cytoscape PKG] Concept clicked:', nodeData);
+        this.conceptSelected.emit(nodeData);
+      }
+    });
+
+    // Edge click events
+    this.cy.on('tap', 'edge', (event: any) => {
+      const edge = event.target;
+      this.edgeClicked.emit(edge.data());
+    });
+  }
+
+  private initializeContextMenu(): void {
+    ContextMenuUtils.initializeContextMenu(this.cy, this.rawConceptRecords, {
+      onStatusChange: (concept, status) => this.handleStatusChange(concept, status),
+      onToggleCourse: (node) => this.handleToggleCourse(node),
+      onToggleRelated: (node) => this.handleToggleRelated(node),
+    });
+  }
+
+  private handleStatusChange(concept: any, status: 'u' | 'dnu' | 'new'): void {
+    this.conceptStatusChanged.emit({ concept, status });
+    
+    // Immediately update the graph visuals
+    const conceptNode = this.cy.$id(concept.id);
+    if (conceptNode.length > 0) {
+      const edgeType = status === 'new' ? 'unknown' : status;
+      
+      // Update the edge from user to this concept
+      const userEdge = this.cy.edges().filter((edge: any) => {
+        if (edge.data('target') !== concept.id) return false;
+        const sourceNode = this.cy.$id(edge.data('source'));
+        return sourceNode.length > 0 && sourceNode.data('type') === 'user';
+      });
+      
+      if (userEdge.length > 0) {
+        userEdge.data('type', edgeType);
+        // Update the label to match the new status
+        const edgeLabel = edgeType === 'u' ? 'Understood' : edgeType === 'dnu' ? 'Not Understood' : '';
+        userEdge.data('label', edgeLabel);
+      }
+      
+      // Re-apply styles based on new edge type
+      GraphUtils.updateNodeStyles(this.cy);
+      GraphUtils.updateEdgeStyles(this.cy);
+    }
+  }
+
+  private handleToggleCourse(node: any): void {
+    CourseNodeUtils.toggleCourseNode(this.cy, node, this.rawConceptRecords);
+  }
+
+  private handleToggleRelated(node: any): void {
+    const conceptId = node.id();
+    const wasVisible = RelatedConceptsUtils.checkForRelatedConcepts(this.cy, node);
+    
+    RelatedConceptsUtils.toggleRelatedConcepts(this.cy, node, this.rawConceptRecords);
+    
+    if (wasVisible) {
+      this.conceptsWithVisibleRelated.delete(conceptId);
+    } else {
+      this.conceptsWithVisibleRelated.add(conceptId);
+    }
+  }
+
+  updateGraphStyles(): void {
+    if (!this.cy) return;
+    GraphUtils.updateEdgeStyles(this.cy, this.elements);
+    GraphUtils.updateNodeStyles(this.cy);
+  }
+}
