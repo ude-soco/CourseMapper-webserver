@@ -43,5 +43,19 @@ export class UserConceptsService {
   
     return this.http.post<any>(`${this.backendEndpointURL}/users/user-concepts`, body);
   }
-  
+
+  /**
+   * Update a single concept's status
+   * Safe to use with TopN filtering
+   */
+  updateSingleConceptStatus(
+    userId: string,
+    conceptId: string,
+    status: 'u' | 'dnu' | 'new'
+  ): Observable<any> {
+    return this.http.patch<any>(
+      `${this.backendEndpointURL}/users/user-concepts/${userId}/concept`,
+      { conceptId, status }
+    );
+  }
 }

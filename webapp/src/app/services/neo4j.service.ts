@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { UserPkgResponse } from '../pages/components/knowledge-graph/user-pkg/types/user-pkg.types';
 
 type Neo4jResult = {
   records: any[];
@@ -262,6 +263,22 @@ export class Neo4jService {
         `${environment.API_URL}/knowledge-graph/renew-concept/${conceptId}`,
         {}
       )
+    );
+  }
+
+  /**
+   * Get user's personal knowledge graph data
+   */
+  getUserPkg(userId: string, topN?: number | 'All'): Observable<UserPkgResponse> {
+    let params = new HttpParams();
+    
+    if (topN && topN !== 'All') {
+      params = params.set('topN', topN.toString());
+    }
+
+    return this.http.get<UserPkgResponse>(
+      `${environment.API_URL}/knowledge-graph/get-user-pkg/${userId}`,
+      { params }
     );
   }
 }
