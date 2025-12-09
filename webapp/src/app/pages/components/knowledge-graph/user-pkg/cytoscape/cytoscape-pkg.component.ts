@@ -208,8 +208,10 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
     this.cy = GraphUtils.createGraph(container, elementsToRender);
     
-    // Apply edge labels based on view mode
+    // Apply edge labels and styles based on view mode
     this.applyEdgeLabels();
+    GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
+    GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode);
     
     GraphUtils.applyConcentricLayout(this.cy);
     this.setupEventListeners();
@@ -304,7 +306,10 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
     if (conceptNode.length > 0) {
       const edgeType = status === 'new' ? 'unknown' : status;
       
-      // Update the edge from user to this concept
+      // Update the node's relationshipType data (important for related concepts in Interest mode)
+      conceptNode.data('relationshipType', edgeType);
+      
+      // Update the edge from user to this concept (if it exists)
       const userEdge = this.cy.edges().filter((edge: any) => {
         if (edge.data('target') !== concept.id) return false;
         const sourceNode = this.cy.$id(edge.data('source'));

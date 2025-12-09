@@ -33,10 +33,17 @@ export function applyConcentricLayout(cy: any): void {
 
 /**
  * Update edge styles based on view mode
+ * Skips engagement edges (they use default CSS styling)
  */
 export function updateEdgeStyles(cy: any, viewMode: ViewMode, elements?: any): void {
   cy.edges().forEach((edge: any) => {
     const edgeType = edge.data('type') as EdgeType;
+    
+    // Skip engagement edges - they use default CSS styling
+    if (edgeType === 'engagement') {
+      return;
+    }
+    
     const sourceNode = edge.source();
     const targetNode = edge.target();
     const sourceType = sourceNode.data('type') as NodeType;
@@ -70,9 +77,16 @@ export function updateNodeStyles(cy: any, viewMode: ViewMode): void {
   cy.nodes('[type="main_concept"], [type="related_concept"]').forEach((node: any) => {
     const nodeType = node.data('type') as NodeType;
     
-    // Get understanding status from incoming user edge
+    // Get understanding status - check multiple sources
     let understandingStatus: 'u' | 'dnu' | 'unknown' = 'unknown';
     
+    // 1. First try from node's relationshipType data (always available, set when node created)
+    const nodeRelationshipType = node.data('relationshipType');
+    if (nodeRelationshipType === 'u' || nodeRelationshipType === 'dnu') {
+      understandingStatus = nodeRelationshipType;
+    }
+    
+    // 2. Then check incoming user edge (may override node data if edge was updated)
     const incomingEdges = node.connectedEdges().filter((edge: any) => 
       edge.data().target === node.id()
     );
