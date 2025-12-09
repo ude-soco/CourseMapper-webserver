@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { UserPkgResponse } from '../pages/components/knowledge-graph/user-pkg/types/user-pkg.types';
+import { UserPkgResponse, RelatedConceptInfo } from '../pages/components/knowledge-graph/user-pkg/types/user-pkg.types';
 
 type Neo4jResult = {
   records: any[];
@@ -279,6 +279,15 @@ export class Neo4jService {
     return this.http.get<UserPkgResponse>(
       `${environment.API_URL}/knowledge-graph/get-user-pkg/${userId}`,
       { params }
+    );
+  }
+
+  /**
+   * Get related concepts for a specific concept (on-demand)
+   */
+  getRelatedConcepts(conceptCid: string): Observable<{ relatedConcepts: RelatedConceptInfo[] }> {
+    return this.http.get<{ relatedConcepts: RelatedConceptInfo[] }>(
+      `${environment.API_URL}/knowledge-graph/get-related-concepts/${conceptCid}`
     );
   }
 }

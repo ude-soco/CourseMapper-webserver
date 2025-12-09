@@ -15,6 +15,9 @@ export interface SlideInfo {
 export interface RelatedConceptInfo {
   cid: string | null;
   name: string | null;
+  wikipedia?: string | null;
+  abstract?: string | null;
+  relationshipType?: 'u' | 'dnu' | 'unknown' | null;
 }
 
 // Raw concept record from backend API

@@ -506,4 +506,11 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getUserPKG
   );
+
+  // Get related concepts for a specific concept
+  app.get(
+    "/api/knowledge-graph/get-related-concepts/:conceptCid",
+    [authJwt.verifyToken],
+    controller.getRelatedConcepts
+  );
 };

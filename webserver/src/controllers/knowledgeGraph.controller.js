@@ -1652,6 +1652,7 @@ export const getUserPKG = async (req, res) => {
     // Enrich records with material/course info and understanding status
     const enrichedRecords = records.map(record => {
       const materialInfo = materialMap[record.mid] || {};
+      
       return {
         ...record,
         ...materialInfo,
@@ -1670,6 +1671,44 @@ export const getUserPKG = async (req, res) => {
     });
   } catch (err) {
     console.error('[Personal KG] Error loading user knowledge graph:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
+ * Get related concepts for a specific concept (on-demand)
+ * GET /api/knowledge-graph/get-related-concepts/:conceptCid
+ */
+export const getRelatedConcepts = async (req, res) => {
+  const { conceptCid } = req.params;
+  const userId = req.userId;
+
+  try {
+    // Get user's concept status from MongoDB
+    const foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: 'User not found' });
+    }
+
+    // Build concept status map
+    const conceptStatusMap = new Map();
+    (foundUser.understoodConcepts || []).forEach(cid => conceptStatusMap.set(cid, 'u'));
+    (foundUser.didNotUnderstandConcepts || []).forEach(cid => conceptStatusMap.set(cid, 'dnu'));
+
+    // Get related concepts from Neo4j
+    const relatedConcepts = await neo4j.getRelatedConceptsForConcept(conceptCid);
+
+    // Enrich with relationship type from MongoDB
+    const enrichedConcepts = relatedConcepts.map(rc => ({
+      ...rc,
+      relationshipType: conceptStatusMap.get(rc.cid) || 'unknown'
+    }));
+
+    console.log(`[Personal KG] Fetched ${enrichedConcepts.length} related concepts for ${conceptCid}`);
+    
+    return res.status(200).send({ relatedConcepts: enrichedConcepts });
+  } catch (err) {
+    console.error('[Personal KG] Error fetching related concepts:', err.message);
     return res.status(500).send({ error: err.message });
   }
 };

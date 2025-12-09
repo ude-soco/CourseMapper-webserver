@@ -1,7 +1,7 @@
 import { CONTEXT_MENU_CONFIG } from '../cytoscape.config';
 import { getNodeStatus } from './graph.utils';
 import { hasCourseConnection } from './course-node.utils';
-import { hasRelatedConceptsInData, checkForRelatedConcepts } from './related-concepts.utils';
+import { checkForRelatedConcepts } from './related-concepts.utils';
 import { ConceptRecord } from '../../types/user-pkg.types';
 
 export interface ContextMenuCallbacks {
@@ -155,14 +155,8 @@ function getRelatedConceptsCommand(
   cy: any, 
   rawConceptRecords: ConceptRecord[],
   callbacks: ContextMenuCallbacks
-): any | null {
-  const conceptData = ele.data();
-  const hasRelatedAvailable = hasRelatedConceptsInData(conceptData, rawConceptRecords);
-  
-  if (!hasRelatedAvailable) {
-    return null;
-  }
-
+): any {
+  // Related concepts are fetched on-demand, so always show the option
   const hasRelatedVisible = checkForRelatedConcepts(cy, ele);
   
   return {

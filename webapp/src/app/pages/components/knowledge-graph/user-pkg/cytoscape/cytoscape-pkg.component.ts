@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject, combineLatest } from 'rxjs';
-import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import { takeUntil, distinctUntilChanged, take } from 'rxjs/operators';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import cxtmenu from 'cytoscape-cxtmenu';
@@ -11,6 +11,7 @@ import * as RelatedConceptsUtils from './utils/related-concepts.utils';
 import * as ContextMenuUtils from './utils/context-menu.utils';
 import { ConceptRecord, ViewMode, CourseInfo } from '../types/user-pkg.types';
 import * as UserPkgSelectors from '../state/user-pkg.reducer';
+import { Neo4jService } from 'src/app/services/neo4j.service';
 
 cytoscape.use(fcose);
 cytoscape.use(cxtmenu);
@@ -40,7 +41,8 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
   constructor(
     private renderer: Renderer2,
-    private store: Store
+    private store: Store,
+    private neo4jService: Neo4jService
   ) {}
 
   ngOnInit(): void {
@@ -248,7 +250,17 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
     conceptsToRestore.forEach(conceptId => {
       const conceptNode = this.cy.getElementById(conceptId);
       if (conceptNode.length > 0) {
-        RelatedConceptsUtils.toggleRelatedConcepts(this.cy, conceptNode, this.rawConceptRecords);
+        const conceptCid = conceptNode.data('cid');
+        // Re-fetch related concepts on-demand
+        this.neo4jService.getRelatedConcepts(conceptCid).pipe(take(1)).subscribe({
+          next: (response) => {
+            RelatedConceptsUtils.showRelatedConcepts(this.cy, conceptNode, response.relatedConcepts);
+          },
+          error: (err) => {
+            console.error('[Cytoscape PKG] Failed to restore related concepts:', err);
+            this.conceptsWithVisibleRelated.delete(conceptId);
+          }
+        });
       } else {
         this.conceptsWithVisibleRelated.delete(conceptId);
       }
@@ -318,14 +330,24 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
   private handleToggleRelated(node: any): void {
     const conceptId = node.id();
+    const conceptCid = node.data('cid');
     const wasVisible = RelatedConceptsUtils.checkForRelatedConcepts(this.cy, node);
     
-    RelatedConceptsUtils.toggleRelatedConcepts(this.cy, node, this.rawConceptRecords);
-    
     if (wasVisible) {
+      // Hide related concepts (no API call needed)
+      RelatedConceptsUtils.hideRelatedConcepts(this.cy, conceptId);
       this.conceptsWithVisibleRelated.delete(conceptId);
     } else {
-      this.conceptsWithVisibleRelated.add(conceptId);
+      // Fetch related concepts on-demand
+      this.neo4jService.getRelatedConcepts(conceptCid).pipe(take(1)).subscribe({
+        next: (response) => {
+          RelatedConceptsUtils.showRelatedConcepts(this.cy, node, response.relatedConcepts);
+          this.conceptsWithVisibleRelated.add(conceptId);
+        },
+        error: (err) => {
+          console.error('[Cytoscape PKG] Failed to fetch related concepts:', err);
+        }
+      });
     }
   }
 

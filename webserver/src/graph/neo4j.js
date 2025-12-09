@@ -614,23 +614,19 @@ export async function getUserConceptsWithRelationships(conceptIds, topN = null) 
     return [];
   }
 
-  // Query to get concepts with their associated relationships:
-  // 1. Slide containment: which slides contain each concept (aggregated)
-  // 2. Related concepts: lateral RELATED_TO relationships (aggregated)
-  // 3. Sorted by type priority (main_concept first) then weight
-  // 4. Limited to top N if specified
+  // Query to get MAIN concepts only.
+  // TopN is applied to main concepts in the query.
+  // Related concepts are fetched on-demand via separate endpoint.
   
   const limitClause = (topN && topN !== 'All') ? `LIMIT ${parseInt(topN)}` : '';
   
   const query = `
     MATCH (c:Concept)
     WHERE c.cid IN $conceptIds
+      AND (c.type = 'main_concept' OR c.type IS NULL)
     OPTIONAL MATCH (s:Slide)-[]->(c)
-    OPTIONAL MATCH (c)-[:RELATED_TO]->(relatedConcept:Concept)
-    WHERE relatedConcept.cid IN $conceptIds
     WITH c,
-         COLLECT(DISTINCT {sid: s.sid, name: s.name}) as slides,
-         COLLECT(DISTINCT {cid: relatedConcept.cid, name: relatedConcept.name}) as relatedConcepts
+         COLLECT(DISTINCT {sid: s.sid, name: s.name}) as slides
     RETURN c.cid as cid, 
            c.name as name, 
            c.type as type,
@@ -639,15 +635,8 @@ export async function getUserConceptsWithRelationships(conceptIds, topN = null) 
            c.weight as weight,
            c.mid as mid,
            c.initial_embedding as initial_embedding,
-           slides,
-           relatedConcepts
-    ORDER BY 
-      CASE 
-        WHEN c.type = 'main_concept' OR c.type IS NULL THEN 0
-        WHEN c.type = 'related_concept' THEN 1
-        ELSE 2
-      END,
-      c.weight DESC
+           slides
+    ORDER BY c.weight DESC
     ${limitClause}`;
   
   const { records } = await graphDb.driver.executeQuery(
@@ -656,7 +645,30 @@ export async function getUserConceptsWithRelationships(conceptIds, topN = null) 
   );
   
   const result = recordsToObjects(records);
-  console.log(`[Personal KG] Neo4j query returned ${result.length} concept records`);
+  console.log(`[Personal KG] Neo4j query returned ${result.length} main concepts`);
   
   return result;
+}
+
+/**
+ * Get related concepts for a specific concept (on-demand fetch)
+ * Returns concepts that have RELATED_TO relationship from the given concept
+ */
+export async function getRelatedConceptsForConcept(conceptCid) {
+  const query = `
+    MATCH (c:Concept {cid: $conceptCid})-[:RELATED_TO]->(related:Concept)
+    RETURN related.cid as cid,
+           related.name as name,
+           related.type as type,
+           related.wikipedia as wikipedia,
+           related.abstract as abstract,
+           related.weight as weight
+    ORDER BY related.weight DESC`;
+  
+  const { records } = await graphDb.driver.executeQuery(
+    query,
+    { conceptCid }
+  );
+  
+  return recordsToObjects(records);
 }
