@@ -12,15 +12,17 @@
       <label for="knowledge" class="cursor-pointer text-sm font-medium text-gray-700 min-w-[110px]">Knowledge State</label>
       
       <!-- Understanding Status Filter -->
-      <p-dropdown 
-        *ngIf="(viewMode$ | async) === 'knowledge'"
-        [options]="understandingStatusOptions" 
-        [ngModel]="understandingStatus$ | async"
-        (onChange)="onUnderstandingStatusChange($event.value)"
-        styleClass="custom-dropdown"
-        [showClear]="false"
-        placeholder="All">
-      </p-dropdown>
+      <div *ngIf="(viewMode$ | async) === 'knowledge'" class="flex items-center gap-2 ml-2">
+        <label class="text-sm text-gray-500 whitespace-nowrap">Filter:</label>
+        <p-dropdown 
+          [options]="understandingStatusOptions" 
+          [ngModel]="understandingStatus$ | async"
+          (onChange)="onUnderstandingStatusChange($event.value)"
+          [style]="{'border': '1px solid #d1d5db', 'border-radius': '6px', 'background': '#f9fafb', 'font-size': '14px', 'height': '36px', 'display': 'flex', 'align-items': 'center'}"
+          [showClear]="false"
+          placeholder="All">
+        </p-dropdown>
+      </div>
     </div>
     
     <div class="flex items-center gap-3 min-h-[36px]">
@@ -65,13 +67,14 @@
   
   <!-- Top-N Dropdown -->
   <div class="flex justify-end">
-    <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center gap-3">
+    <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center gap-2">
       <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Top-N Main Concepts</label>
       <p-dropdown 
         [options]="topNOptions" 
         [ngModel]="topNConcepts$ | async"
         (onChange)="onTopNChange($event.value)"
-        styleClass="custom-dropdown-small">
+        [style]="{'border': '1px solid #d1d5db', 'border-radius': '6px', 'background': '#f9fafb', 'font-size': '14px', 'height': '40px', 'display': 'flex', 'align-items': 'center'}"
+        appendTo="body">
       </p-dropdown>
     </div>
   </div>
