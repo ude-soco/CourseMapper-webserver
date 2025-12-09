@@ -136,18 +136,19 @@ export class UserPkgEffects {
         data: {
           id: conceptNodeId,
           name: concept.name,
-          type: concept.type,
+          type: concept.type || 'main_concept',
           cid: concept.cid,
           wikipedia: concept.wikipedia,
           abstract: concept.abstract,
           weight: concept.weight,
           relationshipType: concept.relationshipType,
           slides: concept.slides,
-          relatedConcepts: concept.relatedConcepts,
           courseId: concept.courseId,
           courseName: concept.courseName,
           courseShortName: concept.courseShortName,
           allCourseIds: concept.allCourseIds,
+          // Placeholder for interest score (to be fetched separately)
+          interestScore: concept.interestScore,
         },
       });
 

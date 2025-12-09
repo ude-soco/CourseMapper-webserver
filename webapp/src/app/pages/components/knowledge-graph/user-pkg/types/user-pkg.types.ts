@@ -30,7 +30,6 @@ export interface ConceptRecord {
   weight: number;
   mid?: string;
   slides: SlideInfo[];
-  relatedConcepts: RelatedConceptInfo[];
   relationshipType: 'u' | 'dnu' | 'unknown';
   materialId?: string;
   materialName?: string;
@@ -38,6 +37,8 @@ export interface ConceptRecord {
   courseId?: string;
   courseName?: string;
   courseShortName?: string;
+  // Interest score
+  interestScore?: number;
 }
 
 // Course info from backend
@@ -45,6 +46,8 @@ export interface CourseInfo {
   courseId: string;
   courseName: string;
   courseShortName: string;
+  // Engagement level 
+  engagementLevel?: number;
 }
 
 // Material info from backend
@@ -76,12 +79,15 @@ export interface CytoscapeNodeData {
   weight?: number;
   relationshipType?: 'u' | 'dnu' | 'unknown';
   slides?: SlideInfo[];
-  relatedConcepts?: RelatedConceptInfo[];
   courseId?: string;
   courseName?: string;
   courseShortName?: string;
   allCourseIds?: string[];
   initials?: string;
+  // Interest score for interest view mode
+  interestScore?: number;
+  // Engagement level for engagement view mode (courses only)
+  engagementLevel?: number;
 }
 
 export interface CytoscapeNode {

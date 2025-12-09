@@ -254,7 +254,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
         // Re-fetch related concepts on-demand
         this.neo4jService.getRelatedConcepts(conceptCid).pipe(take(1)).subscribe({
           next: (response) => {
-            RelatedConceptsUtils.showRelatedConcepts(this.cy, conceptNode, response.relatedConcepts);
+            RelatedConceptsUtils.showRelatedConcepts(this.cy, conceptNode, response.relatedConcepts, this.currentViewMode);
           },
           error: (err) => {
             console.error('[Cytoscape PKG] Failed to restore related concepts:', err);
@@ -313,14 +313,19 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       
       if (userEdge.length > 0) {
         userEdge.data('type', edgeType);
-        // Update the label to match the new status
-        const edgeLabel = edgeType === 'u' ? 'Understood' : edgeType === 'dnu' ? 'Not Understood' : '';
+        // Update the label based on current view mode
+        const edgeLabel = GraphUtils.getEdgeLabelForViewMode(
+          edgeType,
+          this.currentViewMode,
+          'user',
+          conceptNode.data('type')
+        );
         userEdge.data('label', edgeLabel);
       }
       
       // Re-apply styles based on new edge type
-      GraphUtils.updateNodeStyles(this.cy);
-      GraphUtils.updateEdgeStyles(this.cy);
+      GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
+      GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode);
     }
   }
 
@@ -341,7 +346,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       // Fetch related concepts on-demand
       this.neo4jService.getRelatedConcepts(conceptCid).pipe(take(1)).subscribe({
         next: (response) => {
-          RelatedConceptsUtils.showRelatedConcepts(this.cy, node, response.relatedConcepts);
+          RelatedConceptsUtils.showRelatedConcepts(this.cy, node, response.relatedConcepts, this.currentViewMode);
           this.conceptsWithVisibleRelated.add(conceptId);
         },
         error: (err) => {
@@ -353,7 +358,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
   updateGraphStyles(): void {
     if (!this.cy) return;
-    GraphUtils.updateEdgeStyles(this.cy, this.elements);
-    GraphUtils.updateNodeStyles(this.cy);
+    GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode, this.elements);
+    GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
   }
 }

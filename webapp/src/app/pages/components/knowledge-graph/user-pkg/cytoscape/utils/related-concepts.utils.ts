@@ -1,10 +1,14 @@
-import { RelatedConceptInfo } from '../../types/user-pkg.types';
+import { RelatedConceptInfo, ViewMode } from '../../types/user-pkg.types';
 
 /**
  * Related concepts utility functions for showing/hiding related concepts in the graph
  * Related concepts are fetched on-demand from the API.
  * 
  * Handles the case where a related concept can be related to multiple main concepts.
+ * 
+ * View Mode Behavior:
+ * - Knowledge mode: User → Related Concept edges shown (with understanding status)
+ * - Interest mode: NO User → Related Concept edges (only Main → Related)
  */
 
 /**
@@ -39,8 +43,18 @@ export function hideRelatedConcepts(cy: any, mainConceptId: string): void {
 
 /**
  * Show related concepts for a main concept (fetched on-demand from API)
+ * 
+ * @param cy - Cytoscape instance
+ * @param mainConceptNode - The main concept node to show related concepts for
+ * @param relatedConcepts - Array of related concepts from API
+ * @param viewMode - Current view mode (affects whether user-to-related edges are shown)
  */
-export function showRelatedConcepts(cy: any, mainConceptNode: any, relatedConcepts: RelatedConceptInfo[]): void {
+export function showRelatedConcepts(
+  cy: any, 
+  mainConceptNode: any, 
+  relatedConcepts: RelatedConceptInfo[],
+  viewMode: ViewMode = 'knowledge'
+): void {
   const mainConceptId = mainConceptNode.id();
   
   // Filter to valid related concepts
@@ -83,19 +97,22 @@ export function showRelatedConcepts(cy: any, mainConceptNode: any, relatedConcep
         }
       });
       
-      // Add edge from user to related concept (with understanding status)
-      const edgeType = relatedConcept.relationshipType || 'unknown';
-      const edgeLabel = edgeType === 'u' ? 'Understood' : edgeType === 'dnu' ? 'Not Understood' : '';
-      cy.add({
-        group: 'edges',
-        data: {
-          id: `edge-user-${relatedNodeId}`,
-          source: userNode.id(),
-          target: relatedNodeId,
-          type: edgeType,
-          label: edgeLabel
-        }
-      });
+      // Only add edge from user to related concept in KNOWLEDGE mode
+      // In Interest mode, related concepts are only connected to main concepts
+      if (viewMode === 'knowledge') {
+        const edgeType = relatedConcept.relationshipType || 'unknown';
+        const edgeLabel = edgeType === 'u' ? 'Understood' : edgeType === 'dnu' ? 'Not Understood' : '';
+        cy.add({
+          group: 'edges',
+          data: {
+            id: `edge-user-${relatedNodeId}`,
+            source: userNode.id(),
+            target: relatedNodeId,
+            type: edgeType,
+            label: edgeLabel
+          }
+        });
+      }
     }
     
     // Always add the relationship edge from this main concept to the related concept
@@ -110,7 +127,8 @@ export function showRelatedConcepts(cy: any, mainConceptNode: any, relatedConcep
           id: relationEdgeId,
           source: mainConceptId,
           target: relatedNodeId,
-          label: 'related_to'
+          label: 'related_to',
+          type: 'related_to'
         }
       });
     }
