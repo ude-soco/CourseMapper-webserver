@@ -57,11 +57,14 @@ export function showRelatedConcepts(
 ): void {
   const mainConceptId = mainConceptNode.id();
   
-  // Filter to valid related concepts
-  const validRelatedConcepts = relatedConcepts.filter(rc => rc.cid && rc.name);
+  // Filter to valid related concepts that are NOT "new" (unknown)
+  // Only show concepts that have been marked as understood or not understood
+  const validRelatedConcepts = relatedConcepts.filter(rc => 
+    rc.cid && rc.name && (rc.relationshipType === 'u' || rc.relationshipType === 'dnu')
+  );
   
   if (validRelatedConcepts.length === 0) {
-    console.log('No related concepts returned from API');
+    console.log('No related concepts to show (all are new/unknown)');
     return;
   }
 

@@ -130,7 +130,13 @@ function applyNodeStyleFromConfig(node: any, config: { backgroundColor: string; 
 }
 
 export function getNodeStatus(node: any): string {
-  // Get status from the incoming edge (from user node)
+  // First check node's relationshipType data (always available, especially for related concepts)
+  const nodeRelationshipType = node.data('relationshipType');
+  if (nodeRelationshipType === 'u' || nodeRelationshipType === 'dnu') {
+    return nodeRelationshipType;
+  }
+  
+  // Fallback: Get status from the incoming edge (from user node)
   const incomingEdges = node.connectedEdges().filter((edge: any) => 
     edge.data('target') === node.id()
   );
