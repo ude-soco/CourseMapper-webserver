@@ -39,6 +39,9 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   showNotUnderstoodLegend = false;
   showCourseLegend = false;
   showUserLegend = true; // User node is always present
+  
+  // Help dialog state
+  showHelpDialog = false;
 
   constructor(
     private store: Store,
@@ -241,6 +244,14 @@ export class UserPkgComponent implements OnInit, OnDestroy {
 
   onEdgeClicked(edgeData: any): void {
     console.log('[User PKG] Edge clicked:', edgeData);
+  }
+
+  openHelpDialog(): void {
+    this.showHelpDialog = true;
+  }
+
+  closeHelpDialog(): void {
+    this.showHelpDialog = false;
   }
 
   // Extract concept details from raw records (inline helper)

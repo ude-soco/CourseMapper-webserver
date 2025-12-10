@@ -29,14 +29,17 @@
       <!-- Legend -->
       <div class="legend-container">
         <div class="flex items-center gap-5">
+
           <button 
             pButton 
             type="button" 
-            icon="pi pi-cog"
-            class="p-button-text p-button-sm text-gray-600"
-            pTooltip="Graph Controls"
-            title="Graph Controls"
-            tooltipPosition="top">
+            label="Help"
+            icon="pi pi-question-circle"
+            class="p-button-text p-button-sm text-blue-600"
+            pTooltip="Help & Instructions"
+            title="Help & Instructions"
+            tooltipPosition="top"
+            (click)="openHelpDialog()">
           </button>
           
           <div class="flex items-center gap-5">
@@ -78,6 +81,12 @@
         [details]="conceptDetails"
         (close)="closeConceptDetails()">
       </app-pkg-concept-details-panel>
+      
+      <!-- Help Dialog -->
+      <app-graph-help-dialog
+        [visible]="showHelpDialog"
+        (close)="closeHelpDialog()">
+      </app-graph-help-dialog>
     </div>
 
     <!-- Empty State -->

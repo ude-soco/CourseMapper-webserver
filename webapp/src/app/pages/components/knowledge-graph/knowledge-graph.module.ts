@@ -64,6 +64,7 @@ import { PkgFilterControlsComponent } from './user-pkg/components/filter-control
 import { PkgConceptDetailsPanelComponent } from './user-pkg/components/concept-details-panel/concept-details-panel.component';
 import { AdvancedFiltersDialogComponent } from './user-pkg/components/advanced-filters-dialog/advanced-filters-dialog.component';
 import { ProfileNameDialogComponent } from './user-pkg/components/profile-name-dialog/profile-name-dialog.component';
+import { GraphHelpDialogComponent } from './user-pkg/components/graph-help-dialog/graph-help-dialog.component';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { userPkgReducer, userPkgFeatureKey } from './user-pkg/state/user-pkg.reducer';
@@ -102,6 +103,7 @@ import { UserPkgEffects } from './user-pkg/state/user-pkg.effects';
     PkgConceptDetailsPanelComponent,
     AdvancedFiltersDialogComponent,
     ProfileNameDialogComponent,
+    GraphHelpDialogComponent,
   ],
   imports: [
     InputTextModule,
