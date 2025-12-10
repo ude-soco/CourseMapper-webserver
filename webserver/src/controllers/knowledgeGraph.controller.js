@@ -1801,3 +1801,149 @@ export const getCourseHierarchy = async (req, res) => {
     return res.status(500).send({ error: err.message });
   }
 };
+
+/**
+ * Get all PKG filter profiles for a user
+ */
+export const getPkgFilterProfiles = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    const user = await User.findById(userId).select('pkgAdvancedFilterProfiles');
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    console.log(`[PKG Filter Profiles] Fetched ${user.pkgAdvancedFilterProfiles?.length || 0} profiles for user ${userId}`);
+    res.json({ profiles: user.pkgAdvancedFilterProfiles || [] });
+  } catch (error) {
+    console.error('[PKG Filter Profiles] Error getting profiles:', error);
+    res.status(500).json({ error: 'Failed to get filter profiles' });
+  }
+};
+
+/**
+ * Create a new PKG filter profile
+ */
+export const createPkgFilterProfile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { name, slideIds } = req.body;
+    
+    if (!name || !slideIds || !Array.isArray(slideIds)) {
+      return res.status(400).json({ error: 'Name and slideIds array are required' });
+    }
+    
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Check if profile name already exists
+    const existingProfile = user.pkgAdvancedFilterProfiles.find(p => p.name === name);
+    if (existingProfile) {
+      return res.status(400).json({ error: 'Profile name already exists' });
+    }
+    
+    // Add new profile
+    const newProfile = {
+      name,
+      slideIds
+    };
+    
+    user.pkgAdvancedFilterProfiles.push(newProfile);
+    await user.save();
+    
+    // Get the created profile with its _id
+    const createdProfile = user.pkgAdvancedFilterProfiles[user.pkgAdvancedFilterProfiles.length - 1];
+    
+    console.log(`[PKG Filter Profiles] Created profile "${name}" for user ${userId}`);
+    res.status(201).json({ profile: createdProfile });
+  } catch (error) {
+    console.error('[PKG Filter Profiles] Error creating profile:', error);
+    res.status(500).json({ error: 'Failed to create filter profile' });
+  }
+};
+
+/**
+ * Update an existing PKG filter profile
+ */
+export const updatePkgFilterProfile = async (req, res) => {
+  try {
+    const { userId, profileId } = req.params;
+    const { name, slideIds } = req.body;
+    
+    if (!name || !slideIds || !Array.isArray(slideIds)) {
+      return res.status(400).json({ error: 'Name and slideIds array are required' });
+    }
+    
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    const profile = user.pkgAdvancedFilterProfiles.id(profileId);
+    
+    if (!profile) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+    
+    // Check if new name conflicts with another profile
+    if (name !== profile.name) {
+      const existingProfile = user.pkgAdvancedFilterProfiles.find(
+        p => p.name === name && p._id.toString() !== profileId
+      );
+      if (existingProfile) {
+        return res.status(400).json({ error: 'Profile name already exists' });
+      }
+    }
+    
+    // Update profile
+    profile.name = name;
+    profile.slideIds = slideIds;
+    
+    await user.save();
+    
+    console.log(`[PKG Filter Profiles] Updated profile "${name}" for user ${userId}`);
+    res.json({ profile });
+  } catch (error) {
+    console.error('[PKG Filter Profiles] Error updating profile:', error);
+    res.status(500).json({ error: 'Failed to update filter profile' });
+  }
+};
+
+/**
+ * Delete a PKG filter profile
+ */
+export const deletePkgFilterProfile = async (req, res) => {
+  try {
+    const { userId, profileId } = req.params;
+    
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    const profile = user.pkgAdvancedFilterProfiles.id(profileId);
+    
+    if (!profile) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+    
+    const profileName = profile.name;
+    
+    // Remove profile
+    profile.remove();
+    await user.save();
+    
+    console.log(`[PKG Filter Profiles] Deleted profile "${profileName}" for user ${userId}`);
+    res.json({ message: 'Profile deleted successfully' });
+  } catch (error) {
+    console.error('[PKG Filter Profiles] Error deleting profile:', error);
+    res.status(500).json({ error: 'Failed to delete filter profile' });
+  }
+};

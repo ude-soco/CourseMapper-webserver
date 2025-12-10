@@ -520,4 +520,29 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getCourseHierarchy
   );
+
+  // PKG Filter Profiles
+  app.get(
+    "/api/knowledge-graph/pkg-filter-profiles/:userId",
+    [authJwt.verifyToken],
+    controller.getPkgFilterProfiles
+  );
+
+  app.post(
+    "/api/knowledge-graph/pkg-filter-profiles/:userId",
+    [authJwt.verifyToken],
+    controller.createPkgFilterProfile
+  );
+
+  app.put(
+    "/api/knowledge-graph/pkg-filter-profiles/:userId/:profileId",
+    [authJwt.verifyToken],
+    controller.updatePkgFilterProfile
+  );
+
+  app.delete(
+    "/api/knowledge-graph/pkg-filter-profiles/:userId/:profileId",
+    [authJwt.verifyToken],
+    controller.deletePkgFilterProfile
+  );
 };
