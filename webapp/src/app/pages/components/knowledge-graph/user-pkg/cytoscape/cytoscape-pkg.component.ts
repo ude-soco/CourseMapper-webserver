@@ -92,6 +92,8 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
         this.currentViewMode = viewMode;
         if (this.cy && previousViewMode !== viewMode) {
           console.log('[Cytoscape PKG] View mode changed:', viewMode);
+          // Clear related concepts tracking when switching view modes
+          this.conceptsWithVisibleRelated.clear();
           this.render();
         }
       });
