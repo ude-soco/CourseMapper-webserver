@@ -33,6 +33,7 @@ export class SidebarComponent implements OnInit {
   channel: Channel;
   public LandingPage = '/landingPage';
   public HomePage = '/home';
+  public PersonalKnowledgeGraphPage = '/user/pkg';
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
   showModeratorPrivileges: boolean;
