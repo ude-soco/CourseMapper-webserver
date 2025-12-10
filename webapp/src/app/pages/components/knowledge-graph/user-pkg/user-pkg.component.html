@@ -40,19 +40,19 @@
           </button>
           
           <div class="flex items-center gap-5">
-            <div class="legend-item">
+            <div *ngIf="showNotUnderstoodLegend" class="legend-item">
               <div class="legend-dot not-understood"></div>
               <span class="text-xs font-medium text-gray-700">Not Understood Concept</span>
             </div>
-            <div class="legend-item">
+            <div *ngIf="showUnderstoodLegend" class="legend-item">
               <div class="legend-dot understood"></div>
               <span class="text-xs font-medium text-gray-700">Understood Concept</span>
             </div>
-            <div class="legend-item">
+            <div *ngIf="showCourseLegend" class="legend-item">
               <div class="legend-dot course"></div>
               <span class="text-xs font-medium text-gray-700">Course Node</span>
             </div>
-            <div class="legend-item">
+            <div *ngIf="showUserLegend" class="legend-item">
               <div class="legend-dot user"></div>
               <span class="text-xs font-medium text-gray-700">User Node</span>
             </div>
@@ -66,7 +66,8 @@
           (conceptSelected)="onConceptSelected($event)"
           (conceptStatusChanged)="onConceptStatusChanged($event)"
           (courseNodeClicked)="onCourseNodeClicked($event)"
-          (edgeClicked)="onEdgeClicked($event)">
+          (edgeClicked)="onEdgeClicked($event)"
+          (visibleNodesChanged)="onVisibleNodesChanged($event)">
         </app-cytoscape-pkg>
       </div>
       

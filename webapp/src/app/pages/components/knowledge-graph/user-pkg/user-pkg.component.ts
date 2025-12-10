@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil, filter, take } from 'rxjs/operators';
@@ -27,21 +27,30 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   rawConceptRecords$ = this.store.select(UserPkgSelectors.selectRawRecords);
   isLoading$ = this.store.select(UserPkgSelectors.selectIsLoading);
   error$ = this.store.select(UserPkgSelectors.selectError);
+  viewMode$ = this.store.select(UserPkgSelectors.selectViewMode);
   
   // Concept details panel state
   selectedConcept: ConceptData | null = null;
   conceptDetails: ConceptDetail[] = [];
   showConceptDetails = false;
+  
+  // Dynamic legend state
+  showUnderstoodLegend = false;
+  showNotUnderstoodLegend = false;
+  showCourseLegend = false;
+  showUserLegend = true; // User node is always present
 
   constructor(
     private store: Store,
     private messageService: MessageService,
-    private userConceptsService: UserConceptsService
+    private userConceptsService: UserConceptsService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.initializeComponent();
     this.subscribeToErrors();
+    this.subscribeToDynamicLegend();
   }
 
   ngOnDestroy(): void {
@@ -75,6 +84,52 @@ export class UserPkgComponent implements OnInit, OnDestroy {
           detail: error,
         });
       });
+  }
+
+  private subscribeToDynamicLegend(): void {
+    // Initial legend setup based on view mode
+    this.viewMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(viewMode => {
+        // Reset legend when view mode changes
+        // Actual visibility will be updated by onVisibleNodesChanged
+        if (viewMode === 'engagement') {
+          this.showUnderstoodLegend = false;
+          this.showNotUnderstoodLegend = false;
+        }
+      });
+  }
+
+  onVisibleNodesChanged(visibleNodes: any[]): void {
+    if (!visibleNodes || visibleNodes.length === 0) {
+      this.showUnderstoodLegend = false;
+      this.showNotUnderstoodLegend = false;
+      this.showCourseLegend = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // Check what types of nodes are visible
+    const hasUnderstood = visibleNodes.some((node: any) => 
+      (node.type === 'main_concept' || node.type === 'related_concept') &&
+      node.relationshipType === 'u'
+    );
+    
+    const hasNotUnderstood = visibleNodes.some((node: any) => 
+      (node.type === 'main_concept' || node.type === 'related_concept') &&
+      node.relationshipType === 'dnu'
+    );
+    
+    const hasCourses = visibleNodes.some((node: any) => 
+      node.type === 'course'
+    );
+
+    this.showUnderstoodLegend = hasUnderstood;
+    this.showNotUnderstoodLegend = hasNotUnderstood;
+    this.showCourseLegend = hasCourses;
+    
+    // Manually trigger change detection to update the view
+    this.cdr.detectChanges();
   }
 
   private loadKnowledgeGraph(): void {

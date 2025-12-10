@@ -26,6 +26,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
   @Output() conceptStatusChanged = new EventEmitter<{concept: any, status: 'u' | 'dnu' | 'new'}>();
   @Output() courseNodeClicked = new EventEmitter<any>();
   @Output() edgeClicked = new EventEmitter<any>();
+  @Output() visibleNodesChanged = new EventEmitter<any[]>();
 
   public cy: any;
   private conceptsWithVisibleRelated = new Set<string>();
@@ -195,6 +196,8 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
         edge.hide();
       }
     });
+    
+    this.emitVisibleNodes();
   }
 
 
@@ -257,6 +260,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
     }
 
     console.log('[Cytoscape PKG] Graph rendered successfully');
+    this.emitVisibleNodes();
   }
 
   /**
@@ -369,6 +373,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
   private handleToggleCourse(node: any): void {
     CourseNodeUtils.toggleCourseNode(this.cy, node, this.rawConceptRecords);
+    this.emitVisibleNodes();
   }
 
   private handleToggleRelated(node: any): void {
@@ -380,12 +385,14 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       // Hide related concepts (no API call needed)
       RelatedConceptsUtils.hideRelatedConcepts(this.cy, conceptId);
       this.conceptsWithVisibleRelated.delete(conceptId);
+      this.emitVisibleNodes();
     } else {
       // Fetch related concepts on-demand
       this.neo4jService.getRelatedConcepts(conceptCid).pipe(take(1)).subscribe({
         next: (response) => {
           RelatedConceptsUtils.showRelatedConcepts(this.cy, node, response.relatedConcepts, this.currentViewMode);
           this.conceptsWithVisibleRelated.add(conceptId);
+          this.emitVisibleNodes();
         },
         error: (err) => {
           console.error('[Cytoscape PKG] Failed to fetch related concepts:', err);
@@ -398,5 +405,18 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
     if (!this.cy) return;
     GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode, this.elements);
     GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
+  }
+
+  private emitVisibleNodes(): void {
+    if (!this.cy) return;
+    
+    const visibleNodes: any[] = [];
+    this.cy.nodes().forEach((node: any) => {
+      if (node.visible()) {
+        visibleNodes.push(node.data());
+      }
+    });
+    
+    this.visibleNodesChanged.emit(visibleNodes);
   }
 }
