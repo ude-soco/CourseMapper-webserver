@@ -24,9 +24,7 @@ export const CONCENTRIC_LAYOUT_CONFIG = {
     return 1;
   },
   levelWidth: () => 1,
-  animate: true,
-  animationDuration: 1000,
-  animationEasing: 'ease-out',
+  animate: false,
 };
 
 export const CONTEXT_MENU_CONFIG = {
@@ -100,9 +98,7 @@ export function getCytoscapeStyles(): cytoscape.Stylesheet[] {
       
         'text-margin-y': '0',
         'text-outline-width': 0,
-        'text-outline-color': 'transparent',
-        '-webkit-font-smoothing': 'antialiased',
-        '-moz-osx-font-smoothing': 'grayscale'
+        'text-outline-color': 'transparent'
       },
     },
     {
