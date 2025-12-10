@@ -5,6 +5,7 @@ const Material = db.material;
 
 const graphDb = {};
 
+
 export async function connect(url, user, password) {
   try {
     graphDb.driver = neo4j.driver(url, neo4j.auth.basic(user, password), {
@@ -17,6 +18,7 @@ export async function connect(url, user, password) {
   }
 }
 
+
 function recordsToObjects(records) {
   return records.map((record) => {
     const obj = {};
@@ -26,6 +28,7 @@ function recordsToObjects(records) {
     return obj;
   });
 }
+
 
 export async function checkSlide(slideId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
