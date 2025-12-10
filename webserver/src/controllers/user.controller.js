@@ -394,20 +394,23 @@ export const getUserConcepts = async (req, res) => {
 
 
 /**
- * @function updateSingleConceptStatus
- * Update a single concept's status
- * 
+ * @function updateConceptsStatus
+ * Update concept status for one or more concepts (e.g., all merged concepts with same Wikipedia URL)
  * 
  * @param {string} req.params.userId - The user ID
- * @param {string} req.body.conceptId - The concept ID to update
+ * @param {string[]} req.body.conceptIds - Array of concept IDs to update
+ * @param {string} req.body.conceptId - (Backwards compatibility) Single concept ID to update
  * @param {string} req.body.status - The new status: 'u' (understood), 'dnu' (did not understand), or 'new' (remove)
  */
-export const updateSingleConceptStatus = async (req, res) => {
+export const updateConceptsStatus = async (req, res) => {
   const { userId } = req.params;
-  const { conceptId, status } = req.body;
+  const { conceptIds, status } = req.body;
 
-  if (!conceptId || !status) {
-    return res.status(400).send({ error: 'conceptId and status are required' });
+  // Support both single conceptId and array of conceptIds for backwards compatibility
+  const idsToUpdate = Array.isArray(conceptIds) ? conceptIds : (req.body.conceptId ? [req.body.conceptId] : []);
+
+  if (!idsToUpdate.length || !status) {
+    return res.status(400).send({ error: 'conceptIds and status are required' });
   }
 
   if (!['u', 'dnu', 'new'].includes(status)) {
@@ -421,33 +424,41 @@ export const updateSingleConceptStatus = async (req, res) => {
       return res.status(404).send({ error: `User with id ${userId} doesn't exist!` });
     }
 
-    // Remove concept from both arrays first
-    foundUser.understoodConcepts = foundUser.understoodConcepts.filter(id => id !== conceptId);
-    foundUser.didNotUnderstandConcepts = foundUser.didNotUnderstandConcepts.filter(id => id !== conceptId);
+    // Remove all concept IDs from both arrays first
+    idsToUpdate.forEach(cid => {
+      foundUser.understoodConcepts = foundUser.understoodConcepts.filter(id => id !== cid);
+      foundUser.didNotUnderstandConcepts = foundUser.didNotUnderstandConcepts.filter(id => id !== cid);
+    });
 
     // Add to appropriate array based on status
     if (status === 'u') {
-      foundUser.understoodConcepts.push(conceptId);
-      foundUser.conceptTimestamps.delete(conceptId);
+      idsToUpdate.forEach(cid => {
+        foundUser.understoodConcepts.push(cid);
+        foundUser.conceptTimestamps.delete(cid);
+      });
     } else if (status === 'dnu') {
-      foundUser.didNotUnderstandConcepts.push(conceptId);
-      if (!foundUser.conceptTimestamps.has(conceptId)) {
-        foundUser.conceptTimestamps.set(conceptId, new Date());
-      }
+      idsToUpdate.forEach(cid => {
+        foundUser.didNotUnderstandConcepts.push(cid);
+        if (!foundUser.conceptTimestamps.has(cid)) {
+          foundUser.conceptTimestamps.set(cid, new Date());
+        }
+      });
     } else {
       // status === 'new' - remove from conceptTimestamps too
-      foundUser.conceptTimestamps.delete(conceptId);
+      idsToUpdate.forEach(cid => {
+        foundUser.conceptTimestamps.delete(cid);
+      });
     }
 
     await foundUser.save();
 
     res.status(200).send({ 
       message: 'Concept status updated successfully',
-      conceptId,
+      updatedConceptIds: idsToUpdate,
       status
     });
   } catch (error) {
-    console.error('Error updating single concept status:', error);
+    console.error('Error updating concept status:', error);
     res.status(500).send({ error: error.message });
   }
 };

@@ -45,17 +45,21 @@ export class UserConceptsService {
   }
 
   /**
-   * Update a single concept's status
+   * Update concept status for one or more concepts
    * Safe to use with TopN filtering
+   * Pass array of conceptIds to update all merged concepts at once
    */
-  updateSingleConceptStatus(
+  updateConceptsStatus(
     userId: string,
-    conceptId: string,
+    conceptIds: string | string[],
     status: 'u' | 'dnu' | 'new'
   ): Observable<any> {
+    // Ensure conceptIds is always an array
+    const idsArray = Array.isArray(conceptIds) ? conceptIds : [conceptIds];
+    
     return this.http.patch<any>(
       `${this.backendEndpointURL}/users/user-concepts/${userId}/concept`,
-      { conceptId, status }
+      { conceptIds: idsArray, status }
     );
   }
 }

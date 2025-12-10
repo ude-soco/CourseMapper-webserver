@@ -174,6 +174,8 @@ export class UserPkgComponent implements OnInit, OnDestroy {
     }
 
     const conceptId = event.concept.cid;
+    const wikipediaUrl = event.concept.wikipedia;
+    
     if (!conceptId) {
       this.messageService.add({
         severity: 'error',
@@ -183,35 +185,53 @@ export class UserPkgComponent implements OnInit, OnDestroy {
       return;
     }
     
-    // Optimistic update in NgRx state
-    this.store.dispatch(UserPkgActions.updateConceptStatus({ 
-      conceptName: event.concept.name, 
-      status: event.status 
-    }));
-    
-    // Use safe single concept update (doesn't affect other concepts)
-    this.userConceptsService.updateSingleConceptStatus(
-      this.currentUserId,
-      conceptId,
-      event.status
-    ).subscribe({
-      next: () => {
-        const statusMessage = event.status === 'u' ? 'understood' : 
-                              event.status === 'dnu' ? 'not understood' : 'new';
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `Concept "${event.concept.name}" marked as ${statusMessage}`,
-        });
-      },
-      error: (error) => {
-        console.error('[User PKG] Failed to update concept status:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to save status change',
-        });
+    // Find all concept IDs with the same Wikipedia URL (merged concepts)
+    this.rawConceptRecords$.pipe(take(1)).subscribe(records => {
+      let conceptIdsToUpdate: string[] = [conceptId];
+      
+      if (wikipediaUrl) {
+        // Find all concepts with the same Wikipedia URL
+        const mergedConcepts = records.filter(r => 
+          r.wikipedia && r.wikipedia.toLowerCase().trim() === wikipediaUrl.toLowerCase().trim()
+        );
+        
+        if (mergedConcepts.length > 1) {
+          conceptIdsToUpdate = mergedConcepts.map(c => c.cid);
+          console.log(`[User PKG] Updating ${conceptIdsToUpdate.length} merged concepts for Wikipedia URL: ${wikipediaUrl}`);
+        }
       }
+      
+      // Optimistic update in NgRx state with the calculated concept IDs
+      this.store.dispatch(UserPkgActions.updateConceptStatus({ 
+        conceptIds: conceptIdsToUpdate,
+        status: event.status 
+      }));
+      
+      // Update all merged concepts in the backend
+      this.userConceptsService.updateConceptsStatus(
+        this.currentUserId,
+        conceptIdsToUpdate,
+        event.status
+      ).subscribe({
+        next: () => {
+          const statusMessage = event.status === 'u' ? 'understood' : 
+                                event.status === 'dnu' ? 'not understood' : 'new';
+          const conceptCount = conceptIdsToUpdate.length > 1 ? ` (${conceptIdsToUpdate.length} merged concepts)` : '';
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Concept "${event.concept.name}" marked as ${statusMessage}${conceptCount}`,
+          });
+        },
+        error: (error) => {
+          console.error('[User PKG] Failed to update concept status:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to save status change',
+          });
+        }
+      });
     });
   }
 

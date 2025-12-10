@@ -55,7 +55,7 @@ export const setTopNConcepts = createAction(
 // Concept Status Update (optimistic update)
 export const updateConceptStatus = createAction(
   '[User PKG] Update Concept Status',
-  props<{ conceptName: string; status: 'u' | 'dnu' | 'new' }>()
+  props<{ conceptIds: string[]; status: 'u' | 'dnu' | 'new' }>()
 );
 
 // Advanced Filters
