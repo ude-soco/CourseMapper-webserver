@@ -51,7 +51,7 @@
 
 <!-- Top-Right: Search and Filters -->
 <div class="absolute top-6 right-6 z-10 flex flex-col gap-3">
-  <!-- Search Bar and Advanced Filters -->
+    <!-- Search Bar and Advanced Filters -->
   <div class="flex items-center gap-3">
     <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center">
       <i class="pi pi-search text-gray-400 text-sm mr-2"></i>
@@ -69,9 +69,25 @@
       [label]="hasActiveFilters ? 'Clear Filters' : 'Advanced Filters'"
       [icon]="hasActiveFilters ? 'pi pi-times' : 'pi pi-filter'"
       class="p-button-sm"
-      [ngClass]="{'p-button-warning': hasActiveFilters}"
+      [ngClass]="{'p-button-danger': hasActiveFilters}"
       (click)="hasActiveFilters ? clearAdvancedFilters() : openAdvancedFilters()">
     </button>
+  </div>
+
+  <!-- Active Filter Badge -->
+  <div *ngIf="activeProfileName" 
+       class="bg-white rounded-xl shadow-lg px-4 py-2.5 flex items-center justify-between gap-3 cursor-help"
+       [pTooltip]="activeProfileTooltip"
+       tooltipPosition="left"
+       [escape]="false"
+       [tooltipOptions]="{tooltipStyleClass: 'profile-tooltip'}">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-filter text-blue-600 text-base"></i>
+      <span class="text-sm font-semibold text-blue-600">{{ activeProfileName }}</span>
+    </div>
+    <span class="text-xs font-medium text-blue-600 px-2.5 py-1 bg-blue-50 rounded-full whitespace-nowrap">
+      {{ activeProfileSlideCount }} slides
+    </span>
   </div>
   
   <!-- Top-N Dropdown -->

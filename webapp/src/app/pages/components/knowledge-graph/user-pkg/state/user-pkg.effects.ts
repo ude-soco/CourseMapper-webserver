@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { map, switchMap, catchError, withLatestFrom, filter, take } from 'rxjs/operators';
+import { map, switchMap, catchError, withLatestFrom, filter, take, tap } from 'rxjs/operators';
 import * as UserPkgActions from './user-pkg.actions';
 import * as UserPkgSelectors from './user-pkg.reducer';
 import { Neo4jService } from 'src/app/services/neo4j.service';
+import { FilterProfilesService } from 'src/app/services/pkg-filter-profiles.service';
 import { UserPkgGraphData, CytoscapeNode, CytoscapeEdge, ConceptRecord } from '../types/user-pkg.types';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { getInitials } from 'src/app/_helpers/format';
@@ -15,6 +16,7 @@ export class UserPkgEffects {
   constructor(
     private actions$: Actions,
     private neo4jService: Neo4jService,
+    private filterProfilesService: FilterProfilesService,
     private store: Store
   ) {}
 
@@ -220,4 +222,92 @@ export class UserPkgEffects {
 
     return { nodes, edges };
   }
+
+  // Load filter profiles
+  loadFilterProfiles$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserPkgActions.loadFilterProfiles),
+      withLatestFrom(this.store.select(getLoggedInUser)),
+      filter(([_, user]) => user !== null),
+      switchMap(([_, user]) =>
+        this.filterProfilesService.getFilterProfiles(user!.id).pipe(
+          map(response => {
+            console.log('[Effects] Loaded filter profiles:', response.profiles.length);
+            return UserPkgActions.loadFilterProfilesSuccess({ profiles: response.profiles });
+          }),
+          catchError(error => {
+            const errorMessage = error?.error?.error || error?.message || 'Failed to load filter profiles';
+            console.error('[Effects] Error loading filter profiles:', errorMessage);
+            return of(UserPkgActions.loadFilterProfilesFailure({ error: errorMessage }));
+          })
+        )
+      )
+    )
+  );
+
+  // Create filter profile
+  createFilterProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserPkgActions.createFilterProfile),
+      withLatestFrom(this.store.select(getLoggedInUser)),
+      filter(([_, user]) => user !== null),
+      switchMap(([{ name, slideIds }, user]) =>
+        this.filterProfilesService.createFilterProfile(user!.id, name, slideIds).pipe(
+          map(response => {
+            console.log('[Effects] Created filter profile:', response.profile.name);
+            return UserPkgActions.createFilterProfileSuccess({ profile: response.profile });
+          }),
+          catchError(error => {
+            const errorMessage = error?.error?.error || error?.message || 'Failed to create filter profile';
+            console.error('[Effects] Error creating filter profile:', errorMessage);
+            return of(UserPkgActions.createFilterProfileFailure({ error: errorMessage }));
+          })
+        )
+      )
+    )
+  );
+
+  // Update filter profile
+  updateFilterProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserPkgActions.updateFilterProfile),
+      withLatestFrom(this.store.select(getLoggedInUser)),
+      filter(([_, user]) => user !== null),
+      switchMap(([{ profileId, name, slideIds }, user]) =>
+        this.filterProfilesService.updateFilterProfile(user!.id, profileId, name, slideIds).pipe(
+          map(response => {
+            console.log('[Effects] Updated filter profile:', response.profile.name);
+            return UserPkgActions.updateFilterProfileSuccess({ profile: response.profile });
+          }),
+          catchError(error => {
+            const errorMessage = error?.error?.error || error?.message || 'Failed to update filter profile';
+            console.error('[Effects] Error updating filter profile:', errorMessage);
+            return of(UserPkgActions.updateFilterProfileFailure({ error: errorMessage }));
+          })
+        )
+      )
+    )
+  );
+
+  // Delete filter profile
+  deleteFilterProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserPkgActions.deleteFilterProfile),
+      withLatestFrom(this.store.select(getLoggedInUser)),
+      filter(([_, user]) => user !== null),
+      switchMap(([{ profileId }, user]) =>
+        this.filterProfilesService.deleteFilterProfile(user!.id, profileId).pipe(
+          map(() => {
+            console.log('[Effects] Deleted filter profile:', profileId);
+            return UserPkgActions.deleteFilterProfileSuccess({ profileId });
+          }),
+          catchError(error => {
+            const errorMessage = error?.error?.error || error?.message || 'Failed to delete filter profile';
+            console.error('[Effects] Error deleting filter profile:', errorMessage);
+            return of(UserPkgActions.deleteFilterProfileFailure({ error: errorMessage }));
+          })
+        )
+      )
+    )
+  );
 }

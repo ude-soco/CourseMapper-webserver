@@ -20,6 +20,8 @@ export interface UserPkgState {
   filters: PkgFilters;
   courseHierarchy: any[] | null;
   courseHierarchyLoading: boolean;
+  filterProfiles: any[];
+  filterProfilesLoading: boolean;
 }
 
 const initialState: UserPkgState = {
@@ -38,6 +40,8 @@ const initialState: UserPkgState = {
   },
   courseHierarchy: null,
   courseHierarchyLoading: false,
+  filterProfiles: [],
+  filterProfilesLoading: false,
 };
 
 // Feature selector
@@ -112,6 +116,16 @@ export const selectCourseHierarchy = createSelector(
 export const selectCourseHierarchyLoading = createSelector(
   selectUserPkgState,
   (state) => state.courseHierarchyLoading
+);
+
+export const selectFilterProfiles = createSelector(
+  selectUserPkgState,
+  (state) => state.filterProfiles
+);
+
+export const selectFilterProfilesLoading = createSelector(
+  selectUserPkgState,
+  (state) => state.filterProfilesLoading
 );
 
 // Reducer
@@ -223,6 +237,40 @@ export const userPkgReducer = createReducer(
   on(UserPkgActions.loadCourseHierarchyFailure, (state): UserPkgState => ({
     ...state,
     courseHierarchyLoading: false,
+  })),
+
+  // Filter Profiles
+  on(UserPkgActions.loadFilterProfiles, (state): UserPkgState => ({
+    ...state,
+    filterProfilesLoading: true,
+  })),
+
+  on(UserPkgActions.loadFilterProfilesSuccess, (state, { profiles }): UserPkgState => ({
+    ...state,
+    filterProfiles: profiles,
+    filterProfilesLoading: false,
+  })),
+
+  on(UserPkgActions.loadFilterProfilesFailure, (state): UserPkgState => ({
+    ...state,
+    filterProfilesLoading: false,
+  })),
+
+  on(UserPkgActions.createFilterProfileSuccess, (state, { profile }): UserPkgState => ({
+    ...state,
+    filterProfiles: [...state.filterProfiles, profile],
+  })),
+
+  on(UserPkgActions.updateFilterProfileSuccess, (state, { profile }): UserPkgState => ({
+    ...state,
+    filterProfiles: state.filterProfiles.map(p => 
+      p._id === profile._id ? profile : p
+    ),
+  })),
+
+  on(UserPkgActions.deleteFilterProfileSuccess, (state, { profileId }): UserPkgState => ({
+    ...state,
+    filterProfiles: state.filterProfiles.filter(p => p._id !== profileId),
   })),
 
   on(UserPkgActions.clearUserPkg, (): UserPkgState => initialState),

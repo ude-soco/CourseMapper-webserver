@@ -63,6 +63,7 @@ import { CytoscapePkgComponent } from './user-pkg/cytoscape/cytoscape-pkg.compon
 import { PkgFilterControlsComponent } from './user-pkg/components/filter-controls/filter-controls.component';
 import { PkgConceptDetailsPanelComponent } from './user-pkg/components/concept-details-panel/concept-details-panel.component';
 import { AdvancedFiltersDialogComponent } from './user-pkg/components/advanced-filters-dialog/advanced-filters-dialog.component';
+import { ProfileNameDialogComponent } from './user-pkg/components/profile-name-dialog/profile-name-dialog.component';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { userPkgReducer, userPkgFeatureKey } from './user-pkg/state/user-pkg.reducer';
@@ -100,6 +101,7 @@ import { UserPkgEffects } from './user-pkg/state/user-pkg.effects';
     PkgFilterControlsComponent,
     PkgConceptDetailsPanelComponent,
     AdvancedFiltersDialogComponent,
+    ProfileNameDialogComponent,
   ],
   imports: [
     InputTextModule,

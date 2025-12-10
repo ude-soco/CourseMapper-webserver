@@ -7,6 +7,79 @@
   <!-- Content -->
   <div *ngIf="!loading" class="flex flex-col gap-4 flex-1 overflow-hidden">
     
+    <!-- Filter Profile Section -->
+    <div class="border-b border-gray-200 pb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Filter Profile</label>
+      <div class="flex items-center gap-2">
+        <div class="flex-1 relative">
+          <p-dropdown
+            [options]="profileOptions"
+            [(ngModel)]="selectedProfileId"
+            (onChange)="onProfileSelected($event.value)"
+            placeholder="New"
+            [style]="{'width': '100%'}"
+            optionLabel="label"
+            optionValue="value"
+            [disabled]="profilesLoading">
+          </p-dropdown>
+        </div>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-plus"
+          class="p-button-sm p-button-success"
+          (click)="saveAsNewProfile()"
+          pTooltip="Save as new profile"
+          tooltipPosition="top">
+        </button>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-copy"
+          class="p-button-sm"
+          (click)="duplicateProfile()"
+          [disabled]="!selectedProfileId"
+          pTooltip="Duplicate profile"
+          tooltipPosition="top">
+        </button>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-pencil"
+          class="p-button-sm"
+          (click)="renameProfile()"
+          [disabled]="!selectedProfileId"
+          pTooltip="Rename profile"
+          tooltipPosition="top">
+        </button>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-save"
+          class="p-button-sm p-button-info"
+          (click)="updateCurrentProfile()"
+          [disabled]="!selectedProfileId"
+          pTooltip="Update current profile"
+          tooltipPosition="top">
+        </button>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-trash"
+          class="p-button-sm p-button-danger"
+          (click)="deleteCurrentProfile()"
+          [disabled]="!selectedProfileId"
+          pTooltip="Delete profile"
+          tooltipPosition="top">
+        </button>
+      </div>
+    </div>
+    
     <!-- Courses Section -->
     <div class="border border-gray-200 rounded-lg overflow-hidden">
       <div 
@@ -143,7 +216,7 @@
       pButton 
       type="button" 
       label="Clear All" 
-      class="p-button-text p-button-secondary"
+      class="p-button-text p-button-danger"
       (click)="clearAll()">
     </button>
     <div class="flex items-center gap-2">

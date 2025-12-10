@@ -87,6 +87,66 @@ export const loadCourseHierarchyFailure = createAction(
   props<{ error: string }>()
 );
 
+// Filter Profiles
+export const loadFilterProfiles = createAction(
+  '[User PKG] Load Filter Profiles'
+);
+
+export const loadFilterProfilesSuccess = createAction(
+  '[User PKG] Load Filter Profiles Success',
+  props<{ profiles: any[] }>()
+);
+
+export const loadFilterProfilesFailure = createAction(
+  '[User PKG] Load Filter Profiles Failure',
+  props<{ error: string }>()
+);
+
+export const createFilterProfile = createAction(
+  '[User PKG] Create Filter Profile',
+  props<{ name: string; slideIds: string[] }>()
+);
+
+export const createFilterProfileSuccess = createAction(
+  '[User PKG] Create Filter Profile Success',
+  props<{ profile: any }>()
+);
+
+export const createFilterProfileFailure = createAction(
+  '[User PKG] Create Filter Profile Failure',
+  props<{ error: string }>()
+);
+
+export const updateFilterProfile = createAction(
+  '[User PKG] Update Filter Profile',
+  props<{ profileId: string; name: string; slideIds: string[] }>()
+);
+
+export const updateFilterProfileSuccess = createAction(
+  '[User PKG] Update Filter Profile Success',
+  props<{ profile: any }>()
+);
+
+export const updateFilterProfileFailure = createAction(
+  '[User PKG] Update Filter Profile Failure',
+  props<{ error: string }>()
+);
+
+export const deleteFilterProfile = createAction(
+  '[User PKG] Delete Filter Profile',
+  props<{ profileId: string }>()
+);
+
+export const deleteFilterProfileSuccess = createAction(
+  '[User PKG] Delete Filter Profile Success',
+  props<{ profileId: string }>()
+);
+
+export const deleteFilterProfileFailure = createAction(
+  '[User PKG] Delete Filter Profile Failure',
+  props<{ error: string }>()
+);
+
 // Clear State
 export const clearUserPkg = createAction(
   '[User PKG] Clear'

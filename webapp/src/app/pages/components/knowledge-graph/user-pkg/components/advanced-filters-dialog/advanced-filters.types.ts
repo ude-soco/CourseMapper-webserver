@@ -18,3 +18,10 @@ export interface CourseHierarchy {
   shortName: string;
   materials: MaterialInfo[];
 }
+
+// Types for filter profiles
+export interface FilterProfile {
+  _id?: string;
+  name: string;
+  slideIds: string[];
+}
