@@ -13,14 +13,38 @@
       
       <!-- Understanding Status Filter -->
       <div *ngIf="(viewMode$ | async) === 'knowledge'" class="flex items-center gap-2 ml-2">
-        <label class="text-sm text-gray-500 whitespace-nowrap">Filter:</label>
+        <label class="text-sm font-medium text-gray-700 whitespace-nowrap"></label>
         <p-dropdown 
           [options]="understandingStatusOptions" 
           [ngModel]="understandingStatus$ | async"
           (onChange)="onUnderstandingStatusChange($event.value)"
+          optionLabel="label"
+          optionValue="value"
           [style]="{'border': '1px solid #d1d5db', 'border-radius': '6px', 'background': '#f9fafb', 'font-size': '14px', 'height': '36px', 'display': 'flex', 'align-items': 'center'}"
           [showClear]="false"
-          placeholder="All">
+          placeholder="All Concepts">
+          <ng-template let-option pTemplate="item">
+            <div class="flex items-center gap-2">
+              <i [class]="option.icon" 
+                 [ngClass]="{
+                   'text-green-600': option.value === 'u',
+                   'text-red-600': option.value === 'dnu',
+                   'text-gray-500': option.value === 'all'
+                 }"></i>
+              <span>{{ option.label }}</span>
+            </div>
+          </ng-template>
+          <ng-template let-option pTemplate="selectedItem">
+            <div class="flex items-center gap-2">
+              <i [class]="option.icon" 
+                 [ngClass]="{
+                   'text-green-600': option.value === 'u',
+                   'text-red-600': option.value === 'dnu',
+                   'text-gray-500': option.value === 'all'
+                 }"></i>
+              <span>{{ option.label }}</span>
+            </div>
+          </ng-template>
         </p-dropdown>
       </div>
     </div>
@@ -66,7 +90,7 @@
     <button 
       pButton 
       type="button"
-      [label]="hasActiveFilters ? 'Clear Filters' : 'Advanced Filters'"
+      [label]="hasActiveFilters ? 'Clear Filters' : 'Filters'"
       [icon]="hasActiveFilters ? 'pi pi-times' : 'pi pi-filter'"
       class="p-button-sm"
       [ngClass]="{'p-button-danger': hasActiveFilters}"

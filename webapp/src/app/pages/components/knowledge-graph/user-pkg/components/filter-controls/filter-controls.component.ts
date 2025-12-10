@@ -44,9 +44,9 @@ export class PkgFilterControlsComponent implements OnDestroy {
   ];
   
   readonly understandingStatusOptions = [
-    { label: 'All', value: 'all' },
-    { label: 'Understood', value: 'u' },
-    { label: 'Not Understood', value: 'dnu' }
+    { label: 'All Concepts', value: 'all', icon: 'pi pi-circle' },
+    { label: 'Understood', value: 'u', icon: 'pi pi-circle-fill' },
+    { label: 'Not Understood', value: 'dnu', icon: 'pi pi-circle-fill' }
   ];
 
   constructor(
@@ -215,7 +215,7 @@ export class PkgFilterControlsComponent implements OnDestroy {
 
   openAdvancedFilters(): void {
     this.dialogRef = this.dialogService.open(AdvancedFiltersDialogComponent, {
-      header: 'Advanced Filters',
+      header: 'Filters',
       width: '500px',
       contentStyle: { 'max-height': '70vh', 'overflow': 'auto' },
       data: {
