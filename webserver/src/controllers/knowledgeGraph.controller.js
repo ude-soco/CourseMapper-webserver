@@ -1644,7 +1644,7 @@ export const getUserPKG = async (req, res) => {
 
     // Fetch material details from MongoDB
     const materials = await Material.find({ _id: { $in: materialIds } })
-      .select('_id name type courseId')
+      .select('_id name type courseId channelId')
       .populate('courseId', 'name shortName');
 
     // Create material lookup map
@@ -1656,7 +1656,8 @@ export const getUserPKG = async (req, res) => {
         materialType: m.type,
         courseId: m.courseId._id,
         courseName: m.courseId.name,
-        courseShortName: m.courseId.shortName
+        courseShortName: m.courseId.shortName,
+        channelId: m.channelId
       };
     });
 

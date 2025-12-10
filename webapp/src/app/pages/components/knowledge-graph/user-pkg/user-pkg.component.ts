@@ -244,6 +244,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
               courseId: record.courseId,
               courseName: record.courseName || 'Unknown Course',
               courseShortName: record.courseShortName,
+              channelId: record.channelId,
               relationshipType: record.relationshipType === 'u' || record.relationshipType === 'dnu' 
                 ? record.relationshipType : undefined,
             });
@@ -257,6 +258,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
             courseId: record.courseId,
             courseName: record.courseName || 'Unknown Course',
             courseShortName: record.courseShortName,
+            channelId: record.channelId,
             relationshipType: record.relationshipType === 'u' || record.relationshipType === 'dnu' 
               ? record.relationshipType : undefined,
           });

@@ -46,8 +46,7 @@
     
     <div *ngIf="details.length > 0" class="space-y-2">
       <div *ngFor="let detail of details" 
-           class="bg-gray-50 border border-gray-200 rounded-md p-3 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
-           (click)="onDetailClick(detail)">
+           class="bg-gray-50 border border-gray-200 rounded-md p-3 transition-colors duration-200">
         <div class="flex items-center gap-2 text-sm">
           <!-- Understanding Status Icon -->
           <span *ngIf="detail.relationshipType === 'u'" 
@@ -61,22 +60,28 @@
             <i class="pi pi-times-circle"></i>
           </span>
           
-          <!-- Slide name -->
-          <span class="text-blue-600 font-medium hover:underline">
+          <!-- Slide name - Clickable -->
+          <span class="text-blue-600 font-medium hover:underline cursor-pointer"
+                (click)="onSlideClick($event, detail)"
+                title="Navigate to slide">
             {{ detail.slideName }}
           </span>
           
           <span class="text-gray-400">-</span>
           
-          <!-- Material name -->
-          <span class="text-blue-600 hover:underline truncate">
+          <!-- Material name - Clickable -->
+          <span class="text-blue-600 hover:underline truncate cursor-pointer"
+                (click)="onMaterialClick($event, detail)"
+                title="Navigate to material">
             {{ detail.materialName }}
           </span>
           
           <span class="text-gray-400">-</span>
           
-          <!-- Course name -->
-          <span class="text-blue-600 hover:underline flex-shrink-0">
+          <!-- Course name - Clickable -->
+          <span class="text-blue-600 hover:underline flex-shrink-0 cursor-pointer"
+                (click)="onCourseClick($event, detail)"
+                title="Navigate to course">
             {{ detail.courseName || detail.courseShortName }}
           </span>
         </div>

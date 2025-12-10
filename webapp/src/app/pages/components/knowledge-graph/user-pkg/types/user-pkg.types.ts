@@ -37,6 +37,7 @@ export interface ConceptRecord {
   courseId?: string;
   courseName?: string;
   courseShortName?: string;
+  channelId?: string;
   // Interest score
   interestScore?: number;
 }
@@ -58,6 +59,7 @@ export interface MaterialInfo {
   courseId: string;
   courseName: string;
   courseShortName: string;
+  channelId: string;
 }
 
 // API response structure
@@ -139,5 +141,6 @@ export interface ConceptDetail {
   courseId?: string;
   courseName: string;
   courseShortName?: string;
+  channelId?: string;
   relationshipType?: 'u' | 'dnu';
 }
