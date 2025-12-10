@@ -1586,6 +1586,17 @@ export const unhidConceptsMaterialKG = async (req, res, next) => {
 export const getUserPKG = async (req, res) => {
   const userId = req.params.userId;
   const topN = req.query.topN || null; // Optional: limit number of concepts
+  
+  // Advanced filters - parse from query string (JSON encoded)
+  let slideFilter = null;
+  if (req.query.slideIds) {
+    try {
+      slideFilter = JSON.parse(req.query.slideIds);
+      if (!Array.isArray(slideFilter)) slideFilter = null;
+    } catch (e) {
+      console.warn('[Personal KG] Invalid slideIds filter:', e.message);
+    }
+  }
 
   try {
     // Get user from MongoDB with understood/not understood concepts and enrolled courses
@@ -1611,7 +1622,7 @@ export const getUserPKG = async (req, res) => {
     
     const allConceptIds = [...conceptStatusMap.keys()];
 
-    console.log(`[Personal KG] Loading graph: ${allConceptIds.length} concepts (${understoodConcepts.length} understood, ${didNotUnderstandConcepts.length} not understood)`);
+    console.log(`[Personal KG] Loading graph: ${allConceptIds.length} concepts (${understoodConcepts.length} understood, ${didNotUnderstandConcepts.length} not understood)${slideFilter ? `, filtering by ${slideFilter.length} slides` : ''}`);
 
     if (allConceptIds.length === 0) {
       return res.status(200).send({ 
@@ -1625,8 +1636,8 @@ export const getUserPKG = async (req, res) => {
       });
     }
 
-    // Get concept details with relationships from Neo4j (with optional limit)
-    const records = await neo4j.getUserConceptsWithRelationships(allConceptIds, topN);
+    // Get concept details with relationships from Neo4j (with optional limit and slide filter)
+    const records = await neo4j.getUserConceptsWithRelationships(allConceptIds, topN, slideFilter);
 
     // Get unique material IDs from concepts
     const materialIds = [...new Set(records.map(r => r.mid).filter(Boolean))];
@@ -1709,6 +1720,84 @@ export const getRelatedConcepts = async (req, res) => {
     return res.status(200).send({ relatedConcepts: enrichedConcepts });
   } catch (err) {
     console.error('[Personal KG] Error fetching related concepts:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
+ * Get course hierarchy for advanced filters
+ * Returns user's enrolled courses with their materials and slides
+ * 
+ * GET /api/knowledge-graph/course-hierarchy
+ */
+export const getCourseHierarchy = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    // Get user with enrolled courses
+    const foundUser = await User.findById(userId)
+      .populate({
+        path: 'courses.courseId',
+        select: '_id name shortName'
+      });
+
+    if (!foundUser) {
+      return res.status(404).send({ error: 'User not found' });
+    }
+
+    // Get all enrolled course IDs
+    const enrolledCourseIds = foundUser.courses
+      .filter(c => c.courseId)
+      .map(c => c.courseId._id);
+
+    // Get all materials for enrolled courses
+    const materials = await Material.find({
+      courseId: { $in: enrolledCourseIds }
+    }).select('_id name type courseId');
+
+    // Get slides from Neo4j for each material
+    const materialsWithSlides = await Promise.all(
+      materials.map(async (material) => {
+        try {
+          const slides = await neo4j.getMaterialSlides(material._id.toString());
+          return {
+            _id: material._id.toString(),
+            name: material.name,
+            type: material.type,
+            courseId: material.courseId.toString(),
+            slides: slides.map(s => ({
+              sid: s.sid,
+              cid: s.cid
+            }))
+          };
+        } catch (err) {
+          console.warn(`[Course Hierarchy] Failed to get slides for material ${material._id}:`, err.message);
+          return {
+            _id: material._id.toString(),
+            name: material.name,
+            type: material.type,
+            courseId: material.courseId.toString(),
+            slides: []
+          };
+        }
+      })
+    );
+
+    // Build hierarchy
+    const courses = foundUser.courses
+      .filter(c => c.courseId)
+      .map(c => ({
+        _id: c.courseId._id.toString(),
+        name: c.courseId.name,
+        shortName: c.courseId.shortName,
+        materials: materialsWithSlides.filter(m => m.courseId === c.courseId._id.toString())
+      }));
+
+    console.log(`[Course Hierarchy] Fetched ${courses.length} courses for user ${userId}`);
+    
+    return res.status(200).send({ courses });
+  } catch (err) {
+    console.error('[Course Hierarchy] Error:', err.message);
     return res.status(500).send({ error: err.message });
   }
 };

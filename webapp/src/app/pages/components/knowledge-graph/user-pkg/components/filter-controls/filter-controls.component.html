@@ -49,9 +49,9 @@
   </div>
 </div>
 
-<!-- Top-Right: Search and Top-N -->
+<!-- Top-Right: Search and Filters -->
 <div class="absolute top-6 right-6 z-10 flex flex-col gap-3">
-  <!-- Search Bar -->
+  <!-- Search Bar and Advanced Filters -->
   <div class="flex items-center gap-3">
     <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center">
       <i class="pi pi-search text-gray-400 text-sm mr-2"></i>
@@ -61,8 +61,17 @@
         [ngModel]="searchQuery$ | async"
         (ngModelChange)="onSearchQueryChange($event)"
         placeholder="Search for concepts"
-        class="search-input w-56 border-0 outline-none text-sm" />
+        class="search-input w-48 border-0 outline-none text-sm" />
     </div>
+    <button 
+      pButton 
+      type="button"
+      [label]="hasActiveFilters ? 'Clear Filters' : 'Advanced Filters'"
+      [icon]="hasActiveFilters ? 'pi pi-times' : 'pi pi-filter'"
+      class="p-button-sm"
+      [ngClass]="{'p-button-warning': hasActiveFilters}"
+      (click)="hasActiveFilters ? clearAdvancedFilters() : openAdvancedFilters()">
+    </button>
   </div>
   
   <!-- Top-N Dropdown -->

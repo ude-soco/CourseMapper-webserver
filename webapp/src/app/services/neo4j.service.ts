@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UserPkgResponse, RelatedConceptInfo } from '../pages/components/knowledge-graph/user-pkg/types/user-pkg.types';
-
+import { CourseHierarchy} from '../pages/components/knowledge-graph/user-pkg/components/advanced-filters-dialog/advanced-filters.types';
 type Neo4jResult = {
   records: any[];
 };
@@ -268,12 +268,19 @@ export class Neo4jService {
 
   /**
    * Get user's personal knowledge graph data
+   * @param userId - User ID
+   * @param topN - Optional limit on number of concepts
+   * @param slideIds - Optional array of slide IDs to filter concepts by
    */
-  getUserPkg(userId: string, topN?: number | 'All'): Observable<UserPkgResponse> {
+  getUserPkg(userId: string, topN?: number | 'All', slideIds?: string[]): Observable<UserPkgResponse> {
     let params = new HttpParams();
     
     if (topN && topN !== 'All') {
       params = params.set('topN', topN.toString());
+    }
+
+    if (slideIds && slideIds.length > 0) {
+      params = params.set('slideIds', JSON.stringify(slideIds));
     }
 
     return this.http.get<UserPkgResponse>(
@@ -290,4 +297,15 @@ export class Neo4jService {
       `${environment.API_URL}/knowledge-graph/get-related-concepts/${conceptCid}`
     );
   }
+
+  /**
+   * Get course hierarchy for advanced filters
+   * Returns enrolled courses with their materials and slides
+   */
+  getCourseHierarchy(): Observable<{ courses: CourseHierarchy[] }> {
+    return this.http.get<{ courses: CourseHierarchy[] }>(
+      `${environment.API_URL}/knowledge-graph/course-hierarchy`
+    );
+  }
 }
+

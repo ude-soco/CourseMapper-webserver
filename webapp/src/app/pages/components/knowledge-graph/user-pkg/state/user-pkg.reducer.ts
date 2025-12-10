@@ -18,6 +18,8 @@ export interface UserPkgState {
   isLoading: boolean;
   error: string | null;
   filters: PkgFilters;
+  courseHierarchy: any[] | null;
+  courseHierarchyLoading: boolean;
 }
 
 const initialState: UserPkgState = {
@@ -32,7 +34,10 @@ const initialState: UserPkgState = {
     searchQuery: '',
     topNConcepts: 25,
     understandingStatus: 'all',
+    advancedFilters: null,
   },
+  courseHierarchy: null,
+  courseHierarchyLoading: false,
 };
 
 // Feature selector
@@ -94,6 +99,20 @@ export const selectUnderstandingStatus = createSelector(
   (filters) => filters.understandingStatus
 );
 
+export const selectAdvancedFilters = createSelector(
+  selectFilters,
+  (filters) => filters.advancedFilters
+);
+
+export const selectCourseHierarchy = createSelector(
+  selectUserPkgState,
+  (state) => state.courseHierarchy
+);
+
+export const selectCourseHierarchyLoading = createSelector(
+  selectUserPkgState,
+  (state) => state.courseHierarchyLoading
+);
 
 // Reducer
 export const userPkgReducer = createReducer(
@@ -176,6 +195,35 @@ export const userPkgReducer = createReducer(
       graphData: { ...state.graphData, edges: updatedEdges }
     };
   }),
+
+  on(UserPkgActions.setAdvancedFilters, (state, { selectedCourseIds, selectedMaterialIds, selectedSlideIds }): UserPkgState => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      advancedFilters: { selectedCourseIds, selectedMaterialIds, selectedSlideIds }
+    },
+  })),
+
+  on(UserPkgActions.clearAdvancedFilters, (state): UserPkgState => ({
+    ...state,
+    filters: { ...state.filters, advancedFilters: null },
+  })),
+
+  on(UserPkgActions.loadCourseHierarchy, (state): UserPkgState => ({
+    ...state,
+    courseHierarchyLoading: true,
+  })),
+
+  on(UserPkgActions.loadCourseHierarchySuccess, (state, { courses }): UserPkgState => ({
+    ...state,
+    courseHierarchy: courses,
+    courseHierarchyLoading: false,
+  })),
+
+  on(UserPkgActions.loadCourseHierarchyFailure, (state): UserPkgState => ({
+    ...state,
+    courseHierarchyLoading: false,
+  })),
 
   on(UserPkgActions.clearUserPkg, (): UserPkgState => initialState),
 );

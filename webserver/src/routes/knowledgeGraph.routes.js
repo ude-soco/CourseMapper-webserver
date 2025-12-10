@@ -513,4 +513,11 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getRelatedConcepts
   );
+
+  // Get course hierarchy for advanced filters (courses -> materials -> slides)
+  app.get(
+    "/api/knowledge-graph/course-hierarchy",
+    [authJwt.verifyToken],
+    controller.getCourseHierarchy
+  );
 };

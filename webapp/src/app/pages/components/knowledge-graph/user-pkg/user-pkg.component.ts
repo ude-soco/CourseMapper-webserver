@@ -80,6 +80,10 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   private loadKnowledgeGraph(): void {
     if (!this.currentUserId) return;
 
+    // Load course hierarchy for advanced filters (cached in store)
+    this.store.dispatch(UserPkgActions.loadCourseHierarchy());
+
+    // Load user's knowledge graph
     this.store.select(UserPkgSelectors.selectTopNConcepts).pipe(take(1)).subscribe(topN => {
       this.store.dispatch(UserPkgActions.loadUserPkg({ userId: this.currentUserId!, topNConcepts: topN }));
     });

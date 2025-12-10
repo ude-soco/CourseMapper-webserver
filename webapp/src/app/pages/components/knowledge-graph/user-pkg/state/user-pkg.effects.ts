@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { map, switchMap, catchError, withLatestFrom, filter, take } from 'rxjs/operators';
 import * as UserPkgActions from './user-pkg.actions';
+import * as UserPkgSelectors from './user-pkg.reducer';
 import { Neo4jService } from 'src/app/services/neo4j.service';
 import { UserPkgGraphData, CytoscapeNode, CytoscapeEdge, ConceptRecord } from '../types/user-pkg.types';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
@@ -21,10 +22,36 @@ export class UserPkgEffects {
   reloadOnTopNChange$ = createEffect(() =>
     this.actions$.pipe(
       ofType(UserPkgActions.setTopNConcepts),
-      withLatestFrom(this.store.select(getLoggedInUser)),
+      withLatestFrom(
+        this.store.select(getLoggedInUser),
+        this.store.select(UserPkgSelectors.selectAdvancedFilters)
+      ),
       filter(([_, user]) => user !== null),
-      map(([{ topNConcepts }, user]) => 
-        UserPkgActions.loadUserPkg({ userId: user!.id, topNConcepts })
+      map(([{ topNConcepts }, user, advancedFilters]) => 
+        UserPkgActions.loadUserPkg({ 
+          userId: user!.id, 
+          topNConcepts,
+          slideIds: advancedFilters?.selectedSlideIds
+        })
+      )
+    )
+  );
+
+  // Reload data when Advanced Filters change
+  reloadOnAdvancedFiltersChange$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserPkgActions.setAdvancedFilters),
+      withLatestFrom(
+        this.store.select(getLoggedInUser),
+        this.store.select(UserPkgSelectors.selectTopNConcepts)
+      ),
+      filter(([_, user]) => user !== null),
+      map(([{ selectedSlideIds }, user, topNConcepts]) => 
+        UserPkgActions.loadUserPkg({ 
+          userId: user!.id, 
+          topNConcepts,
+          slideIds: selectedSlideIds
+        })
       )
     )
   );
@@ -32,8 +59,8 @@ export class UserPkgEffects {
   loadUserPkg$ = createEffect(() =>
     this.actions$.pipe(
       ofType(UserPkgActions.loadUserPkg),
-      switchMap(({ userId, topNConcepts }) =>
-        this.neo4jService.getUserPkg(userId, topNConcepts).pipe(
+      switchMap(({ userId, topNConcepts, slideIds }) =>
+        this.neo4jService.getUserPkg(userId, topNConcepts, slideIds).pipe(
           map((response) => {
             console.log('[Effects] Received response:', response);
             
@@ -59,6 +86,34 @@ export class UserPkgEffects {
           })
         )
       )
+    )
+  );
+
+  // Load course hierarchy (cached in store)
+  loadCourseHierarchy$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserPkgActions.loadCourseHierarchy),
+      withLatestFrom(this.store.select(UserPkgSelectors.selectCourseHierarchy)),
+      switchMap(([_, cachedHierarchy]) => {
+        // If already loaded, don't fetch again
+        if (cachedHierarchy) {
+          console.log('[Effects] Using cached course hierarchy');
+          return of(UserPkgActions.loadCourseHierarchySuccess({ courses: cachedHierarchy }));
+        }
+        
+        // Fetch from backend
+        return this.neo4jService.getCourseHierarchy().pipe(
+          map((response) => {
+            console.log('[Effects] Loaded course hierarchy:', response.courses.length, 'courses');
+            return UserPkgActions.loadCourseHierarchySuccess({ courses: response.courses });
+          }),
+          catchError((error) => {
+            const errorMessage = error?.error?.error || error?.message || 'Failed to load course hierarchy';
+            console.error('[Effects] Error loading course hierarchy:', errorMessage);
+            return of(UserPkgActions.loadCourseHierarchyFailure({ error: errorMessage }));
+          })
+        );
+      })
     )
   );
 

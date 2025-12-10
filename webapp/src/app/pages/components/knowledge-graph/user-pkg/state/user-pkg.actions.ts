@@ -10,7 +10,7 @@ import {
 // Load User PKG
 export const loadUserPkg = createAction(
   '[User PKG] Load',
-  props<{ userId: string; topNConcepts?: number | 'All' }>()
+  props<{ userId: string; topNConcepts?: number | 'All'; slideIds?: string[] }>()
 );
 
 export const loadUserPkgSuccess = createAction(
@@ -56,6 +56,35 @@ export const setTopNConcepts = createAction(
 export const updateConceptStatus = createAction(
   '[User PKG] Update Concept Status',
   props<{ conceptName: string; status: 'u' | 'dnu' | 'new' }>()
+);
+
+// Advanced Filters
+export const setAdvancedFilters = createAction(
+  '[User PKG] Set Advanced Filters',
+  props<{ 
+    selectedCourseIds: string[];
+    selectedMaterialIds: string[];
+    selectedSlideIds: string[];
+  }>()
+);
+
+export const clearAdvancedFilters = createAction(
+  '[User PKG] Clear Advanced Filters'
+);
+
+// Course Hierarchy (for advanced filters dialog)
+export const loadCourseHierarchy = createAction(
+  '[User PKG] Load Course Hierarchy'
+);
+
+export const loadCourseHierarchySuccess = createAction(
+  '[User PKG] Load Course Hierarchy Success',
+  props<{ courses: any[] }>()
+);
+
+export const loadCourseHierarchyFailure = createAction(
+  '[User PKG] Load Course Hierarchy Failure',
+  props<{ error: string }>()
 );
 
 // Clear State

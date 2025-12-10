@@ -9,7 +9,7 @@ import * as GraphUtils from './utils/graph.utils';
 import * as CourseNodeUtils from './utils/course-node.utils';
 import * as RelatedConceptsUtils from './utils/related-concepts.utils';
 import * as ContextMenuUtils from './utils/context-menu.utils';
-import { ConceptRecord, ViewMode, CourseInfo } from '../types/user-pkg.types';
+import { ConceptRecord, ViewMode, CourseInfo, AdvancedFilters } from '../types/user-pkg.types';
 import * as UserPkgSelectors from '../state/user-pkg.reducer';
 import { Neo4jService } from 'src/app/services/neo4j.service';
 
@@ -38,6 +38,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
   private currentViewMode: ViewMode = 'knowledge';
   private currentSearchQuery = '';
   private currentUnderstandingStatus: 'all' | 'u' | 'dnu' = 'all';
+  private currentAdvancedFilters: AdvancedFilters | null = null;
 
   constructor(
     private renderer: Renderer2,
@@ -114,6 +115,16 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
           this.applyFilters();
         }
       });
+
+    // Subscribe to advanced filters
+    this.store.select(UserPkgSelectors.selectAdvancedFilters)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(filters => {
+        this.currentAdvancedFilters = filters;
+        if (this.cy) {
+          this.applyFilters();
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -122,22 +133,35 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Apply all filters (search query, understanding status) to nodes
+   * Apply all filters (search query, understanding status, advanced filters) to nodes
    */
   private applyFilters(): void {
     if (!this.cy) return;
     
     const query = this.currentSearchQuery?.toLowerCase().trim() || '';
     const status = this.currentUnderstandingStatus;
+    const advancedFilters = this.currentAdvancedFilters;
+    
+    // Build a set of allowed concept IDs based on advanced filters
+    const allowedConceptIds = this.getFilteredConceptIds(advancedFilters);
     
     this.cy.nodes().forEach((node: any) => {
       const nodeType = node.data('type');
       const nodeName = node.data('name')?.toLowerCase() || '';
+      const nodeCid = node.data('cid');
       
       // Always show user node
       if (nodeType === 'user') {
         node.show();
         return;
+      }
+      
+      // Check advanced filters (course/material/slide selection)
+      if (allowedConceptIds !== null && nodeType !== 'course') {
+        if (!allowedConceptIds.has(nodeCid)) {
+          node.hide();
+          return;
+        }
       }
       
       // Check understanding status filter
@@ -169,6 +193,13 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
         edge.hide();
       }
     });
+  }
+
+
+  private getFilteredConceptIds(filters: AdvancedFilters | null): Set<string> | null {
+    // Advanced filters are handled server-side, so we don't need to filter client-side
+    // Return null to show all loaded concepts
+    return null;
   }
 
 

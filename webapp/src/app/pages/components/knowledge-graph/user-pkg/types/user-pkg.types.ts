@@ -113,12 +113,20 @@ export interface UserPkgGraphData {
   edges: CytoscapeEdge[];
 }
 
+// Advanced filters for courses, materials, slides
+export interface AdvancedFilters {
+  selectedCourseIds: string[];
+  selectedMaterialIds: string[];
+  selectedSlideIds: string[];
+}
+
 // Filter state (used by reducer and filter controls component)
 export interface PkgFilters {
   viewMode: ViewMode;
   searchQuery: string;
   topNConcepts: number | 'All';
   understandingStatus: 'all' | 'u' | 'dnu';
+  advancedFilters: AdvancedFilters | null;
 }
 
 // Concept detail for the details panel

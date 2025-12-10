@@ -609,7 +609,7 @@ export async function getHasConcept(targetId) {
 
 
 
-export async function getUserConceptsWithRelationships(conceptIds, topN = null) {
+export async function getUserConceptsWithRelationships(conceptIds, topN = null, slideFilter = null) {
   if (conceptIds.length === 0) {
     return [];
   }
@@ -617,35 +617,65 @@ export async function getUserConceptsWithRelationships(conceptIds, topN = null) 
   // Query to get MAIN concepts only.
   // TopN is applied to main concepts in the query.
   // Related concepts are fetched on-demand via separate endpoint.
+  // slideFilter: optional array of slide IDs to filter concepts by
   
   const limitClause = (topN && topN !== 'All') ? `LIMIT ${parseInt(topN)}` : '';
   
-  const query = `
-    MATCH (c:Concept)
-    WHERE c.cid IN $conceptIds
-      AND (c.type = 'main_concept' OR c.type IS NULL)
-    OPTIONAL MATCH (s:Slide)-[]->(c)
-    WITH c,
-         COLLECT(DISTINCT {sid: s.sid, name: s.name}) as slides
-    RETURN c.cid as cid, 
-           c.name as name, 
-           c.type as type,
-           c.wikipedia as wikipedia, 
-           c.abstract as abstract,
-           c.weight as weight,
-           c.mid as mid,
-           c.initial_embedding as initial_embedding,
-           slides
-    ORDER BY c.weight DESC
-    ${limitClause}`;
+  // Build the query based on whether we have a slide filter
+  let query;
+  let params = { conceptIds };
+  
+  if (slideFilter && slideFilter.length > 0) {
+    // Filter concepts that belong to selected slides
+    params.slideIds = slideFilter;
+    query = `
+      MATCH (c:Concept)
+      WHERE c.cid IN $conceptIds
+        AND (c.type = 'main_concept' OR c.type IS NULL)
+      OPTIONAL MATCH (s:Slide)-[]->(c)
+      WITH c,
+           COLLECT(DISTINCT {sid: s.sid, name: s.name}) as slides
+      WHERE ANY(slide IN slides WHERE slide.sid IN $slideIds)
+      RETURN c.cid as cid, 
+             c.name as name, 
+             c.type as type,
+             c.wikipedia as wikipedia, 
+             c.abstract as abstract,
+             c.weight as weight,
+             c.mid as mid,
+             c.initial_embedding as initial_embedding,
+             slides
+      ORDER BY c.weight DESC
+      ${limitClause}`;
+  } else {
+    // No slide filter - return all concepts
+    query = `
+      MATCH (c:Concept)
+      WHERE c.cid IN $conceptIds
+        AND (c.type = 'main_concept' OR c.type IS NULL)
+      OPTIONAL MATCH (s:Slide)-[]->(c)
+      WITH c,
+           COLLECT(DISTINCT {sid: s.sid, name: s.name}) as slides
+      RETURN c.cid as cid, 
+             c.name as name, 
+             c.type as type,
+             c.wikipedia as wikipedia, 
+             c.abstract as abstract,
+             c.weight as weight,
+             c.mid as mid,
+             c.initial_embedding as initial_embedding,
+             slides
+      ORDER BY c.weight DESC
+      ${limitClause}`;
+  }
   
   const { records } = await graphDb.driver.executeQuery(
     query,
-    { conceptIds }
+    params
   );
   
   const result = recordsToObjects(records);
-  console.log(`[Personal KG] Neo4j query returned ${result.length} main concepts`);
+  console.log(`[Personal KG] Neo4j query returned ${result.length} main concepts${slideFilter ? ` (filtered by ${slideFilter.length} slides)` : ''}`);
   
   return result;
 }
