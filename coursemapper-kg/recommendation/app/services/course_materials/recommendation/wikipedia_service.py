@@ -8,6 +8,9 @@ from wikipedia import DisambiguationError
 
 logger = LOG(name=__name__, level=logging.DEBUG)
 
+# Set Wikipedia user agent to comply with their policy
+wikipedia.set_user_agent("CourseMapper/1.0 (https://github.com/ude-soco/CourseMapper; coursemapper@example.com)")
+
 
 class WikipediaService:
     def get_articles(self, concepts, top_n=15):

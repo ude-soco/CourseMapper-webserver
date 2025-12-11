@@ -11,8 +11,12 @@ services:
       REDIS_PORT: 6379
       REDIS_DB: 0
       REDIS_PASSWORD: 
+      MONGO_DB_URI: mongodb://mongo:27017
+      MONGO_DB_NAME: coursemapper_v2
       PIPELINES: concept-recommendation,resource-recommendation,get_resources_by_main_concepts
     depends_on:
+      mongo:
+        condition: service_healthy
       neo4j:
         condition: service_healthy
       redis:
