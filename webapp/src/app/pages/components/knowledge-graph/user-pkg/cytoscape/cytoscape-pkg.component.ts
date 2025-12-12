@@ -54,8 +54,9 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
   private subscribeToStore(): void {
     // Subscribe to graph data, raw records, and courses together
+    // Use selectGraphDataWithScores to get enriched data with interest scores
     combineLatest([
-      this.store.select(UserPkgSelectors.selectGraphData),
+      this.store.select(UserPkgSelectors.selectGraphDataWithScores),
       this.store.select(UserPkgSelectors.selectRawRecords),
       this.store.select(UserPkgSelectors.selectCourses)
     ]).pipe(takeUntil(this.destroy$))
@@ -78,6 +79,8 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
         
         if (this.cy && previousNodes.length > 0 && sameNodes) {
           console.log('[Cytoscape PKG] Updating styles only');
+          // Update edge data in Cytoscape with enriched data (including scores)
+          this.updateCytoscapeEdgeData(graphData.edges);
           this.updateGraphStyles();
         } else if (graphData.nodes.length > 0) {
           console.log('[Cytoscape PKG] Full re-render');
@@ -273,13 +276,26 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       const targetNode = edge.target();
       const sourceType = sourceNode.data('type');
       const targetType = targetNode.data('type');
+      const interestScore = edge.data('interestScore'); // Get interest score from edge data
+      
+      // Debug logging
+      if (this.currentViewMode === 'interest' && sourceType === 'user') {
+        console.log('Edge:', edge.data('id'), 'Type:', edgeType, 'Score:', interestScore, 'Target:', targetNode.data('cid'));
+      }
       
       const label = GraphUtils.getEdgeLabelForViewMode(
         edgeType, 
         this.currentViewMode,
         sourceType,
-        targetType
+        targetType,
+        interestScore // Pass score to label function
       );
+      
+      // Debug logging
+      if (this.currentViewMode === 'interest' && sourceType === 'user') {
+        console.log('Generated label:', label);
+      }
+      
       edge.data('label', label);
     });
   }
@@ -356,11 +372,13 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       if (userEdge.length > 0) {
         userEdge.data('type', edgeType);
         // Update the label based on current view mode
+        const interestScore = userEdge.data('interestScore'); // Get interest score from edge data
         const edgeLabel = GraphUtils.getEdgeLabelForViewMode(
           edgeType,
           this.currentViewMode,
           'user',
-          conceptNode.data('type')
+          conceptNode.data('type'),
+          interestScore // Pass score to label function
         );
         userEdge.data('label', edgeLabel);
       }
@@ -403,8 +421,28 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
   updateGraphStyles(): void {
     if (!this.cy) return;
+    this.applyEdgeLabels(); // Re-apply labels when styles update (includes interest scores)
     GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode, this.elements);
     GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
+  }
+
+  /**
+   * Update Cytoscape edge data with enriched data from the selector
+   * This is needed to sync interest scores into the Cytoscape instance
+   */
+  private updateCytoscapeEdgeData(edges: any[]): void {
+    if (!this.cy) return;
+    
+    console.log('[Cytoscape PKG] Updating edge data in Cytoscape');
+    edges.forEach(edge => {
+      const cyEdge = this.cy.$id(edge.data.id);
+      if (cyEdge.length > 0) {
+        // Update edge data with enriched properties (like interestScore)
+        Object.keys(edge.data).forEach(key => {
+          cyEdge.data(key, edge.data[key]);
+        });
+      }
+    });
   }
 
   private emitVisibleNodes(): void {

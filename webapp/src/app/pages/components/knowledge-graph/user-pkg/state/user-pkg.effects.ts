@@ -310,4 +310,40 @@ export class UserPkgEffects {
       )
     )
   );
+
+  // Load interest scores when view mode changes to 'interest'
+  loadInterestScoresOnViewModeChange$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserPkgActions.setViewMode),
+      filter(({ viewMode }) => viewMode === 'interest'),
+      withLatestFrom(
+        this.store.select(getLoggedInUser),
+        this.store.select(UserPkgSelectors.selectInterestScores)
+      ),
+      filter(([_, user, scores]) => user !== null && scores === null), // Only load if not already loaded
+      map(([_, user]) => 
+        UserPkgActions.loadUserInterestScores({ userId: user!.id })
+      )
+    )
+  );
+
+  // Load interest scores
+  loadUserInterestScores$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserPkgActions.loadUserInterestScores),
+      switchMap(({ userId, minScore }) =>
+        this.neo4jService.getUserInterestScores(userId, minScore).pipe(
+          map((response) => {
+            console.log('[Effects] Loaded interest scores:', response.totalConcepts, 'concepts');
+            return UserPkgActions.loadUserInterestScoresSuccess({ scores: response.scores });
+          }),
+          catchError((error) => {
+            const errorMessage = error?.error?.error || error?.message || 'Failed to load interest scores';
+            console.error('[Effects] Error loading interest scores:', errorMessage);
+            return of(UserPkgActions.loadUserInterestScoresFailure({ error: errorMessage }));
+          })
+        )
+      )
+    )
+  );
 }

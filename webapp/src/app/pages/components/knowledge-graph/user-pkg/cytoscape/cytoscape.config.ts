@@ -166,6 +166,14 @@ export function getCytoscapeStyles(): cytoscape.Stylesheet[] {
       },
     },
     {
+      selector: 'edge[type="interest"]',
+      style: {
+        'line-color': '#8B5CF6',
+        'target-arrow-color': '#8B5CF6',
+        'color': '#6D28D9',
+      },
+    },
+    {
       selector: 'edge[label="related_to"]',
       style: {
         'line-color': '#9CA3AF',

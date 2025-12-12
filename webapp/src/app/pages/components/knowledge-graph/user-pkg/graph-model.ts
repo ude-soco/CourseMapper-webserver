@@ -194,7 +194,7 @@ export function getEdgeLabel(
     const edgeType = config.userToCourseEdgeType;
     const style = EDGE_STYLES[edgeType];
     if (style.showScore && score !== undefined) {
-      return `${style.label} (${score})`;
+      return `${style.label} (${score.toFixed(3)})`;
     }
     return style.label;
   }
@@ -211,7 +211,7 @@ export function getEdgeLabel(
     if (viewMode === 'interest') {
       const style = EDGE_STYLES['interest'];
       if (style.showScore && score !== undefined) {
-        return `${style.label} (${score})`;
+        return `${style.label} (${score.toFixed(3)})`;
       }
       return style.label;
     }
