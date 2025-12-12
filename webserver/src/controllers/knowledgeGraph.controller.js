@@ -1726,6 +1726,31 @@ export const getRelatedConcepts = async (req, res) => {
 };
 
 /**
+ * Get user interest scores from PKG
+ * Returns map of concept_id -> {score, updatedAt} for all concepts user is interested in
+ * 
+ * GET /api/knowledge-graph/user/:userId/interest-scores
+ */
+export const getUserInterestScores = async (req, res) => {
+  const { userId } = req.params;
+  const minScore = parseFloat(req.query.minScore) || 0.0;
+
+  try {
+    // Get interest scores from Neo4j
+    const scoresMap = await neo4j.getUserInterestScores(userId, minScore);
+    
+    return res.status(200).send({
+      userId,
+      scores: scoresMap,
+      totalConcepts: Object.keys(scoresMap).length
+    });
+  } catch (err) {
+    console.error('[Interest Scores] Error fetching interest scores:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
  * Get course hierarchy for advanced filters
  * Returns user's enrolled courses with their materials and slides
  * 

@@ -514,6 +514,13 @@ module.exports = function (app) {
     controller.getRelatedConcepts
   );
 
+  // Get user interest scores from PKG
+  app.get(
+    "/api/knowledge-graph/user/:userId/interest-scores",
+    [authJwt.verifyToken],
+    controller.getUserInterestScores
+  );
+
   // Get course hierarchy for advanced filters (courses -> materials -> slides)
   app.get(
     "/api/knowledge-graph/course-hierarchy",

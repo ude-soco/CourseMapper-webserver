@@ -702,3 +702,42 @@ export async function getRelatedConceptsForConcept(conceptCid) {
   
   return recordsToObjects(records);
 }
+
+/**
+ * Get user interest scores from INTERESTED_IN relationships
+ * Returns a map of concept_id -> score for all concepts the user is interested in
+ * @param {string} userId - User ID (uid property)
+ * @param {number|null} minScore - Minimum score threshold (optional)
+ * @returns {Promise<Object>} Map of concept_id -> {score, updatedAt}
+ */
+export async function getUserInterestScores(userId, minScore = 0.0) {
+  const query = `
+    MATCH (u:User {uid: $userId})-[r:INTERESTED_IN]->(c:Concept)
+    WHERE r.interestScore >= $minScore AND c.type = 'main_concept'
+    RETURN c.cid as concept_id,
+           r.interestScore as score,
+           r.updatedAt as updated_at
+    ORDER BY r.interestScore DESC`;
+  
+  const { records } = await graphDb.driver.executeQuery(
+    query,
+    { userId, minScore }
+  );
+  
+  // Convert to a map for easy lookup: concept_id -> {score, updatedAt}
+  const scoresMap = {};
+  records.forEach(record => {
+    const conceptId = record.get('concept_id');
+    const score = record.get('score');
+    const updatedAt = record.get('updated_at');
+    
+    scoresMap[conceptId] = {
+      score: score,
+      updatedAt: updatedAt
+    };
+  });
+  
+  console.log(`[Interest Scores] Found ${Object.keys(scoresMap).length} interest scores for user ${userId}`);
+  
+  return scoresMap;
+}
