@@ -1,0 +1,868 @@
+<div class="engagement-charts-container bg-gray-100 min-h-screen">
+  <div class="p-5">
+    <!-- Header Section -->
+    <div class="mb-6 flex items-center gap-6">
+      <div class="flex-1">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ courseName }}</h2>
+        <p class="text-lg text-gray-600">
+          Level of Engagement: <span class="font-medium" [ngClass]="getEngagementColor()">{{ engagementLevel }}</span>
+        </p>
+      </div>
+      <div class="gauge-container" style="width: 200px; height: 120px;">
+        <p-chart 
+          type="doughnut" 
+          [data]="gaugeData" 
+          [options]="gaugeOptions"
+          [style]="{'height': '100%'}">
+        </p-chart>
+        <div class="gauge-label absolute inset-0 flex items-center justify-center pointer-events-none">
+          <span class="text-2xl font-bold" [ngClass]="getEngagementColor()">{{ engagementLevel }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Section -->
+    <div class="mb-6">
+      <div *ngIf="getHiddenChartsCount() > 0" class="mb-4 flex justify-end">
+        <button 
+          class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+          (click)="showAllCharts()">
+          <i class="pi pi-eye"></i>
+          <span>Show All Charts ({{ getHiddenChartsCount() }} hidden)</span>
+        </button>
+      </div>
+      <p-tabView [(activeIndex)]="activeTabIndex">
+        <p-tabPanel *ngFor="let tab of tabs; let i = index" [header]="tab.label">
+          <!-- Show charts in all tabs -->
+          <div class="mt-6">
+            <!-- Material Activities Section -->
+            <div class="mb-8">
+              <h3 
+                class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
+                <div class="flex items-center gap-2">
+                  <span (click)="toggleMaterialActivities()">Material Activities</span>
+                  <i 
+                    #materialFilterIcon
+                    class="pi pi-filter cursor-pointer hover:text-blue-600"
+                    style="font-size: 1rem;"
+                    title="Filter material activities"
+                    (click)="openMaterialFilter($event); $event.stopPropagation()"></i>
+                  <p-overlayPanel #materialFilterPanel>
+                    <div class="p-3">
+                      <h4 class="font-semibold mb-3">Filter Charts</h4>
+                      <div class="flex flex-col gap-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="pdfActivitiesVisible"
+                            (change)="pdfActivitiesVisible = !pdfActivitiesVisible"
+                            class="cursor-pointer">
+                          <span>PDF related activities</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="videoActivitiesVisible"
+                            (change)="videoActivitiesVisible = !videoActivitiesVisible"
+                            class="cursor-pointer">
+                          <span>Video related activities</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="slidesAndVideoTimeVisible"
+                            (change)="slidesAndVideoTimeVisible = !slidesAndVideoTimeVisible"
+                            class="cursor-pointer">
+                          <span>Total slides viewed and time spent on videos</span>
+                        </label>
+                      </div>
+                    </div>
+                  </p-overlayPanel>
+                </div>
+                <i 
+                  class="pi"
+                  [ngClass]="materialActivitiesExpanded ? 'pi-chevron-down' : 'pi-chevron-right'"
+                  style="font-size: 1rem;"
+                  (click)="toggleMaterialActivities()"></i>
+              </h3>
+              <div *ngIf="materialActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- PDF related activities -->
+                <div *ngIf="pdfActivitiesVisible" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('pdfActivities'); $event.stopPropagation()"
+                      [title]="getChartType('pdfActivities') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('pdfActivities') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('pdfActivities'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('pdfActivities'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('pdfActivities')" 
+                      [data]="getChartData('pdfActivities')" 
+                      [options]="getChartOptions('pdfActivities')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- Video related activities -->
+                <div *ngIf="videoActivitiesVisible" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('videoActivities'); $event.stopPropagation()"
+                      [title]="getChartType('videoActivities') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('videoActivities') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('videoActivities'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('videoActivities'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('videoActivities')" 
+                      [data]="getChartData('videoActivities')" 
+                      [options]="getChartOptions('videoActivities')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- Total slides viewed and time spent on videos -->
+                <div *ngIf="slidesAndVideoTimeVisible" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('slidesAndVideoTime'); $event.stopPropagation()"
+                      [title]="getChartType('slidesAndVideoTime') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('slidesAndVideoTime') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('slidesAndVideoTime'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('slidesAndVideoTime'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('slidesAndVideoTime')" 
+                      [data]="getChartData('slidesAndVideoTime')" 
+                      [options]="getChartOptions('slidesAndVideoTime')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Annotation Activities Section -->
+            <div class="mb-8">
+              <h3 
+                class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
+                <div class="flex items-center gap-2">
+                  <span (click)="toggleAnnotationActivities()">Annotation Activities</span>
+                  <i 
+                    #annotationFilterIcon
+                    class="pi pi-filter cursor-pointer hover:text-blue-600"
+                    style="font-size: 1rem;"
+                    title="Filter annotation activities"
+                    (click)="openAnnotationFilter($event); $event.stopPropagation()"></i>
+                  <p-overlayPanel #annotationFilterPanel>
+                    <div class="p-3">
+                      <h4 class="font-semibold mb-3">Filter Charts</h4>
+                      <div class="flex flex-col gap-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="addedAnnotationsVisible"
+                            (change)="addedAnnotationsVisible = !addedAnnotationsVisible"
+                            class="cursor-pointer">
+                          <span>Added annotations</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="annotationInteractionsVisible"
+                            (change)="annotationInteractionsVisible = !annotationInteractionsVisible"
+                            class="cursor-pointer">
+                          <span>Total annotation interactions</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="likesDislikesVisible"
+                            (change)="likesDislikesVisible = !likesDislikesVisible"
+                            class="cursor-pointer">
+                          <span>Total likes/dislikes on annotations</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="tagsVisible"
+                            (change)="tagsVisible = !tagsVisible"
+                            class="cursor-pointer">
+                          <span>Total tags added/viewed</span>
+                        </label>
+                      </div>
+                    </div>
+                  </p-overlayPanel>
+                </div>
+                <i 
+                  class="pi"
+                  [ngClass]="annotationActivitiesExpanded ? 'pi-chevron-down' : 'pi-chevron-right'"
+                  style="font-size: 1rem;"
+                  (click)="toggleAnnotationActivities()"></i>
+              </h3>
+              <div *ngIf="annotationActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Added annotations -->
+                <div *ngIf="addedAnnotationsVisible" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('addedAnnotations'); $event.stopPropagation()"
+                      [title]="getChartType('addedAnnotations') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('addedAnnotations') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('addedAnnotations'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('addedAnnotations'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('addedAnnotations')" 
+                      [data]="getChartData('addedAnnotations')" 
+                      [options]="getChartOptions('addedAnnotations')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- Total annotation interactions -->
+                <div *ngIf="annotationInteractionsVisible" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('annotationInteractions'); $event.stopPropagation()"
+                      [title]="getChartType('annotationInteractions') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('annotationInteractions') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('annotationInteractions'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('annotationInteractions'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('annotationInteractions')" 
+                      [data]="getChartData('annotationInteractions')" 
+                      [options]="getChartOptions('annotationInteractions')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- Total number of likes/dislikes on annotations -->
+                <div *ngIf="likesDislikesVisible" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('likesDislikes'); $event.stopPropagation()"
+                      [title]="getChartType('likesDislikes') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('likesDislikes') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('likesDislikes'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('likesDislikes'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('likesDislikes')" 
+                      [data]="getChartData('likesDislikes')" 
+                      [options]="getChartOptions('likesDislikes')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- Total tags added/viewed -->
+                <div *ngIf="tagsVisible" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('tags'); $event.stopPropagation()"
+                      [title]="getChartType('tags') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('tags') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('tags'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('tags'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('tags')" 
+                      [data]="getChartData('tags')" 
+                      [options]="getChartOptions('tags')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Access Activities Section -->
+            <div class="mb-8">
+              <h3 
+                class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
+                <div class="flex items-center gap-2">
+                  <span (click)="toggleAccessActivities()">Access Activities</span>
+                  <i 
+                    #accessFilterIcon
+                    class="pi pi-filter cursor-pointer hover:text-blue-600"
+                    style="font-size: 1rem;"
+                    title="Filter access activities"
+                    (click)="openAccessFilter($event); $event.stopPropagation()"></i>
+                  <p-overlayPanel #accessFilterPanel>
+                    <div class="p-3">
+                      <h4 class="font-semibold mb-3">Filter Charts</h4>
+                      <div class="flex flex-col gap-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="accessActivitiesVisible1"
+                            (change)="accessActivitiesVisible1 = !accessActivitiesVisible1"
+                            class="cursor-pointer">
+                          <span>Access Activity 1</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="accessActivitiesVisible2"
+                            (change)="accessActivitiesVisible2 = !accessActivitiesVisible2"
+                            class="cursor-pointer">
+                          <span>Access Activity 2</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="accessActivitiesVisible3"
+                            (change)="accessActivitiesVisible3 = !accessActivitiesVisible3"
+                            class="cursor-pointer">
+                          <span>Access Activity 3</span>
+                        </label>
+                      </div>
+                    </div>
+                  </p-overlayPanel>
+                </div>
+                <i 
+                  class="pi"
+                  [ngClass]="accessActivitiesExpanded ? 'pi-chevron-down' : 'pi-chevron-right'"
+                  style="font-size: 1rem;"
+                  (click)="toggleAccessActivities()"></i>
+              </h3>
+              <div *ngIf="accessActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Access Activity 1 -->
+                <div *ngIf="accessActivitiesVisible1" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('accessActivities1'); $event.stopPropagation()"
+                      title="Toggle chart type">
+                      <i class="pi" [ngClass]="getChartType('accessActivities1') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('accessActivities1'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('accessActivities1'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('accessActivities1')" 
+                      [data]="getChartData('accessActivities1')" 
+                      [options]="getChartOptions('accessActivities1')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- Access Activity 2 -->
+                <div *ngIf="accessActivitiesVisible2" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('accessActivities2'); $event.stopPropagation()"
+                      title="Toggle chart type">
+                      <i class="pi" [ngClass]="getChartType('accessActivities2') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('accessActivities2'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('accessActivities2'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('accessActivities2')" 
+                      [data]="getChartData('accessActivities2')" 
+                      [options]="getChartOptions('accessActivities2')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- Access Activity 3 -->
+                <div *ngIf="accessActivitiesVisible3" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('accessActivities3'); $event.stopPropagation()"
+                      title="Toggle chart type">
+                      <i class="pi" [ngClass]="getChartType('accessActivities3') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('accessActivities3'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('accessActivities3'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('accessActivities3')" 
+                      [data]="getChartData('accessActivities3')" 
+                      [options]="getChartOptions('accessActivities3')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Knowledge Graph (KG) Activities Section -->
+            <div class="mb-8">
+              <h3 
+                class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
+                <div class="flex items-center gap-2">
+                  <span (click)="toggleKgActivities()">Knowledge Graph (KG) Activities</span>
+                  <i 
+                    #kgFilterIcon
+                    class="pi pi-filter cursor-pointer hover:text-blue-600"
+                    style="font-size: 1rem;"
+                    title="Filter KG activities"
+                    (click)="openKgFilter($event); $event.stopPropagation()"></i>
+                  <p-overlayPanel #kgFilterPanel>
+                    <div class="p-3">
+                      <h4 class="font-semibold mb-3">Filter Charts</h4>
+                      <div class="flex flex-col gap-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="kgActivitiesVisible1"
+                            (change)="kgActivitiesVisible1 = !kgActivitiesVisible1"
+                            class="cursor-pointer">
+                          <span>Knowledge Graph Activity 1</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="kgActivitiesVisible2"
+                            (change)="kgActivitiesVisible2 = !kgActivitiesVisible2"
+                            class="cursor-pointer">
+                          <span>Knowledge Graph Activity 2</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="kgActivitiesVisible3"
+                            (change)="kgActivitiesVisible3 = !kgActivitiesVisible3"
+                            class="cursor-pointer">
+                          <span>Knowledge Graph Activity 3</span>
+                        </label>
+                      </div>
+                    </div>
+                  </p-overlayPanel>
+                </div>
+                <i 
+                  class="pi"
+                  [ngClass]="kgActivitiesExpanded ? 'pi-chevron-down' : 'pi-chevron-right'"
+                  style="font-size: 1rem;"
+                  (click)="toggleKgActivities()"></i>
+              </h3>
+              <div *ngIf="kgActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- KG Activity 1 -->
+                <div *ngIf="kgActivitiesVisible1" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('kgActivities1'); $event.stopPropagation()"
+                      title="Toggle chart type">
+                      <i class="pi" [ngClass]="getChartType('kgActivities1') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('kgActivities1'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('kgActivities1'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('kgActivities1')" 
+                      [data]="getChartData('kgActivities1')" 
+                      [options]="getChartOptions('kgActivities1')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- KG Activity 2 -->
+                <div *ngIf="kgActivitiesVisible2" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('kgActivities2'); $event.stopPropagation()"
+                      title="Toggle chart type">
+                      <i class="pi" [ngClass]="getChartType('kgActivities2') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('kgActivities2'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('kgActivities2'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('kgActivities2')" 
+                      [data]="getChartData('kgActivities2')" 
+                      [options]="getChartOptions('kgActivities2')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- KG Activity 3 -->
+                <div *ngIf="kgActivitiesVisible3" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('kgActivities3'); $event.stopPropagation()"
+                      title="Toggle chart type">
+                      <i class="pi" [ngClass]="getChartType('kgActivities3') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('kgActivities3'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('kgActivities3'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      [type]="getChartType('kgActivities3')" 
+                      [data]="getChartData('kgActivities3')" 
+                      [options]="getChartOptions('kgActivities3')"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recommendation Activities Section -->
+            <div class="mb-8">
+              <h3 
+                class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
+                <div class="flex items-center gap-2">
+                  <span (click)="toggleRecommendationActivities()">Recommendation Activities</span>
+                  <i 
+                    #recommendationFilterIcon
+                    class="pi pi-filter cursor-pointer hover:text-blue-600"
+                    style="font-size: 1rem;"
+                    title="Filter recommendation activities"
+                    (click)="openRecommendationFilter($event); $event.stopPropagation()"></i>
+                  <p-overlayPanel #recommendationFilterPanel>
+                    <div class="p-3">
+                      <h4 class="font-semibold mb-3">Filter Charts</h4>
+                      <div class="flex flex-col gap-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="recommendationActivitiesVisible1"
+                            (change)="recommendationActivitiesVisible1 = !recommendationActivitiesVisible1"
+                            class="cursor-pointer">
+                          <span>Recommendation Activity 1</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="recommendationActivitiesVisible2"
+                            (change)="recommendationActivitiesVisible2 = !recommendationActivitiesVisible2"
+                            class="cursor-pointer">
+                          <span>Recommendation Activity 2</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="recommendationActivitiesVisible3"
+                            (change)="recommendationActivitiesVisible3 = !recommendationActivitiesVisible3"
+                            class="cursor-pointer">
+                          <span>Recommendation Activity 3</span>
+                        </label>
+                      </div>
+                    </div>
+                  </p-overlayPanel>
+                </div>
+                <i 
+                  class="pi"
+                  [ngClass]="recommendationActivitiesExpanded ? 'pi-chevron-down' : 'pi-chevron-right'"
+                  style="font-size: 1rem;"
+                  (click)="toggleRecommendationActivities()"></i>
+              </h3>
+              <div *ngIf="recommendationActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Recommendation Activity 1 -->
+                <div *ngIf="recommendationActivitiesVisible1" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('recommendationActivities1'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('recommendationActivities1'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      type="bar" 
+                      [data]="recommendationActivitiesData1" 
+                      [options]="recommendationActivitiesOptions1"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- Recommendation Activity 2 -->
+                <div *ngIf="recommendationActivitiesVisible2" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('recommendationActivities2'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('recommendationActivities2'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      type="bar" 
+                      [data]="recommendationActivitiesData2" 
+                      [options]="recommendationActivitiesOptions2"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+
+                <!-- Recommendation Activity 3 -->
+                <div *ngIf="recommendationActivitiesVisible3" class="bg-white rounded-lg shadow-md p-4 relative">
+                  <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      (click)="maximizeChart('recommendationActivities3'); $event.stopPropagation()"
+                      title="Maximize chart">
+                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <button 
+                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChart('recommendationActivities3'); $event.stopPropagation()"
+                      title="Close chart">
+                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                    </button>
+                  </div>
+                  <div class="chart-wrapper" style="height: 300px;">
+                    <p-chart 
+                      type="bar" 
+                      [data]="recommendationActivitiesData3" 
+                      [options]="recommendationActivitiesOptions3"
+                      [style]="{'height': '100%'}">
+                    </p-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+
+  <!-- Maximized Chart Dialog -->
+  <p-dialog 
+    [(visible)]="showMaximizedDialog" 
+    [modal]="true" 
+    [style]="{width: '90vw', height: '85vh'}"
+    [draggable]="false"
+    [resizable]="false"
+    (onHide)="closeMaximizedChart()">
+    <ng-template pTemplate="header">
+      <span class="text-xl font-semibold">{{ maximizedChartTitle }}</span>
+    </ng-template>
+    <div class="w-full h-full flex" style="height: calc(90vh - 60px);">
+      <!-- Left half: Chart -->
+      <div class="w-1/2 h-full">
+        <div class="chart-wrapper h-full w-full">
+          <p-chart 
+            *ngIf="maximizedChartData && maximizedChartOptions"
+            type="bar" 
+            [data]="maximizedChartData" 
+            [options]="maximizedChartOptions"
+            [style]="{'height': '100%', 'width': '100%'}">
+          </p-chart>
+        </div>
+      </div>
+      <!-- Line separator -->
+      <div class="w-px bg-gray-300 h-full"></div>
+      <!-- Right half: Material List -->
+      <div class="w-1/2 h-full p-4 overflow-y-auto">
+        <div *ngIf="maximizedChartMaterialList && maximizedChartMaterialList.length > 0" class="h-full">
+          <div *ngFor="let group of maximizedChartMaterialList" class="mb-6">
+            <h4 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-300">
+              {{ group.label }}
+            </h4>
+            <div *ngIf="group.items && group.items.length > 0" class="space-y-2">
+              <div 
+                *ngFor="let material of group.items" 
+                class="p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-200 hover:border-blue-400"
+                (click)="navigateToMaterial(material)">
+                <div class="flex items-center gap-2">
+                  <i class="pi" [ngClass]="material.type === 'pdf' ? 'pi-file-pdf text-red-600' : 'pi-video text-blue-600'" style="font-size: 1.25rem;"></i>
+                  <span class="text-gray-800 font-medium hover:text-blue-600 transition-colors flex-1">
+                    {{ material.name }}
+                  </span>
+                  <i class="pi pi-external-link text-gray-400 text-sm"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!group.items || group.items.length === 0" class="text-gray-500 text-sm italic">
+              No items found
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!maximizedChartMaterialList || maximizedChartMaterialList.length === 0" class="h-full flex items-center justify-center text-gray-500">
+          <p>No additional details available</p>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</div>

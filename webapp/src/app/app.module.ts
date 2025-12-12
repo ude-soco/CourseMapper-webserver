@@ -95,6 +95,7 @@ import { TopicDashboardComponent } from './pages/components/Dashboards/topic-das
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
 import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
 import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
+import { EngagementDashboardComponent } from './pages/components/Dashboards/engagement-dashboard/engagement-dashboard.component';
 // import { BackButtonComponent } from './pages/components/back-button/back-button.component';
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
@@ -138,6 +139,7 @@ import { RequestEmailValidationComponent } from './pages/components/email-valida
     ChannelDashboardComponent,
     // PopulateDashboardComponent,
     MaterialDashboardComponent,
+    EngagementDashboardComponent,
     // BackButtonComponent,
     EmailValidationComponent,
     RequestEmailValidationComponent,

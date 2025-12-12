@@ -1,0 +1,102 @@
+Master Prompt for Cursor — Thesis Implementation Reference (Updated)
+
+Project Title: “Visualizing and Explaining Learner’s Engagement in
+CourseMapper”
+
+System Context (Backend + Frontend + Data Sources)
+
+Domain - Online learning platform (CourseMapper, MOOCs).
+
+Backend Architecture - MongoDB - Stores xAPI statements (all learner
+activity logs per course). - Stores per-user, per-course aggregated
+metrics when needed.
+
+-   Neo4j
+    -   Stores PKG (Personal Knowledge Graph)
+    -   Stores course structure graph: courses → slides → concepts
+    -   Used for linking engagement metrics to course nodes.
+-   Python backend scripts
+    -   File: user_engagement.py
+    -   Important Update:
+        -   Engagement-level clustering is already pre-calculated.
+        -   No component in the IDE or frontend needs to re-run or
+            recompute engagement levels.
+        -   The script stores or exposes:
+            -   Each user’s engagement level per course.
+            -   Cluster statistics (min / avg / max thresholds).
+        -   The system should only fetch and link the engagement level
+            and activity values.
+
+Frontend Architecture (Angular) - Angular + TypeScript - State
+Management: NgRx - Actions - Reducers - Selectors - Effects - Charts: -
+ng-apexcharts - apexcharts
+
+Overall Goals 1. Build a robust multi-category Dashboard UI with charts
+for: - Material Activities - Annotation Activities - Access Activities -
+Knowledge Graph Activities - Recommendation Activities
+
+Tabs: - My Activities - My Activities vs. Top Peers - My Activities
+vs. Same Engagement Level - My Activities vs. Higher Engagement Level
+Boundaries
+
+2.  Fetch course-specific engagement data:
+    -   Retrieve user xAPI activity values from MongoDB.
+    -   Retrieve pre-calculated engagement level from Python clustering
+        outputs (no recomputation required).
+    -   Load values into NgRx store and visualize with ApexCharts.
+3.  Compare the user to others in the same engagement level:
+    -   Fetch all learners in the same pre-defined cluster.
+    -   Compute or retrieve min, average, max values.
+    -   Display them in “My Activities vs. Same Engagement Level
+        Characteristics”.
+4.  Fetch next higher engagement level boundaries:
+    -   Retrieve minimum thresholds of the next cluster from
+        pre-calculated clustering results.
+    -   Display these values in “My Activities vs. Higher Engagement
+        Level Boundaries”.
+5.  Provide additional chart styles:
+    -   Bar charts
+    -   Line charts
+    -   Pie charts
+    -   Donut charts
+    -   Radar charts (optional)
+6.  Link dashboard to user’s PKG (Neo4j):
+    -   Allow navigation from dashboard to PKG nodes.
+    -   Show concepts, recommendations, related material.
+
+Architecture Pattern Requirements
+
+Backend / API - Python endpoints should only fetch existing engagement
+levels—never re-run clustering. - Endpoints must return: - User’s
+engagement values - Pre-calculated cluster statistics - Peer-level
+thresholds - Return structured JSON. - Provide time filtering for
+progress charts.
+
+NgRx Layer - Required: - Actions (e.g., loadUserEngagementForCourse) -
+Effects (API communication) - Reducers - Selectors - Store all needed
+metrics for comparisons and chart data.
+
+Angular Components - engagement-dashboard - engagement-category-card -
+engagement-chart - Reusable ApexChart configuration service
+
+ApexCharts Integration - Reusable chart config templates - Dynamic
+rendering via selectors - Responsive design
+
+Cursor Instructions Whenever implementing: 1. Follow system context
+strictly. 2. Use Angular + NgRx best practices. 3. Use modular
+ApexCharts configs. 4. Assume backend APIs provide pre-calculated
+engagement level and cluster statistics. 5. Do not attempt to re-run
+clustering on the frontend or backend. 6. When uncertain, propose
+architecture-consistent structures. 7. Write production-ready, modular
+code.
+
+IMPORTANT:
+- Do NOT invent totally new patterns if there’s an obvious existing pattern in the codebase, especially for NgRx.
+- Prefer readability and maintainability over cleverness.
+- If something is ambiguous, ask me for clarification 
+
+## ADDITIONAL INFO FOR CURSOR
+
+- I prefer clear error messages and logging
+- I want comprehensive docstrings and type hints
+- Edge cases should be documented and tested

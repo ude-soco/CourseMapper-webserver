@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.engagement-charts-container {
+  width: 100%;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Chart container styling */
+:host ::ng-deep .p-chart {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-chart > canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Ensure charts are responsive */
+:host ::ng-deep canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+
+/* Consistent spacing and styling */
+.bg-white {
+  transition: box-shadow 0.2s ease;
+}
+
+.bg-white:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Chart title styling */
+:host ::ng-deep .p-chart canvas {
+  font-family: inherit;
+}
+
+/* Gauge container styling */
+.gauge-container {
+  position: relative;
+}
+
+.gauge-label {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transform: translateY(-25%); /* Position in the center of the visible semi-circle */
+}
+

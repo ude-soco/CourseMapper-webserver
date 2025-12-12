@@ -24,6 +24,7 @@ torch-geometric = "*"
 torch = "*"
 bertopic = "*"
 "pdfminer.six" = "==20201018"
+requests = "*"
 
 [dev-packages]
 
