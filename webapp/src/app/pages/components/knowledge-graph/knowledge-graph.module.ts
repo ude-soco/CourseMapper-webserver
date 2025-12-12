@@ -62,9 +62,13 @@ import { UserPkgComponent } from './user-pkg/user-pkg.component';
 import { CytoscapePkgComponent } from './user-pkg/cytoscape/cytoscape-pkg.component';
 import { PkgFilterControlsComponent } from './user-pkg/components/filter-controls/filter-controls.component';
 import { PkgConceptDetailsPanelComponent } from './user-pkg/components/concept-details-panel/concept-details-panel.component';
+import { AdvancedFiltersDialogComponent } from './user-pkg/components/advanced-filters-dialog/advanced-filters-dialog.component';
+import { ProfileNameDialogComponent } from './user-pkg/components/profile-name-dialog/profile-name-dialog.component';
+import { GraphHelpDialogComponent } from './user-pkg/components/graph-help-dialog/graph-help-dialog.component';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { userPkgReducer, userPkgFeatureKey } from './user-pkg/state/user-pkg.reducer';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { UserPkgEffects } from './user-pkg/state/user-pkg.effects';
 @NgModule({
   declarations: [
@@ -97,6 +101,9 @@ import { UserPkgEffects } from './user-pkg/state/user-pkg.effects';
     CytoscapePkgComponent,
     PkgFilterControlsComponent,
     PkgConceptDetailsPanelComponent,
+    AdvancedFiltersDialogComponent,
+    ProfileNameDialogComponent,
+    GraphHelpDialogComponent,
   ],
   imports: [
     InputTextModule,
@@ -141,10 +148,14 @@ import { UserPkgEffects } from './user-pkg/state/user-pkg.effects';
     PdfViewerModule,
     PaginatorModule,
     SharedComponentsModule,
+    DynamicDialogModule,
     
     // User PKG v2 NgRx
     StoreModule.forFeature(userPkgFeatureKey, userPkgReducer),
     EffectsModule.forFeature([UserPkgEffects]),
+  ],
+  providers: [
+    DialogService,
   ],
   exports: [
     ConceptMapComponent,

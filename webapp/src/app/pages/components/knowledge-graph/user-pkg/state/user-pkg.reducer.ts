@@ -18,6 +18,10 @@ export interface UserPkgState {
   isLoading: boolean;
   error: string | null;
   filters: PkgFilters;
+  courseHierarchy: any[] | null;
+  courseHierarchyLoading: boolean;
+  filterProfiles: any[];
+  filterProfilesLoading: boolean;
 }
 
 const initialState: UserPkgState = {
@@ -32,7 +36,12 @@ const initialState: UserPkgState = {
     searchQuery: '',
     topNConcepts: 25,
     understandingStatus: 'all',
+    advancedFilters: null,
   },
+  courseHierarchy: null,
+  courseHierarchyLoading: false,
+  filterProfiles: [],
+  filterProfilesLoading: false,
 };
 
 // Feature selector
@@ -94,6 +103,30 @@ export const selectUnderstandingStatus = createSelector(
   (filters) => filters.understandingStatus
 );
 
+export const selectAdvancedFilters = createSelector(
+  selectFilters,
+  (filters) => filters.advancedFilters
+);
+
+export const selectCourseHierarchy = createSelector(
+  selectUserPkgState,
+  (state) => state.courseHierarchy
+);
+
+export const selectCourseHierarchyLoading = createSelector(
+  selectUserPkgState,
+  (state) => state.courseHierarchyLoading
+);
+
+export const selectFilterProfiles = createSelector(
+  selectUserPkgState,
+  (state) => state.filterProfiles
+);
+
+export const selectFilterProfilesLoading = createSelector(
+  selectUserPkgState,
+  (state) => state.filterProfilesLoading
+);
 
 // Reducer
 export const userPkgReducer = createReducer(
@@ -145,23 +178,24 @@ export const userPkgReducer = createReducer(
     filters: { ...state.filters, topNConcepts },
   })),
 
-  on(UserPkgActions.updateConceptStatus, (state, { conceptName, status }): UserPkgState => {
+  on(UserPkgActions.updateConceptStatus, (state, { conceptIds, status }): UserPkgState => {
     if (!state.graphData || !state.rawConceptRecords.length) return state;
 
-    const conceptNameLower = conceptName.toLowerCase().trim();
+    // Create a Set for O(1) lookup
+    const conceptIdSet = new Set(conceptIds);
     
-    // Update raw records
+    // Update raw records by concept ID
     const updatedRawRecords = state.rawConceptRecords.map(record => {
-      if (record.name.toLowerCase().trim() === conceptNameLower) {
+      if (conceptIdSet.has(record.cid)) {
         return { ...record, relationshipType: status === 'new' ? 'unknown' : status } as ConceptRecord;
       }
       return record;
     });
 
-    // Update graph edges
+    // Update graph edges by concept ID
     const updatedEdges = state.graphData.edges.map(edge => {
       const targetNode = state.graphData!.nodes.find(n => n.data.id === edge.data.target);
-      if (targetNode && targetNode.data.name?.toLowerCase().trim() === conceptNameLower) {
+      if (targetNode && targetNode.data.cid && conceptIdSet.has(targetNode.data.cid)) {
         return {
           ...edge,
           data: { ...edge.data, type: status === 'new' ? 'unknown' : status }
@@ -176,6 +210,69 @@ export const userPkgReducer = createReducer(
       graphData: { ...state.graphData, edges: updatedEdges }
     };
   }),
+
+  on(UserPkgActions.setAdvancedFilters, (state, { selectedCourseIds, selectedMaterialIds, selectedSlideIds }): UserPkgState => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      advancedFilters: { selectedCourseIds, selectedMaterialIds, selectedSlideIds }
+    },
+  })),
+
+  on(UserPkgActions.clearAdvancedFilters, (state): UserPkgState => ({
+    ...state,
+    filters: { ...state.filters, advancedFilters: null },
+  })),
+
+  on(UserPkgActions.loadCourseHierarchy, (state): UserPkgState => ({
+    ...state,
+    courseHierarchyLoading: true,
+  })),
+
+  on(UserPkgActions.loadCourseHierarchySuccess, (state, { courses }): UserPkgState => ({
+    ...state,
+    courseHierarchy: courses,
+    courseHierarchyLoading: false,
+  })),
+
+  on(UserPkgActions.loadCourseHierarchyFailure, (state): UserPkgState => ({
+    ...state,
+    courseHierarchyLoading: false,
+  })),
+
+  // Filter Profiles
+  on(UserPkgActions.loadFilterProfiles, (state): UserPkgState => ({
+    ...state,
+    filterProfilesLoading: true,
+  })),
+
+  on(UserPkgActions.loadFilterProfilesSuccess, (state, { profiles }): UserPkgState => ({
+    ...state,
+    filterProfiles: profiles,
+    filterProfilesLoading: false,
+  })),
+
+  on(UserPkgActions.loadFilterProfilesFailure, (state): UserPkgState => ({
+    ...state,
+    filterProfilesLoading: false,
+  })),
+
+  on(UserPkgActions.createFilterProfileSuccess, (state, { profile }): UserPkgState => ({
+    ...state,
+    filterProfiles: [...state.filterProfiles, profile],
+  })),
+
+  on(UserPkgActions.updateFilterProfileSuccess, (state, { profile }): UserPkgState => ({
+    ...state,
+    filterProfiles: state.filterProfiles.map(p => 
+      p._id === profile._id ? profile : p
+    ),
+  })),
+
+  on(UserPkgActions.deleteFilterProfileSuccess, (state, { profileId }): UserPkgState => ({
+    ...state,
+    filterProfiles: state.filterProfiles.filter(p => p._id !== profileId),
+  })),
 
   on(UserPkgActions.clearUserPkg, (): UserPkgState => initialState),
 );

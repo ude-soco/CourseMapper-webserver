@@ -11,16 +11,42 @@
       </p-radioButton>
       <label for="knowledge" class="cursor-pointer text-sm font-medium text-gray-700 min-w-[110px]">Knowledge State</label>
       
-      <!-- Understanding Status Filter -->
-      <p-dropdown 
-        *ngIf="(viewMode$ | async) === 'knowledge'"
-        [options]="understandingStatusOptions" 
-        [ngModel]="understandingStatus$ | async"
-        (onChange)="onUnderstandingStatusChange($event.value)"
-        styleClass="custom-dropdown"
-        [showClear]="false"
-        placeholder="All">
-      </p-dropdown>
+      <!-- Understanding Status Filter - Shows for both Knowledge and Interest modes -->
+      <div *ngIf="(viewMode$ | async) === 'knowledge' || (viewMode$ | async) === 'interest'" class="flex items-center gap-2 ml-2">
+        <label class="text-sm font-medium text-gray-700 whitespace-nowrap"></label>
+        <p-dropdown 
+          [options]="understandingStatusOptions" 
+          [ngModel]="understandingStatus$ | async"
+          (onChange)="onUnderstandingStatusChange($event.value)"
+          optionLabel="label"
+          optionValue="value"
+          [style]="{'border': '1px solid #d1d5db', 'border-radius': '6px', 'background': '#f9fafb', 'font-size': '14px', 'height': '36px', 'display': 'flex', 'align-items': 'center'}"
+          [showClear]="false"
+          placeholder="All Concepts">
+          <ng-template let-option pTemplate="item">
+            <div class="flex items-center gap-2">
+              <i [class]="option.icon" 
+                 [ngClass]="{
+                   'text-green-600': option.value === 'u',
+                   'text-red-600': option.value === 'dnu',
+                   'text-gray-500': option.value === 'all'
+                 }"></i>
+              <span>{{ option.label }}</span>
+            </div>
+          </ng-template>
+          <ng-template let-option pTemplate="selectedItem">
+            <div class="flex items-center gap-2">
+              <i [class]="option.icon" 
+                 [ngClass]="{
+                   'text-green-600': option.value === 'u',
+                   'text-red-600': option.value === 'dnu',
+                   'text-gray-500': option.value === 'all'
+                 }"></i>
+              <span>{{ option.label }}</span>
+            </div>
+          </ng-template>
+        </p-dropdown>
+      </div>
     </div>
     
     <div class="flex items-center gap-3 min-h-[36px]">
@@ -47,9 +73,9 @@
   </div>
 </div>
 
-<!-- Top-Right: Search and Top-N -->
-<div class="absolute top-6 right-6 z-10 flex flex-col gap-3">
-  <!-- Search Bar -->
+<!-- Top-Right: Search and Filters -->
+<div *ngIf="(viewMode$ | async) !== 'engagement'" class="absolute top-6 right-6 z-10 flex flex-col gap-3">
+    <!-- Search Bar and Advanced Filters -->
   <div class="flex items-center gap-3">
     <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center">
       <i class="pi pi-search text-gray-400 text-sm mr-2"></i>
@@ -59,19 +85,45 @@
         [ngModel]="searchQuery$ | async"
         (ngModelChange)="onSearchQueryChange($event)"
         placeholder="Search for concepts"
-        class="search-input w-56 border-0 outline-none text-sm" />
+        class="search-input w-48 border-0 outline-none text-sm" />
     </div>
+    <button 
+      pButton 
+      type="button"
+      [label]="hasActiveFilters ? 'Clear Filters' : 'Filters'"
+      [icon]="hasActiveFilters ? 'pi pi-times' : 'pi pi-filter'"
+      class="p-button-sm"
+      [ngClass]="{'p-button-danger': hasActiveFilters}"
+      (click)="hasActiveFilters ? clearAdvancedFilters() : openAdvancedFilters()">
+    </button>
+  </div>
+
+  <!-- Active Filter Badge -->
+  <div *ngIf="activeProfileName" 
+       class="bg-white rounded-xl shadow-lg px-4 py-2.5 flex items-center justify-between gap-3 cursor-help"
+       [pTooltip]="activeProfileTooltip"
+       tooltipPosition="left"
+       [escape]="false"
+       [tooltipOptions]="{tooltipStyleClass: 'profile-tooltip'}">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-filter text-blue-600 text-base"></i>
+      <span class="text-sm font-semibold text-blue-600">{{ activeProfileName }}</span>
+    </div>
+    <span class="text-xs font-medium text-blue-600 px-2.5 py-1 bg-blue-50 rounded-full whitespace-nowrap">
+      {{ activeProfileSlideCount }} slides
+    </span>
   </div>
   
   <!-- Top-N Dropdown -->
   <div class="flex justify-end">
-    <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center gap-3">
+    <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center gap-2">
       <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Top-N Main Concepts</label>
       <p-dropdown 
         [options]="topNOptions" 
         [ngModel]="topNConcepts$ | async"
         (onChange)="onTopNChange($event.value)"
-        styleClass="custom-dropdown-small">
+        [style]="{'border': '1px solid #d1d5db', 'border-radius': '6px', 'background': '#f9fafb', 'font-size': '14px', 'height': '40px', 'display': 'flex', 'align-items': 'center'}"
+        appendTo="body">
       </p-dropdown>
     </div>
   </div>

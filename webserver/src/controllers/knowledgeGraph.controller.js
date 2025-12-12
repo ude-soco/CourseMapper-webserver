@@ -1586,6 +1586,17 @@ export const unhidConceptsMaterialKG = async (req, res, next) => {
 export const getUserPKG = async (req, res) => {
   const userId = req.params.userId;
   const topN = req.query.topN || null; // Optional: limit number of concepts
+  
+  // Advanced filters - parse from query string (JSON encoded)
+  let slideFilter = null;
+  if (req.query.slideIds) {
+    try {
+      slideFilter = JSON.parse(req.query.slideIds);
+      if (!Array.isArray(slideFilter)) slideFilter = null;
+    } catch (e) {
+      console.warn('[Personal KG] Invalid slideIds filter:', e.message);
+    }
+  }
 
   try {
     // Get user from MongoDB with understood/not understood concepts and enrolled courses
@@ -1611,7 +1622,7 @@ export const getUserPKG = async (req, res) => {
     
     const allConceptIds = [...conceptStatusMap.keys()];
 
-    console.log(`[Personal KG] Loading graph: ${allConceptIds.length} concepts (${understoodConcepts.length} understood, ${didNotUnderstandConcepts.length} not understood)`);
+    console.log(`[Personal KG] Loading graph: ${allConceptIds.length} concepts (${understoodConcepts.length} understood, ${didNotUnderstandConcepts.length} not understood)${slideFilter ? `, filtering by ${slideFilter.length} slides` : ''}`);
 
     if (allConceptIds.length === 0) {
       return res.status(200).send({ 
@@ -1625,15 +1636,15 @@ export const getUserPKG = async (req, res) => {
       });
     }
 
-    // Get concept details with relationships from Neo4j (with optional limit)
-    const records = await neo4j.getUserConceptsWithRelationships(allConceptIds, topN);
+    // Get concept details with relationships from Neo4j (with optional limit and slide filter)
+    const records = await neo4j.getUserConceptsWithRelationships(allConceptIds, topN, slideFilter);
 
     // Get unique material IDs from concepts
     const materialIds = [...new Set(records.map(r => r.mid).filter(Boolean))];
 
     // Fetch material details from MongoDB
     const materials = await Material.find({ _id: { $in: materialIds } })
-      .select('_id name type courseId')
+      .select('_id name type courseId channelId')
       .populate('courseId', 'name shortName');
 
     // Create material lookup map
@@ -1645,13 +1656,15 @@ export const getUserPKG = async (req, res) => {
         materialType: m.type,
         courseId: m.courseId._id,
         courseName: m.courseId.name,
-        courseShortName: m.courseId.shortName
+        courseShortName: m.courseId.shortName,
+        channelId: m.channelId
       };
     });
 
     // Enrich records with material/course info and understanding status
     const enrichedRecords = records.map(record => {
       const materialInfo = materialMap[record.mid] || {};
+      
       return {
         ...record,
         ...materialInfo,
@@ -1671,5 +1684,267 @@ export const getUserPKG = async (req, res) => {
   } catch (err) {
     console.error('[Personal KG] Error loading user knowledge graph:', err.message);
     return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
+ * Get related concepts for a specific concept (on-demand)
+ * GET /api/knowledge-graph/get-related-concepts/:conceptCid
+ */
+export const getRelatedConcepts = async (req, res) => {
+  const { conceptCid } = req.params;
+  const userId = req.userId;
+
+  try {
+    // Get user's concept status from MongoDB
+    const foundUser = await User.findById(userId);
+    if (!foundUser) {
+      return res.status(404).send({ error: 'User not found' });
+    }
+
+    // Build concept status map
+    const conceptStatusMap = new Map();
+    (foundUser.understoodConcepts || []).forEach(cid => conceptStatusMap.set(cid, 'u'));
+    (foundUser.didNotUnderstandConcepts || []).forEach(cid => conceptStatusMap.set(cid, 'dnu'));
+
+    // Get related concepts from Neo4j
+    const relatedConcepts = await neo4j.getRelatedConceptsForConcept(conceptCid);
+
+    // Enrich with relationship type from MongoDB
+    const enrichedConcepts = relatedConcepts.map(rc => ({
+      ...rc,
+      relationshipType: conceptStatusMap.get(rc.cid) || 'unknown'
+    }));
+
+    console.log(`[Personal KG] Fetched ${enrichedConcepts.length} related concepts for ${conceptCid}`);
+    
+    return res.status(200).send({ relatedConcepts: enrichedConcepts });
+  } catch (err) {
+    console.error('[Personal KG] Error fetching related concepts:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
+ * Get course hierarchy for advanced filters
+ * Returns user's enrolled courses with their materials and slides
+ * 
+ * GET /api/knowledge-graph/course-hierarchy
+ */
+export const getCourseHierarchy = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    // Get user with enrolled courses
+    const foundUser = await User.findById(userId)
+      .populate({
+        path: 'courses.courseId',
+        select: '_id name shortName'
+      });
+
+    if (!foundUser) {
+      return res.status(404).send({ error: 'User not found' });
+    }
+
+    // Get all enrolled course IDs
+    const enrolledCourseIds = foundUser.courses
+      .filter(c => c.courseId)
+      .map(c => c.courseId._id);
+
+    // Get all materials for enrolled courses
+    const materials = await Material.find({
+      courseId: { $in: enrolledCourseIds }
+    }).select('_id name type courseId');
+
+    // Get slides from Neo4j for each material
+    const materialsWithSlides = await Promise.all(
+      materials.map(async (material) => {
+        try {
+          const slides = await neo4j.getMaterialSlides(material._id.toString());
+          return {
+            _id: material._id.toString(),
+            name: material.name,
+            type: material.type,
+            courseId: material.courseId.toString(),
+            slides: slides.map(s => ({
+              sid: s.sid,
+              cid: s.cid
+            }))
+          };
+        } catch (err) {
+          console.warn(`[Course Hierarchy] Failed to get slides for material ${material._id}:`, err.message);
+          return {
+            _id: material._id.toString(),
+            name: material.name,
+            type: material.type,
+            courseId: material.courseId.toString(),
+            slides: []
+          };
+        }
+      })
+    );
+
+    // Build hierarchy
+    const courses = foundUser.courses
+      .filter(c => c.courseId)
+      .map(c => ({
+        _id: c.courseId._id.toString(),
+        name: c.courseId.name,
+        shortName: c.courseId.shortName,
+        materials: materialsWithSlides.filter(m => m.courseId === c.courseId._id.toString())
+      }));
+
+    console.log(`[Course Hierarchy] Fetched ${courses.length} courses for user ${userId}`);
+    
+    return res.status(200).send({ courses });
+  } catch (err) {
+    console.error('[Course Hierarchy] Error:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
+ * Get all PKG filter profiles for a user
+ */
+export const getPkgFilterProfiles = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    const user = await User.findById(userId).select('pkgAdvancedFilterProfiles');
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    console.log(`[PKG Filter Profiles] Fetched ${user.pkgAdvancedFilterProfiles?.length || 0} profiles for user ${userId}`);
+    res.json({ profiles: user.pkgAdvancedFilterProfiles || [] });
+  } catch (error) {
+    console.error('[PKG Filter Profiles] Error getting profiles:', error);
+    res.status(500).json({ error: 'Failed to get filter profiles' });
+  }
+};
+
+/**
+ * Create a new PKG filter profile
+ */
+export const createPkgFilterProfile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { name, slideIds } = req.body;
+    
+    if (!name || !slideIds || !Array.isArray(slideIds)) {
+      return res.status(400).json({ error: 'Name and slideIds array are required' });
+    }
+    
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Check if profile name already exists
+    const existingProfile = user.pkgAdvancedFilterProfiles.find(p => p.name === name);
+    if (existingProfile) {
+      return res.status(400).json({ error: 'Profile name already exists' });
+    }
+    
+    // Add new profile
+    const newProfile = {
+      name,
+      slideIds
+    };
+    
+    user.pkgAdvancedFilterProfiles.push(newProfile);
+    await user.save();
+    
+    // Get the created profile with its _id
+    const createdProfile = user.pkgAdvancedFilterProfiles[user.pkgAdvancedFilterProfiles.length - 1];
+    
+    console.log(`[PKG Filter Profiles] Created profile "${name}" for user ${userId}`);
+    res.status(201).json({ profile: createdProfile });
+  } catch (error) {
+    console.error('[PKG Filter Profiles] Error creating profile:', error);
+    res.status(500).json({ error: 'Failed to create filter profile' });
+  }
+};
+
+/**
+ * Update an existing PKG filter profile
+ */
+export const updatePkgFilterProfile = async (req, res) => {
+  try {
+    const { userId, profileId } = req.params;
+    const { name, slideIds } = req.body;
+    
+    if (!name || !slideIds || !Array.isArray(slideIds)) {
+      return res.status(400).json({ error: 'Name and slideIds array are required' });
+    }
+    
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    const profile = user.pkgAdvancedFilterProfiles.id(profileId);
+    
+    if (!profile) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+    
+    // Check if new name conflicts with another profile
+    if (name !== profile.name) {
+      const existingProfile = user.pkgAdvancedFilterProfiles.find(
+        p => p.name === name && p._id.toString() !== profileId
+      );
+      if (existingProfile) {
+        return res.status(400).json({ error: 'Profile name already exists' });
+      }
+    }
+    
+    // Update profile
+    profile.name = name;
+    profile.slideIds = slideIds;
+    
+    await user.save();
+    
+    console.log(`[PKG Filter Profiles] Updated profile "${name}" for user ${userId}`);
+    res.json({ profile });
+  } catch (error) {
+    console.error('[PKG Filter Profiles] Error updating profile:', error);
+    res.status(500).json({ error: 'Failed to update filter profile' });
+  }
+};
+
+/**
+ * Delete a PKG filter profile
+ */
+export const deletePkgFilterProfile = async (req, res) => {
+  try {
+    const { userId, profileId } = req.params;
+    
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    const profile = user.pkgAdvancedFilterProfiles.id(profileId);
+    
+    if (!profile) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+    
+    const profileName = profile.name;
+    
+    // Remove profile
+    profile.remove();
+    await user.save();
+    
+    console.log(`[PKG Filter Profiles] Deleted profile "${profileName}" for user ${userId}`);
+    res.json({ message: 'Profile deleted successfully' });
+  } catch (error) {
+    console.error('[PKG Filter Profiles] Error deleting profile:', error);
+    res.status(500).json({ error: 'Failed to delete filter profile' });
   }
 };

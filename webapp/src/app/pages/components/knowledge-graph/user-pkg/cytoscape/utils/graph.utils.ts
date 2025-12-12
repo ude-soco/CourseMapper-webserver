@@ -1,6 +1,16 @@
 import cytoscape from 'cytoscape';
 import { getCytoscapeStyles, CONCENTRIC_LAYOUT_CONFIG, CYTOSCAPE_ZOOM_CONFIG } from '../cytoscape.config';
 import { ViewMode, UserPkgGraphData, CourseInfo } from '../../types/user-pkg.types';
+import { 
+  NodeType, 
+  EdgeType,
+  EDGE_STYLES, 
+  NODE_STYLES,
+  VIEW_MODE_CONFIG,
+  getEdgeLabel,
+  getEdgeStyle,
+  getNodeStyle
+} from '../../graph-model';
 
 /**
  * Graph utility functions for Cytoscape operations
@@ -21,9 +31,23 @@ export function applyConcentricLayout(cy: any): void {
   cy.layout(CONCENTRIC_LAYOUT_CONFIG).run();
 }
 
-export function updateEdgeStyles(cy: any, elements?: any): void {
+/**
+ * Update edge styles based on view mode
+ * Skips engagement edges (they use default CSS styling)
+ */
+export function updateEdgeStyles(cy: any, viewMode: ViewMode, elements?: any): void {
   cy.edges().forEach((edge: any) => {
-    const edgeType = edge.data('type');
+    const edgeType = edge.data('type') as EdgeType;
+    
+    // Skip engagement edges - they use default CSS styling
+    if (edgeType === 'engagement') {
+      return;
+    }
+    
+    const sourceNode = edge.source();
+    const targetNode = edge.target();
+    const sourceType = sourceNode.data('type') as NodeType;
+    const targetType = targetNode.data('type') as NodeType;
     
     // If elements provided, try to sync from elements data
     if (elements?.edges) {
@@ -37,15 +61,34 @@ export function updateEdgeStyles(cy: any, elements?: any): void {
       }
     }
     
-    // Apply style based on current edge type
-    applyEdgeStyle(edge, edge.data('type'));
+    // Get style based on view mode and edge context
+    const styleConfig = getEdgeStyle(viewMode, sourceType, targetType, edgeType as any);
+    applyEdgeStyleFromConfig(edge, styleConfig);
   });
 }
 
-export function updateNodeStyles(cy: any): void {
-  cy.nodes('[type!="user"][type!="course"]').forEach((node: any) => {
+/**
+ * Update node styles based on view mode
+ * Only updates concept nodes - user and course nodes keep their original styles
+ */
+export function updateNodeStyles(cy: any, viewMode: ViewMode): void {
+  // Only update concept nodes (main_concept and related_concept)
+  // User and course nodes should not be updated
+  cy.nodes('[type="main_concept"], [type="related_concept"]').forEach((node: any) => {
+    const nodeType = node.data('type') as NodeType;
+    
+    // Get understanding status - check multiple sources
+    let understandingStatus: 'u' | 'dnu' | 'unknown' = 'unknown';
+    
+    // 1. First try from node's relationshipType data (always available, set when node created)
+    const nodeRelationshipType = node.data('relationshipType');
+    if (nodeRelationshipType === 'u' || nodeRelationshipType === 'dnu') {
+      understandingStatus = nodeRelationshipType;
+    }
+    
+    // 2. Then check incoming user edge (may override node data if edge was updated)
     const incomingEdges = node.connectedEdges().filter((edge: any) => 
-      edge.data().target === node.id() && edge.data().source !== node.id()
+      edge.data().target === node.id()
     );
     
     const userEdge = incomingEdges.find((edge: any) => {
@@ -54,54 +97,46 @@ export function updateNodeStyles(cy: any): void {
     });
     
     if (userEdge) {
-      applyNodeStyle(node, userEdge.data().type);
+      const edgeType = userEdge.data('type');
+      if (edgeType === 'u' || edgeType === 'dnu') {
+        understandingStatus = edgeType;
+      }
     }
+    
+    const styleConfig = getNodeStyle(viewMode, nodeType, understandingStatus);
+    applyNodeStyleFromConfig(node, styleConfig);
   });
 }
 
-function applyEdgeStyle(edge: any, type: string): void {
-  const styles: Record<string, any> = {
-    'u': {
-      'line-color': '#16A34A',
-      'target-arrow-color': '#16A34A',
-      'color': '#15803D'
-    },
-    'dnu': {
-      'line-color': '#DC2626',
-      'target-arrow-color': '#DC2626',
-      'color': '#991B1B'
-    },
-    'default': {
-      'line-color': '#9CA3AF',
-      'target-arrow-color': '#9CA3AF',
-      'color': '#374151'
-    }
-  };
-
-  edge.style(styles[type] || styles['default']);
+/**
+ * Apply edge style from configuration
+ */
+function applyEdgeStyleFromConfig(edge: any, config: { color: string; arrowColor: string; textColor: string }): void {
+  edge.style({
+    'line-color': config.color,
+    'target-arrow-color': config.arrowColor,
+    'color': config.textColor
+  });
 }
 
-function applyNodeStyle(node: any, edgeType: string): void {
-  const styles: Record<string, any> = {
-    'dnu': {
-      'background-color': '#DC2626',
-      'border-color': '#991B1B'
-    },
-    'u': {
-      'background-color': '#16A34A',
-      'border-color': '#15803D'
-    },
-    'default': {
-      'background-color': '#3B82F6',
-      'border-color': '#1E40AF'
-    }
-  };
-
-  node.style(styles[edgeType] || styles['default']);
+/**
+ * Apply node style from configuration
+ */
+function applyNodeStyleFromConfig(node: any, config: { backgroundColor: string; borderColor: string }): void {
+  node.style({
+    'background-color': config.backgroundColor,
+    'border-color': config.borderColor
+  });
 }
 
 export function getNodeStatus(node: any): string {
-  // Get status from the incoming edge (from user node)
+  // First check node's relationshipType data (always available, especially for related concepts)
+  const nodeRelationshipType = node.data('relationshipType');
+  if (nodeRelationshipType === 'u' || nodeRelationshipType === 'dnu') {
+    return nodeRelationshipType;
+  }
+  
+  // Fallback: Get status from the incoming edge (from user node)
   const incomingEdges = node.connectedEdges().filter((edge: any) => 
     edge.data('target') === node.id()
   );
@@ -164,7 +199,15 @@ export function createEngagementGraphData(
 
 /**
  * Get edge label based on view mode and relationship type
+ * Uses the centralized graph model configuration
+ * 
+ * @param edgeType - The edge type (u, dnu, related_to, etc.)
+ * @param viewMode - Current view mode (knowledge, interest, engagement)
+ * @param sourceType - Source node type
+ * @param targetType - Target node type
+ * @param score - Optional score for interest/engagement edges
  */
+<<<<<<< HEAD
 export function getEdgeLabelForViewMode(edgeType: string | undefined, viewMode: ViewMode, sourceType?: string, targetType?: string): string {
   // Handle user -> course relationship in knowledge mode
   if (viewMode === 'knowledge' && sourceType === 'user' && targetType === 'course') {
@@ -191,6 +234,22 @@ export function getEdgeLabelForViewMode(edgeType: string | undefined, viewMode: 
     default:
       return edgeType || '';
   }
+=======
+export function getEdgeLabelForViewMode(
+  edgeType: string | undefined, 
+  viewMode: ViewMode, 
+  sourceType?: string, 
+  targetType?: string,
+  score?: number
+): string {
+  return getEdgeLabel(
+    viewMode,
+    (sourceType || 'user') as NodeType,
+    (targetType || 'main_concept') as NodeType,
+    edgeType as 'u' | 'dnu' | 'unknown',
+    score
+  );
+>>>>>>> origin/dev2-monir-pkg
 }
 
 /**

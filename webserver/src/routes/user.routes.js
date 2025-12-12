@@ -90,6 +90,6 @@ module.exports = function (app) {
   app.patch(
     "/api/users/user-concepts/:userId/concept",
     [authJwt.verifyToken],
-    controller.updateSingleConceptStatus
+    controller.updateConceptsStatus
   );
 };

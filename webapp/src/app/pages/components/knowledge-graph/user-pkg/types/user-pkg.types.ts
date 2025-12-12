@@ -15,6 +15,9 @@ export interface SlideInfo {
 export interface RelatedConceptInfo {
   cid: string | null;
   name: string | null;
+  wikipedia?: string | null;
+  abstract?: string | null;
+  relationshipType?: 'u' | 'dnu' | 'unknown' | null;
 }
 
 // Raw concept record from backend API
@@ -27,7 +30,6 @@ export interface ConceptRecord {
   weight: number;
   mid?: string;
   slides: SlideInfo[];
-  relatedConcepts: RelatedConceptInfo[];
   relationshipType: 'u' | 'dnu' | 'unknown';
   materialId?: string;
   materialName?: string;
@@ -35,6 +37,9 @@ export interface ConceptRecord {
   courseId?: string;
   courseName?: string;
   courseShortName?: string;
+  channelId?: string;
+  // Interest score
+  interestScore?: number;
 }
 
 // Course info from backend
@@ -42,7 +47,12 @@ export interface CourseInfo {
   courseId: string;
   courseName: string;
   courseShortName: string;
+<<<<<<< HEAD
   engagementLevel?: string; // 'low', 'medium', 'high'
+=======
+  // Engagement level 
+  engagementLevel?: number;
+>>>>>>> origin/dev2-monir-pkg
 }
 
 // Material info from backend
@@ -53,6 +63,7 @@ export interface MaterialInfo {
   courseId: string;
   courseName: string;
   courseShortName: string;
+  channelId: string;
 }
 
 // API response structure
@@ -74,13 +85,19 @@ export interface CytoscapeNodeData {
   weight?: number;
   relationshipType?: 'u' | 'dnu' | 'unknown';
   slides?: SlideInfo[];
-  relatedConcepts?: RelatedConceptInfo[];
   courseId?: string;
   courseName?: string;
   courseShortName?: string;
   allCourseIds?: string[];
   initials?: string;
+<<<<<<< HEAD
   engagementLevel?: string; // For course nodes in engagement view
+=======
+  // Interest score for interest view mode
+  interestScore?: number;
+  // Engagement level for engagement view mode (courses only)
+  engagementLevel?: number;
+>>>>>>> origin/dev2-monir-pkg
 }
 
 export interface CytoscapeNode {
@@ -107,12 +124,20 @@ export interface UserPkgGraphData {
   edges: CytoscapeEdge[];
 }
 
+// Advanced filters for courses, materials, slides
+export interface AdvancedFilters {
+  selectedCourseIds: string[];
+  selectedMaterialIds: string[];
+  selectedSlideIds: string[];
+}
+
 // Filter state (used by reducer and filter controls component)
 export interface PkgFilters {
   viewMode: ViewMode;
   searchQuery: string;
   topNConcepts: number | 'All';
   understandingStatus: 'all' | 'u' | 'dnu';
+  advancedFilters: AdvancedFilters | null;
 }
 
 // Concept detail for the details panel
@@ -125,5 +150,6 @@ export interface ConceptDetail {
   courseId?: string;
   courseName: string;
   courseShortName?: string;
+  channelId?: string;
   relationshipType?: 'u' | 'dnu';
 }

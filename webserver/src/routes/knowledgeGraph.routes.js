@@ -506,4 +506,43 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getUserPKG
   );
+
+  // Get related concepts for a specific concept
+  app.get(
+    "/api/knowledge-graph/get-related-concepts/:conceptCid",
+    [authJwt.verifyToken],
+    controller.getRelatedConcepts
+  );
+
+  // Get course hierarchy for advanced filters (courses -> materials -> slides)
+  app.get(
+    "/api/knowledge-graph/course-hierarchy",
+    [authJwt.verifyToken],
+    controller.getCourseHierarchy
+  );
+
+  // PKG Filter Profiles
+  app.get(
+    "/api/knowledge-graph/pkg-filter-profiles/:userId",
+    [authJwt.verifyToken],
+    controller.getPkgFilterProfiles
+  );
+
+  app.post(
+    "/api/knowledge-graph/pkg-filter-profiles/:userId",
+    [authJwt.verifyToken],
+    controller.createPkgFilterProfile
+  );
+
+  app.put(
+    "/api/knowledge-graph/pkg-filter-profiles/:userId/:profileId",
+    [authJwt.verifyToken],
+    controller.updatePkgFilterProfile
+  );
+
+  app.delete(
+    "/api/knowledge-graph/pkg-filter-profiles/:userId/:profileId",
+    [authJwt.verifyToken],
+    controller.deletePkgFilterProfile
+  );
 };

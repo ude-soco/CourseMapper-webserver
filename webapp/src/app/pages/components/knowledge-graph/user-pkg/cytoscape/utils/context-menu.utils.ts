@@ -1,7 +1,7 @@
 import { CONTEXT_MENU_CONFIG } from '../cytoscape.config';
 import { getNodeStatus } from './graph.utils';
 import { hasCourseConnection } from './course-node.utils';
-import { hasRelatedConceptsInData, checkForRelatedConcepts } from './related-concepts.utils';
+import { checkForRelatedConcepts } from './related-concepts.utils';
 import { ConceptRecord } from '../../types/user-pkg.types';
 
 export interface ContextMenuCallbacks {
@@ -53,18 +53,24 @@ function getCommandsForConcept(
   callbacks: ContextMenuCallbacks
 ): any[] {
   const currentStatus = getNodeStatus(ele);
+  const nodeType = ele.data('type');
+  const isRelatedConcept = nodeType === 'related_concept';
   const commands = [];
 
   // Status change commands
   commands.push(...getStatusCommands(currentStatus, ele, callbacks));
 
-  // Course toggle command
-  commands.push(getToggleCourseVisibilityCommand(ele, cy, rawConceptRecords, callbacks));
+  // Course toggle command - only for main concepts, not related concepts
+  if (!isRelatedConcept) {
+    commands.push(getToggleCourseVisibilityCommand(ele, cy, rawConceptRecords, callbacks));
+  }
 
-  // Related concepts command (if applicable)
-  const relatedCommand = getRelatedConceptsCommand(ele, cy, rawConceptRecords, callbacks);
-  if (relatedCommand) {
-    commands.push(relatedCommand);
+  // Related concepts command - only for main concepts, not related concepts
+  if (!isRelatedConcept) {
+    const relatedCommand = getRelatedConceptsCommand(ele, cy, rawConceptRecords, callbacks);
+    if (relatedCommand) {
+      commands.push(relatedCommand);
+    }
   }
 
   return commands;
@@ -170,14 +176,8 @@ function getRelatedConceptsCommand(
   cy: any, 
   rawConceptRecords: ConceptRecord[],
   callbacks: ContextMenuCallbacks
-): any | null {
-  const conceptData = ele.data();
-  const hasRelatedAvailable = hasRelatedConceptsInData(conceptData, rawConceptRecords);
-  
-  if (!hasRelatedAvailable) {
-    return null;
-  }
-
+): any {
+  // Related concepts are fetched on-demand, so always show the option
   const hasRelatedVisible = checkForRelatedConcepts(cy, ele);
   
   return {

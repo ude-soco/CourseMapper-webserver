@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -30,23 +30,38 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   rawConceptRecords$ = this.store.select(UserPkgSelectors.selectRawRecords);
   isLoading$ = this.store.select(UserPkgSelectors.selectIsLoading);
   error$ = this.store.select(UserPkgSelectors.selectError);
+  viewMode$ = this.store.select(UserPkgSelectors.selectViewMode);
   
   // Concept details panel state
   selectedConcept: ConceptData | null = null;
   conceptDetails: ConceptDetail[] = [];
   showConceptDetails = false;
+  
+  // Dynamic legend state
+  showUnderstoodLegend = false;
+  showNotUnderstoodLegend = false;
+  showCourseLegend = false;
+  showUserLegend = true; // User node is always present
+  
+  // Help dialog state
+  showHelpDialog = false;
 
   constructor(
     private store: Store,
     private router: Router,
     private messageService: MessageService,
     private userConceptsService: UserConceptsService,
+<<<<<<< HEAD
     private courseService: CourseService
+=======
+    private cdr: ChangeDetectorRef
+>>>>>>> origin/dev2-monir-pkg
   ) {}
 
   ngOnInit(): void {
     this.initializeComponent();
     this.subscribeToErrors();
+    this.subscribeToDynamicLegend();
   }
 
   ngOnDestroy(): void {
@@ -82,9 +97,59 @@ export class UserPkgComponent implements OnInit, OnDestroy {
       });
   }
 
+  private subscribeToDynamicLegend(): void {
+    // Initial legend setup based on view mode
+    this.viewMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(viewMode => {
+        // Reset legend when view mode changes
+        // Actual visibility will be updated by onVisibleNodesChanged
+        if (viewMode === 'engagement') {
+          this.showUnderstoodLegend = false;
+          this.showNotUnderstoodLegend = false;
+        }
+      });
+  }
+
+  onVisibleNodesChanged(visibleNodes: any[]): void {
+    if (!visibleNodes || visibleNodes.length === 0) {
+      this.showUnderstoodLegend = false;
+      this.showNotUnderstoodLegend = false;
+      this.showCourseLegend = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // Check what types of nodes are visible
+    const hasUnderstood = visibleNodes.some((node: any) => 
+      (node.type === 'main_concept' || node.type === 'related_concept') &&
+      node.relationshipType === 'u'
+    );
+    
+    const hasNotUnderstood = visibleNodes.some((node: any) => 
+      (node.type === 'main_concept' || node.type === 'related_concept') &&
+      node.relationshipType === 'dnu'
+    );
+    
+    const hasCourses = visibleNodes.some((node: any) => 
+      node.type === 'course'
+    );
+
+    this.showUnderstoodLegend = hasUnderstood;
+    this.showNotUnderstoodLegend = hasNotUnderstood;
+    this.showCourseLegend = hasCourses;
+    
+    // Manually trigger change detection to update the view
+    this.cdr.detectChanges();
+  }
+
   private loadKnowledgeGraph(): void {
     if (!this.currentUserId) return;
 
+    // Load course hierarchy for advanced filters (cached in store)
+    this.store.dispatch(UserPkgActions.loadCourseHierarchy());
+
+    // Load user's knowledge graph
     this.store.select(UserPkgSelectors.selectTopNConcepts).pipe(take(1)).subscribe(topN => {
       this.store.dispatch(UserPkgActions.loadUserPkg({ userId: this.currentUserId!, topNConcepts: topN }));
     });
@@ -120,6 +185,8 @@ export class UserPkgComponent implements OnInit, OnDestroy {
     }
 
     const conceptId = event.concept.cid;
+    const wikipediaUrl = event.concept.wikipedia;
+    
     if (!conceptId) {
       this.messageService.add({
         severity: 'error',
@@ -129,35 +196,53 @@ export class UserPkgComponent implements OnInit, OnDestroy {
       return;
     }
     
-    // Optimistic update in NgRx state
-    this.store.dispatch(UserPkgActions.updateConceptStatus({ 
-      conceptName: event.concept.name, 
-      status: event.status 
-    }));
-    
-    // Use safe single concept update (doesn't affect other concepts)
-    this.userConceptsService.updateSingleConceptStatus(
-      this.currentUserId,
-      conceptId,
-      event.status
-    ).subscribe({
-      next: () => {
-        const statusMessage = event.status === 'u' ? 'understood' : 
-                              event.status === 'dnu' ? 'not understood' : 'new';
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `Concept "${event.concept.name}" marked as ${statusMessage}`,
-        });
-      },
-      error: (error) => {
-        console.error('[User PKG] Failed to update concept status:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to save status change',
-        });
+    // Find all concept IDs with the same Wikipedia URL (merged concepts)
+    this.rawConceptRecords$.pipe(take(1)).subscribe(records => {
+      let conceptIdsToUpdate: string[] = [conceptId];
+      
+      if (wikipediaUrl) {
+        // Find all concepts with the same Wikipedia URL
+        const mergedConcepts = records.filter(r => 
+          r.wikipedia && r.wikipedia.toLowerCase().trim() === wikipediaUrl.toLowerCase().trim()
+        );
+        
+        if (mergedConcepts.length > 1) {
+          conceptIdsToUpdate = mergedConcepts.map(c => c.cid);
+          console.log(`[User PKG] Updating ${conceptIdsToUpdate.length} merged concepts for Wikipedia URL: ${wikipediaUrl}`);
+        }
       }
+      
+      // Optimistic update in NgRx state with the calculated concept IDs
+      this.store.dispatch(UserPkgActions.updateConceptStatus({ 
+        conceptIds: conceptIdsToUpdate,
+        status: event.status 
+      }));
+      
+      // Update all merged concepts in the backend
+      this.userConceptsService.updateConceptsStatus(
+        this.currentUserId,
+        conceptIdsToUpdate,
+        event.status
+      ).subscribe({
+        next: () => {
+          const statusMessage = event.status === 'u' ? 'understood' : 
+                                event.status === 'dnu' ? 'not understood' : 'new';
+          const conceptCount = conceptIdsToUpdate.length > 1 ? ` (${conceptIdsToUpdate.length} merged concepts)` : '';
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Concept "${event.concept.name}" marked as ${statusMessage}${conceptCount}`,
+          });
+        },
+        error: (error) => {
+          console.error('[User PKG] Failed to update concept status:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to save status change',
+          });
+        }
+      });
     });
   }
 
@@ -211,6 +296,14 @@ export class UserPkgComponent implements OnInit, OnDestroy {
     console.log('[User PKG] Edge clicked:', edgeData);
   }
 
+  openHelpDialog(): void {
+    this.showHelpDialog = true;
+  }
+
+  closeHelpDialog(): void {
+    this.showHelpDialog = false;
+  }
+
   // Extract concept details from raw records (inline helper)
   private extractConceptDetails(conceptName: string, rawConceptRecords: ConceptRecord[]): ConceptDetail[] {
     const conceptNameLower = conceptName.toLowerCase().trim();
@@ -232,6 +325,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
               courseId: record.courseId,
               courseName: record.courseName || 'Unknown Course',
               courseShortName: record.courseShortName,
+              channelId: record.channelId,
               relationshipType: record.relationshipType === 'u' || record.relationshipType === 'dnu' 
                 ? record.relationshipType : undefined,
             });
@@ -245,6 +339,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
             courseId: record.courseId,
             courseName: record.courseName || 'Unknown Course',
             courseShortName: record.courseShortName,
+            channelId: record.channelId,
             relationshipType: record.relationshipType === 'u' || record.relationshipType === 'dnu' 
               ? record.relationshipType : undefined,
           });

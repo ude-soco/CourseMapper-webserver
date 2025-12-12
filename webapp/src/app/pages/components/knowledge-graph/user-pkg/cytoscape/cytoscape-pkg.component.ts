@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject, combineLatest } from 'rxjs';
-import { takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import { takeUntil, distinctUntilChanged, take } from 'rxjs/operators';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import cxtmenu from 'cytoscape-cxtmenu';
@@ -9,8 +9,9 @@ import * as GraphUtils from './utils/graph.utils';
 import * as CourseNodeUtils from './utils/course-node.utils';
 import * as RelatedConceptsUtils from './utils/related-concepts.utils';
 import * as ContextMenuUtils from './utils/context-menu.utils';
-import { ConceptRecord, ViewMode, CourseInfo } from '../types/user-pkg.types';
+import { ConceptRecord, ViewMode, CourseInfo, AdvancedFilters } from '../types/user-pkg.types';
 import * as UserPkgSelectors from '../state/user-pkg.reducer';
+import { Neo4jService } from 'src/app/services/neo4j.service';
 
 cytoscape.use(fcose);
 cytoscape.use(cxtmenu);
@@ -26,6 +27,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
   @Output() courseNodeClicked = new EventEmitter<any>();
   @Output() courseEngagementDashboardRequested = new EventEmitter<any>();
   @Output() edgeClicked = new EventEmitter<any>();
+  @Output() visibleNodesChanged = new EventEmitter<any[]>();
 
   public cy: any;
   private conceptsWithVisibleRelated = new Set<string>();
@@ -38,10 +40,12 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
   private currentViewMode: ViewMode = 'knowledge';
   private currentSearchQuery = '';
   private currentUnderstandingStatus: 'all' | 'u' | 'dnu' = 'all';
+  private currentAdvancedFilters: AdvancedFilters | null = null;
 
   constructor(
     private renderer: Renderer2,
-    private store: Store
+    private store: Store,
+    private neo4jService: Neo4jService
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +94,8 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
         this.currentViewMode = viewMode;
         if (this.cy && previousViewMode !== viewMode) {
           console.log('[Cytoscape PKG] View mode changed:', viewMode);
+          // Clear related concepts tracking when switching view modes
+          this.conceptsWithVisibleRelated.clear();
           this.render();
         }
       });
@@ -113,6 +119,16 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
           this.applyFilters();
         }
       });
+
+    // Subscribe to advanced filters
+    this.store.select(UserPkgSelectors.selectAdvancedFilters)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(filters => {
+        this.currentAdvancedFilters = filters;
+        if (this.cy) {
+          this.applyFilters();
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -121,22 +137,35 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Apply all filters (search query, understanding status) to nodes
+   * Apply all filters (search query, understanding status, advanced filters) to nodes
    */
   private applyFilters(): void {
     if (!this.cy) return;
     
     const query = this.currentSearchQuery?.toLowerCase().trim() || '';
     const status = this.currentUnderstandingStatus;
+    const advancedFilters = this.currentAdvancedFilters;
+    
+    // Build a set of allowed concept IDs based on advanced filters
+    const allowedConceptIds = this.getFilteredConceptIds(advancedFilters);
     
     this.cy.nodes().forEach((node: any) => {
       const nodeType = node.data('type');
       const nodeName = node.data('name')?.toLowerCase() || '';
+      const nodeCid = node.data('cid');
       
       // Always show user node
       if (nodeType === 'user') {
         node.show();
         return;
+      }
+      
+      // Check advanced filters (course/material/slide selection)
+      if (allowedConceptIds !== null && nodeType !== 'course') {
+        if (!allowedConceptIds.has(nodeCid)) {
+          node.hide();
+          return;
+        }
       }
       
       // Check understanding status filter
@@ -168,6 +197,15 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
         edge.hide();
       }
     });
+    
+    this.emitVisibleNodes();
+  }
+
+
+  private getFilteredConceptIds(filters: AdvancedFilters | null): Set<string> | null {
+    // Advanced filters are handled server-side, so we don't need to filter client-side
+    // Return null to show all loaded concepts
+    return null;
   }
 
 
@@ -207,8 +245,10 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
     this.cy = GraphUtils.createGraph(container, elementsToRender);
     
-    // Apply edge labels based on view mode
+    // Apply edge labels and styles based on view mode
     this.applyEdgeLabels();
+    GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
+    GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode);
     
     GraphUtils.applyConcentricLayout(this.cy);
     this.setupEventListeners();
@@ -221,6 +261,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
     }
 
     console.log('[Cytoscape PKG] Graph rendered successfully');
+    this.emitVisibleNodes();
   }
 
   /**
@@ -255,7 +296,17 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
     conceptsToRestore.forEach(conceptId => {
       const conceptNode = this.cy.getElementById(conceptId);
       if (conceptNode.length > 0) {
-        RelatedConceptsUtils.toggleRelatedConcepts(this.cy, conceptNode, this.rawConceptRecords);
+        const conceptCid = conceptNode.data('cid');
+        // Re-fetch related concepts on-demand
+        this.neo4jService.getRelatedConcepts(conceptCid).pipe(take(1)).subscribe({
+          next: (response) => {
+            RelatedConceptsUtils.showRelatedConcepts(this.cy, conceptNode, response.relatedConcepts, this.currentViewMode);
+          },
+          error: (err) => {
+            console.error('[Cytoscape PKG] Failed to restore related concepts:', err);
+            this.conceptsWithVisibleRelated.delete(conceptId);
+          }
+        });
       } else {
         this.conceptsWithVisibleRelated.delete(conceptId);
       }
@@ -300,7 +351,10 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
     if (conceptNode.length > 0) {
       const edgeType = status === 'new' ? 'unknown' : status;
       
-      // Update the edge from user to this concept
+      // Update the node's relationshipType data (important for related concepts in Interest mode)
+      conceptNode.data('relationshipType', edgeType);
+      
+      // Update the edge from user to this concept (if it exists)
       const userEdge = this.cy.edges().filter((edge: any) => {
         if (edge.data('target') !== concept.id) return false;
         const sourceNode = this.cy.$id(edge.data('source'));
@@ -309,31 +363,49 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       
       if (userEdge.length > 0) {
         userEdge.data('type', edgeType);
-        // Update the label to match the new status
-        const edgeLabel = edgeType === 'u' ? 'Understood' : edgeType === 'dnu' ? 'Not Understood' : '';
+        // Update the label based on current view mode
+        const edgeLabel = GraphUtils.getEdgeLabelForViewMode(
+          edgeType,
+          this.currentViewMode,
+          'user',
+          conceptNode.data('type')
+        );
         userEdge.data('label', edgeLabel);
       }
       
       // Re-apply styles based on new edge type
-      GraphUtils.updateNodeStyles(this.cy);
-      GraphUtils.updateEdgeStyles(this.cy);
+      GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
+      GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode);
     }
   }
 
   private handleToggleCourse(node: any): void {
     CourseNodeUtils.toggleCourseNode(this.cy, node, this.rawConceptRecords);
+    this.emitVisibleNodes();
   }
 
   private handleToggleRelated(node: any): void {
     const conceptId = node.id();
+    const conceptCid = node.data('cid');
     const wasVisible = RelatedConceptsUtils.checkForRelatedConcepts(this.cy, node);
     
-    RelatedConceptsUtils.toggleRelatedConcepts(this.cy, node, this.rawConceptRecords);
-    
     if (wasVisible) {
+      // Hide related concepts (no API call needed)
+      RelatedConceptsUtils.hideRelatedConcepts(this.cy, conceptId);
       this.conceptsWithVisibleRelated.delete(conceptId);
+      this.emitVisibleNodes();
     } else {
-      this.conceptsWithVisibleRelated.add(conceptId);
+      // Fetch related concepts on-demand
+      this.neo4jService.getRelatedConcepts(conceptCid).pipe(take(1)).subscribe({
+        next: (response) => {
+          RelatedConceptsUtils.showRelatedConcepts(this.cy, node, response.relatedConcepts, this.currentViewMode);
+          this.conceptsWithVisibleRelated.add(conceptId);
+          this.emitVisibleNodes();
+        },
+        error: (err) => {
+          console.error('[Cytoscape PKG] Failed to fetch related concepts:', err);
+        }
+      });
     }
   }
 
@@ -344,7 +416,20 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
   updateGraphStyles(): void {
     if (!this.cy) return;
-    GraphUtils.updateEdgeStyles(this.cy, this.elements);
-    GraphUtils.updateNodeStyles(this.cy);
+    GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode, this.elements);
+    GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
+  }
+
+  private emitVisibleNodes(): void {
+    if (!this.cy) return;
+    
+    const visibleNodes: any[] = [];
+    this.cy.nodes().forEach((node: any) => {
+      if (node.visible()) {
+        visibleNodes.push(node.data());
+      }
+    });
+    
+    this.visibleNodesChanged.emit(visibleNodes);
   }
 }

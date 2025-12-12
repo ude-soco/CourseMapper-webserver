@@ -1,0 +1,102 @@
+<p-dialog 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="true"
+  (onHide)="onClose()"
+  [style]="{width: '550px'}"
+  styleClass="help-dialog">
+  
+  <ng-template pTemplate="header">
+    <h2 class="dialog-title">How to Use the Knowledge Graph</h2>
+  </ng-template>
+
+  <div class="help-content">
+
+    <!-- Interactions -->
+    <div class="section">
+      <h3 class="section-title">Interactions</h3>
+      
+      <div class="help-item">
+        <div class="icon-wrapper blue">
+          <i class="pi pi-mouse"></i>
+        </div>
+        <div class="help-text">
+          <h4>Click on a Node</h4>
+          <p>Click any concept node to view detailed information about that topic.</p>
+        </div>
+      </div>
+
+      <div class="help-item">
+        <div class="icon-wrapper purple">
+          <i class="pi pi-hand-pointer"></i>
+        </div>
+        <div class="help-text">
+          <h4>Right Click and Hold</h4>
+          <p>Right click and hold on a concept node to open the quick actions menu: mark understanding, show related concepts, show course nodes.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="section">
+      <h3 class="section-title">Filters & Search</h3>
+      
+      <div class="help-item">
+        <div class="icon-wrapper green">
+          <i class="pi pi-filter"></i>
+        </div>
+        <div class="help-text">
+          <h4>Filters</h4>
+          <p>Use filters to filter by understanding status, or focus views by filtering by course, materials, or slides.</p>
+        </div>
+      </div>
+
+      <div class="help-item">
+        <div class="icon-wrapper orange">
+          <i class="pi pi-search"></i>
+        </div>
+        <div class="help-text">
+          <h4>Search Concepts</h4>
+          <p>Use the search bar to quickly find specific concepts in your knowledge graph.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graph Info -->
+    <div class="info-grid">
+      <div class="info-card">
+        <i class="pi pi-circle"></i>
+        <div>
+          <strong>Node Size</strong>
+          <span>Reflects how many courses the concept appears in</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <i class="pi pi-sort-amount-down"></i>
+        <div>
+          <strong>Top-N Concepts</strong>
+          <span>Main concepts are ranked by weight</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Modes -->
+    <div class="radio-info">
+      <strong>View Modes:</strong> Use the radio buttons on the left to change the graph view between Knowledge State, Interest Level, and Engagement Level.
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button 
+      pButton 
+      type="button" 
+      label="Got it!" 
+      icon="pi pi-check"
+      class="p-button-primary footer-button"
+      (click)="onClose()">
+    </button>
+  </ng-template>
+</p-dialog>

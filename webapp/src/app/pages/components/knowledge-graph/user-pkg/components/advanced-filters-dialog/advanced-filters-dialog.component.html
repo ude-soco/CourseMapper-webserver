@@ -1,0 +1,238 @@
+<div class="flex flex-col h-full">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex items-center justify-center py-12">
+    <i class="pi pi-spin pi-spinner text-3xl text-blue-500"></i>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading" class="flex flex-col gap-4 flex-1 overflow-hidden">
+    
+    <!-- Filter Profile Section -->
+    <div class="border-b border-gray-200 pb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Filter Profile</label>
+      <div class="flex items-center gap-2">
+        <div class="flex-1 relative">
+          <p-dropdown
+            [options]="profileOptions"
+            [(ngModel)]="selectedProfileId"
+            (onChange)="onProfileSelected($event.value)"
+            placeholder="New"
+            [style]="{'width': '100%'}"
+            optionLabel="label"
+            optionValue="value"
+            [disabled]="profilesLoading">
+          </p-dropdown>
+        </div>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-plus"
+          class="p-button-sm p-button-success"
+          (click)="saveAsNewProfile()"
+          pTooltip="Save as new profile"
+          tooltipPosition="top">
+        </button>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-copy"
+          class="p-button-sm"
+          (click)="duplicateProfile()"
+          [disabled]="!selectedProfileId"
+          pTooltip="Duplicate profile"
+          tooltipPosition="top">
+        </button>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-pencil"
+          class="p-button-sm"
+          (click)="renameProfile()"
+          [disabled]="!selectedProfileId"
+          pTooltip="Rename profile"
+          tooltipPosition="top">
+        </button>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-save"
+          class="p-button-sm p-button-info"
+          (click)="updateCurrentProfile()"
+          [disabled]="!selectedProfileId"
+          pTooltip="Update current profile"
+          tooltipPosition="top">
+        </button>
+        
+        <button
+          pButton
+          type="button"
+          icon="pi pi-trash"
+          class="p-button-sm p-button-danger"
+          (click)="deleteCurrentProfile()"
+          [disabled]="!selectedProfileId"
+          pTooltip="Delete profile"
+          tooltipPosition="top">
+        </button>
+      </div>
+    </div>
+    
+    <!-- Courses Section -->
+    <div class="border border-gray-200 rounded-lg overflow-hidden">
+      <div 
+        class="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+        (click)="coursesExpanded = !coursesExpanded">
+        <div class="flex items-center gap-3">
+          <p-checkbox 
+            [binary]="true"
+            [ngModel]="allCoursesSelected"
+            (onChange)="toggleAllCourses()"
+            (click)="$event.stopPropagation()">
+          </p-checkbox>
+          <span class="font-medium text-gray-800">Courses</span>
+          <span class="text-sm text-gray-500">({{ selectedCoursesCount }} selected)</span>
+        </div>
+        <i class="pi" [ngClass]="coursesExpanded ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+      </div>
+      
+      <div *ngIf="coursesExpanded" class="max-h-48 overflow-y-auto border-t border-gray-200">
+        <div 
+          *ngFor="let course of courses" 
+          class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+          (click)="toggleCourse(course._id)">
+          <p-checkbox 
+            [binary]="true"
+            [ngModel]="isCourseSelected(course._id)"
+            (click)="$event.stopPropagation()">
+          </p-checkbox>
+          <div 
+            class="w-3 h-3 rounded-full flex-shrink-0" 
+            [style.background-color]="getCourseColor(course._id)">
+          </div>
+          <span class="text-sm text-gray-700">{{ course.name }}</span>
+          <span class="text-xs text-gray-400">({{ course.materials.length }} materials)</span>
+        </div>
+        <div *ngIf="courses.length === 0" class="px-4 py-3 text-sm text-gray-500 italic">
+          No courses available
+        </div>
+      </div>
+    </div>
+
+    <!-- Learning Materials Section -->
+    <div class="border border-gray-200 rounded-lg overflow-hidden">
+      <div 
+        class="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+        (click)="materialsExpanded = !materialsExpanded">
+        <div class="flex items-center gap-3">
+          <p-checkbox 
+            [binary]="true"
+            [ngModel]="allMaterialsSelected"
+            (onChange)="toggleAllMaterials()"
+            (click)="$event.stopPropagation()"
+            [disabled]="selectedCourseIds.length === 0">
+          </p-checkbox>
+          <span class="font-medium text-gray-800">Learning Materials</span>
+          <span class="text-sm text-gray-500">({{ selectedMaterialsCount }} selected)</span>
+        </div>
+        <i class="pi" [ngClass]="materialsExpanded ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+      </div>
+      
+      <div *ngIf="materialsExpanded" class="max-h-48 overflow-y-auto border-t border-gray-200">
+        <div 
+          *ngFor="let material of cachedAvailableMaterials" 
+          class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+          (click)="toggleMaterial(material._id)">
+          <p-checkbox 
+            [binary]="true"
+            [ngModel]="isMaterialSelected(material._id)"
+            (click)="$event.stopPropagation()">
+          </p-checkbox>
+          <div 
+            class="w-3 h-3 rounded-full flex-shrink-0" 
+            [style.background-color]="material.courseColor"
+            [title]="material.courseName">
+          </div>
+          <i class="pi pi-file-pdf text-red-500" *ngIf="material.type === 'pdf'"></i>
+          <i class="pi pi-video text-blue-500" *ngIf="material.type === 'video'"></i>
+          <span class="text-sm text-gray-700">{{ material.name }}</span>
+          <span class="text-xs text-gray-400">({{ material.slides.length }} slides)</span>
+        </div>
+        <div *ngIf="cachedAvailableMaterials.length === 0" class="px-4 py-3 text-sm text-gray-500 italic">
+          Select courses first to see materials
+        </div>
+      </div>
+    </div>
+
+    <!-- Slides Section -->
+    <div class="border border-gray-200 rounded-lg overflow-hidden">
+      <div 
+        class="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+        (click)="slidesExpanded = !slidesExpanded">
+        <div class="flex items-center gap-3">
+          <p-checkbox 
+            [binary]="true"
+            [ngModel]="allSlidesSelected"
+            (onChange)="toggleAllSlides()"
+            (click)="$event.stopPropagation()"
+            [disabled]="selectedMaterialIds.length === 0">
+          </p-checkbox>
+          <span class="font-medium text-gray-800">Slides</span>
+          <span class="text-sm text-gray-500">({{ selectedSlidesCount }} selected)</span>
+        </div>
+        <i class="pi" [ngClass]="slidesExpanded ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+      </div>
+      
+      <div *ngIf="slidesExpanded" class="max-h-48 overflow-y-auto border-t border-gray-200">
+        <div 
+          *ngFor="let slide of cachedAvailableSlides" 
+          class="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+          (click)="toggleSlide(slide.sid)">
+          <p-checkbox 
+            [binary]="true"
+            [ngModel]="isSlideSelected(slide.sid)"
+            (click)="$event.stopPropagation()">
+          </p-checkbox>
+          <div 
+            class="w-3 h-3 rounded-full flex-shrink-0" 
+            [style.background-color]="slide.courseColor"
+            [title]="slide.courseName">
+          </div>
+          <span class="text-sm text-gray-700">Slide {{ getSlideNumber(slide.sid) }}</span>
+          <span class="text-xs text-gray-400">({{ slide.materialName }})</span>
+        </div>
+        <div *ngIf="cachedAvailableSlides.length === 0" class="px-4 py-3 text-sm text-gray-500 italic">
+          Select materials first to see slides
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="flex items-center justify-between pt-4 mt-4 border-t border-gray-200">
+    <button 
+      pButton 
+      type="button" 
+      label="Clear All" 
+      class="p-button-text p-button-danger"
+      (click)="clearAll()">
+    </button>
+    <div class="flex items-center gap-2">
+      <button 
+        pButton 
+        type="button" 
+        label="Cancel" 
+        class="p-button-outlined"
+        (click)="cancel()">
+      </button>
+      <button 
+        pButton 
+        type="button" 
+        label="Apply Filters" 
+        (click)="applyFilters()">
+      </button>
+    </div>
+  </div>
+</div>

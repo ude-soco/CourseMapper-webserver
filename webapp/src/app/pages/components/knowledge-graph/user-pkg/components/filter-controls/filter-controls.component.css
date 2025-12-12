@@ -14,3 +14,30 @@
   box-shadow: none;
   background: transparent;
 }
+
+/* Profile tooltip styling with site-specific colors */
+::ng-deep .profile-tooltip {
+  background-color: #2c3e50 !important;
+  color: #ecf0f1 !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  padding: 14px 18px !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4) !important;
+  max-width: 380px !important;
+  border: 1px solid rgba(52, 152, 219, 0.3) !important;
+}
+
+::ng-deep .profile-tooltip .p-tooltip-arrow {
+  border-left-color: #2c3e50 !important;
+}
+
+::ng-deep .profile-tooltip strong {
+  color: #3498db !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+}
+
+::ng-deep .profile-tooltip .text-gray-500 {
+  color: #bdc3c7 !important;
+}

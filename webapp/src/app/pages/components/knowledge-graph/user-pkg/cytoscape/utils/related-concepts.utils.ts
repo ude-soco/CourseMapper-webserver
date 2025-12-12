@@ -1,25 +1,20 @@
-import { ConceptRecord, RelatedConceptInfo } from '../../types/user-pkg.types';
+import { RelatedConceptInfo, ViewMode } from '../../types/user-pkg.types';
 
 /**
  * Related concepts utility functions for showing/hiding related concepts in the graph
- * Uses the new aggregated relatedConcepts[] array from the backend
+ * Related concepts are fetched on-demand from the API.
  * 
  * Handles the case where a related concept can be related to multiple main concepts.
+ * 
+ * View Mode Behavior:
+ * - Knowledge mode: User → Related Concept edges shown (with understanding status)
+ * - Interest mode: NO User → Related Concept edges (only Main → Related)
  */
 
-export function toggleRelatedConcepts(cy: any, conceptNode: any, rawConceptRecords: ConceptRecord[]): void {
-  const clickedConceptId = conceptNode.id();
-  
-  const existingRelatedEdges = cy.edges(`[source="${clickedConceptId}"][label="related_to"]`);
-  
-  if (existingRelatedEdges.length > 0) {
-    hideRelatedConcepts(cy, clickedConceptId);
-  } else {
-    showRelatedConcepts(cy, conceptNode, rawConceptRecords);
-  }
-}
-
-function hideRelatedConcepts(cy: any, mainConceptId: string): void {
+/**
+ * Hide related concepts for a main concept
+ */
+export function hideRelatedConcepts(cy: any, mainConceptId: string): void {
   const relatedEdges = cy.edges(`[source="${mainConceptId}"][label="related_to"]`);
   
   relatedEdges.forEach((edge: any) => {
@@ -46,21 +41,30 @@ function hideRelatedConcepts(cy: any, mainConceptId: string): void {
   });
 }
 
-function showRelatedConcepts(cy: any, mainConceptNode: any, rawConceptRecords: ConceptRecord[]): void {
-  const conceptData = mainConceptNode.data();
+/**
+ * Show related concepts for a main concept (fetched on-demand from API)
+ * 
+ * @param cy - Cytoscape instance
+ * @param mainConceptNode - The main concept node to show related concepts for
+ * @param relatedConcepts - Array of related concepts from API
+ * @param viewMode - Current view mode (affects whether user-to-related edges are shown)
+ */
+export function showRelatedConcepts(
+  cy: any, 
+  mainConceptNode: any, 
+  relatedConcepts: RelatedConceptInfo[],
+  viewMode: ViewMode = 'knowledge'
+): void {
   const mainConceptId = mainConceptNode.id();
   
-  // Get related concepts from the node's data (aggregated from backend)
-  const relatedConcepts: RelatedConceptInfo[] = conceptData.relatedConcepts || [];
-  
-  // Filter to only show related concepts that exist in rawConceptRecords (respects TopN filter)
-  const rawRecordCids = new Set(rawConceptRecords.map(r => r.cid));
+  // Filter to valid related concepts that are NOT "new" (unknown)
+  // Only show concepts that have been marked as understood or not understood
   const validRelatedConcepts = relatedConcepts.filter(rc => 
-    rc.cid && rc.name && rawRecordCids.has(rc.cid)
+    rc.cid && rc.name && (rc.relationshipType === 'u' || rc.relationshipType === 'dnu')
   );
   
   if (validRelatedConcepts.length === 0) {
-    console.log('No related concepts in current records for:', conceptData.name);
+    console.log('No related concepts to show (all are new/unknown)');
     return;
   }
 
@@ -74,9 +78,6 @@ function showRelatedConcepts(cy: any, mainConceptNode: any, rawConceptRecords: C
   validRelatedConcepts.forEach((relatedConcept) => {
     const relatedNodeId = `concept-${relatedConcept.cid}`;
     
-    // Find the related concept's full data from rawConceptRecords
-    const relatedRecord = rawConceptRecords.find(r => r.cid === relatedConcept.cid);
-    
     // Check if node already exists (might be shown by another main concept)
     const existingNode = cy.getElementById(relatedNodeId);
     
@@ -89,9 +90,9 @@ function showRelatedConcepts(cy: any, mainConceptNode: any, rawConceptRecords: C
           name: relatedConcept.name,
           type: 'related_concept',
           cid: relatedConcept.cid,
-          wikipedia: relatedRecord?.wikipedia,
-          abstract: relatedRecord?.abstract,
-          relationshipType: relatedRecord?.relationshipType || 'unknown',
+          wikipedia: relatedConcept.wikipedia,
+          abstract: relatedConcept.abstract,
+          relationshipType: relatedConcept.relationshipType || 'unknown',
         },
         position: {
           x: mainConceptPos.x + radius * Math.cos(angleOffset),
@@ -99,19 +100,22 @@ function showRelatedConcepts(cy: any, mainConceptNode: any, rawConceptRecords: C
         }
       });
       
-      // Add edge from user to related concept (with understanding status)
-      const edgeType = relatedRecord?.relationshipType || 'unknown';
-      const edgeLabel = edgeType === 'u' ? 'Understood' : edgeType === 'dnu' ? 'Not Understood' : '';
-      cy.add({
-        group: 'edges',
-        data: {
-          id: `edge-user-${relatedNodeId}`,
-          source: userNode.id(),
-          target: relatedNodeId,
-          type: edgeType,
-          label: edgeLabel
-        }
-      });
+      // Only add edge from user to related concept in KNOWLEDGE mode
+      // In Interest mode, related concepts are only connected to main concepts
+      if (viewMode === 'knowledge') {
+        const edgeType = relatedConcept.relationshipType || 'unknown';
+        const edgeLabel = edgeType === 'u' ? 'Understood' : edgeType === 'dnu' ? 'Not Understood' : '';
+        cy.add({
+          group: 'edges',
+          data: {
+            id: `edge-user-${relatedNodeId}`,
+            source: userNode.id(),
+            target: relatedNodeId,
+            type: edgeType,
+            label: edgeLabel
+          }
+        });
+      }
     }
     
     // Always add the relationship edge from this main concept to the related concept
@@ -126,22 +130,14 @@ function showRelatedConcepts(cy: any, mainConceptNode: any, rawConceptRecords: C
           id: relationEdgeId,
           source: mainConceptId,
           target: relatedNodeId,
-          label: 'related_to'
+          label: 'related_to',
+          type: 'related_to'
         }
       });
     }
     
     angleOffset += angleStep;
   });
-}
-
-/**
- * Check if a concept has related concepts that exist in rawConceptRecords
- */
-export function hasRelatedConceptsInData(conceptData: any, rawConceptRecords: ConceptRecord[]): boolean {
-  const relatedConcepts: RelatedConceptInfo[] = conceptData.relatedConcepts || [];
-  const rawRecordCids = new Set(rawConceptRecords.map(r => r.cid));
-  return relatedConcepts.some(rc => rc.cid && rc.name && rawRecordCids.has(rc.cid));
 }
 
 /**

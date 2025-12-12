@@ -33,6 +33,14 @@ const User = new Schema({
     default: {}
   },
 
+  // Advanced filter profiles for PKG
+  pkgAdvancedFilterProfiles: [
+    {
+      name: { type: String, required: true },
+      slideIds: [{ type: String, required: true }]
+    }
+  ],
+
   indicators: [
     {
       _id: Schema.Types.ObjectId,

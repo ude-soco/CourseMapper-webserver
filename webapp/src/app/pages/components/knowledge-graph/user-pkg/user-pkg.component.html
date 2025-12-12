@@ -29,30 +29,33 @@
       <!-- Legend -->
       <div class="legend-container">
         <div class="flex items-center gap-5">
+
           <button 
             pButton 
             type="button" 
-            icon="pi pi-cog"
-            class="p-button-text p-button-sm text-gray-600"
-            pTooltip="Graph Controls"
-            title="Graph Controls"
-            tooltipPosition="top">
+            label="Help"
+            icon="pi pi-question-circle"
+            class="p-button-text p-button-sm text-blue-600"
+            pTooltip="Help & Instructions"
+            title="Help & Instructions"
+            tooltipPosition="top"
+            (click)="openHelpDialog()">
           </button>
           
           <div class="flex items-center gap-5">
-            <div class="legend-item">
+            <div *ngIf="showNotUnderstoodLegend" class="legend-item">
               <div class="legend-dot not-understood"></div>
               <span class="text-xs font-medium text-gray-700">Not Understood Concept</span>
             </div>
-            <div class="legend-item">
+            <div *ngIf="showUnderstoodLegend" class="legend-item">
               <div class="legend-dot understood"></div>
               <span class="text-xs font-medium text-gray-700">Understood Concept</span>
             </div>
-            <div class="legend-item">
+            <div *ngIf="showCourseLegend" class="legend-item">
               <div class="legend-dot course"></div>
               <span class="text-xs font-medium text-gray-700">Course Node</span>
             </div>
-            <div class="legend-item">
+            <div *ngIf="showUserLegend" class="legend-item">
               <div class="legend-dot user"></div>
               <span class="text-xs font-medium text-gray-700">User Node</span>
             </div>
@@ -66,8 +69,13 @@
           (conceptSelected)="onConceptSelected($event)"
           (conceptStatusChanged)="onConceptStatusChanged($event)"
           (courseNodeClicked)="onCourseNodeClicked($event)"
+<<<<<<< HEAD
           (courseEngagementDashboardRequested)="onCourseEngagementDashboardRequested($event)"
           (edgeClicked)="onEdgeClicked($event)">
+=======
+          (edgeClicked)="onEdgeClicked($event)"
+          (visibleNodesChanged)="onVisibleNodesChanged($event)">
+>>>>>>> origin/dev2-monir-pkg
         </app-cytoscape-pkg>
       </div>
       
@@ -78,6 +86,12 @@
         [details]="conceptDetails"
         (close)="closeConceptDetails()">
       </app-pkg-concept-details-panel>
+      
+      <!-- Help Dialog -->
+      <app-graph-help-dialog
+        [visible]="showHelpDialog"
+        (close)="closeHelpDialog()">
+      </app-graph-help-dialog>
     </div>
 
     <!-- Empty State -->

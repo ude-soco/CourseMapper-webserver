@@ -46,39 +46,42 @@
     
     <div *ngIf="details.length > 0" class="space-y-2">
       <div *ngFor="let detail of details" 
-           class="bg-gray-50 border border-gray-200 rounded-md p-3 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
-           (click)="onDetailClick(detail)">
-        <div class="flex items-center gap-2 text-sm">
-          <!-- Understanding Status Icon -->
-          <span *ngIf="detail.relationshipType === 'u'" 
-                class="flex-shrink-0 text-green-600"
-                title="Understood">
-            <i class="pi pi-check-circle"></i>
-          </span>
-          <span *ngIf="detail.relationshipType === 'dnu'" 
-                class="flex-shrink-0 text-red-600"
-                title="Not Understood">
-            <i class="pi pi-times-circle"></i>
-          </span>
+           class="bg-gray-50 border border-gray-200 rounded-md p-3 transition-colors duration-200">
+        <div class="flex items-start gap-3 text-sm">
+          <!-- Slide Section -->
+          <div class="flex items-center gap-1.5 min-w-0 flex-1">
+            <i class="pi pi-file text-gray-500 flex-shrink-0"></i>
+            <span class="text-blue-600 font-medium hover:underline cursor-pointer truncate"
+                  (click)="onSlideClick($event, detail)"
+                  [title]="'Navigate to slide: ' + detail.slideName">
+              {{ detail.slideName }}
+            </span>
+          </div>
           
-          <!-- Slide name -->
-          <span class="text-blue-600 font-medium hover:underline">
-            {{ detail.slideName }}
-          </span>
+          <span class="text-gray-300 flex-shrink-0">|</span>
           
-          <span class="text-gray-400">-</span>
+          <!-- Material Section -->
+          <div class="flex items-center gap-1.5 min-w-0 flex-1">
+            <i class="pi text-red-500 flex-shrink-0" 
+               [ngClass]="detail.materialType === 'video' ? 'pi-video' : 'pi-file-pdf'"></i>
+            <span class="text-blue-600 hover:underline cursor-pointer truncate"
+                  (click)="onMaterialClick($event, detail)"
+                  [title]="'Navigate to material: ' + detail.materialName">
+              {{ detail.materialName }}
+            </span>
+          </div>
           
-          <!-- Material name -->
-          <span class="text-blue-600 hover:underline truncate">
-            {{ detail.materialName }}
-          </span>
+          <span class="text-gray-300 flex-shrink-0">|</span>
           
-          <span class="text-gray-400">-</span>
-          
-          <!-- Course name -->
-          <span class="text-blue-600 hover:underline flex-shrink-0">
-            {{ detail.courseName || detail.courseShortName }}
-          </span>
+          <!-- Course Section -->
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <i class="pi pi-bookmark text-blue-600 flex-shrink-0"></i>
+            <span class="text-blue-600 hover:underline cursor-pointer"
+                  (click)="onCourseClick($event, detail)"
+                  [title]="'Navigate to course: ' + (detail.courseName || detail.courseShortName)">
+              {{ detail.courseName || detail.courseShortName }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
