@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil, filter, take } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
@@ -11,6 +12,8 @@ import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { User } from 'src/app/models/User';
 import { ConceptData } from './components/concept-details-panel/concept-details-panel.component';
 import { UserConceptsService } from 'src/app/services/user-concepts.service';
+import { CourseService } from 'src/app/services/course.service';
+import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 
 @Component({
   selector: 'app-user-pkg',
@@ -35,8 +38,10 @@ export class UserPkgComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private router: Router,
     private messageService: MessageService,
-    private userConceptsService: UserConceptsService
+    private userConceptsService: UserConceptsService,
+    private courseService: CourseService
   ) {}
 
   ngOnInit(): void {
@@ -158,6 +163,48 @@ export class UserPkgComponent implements OnInit, OnDestroy {
 
   onCourseNodeClicked(courseData: any): void {
     console.log('[User PKG] Course node clicked:', courseData);
+  }
+
+  onCourseEngagementDashboardRequested(courseData: any): void {
+    console.log('[User PKG] Engagement dashboard requested for course:', courseData);
+    const courseId = courseData.courseId || courseData.id?.replace('course-', '');
+    
+    if (!courseId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Course ID not found',
+      });
+      return;
+    }
+
+    // Fetch course details and set in store, then navigate
+    this.courseService.GetCourseById(courseId).subscribe({
+      next: (course) => {
+        if (course) {
+          // Set the course in the store
+          this.store.dispatch(CourseActions.setCurrentCourse({ selcetedCourse: course }));
+          this.store.dispatch(CourseActions.setCourseId({ courseId: course._id }));
+          
+          // Navigate to engagement dashboard
+          this.router.navigate(['user/engagement']);
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Course not found',
+          });
+        }
+      },
+      error: (error) => {
+        console.error('[User PKG] Error loading course:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load course details',
+        });
+      }
+    });
   }
 
   onEdgeClicked(edgeData: any): void {

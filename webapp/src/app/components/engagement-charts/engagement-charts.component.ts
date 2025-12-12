@@ -12,6 +12,9 @@ export class EngagementChartsComponent implements OnInit, OnChanges {
   @Input() courseName: string = 'Course name';
   @Input() engagementLevel: string = 'Low';
   @Input() engagementMetrics: EngagementMetrics | null = null;
+  @Input() userId: string = '';
+  @Input() courseId: string = '';
+  @Input() userName: string = 'You';
 
   activeTabIndex: number = 0;
   tabs = [

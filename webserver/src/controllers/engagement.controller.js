@@ -4,6 +4,94 @@ const Course = db.course;
 const Role = db.role;
 const Material = db.material;
 const { getLevelOfEngagement } = require("../graph/neo4j");
+const fs = require("fs");
+const path = require("path");
+
+/**
+ * Read engagement metrics from CSV file for a specific user and course
+ */
+function readMetricsFromCSV(userId, courseId) {
+  try {
+    // Path to the CSV file
+    // From dist-server/controllers/ (transpiled) or src/controllers/ (development) 
+    // Go up to project root, then to coursemapper-kg/recommendation/activitiesProductionOrig.csv
+    const csvPath = path.join(__dirname, "../../../coursemapper-kg/recommendation/activitiesProductionOrig.csv");
+    
+    if (!fs.existsSync(csvPath)) {
+      console.warn(`CSV file not found at ${csvPath}`);
+      return null;
+    }
+
+    const csvContent = fs.readFileSync(csvPath, "utf-8");
+    const lines = csvContent.split("\n").filter(line => line.trim());
+    
+    if (lines.length === 0) {
+      return null;
+    }
+
+    // Skip header line
+    for (let i = 1; i < lines.length; i++) {
+      const columns = lines[i].split(",");
+      
+      // Column indices:
+      // 1: stdUsername (userId)
+      // 2: course_id
+      // 30: courseAccesses
+      // 31: topicAccesses
+      // 32: channelAccesses
+      // 33: pdfAccess
+      // 34: videoAccess
+      // 36: dashboardCourseAccesses
+      // 37: dashboardTopicAccesses
+      // 38: dashboardChannelAccesses
+      // 39: dashboardMaterialAccesses
+      // 51: courseKnowledgeGraphAccesses
+      // 52: materialKnowledgeGraphAccesses
+      // 53: slideKnowledgeGraphAccesses
+      // 56: totalKnowledgeGraphWikiArticleViewed
+      // 60: mainConceptViewed
+      // 65: totalRecommendedConcept/WikiViewed (recommendation KG access)
+      // 68: totalSlideKnowledgeGraphMarkedUnderstood
+      // 69: totalSlideKnowledgeGraphMarkedNotUnderstood
+      // 70: totalSlideKnowledgeGraphMarkedAsNew
+      
+      if (columns.length < 71) continue;
+      
+      const csvUserId = columns[1]?.trim();
+      const csvCourseId = columns[2]?.trim();
+      
+      if (csvUserId === String(userId) && csvCourseId === String(courseId)) {
+        return {
+          courseAccesses: parseInt(columns[30] || "0", 10),
+          topicAccesses: parseInt(columns[31] || "0", 10),
+          channelAccesses: parseInt(columns[32] || "0", 10),
+          pdfAccess: parseInt(columns[33] || "0", 10),
+          videoAccess: parseInt(columns[34] || "0", 10),
+          materialAccesses: parseInt(columns[33] || "0", 10) + parseInt(columns[34] || "0", 10),
+          dashboardCourseAccesses: parseInt(columns[36] || "0", 10),
+          dashboardTopicAccesses: parseInt(columns[37] || "0", 10),
+          dashboardChannelAccesses: parseInt(columns[38] || "0", 10),
+          dashboardMaterialAccesses: parseInt(columns[39] || "0", 10),
+          // KG metrics
+          courseKnowledgeGraphAccesses: parseInt(columns[51] || "0", 10),
+          materialKnowledgeGraphAccesses: parseInt(columns[52] || "0", 10),
+          slideKnowledgeGraphAccesses: parseInt(columns[53] || "0", 10),
+          recommendationKnowledgeGraphAccesses: parseInt(columns[65] || "0", 10),
+          mainConceptViewed: parseInt(columns[60] || "0", 10),
+          totalKnowledgeGraphWikiArticleViewed: parseInt(columns[56] || "0", 10),
+          totalSlideKnowledgeGraphMarkedUnderstood: parseInt(columns[68] || "0", 10),
+          totalSlideKnowledgeGraphMarkedNotUnderstood: parseInt(columns[69] || "0", 10),
+          totalSlideKnowledgeGraphMarkedAsNew: parseInt(columns[70] || "0", 10)
+        };
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error reading CSV file:", error);
+    return null;
+  }
+}
 
 /**
  * Extract course ID from activity extensions
@@ -397,6 +485,33 @@ export const getUserEngagementMetrics = async (req, res) => {
     // Process activities to get metrics
     const { metrics, videoIds, pdfIds } = await processUserCourseActivities(userId, courseId, courseActivities);
 
+    // Override metrics with CSV data if available
+    const csvMetrics = readMetricsFromCSV(userId, courseId);
+    if (csvMetrics) {
+      // Access metrics
+      metrics.courseAccesses = csvMetrics.courseAccesses;
+      metrics.topicAccesses = csvMetrics.topicAccesses;
+      metrics.channelAccesses = csvMetrics.channelAccesses;
+      metrics.pdfAccess = csvMetrics.pdfAccess;
+      metrics.videoAccess = csvMetrics.videoAccess;
+      metrics.materialAccesses = csvMetrics.materialAccesses;
+      metrics.dashboardCourseAccesses = csvMetrics.dashboardCourseAccesses;
+      metrics.dashboardTopicAccesses = csvMetrics.dashboardTopicAccesses;
+      metrics.dashboardChannelAccesses = csvMetrics.dashboardChannelAccesses;
+      metrics.dashboardMaterialAccesses = csvMetrics.dashboardMaterialAccesses;
+      
+      // KG metrics
+      metrics.courseKnowledgeGraphAccesses = csvMetrics.courseKnowledgeGraphAccesses;
+      metrics.materialKnowledgeGraphAccesses = csvMetrics.materialKnowledgeGraphAccesses;
+      metrics.slideKnowledgeGraphAccesses = csvMetrics.slideKnowledgeGraphAccesses;
+      metrics.recommendationKnowledgeGraphAccesses = csvMetrics.recommendationKnowledgeGraphAccesses;
+      metrics.mainConceptViewed = csvMetrics.mainConceptViewed;
+      metrics.totalKnowledgeGraphWikiArticleViewed = csvMetrics.totalKnowledgeGraphWikiArticleViewed;
+      metrics.totalSlideKnowledgeGraphMarkedUnderstood = csvMetrics.totalSlideKnowledgeGraphMarkedUnderstood;
+      metrics.totalSlideKnowledgeGraphMarkedNotUnderstood = csvMetrics.totalSlideKnowledgeGraphMarkedNotUnderstood;
+      metrics.totalSlideKnowledgeGraphMarkedAsNew = csvMetrics.totalSlideKnowledgeGraphMarkedAsNew;
+    }
+
     // Fetch material details for videos and PDFs
     const allMaterialIds = [...new Set([...videoIds.started, ...videoIds.completed, ...pdfIds.started, ...pdfIds.completed])];
     const materials = await Material.find({ _id: { $in: allMaterialIds } }).select('_id name channelId courseId type');
@@ -417,11 +532,12 @@ export const getUserEngagementMetrics = async (req, res) => {
     let engagementLevel = "medium";
     try {
       const engagementRecords = await getLevelOfEngagement(userId);
-      const courseEngagement = engagementRecords?.records?.find(
+      // engagementRecords is already an array, not an object with .records property
+      const courseEngagement = engagementRecords?.find(
         (record) => record?.target?.properties?.cid === String(courseId)
       );
       if (courseEngagement?.r?.properties?.level) {
-        engagementLevel = courseEngagement.r.properties.level;
+        engagementLevel = courseEngagement.r.properties.level.toLowerCase();
       }
     } catch (neo4jError) {
       console.warn("Could not fetch engagement level from Neo4j:", neo4jError);
@@ -450,6 +566,29 @@ export const getUserEngagementMetrics = async (req, res) => {
     });
   } catch (error) {
     console.error("Error getting user engagement metrics:", error);
+    res.status(500).send({ error: error.message });
+  }
+};
+
+/**
+ * Get peer activities data from JSON file
+ */
+export const getPeerActivities = async (req, res) => {
+  try {
+    // Path to the JSON file
+    const jsonPath = path.join(__dirname, "../../../coursemapper-kg/recommendation/activitiesProductionOrig.json");
+    
+    if (!fs.existsSync(jsonPath)) {
+      console.warn(`JSON file not found at ${jsonPath}`);
+      return res.status(404).send({ error: "Peer activities data not found" });
+    }
+
+    const jsonContent = fs.readFileSync(jsonPath, "utf-8");
+    const data = JSON.parse(jsonContent);
+    
+    res.status(200).send(data);
+  } catch (error) {
+    console.error("Error reading peer activities JSON file:", error);
     res.status(500).send({ error: error.message });
   }
 };

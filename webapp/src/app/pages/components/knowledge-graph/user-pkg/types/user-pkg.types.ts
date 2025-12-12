@@ -42,6 +42,7 @@ export interface CourseInfo {
   courseId: string;
   courseName: string;
   courseShortName: string;
+  engagementLevel?: string; // 'low', 'medium', 'high'
 }
 
 // Material info from backend
@@ -79,6 +80,7 @@ export interface CytoscapeNodeData {
   courseShortName?: string;
   allCourseIds?: string[];
   initials?: string;
+  engagementLevel?: string; // For course nodes in engagement view
 }
 
 export interface CytoscapeNode {
@@ -92,6 +94,7 @@ export interface CytoscapeEdgeData {
   target: string;
   type?: string;
   label?: string;
+  engagementLevel?: string; // For edges connecting user to courses
 }
 
 export interface CytoscapeEdge {

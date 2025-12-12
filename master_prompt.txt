@@ -84,10 +84,10 @@ rendering via selectors - Responsive design
 
 Cursor Instructions Whenever implementing: 1. Follow system context
 strictly. 2. Use Angular + NgRx best practices. 3. Use modular
-ApexCharts configs. 4. Assume backend APIs provide pre-calculated
+ApexCharts configs. 4. Assume backend APIs and python script provide pre-calculated
 engagement level and cluster statistics. 5. Do not attempt to re-run
-clustering on the frontend or backend. 6. When uncertain, propose
-architecture-consistent structures. 7. Write production-ready, modular
+clustering on the frontend or backend. 6. Use the scheduler.py to regularly run the engagement level clustering.  7. When uncertain, propose
+architecture-consistent structures. 8. Write production-ready, modular
 code.
 
 IMPORTANT:

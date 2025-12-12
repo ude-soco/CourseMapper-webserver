@@ -13,5 +13,12 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.getUserEngagementMetrics
   );
+
+  // Get peer activities data
+  app.get(
+    "/api/engagement/peer-activities",
+    [authJwt.verifyToken],
+    controller.getPeerActivities
+  );
 };
 

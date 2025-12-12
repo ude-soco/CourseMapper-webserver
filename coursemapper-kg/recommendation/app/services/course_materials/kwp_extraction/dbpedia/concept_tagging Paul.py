@@ -41,7 +41,7 @@ class DBpediaSpotlight:
         self.sparql.setTimeout(60)
         # close long connections and set length of timeout to avoid HTTP connection timeouts and Max retries exceeded with url
         # self.wiki_api = Wikipedia('en',headers={'Connection': 'close'},timeout=20)
-        self.wiki_api = Wikipedia('en')
+        self.wiki_api = Wikipedia(user_agent="CourseMapper/1.0 (https://github.com/socialcomputing/CourseMapper)", language="en")
         # self.model = SentenceTransformer('all-mpnet-base-v2')
         #self.model = TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b')
         # self.model = TransformerDocumentEmbeddings('sentence-transformers/all-mpnet-base-v2')

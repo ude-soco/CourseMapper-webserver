@@ -21,6 +21,9 @@
           [courseName]="getCourseName()"
           [engagementLevel]="getEngagementLevel()"
           [engagementMetrics]="getEngagementMetrics()"
+          [userId]="loggedInUser?.id || ''"
+          [courseId]="currentCourse?._id || ''"
+          [userName]="loggedInUser?.name || 'You'"
         ></app-engagement-charts>
       </div>
     </div>

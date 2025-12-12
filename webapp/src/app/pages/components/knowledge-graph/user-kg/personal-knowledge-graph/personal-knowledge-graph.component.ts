@@ -23,7 +23,6 @@ export class PersonalKnowledgeGraphComponent implements OnInit {
   showUserKg: boolean = true;
   showEngagementKg: boolean = false;
   showDNUEngagementKg: boolean = false;
-  showEngagementCharts: boolean = false;
 
   @Output() conceptMapEvent: EventEmitter<boolean> = new EventEmitter();
 
@@ -180,13 +179,4 @@ export class PersonalKnowledgeGraphComponent implements OnInit {
     }
   }
 
-  toggleEngagementCharts() {
-    this.showEngagementCharts = !this.showEngagementCharts;
-  }
-
-  getEngagementLevel(): string {
-    // This can be dynamically calculated based on user data
-    // For now, returning a placeholder
-    return 'Low';
-  }
 }

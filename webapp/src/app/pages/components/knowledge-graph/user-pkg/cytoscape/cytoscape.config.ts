@@ -1,4 +1,5 @@
 import cytoscape from 'cytoscape';
+import { getEngagementEdgeWidth, getEngagementNodeSize } from './utils/graph.utils';
 
 /**
  * Cytoscape configuration for User PKG
@@ -108,8 +109,14 @@ export function getCytoscapeStyles(): cytoscape.Stylesheet[] {
     {
       selector: 'node[type="course"]',
       style: {
-        'height': 80,
-        'width': 80,
+        'height': (elm: any) => {
+          const engagementLevel = elm.data('engagementLevel');
+          return getEngagementNodeSize(engagementLevel);
+        },
+        'width': (elm: any) => {
+          const engagementLevel = elm.data('engagementLevel');
+          return getEngagementNodeSize(engagementLevel);
+        },
         'font-size': 14,
         'shape': 'ellipse',
         'background-color': '#6B5D3F',
@@ -135,7 +142,13 @@ export function getCytoscapeStyles(): cytoscape.Stylesheet[] {
       selector: 'edge',
       style: {
         'curve-style': 'bezier',
-        'width': 3,
+        'width': (elm: any) => {
+          // For engagement edges, use engagement level-based width
+          if (elm.data('type') === 'engagement' && elm.data('engagementLevel')) {
+            return getEngagementEdgeWidth(elm.data('engagementLevel'));
+          }
+          return 3;
+        },
         'target-arrow-shape': 'triangle',
         'target-arrow-color': '#9CA3AF',
         'line-color': '#9CA3AF',

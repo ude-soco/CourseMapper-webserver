@@ -1,6 +1,6 @@
 import numpy as np
 import wikipediaapi
-from html2text import html2text as htt
+import html2text
 from typing import List, Tuple
 import psycopg
 from psycopg.rows import dict_row
@@ -47,7 +47,7 @@ class WikipediaService:
 
     def get_page(self, title: str) -> WikipediaPage | None:
         # Normalize title
-        title = htt(title)
+        title = html2text.html2text(title)
         title = title.replace('_', ' ')
         title = title.strip()
 
@@ -104,7 +104,7 @@ class WikipediaService:
         return WikipediaPage(page.title, page.summary, [category_name for _, category_name in page_categories], page_links)
 
     def get_alternative_pages(self, title: str) -> List[WikipediaPage | None]:
-        title = htt(title)
+        title = html2text.html2text(title)
         title = title.replace('_', ' ')
         title = title.strip()
 

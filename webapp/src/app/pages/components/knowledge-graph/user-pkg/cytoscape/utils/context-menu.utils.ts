@@ -8,6 +8,7 @@ export interface ContextMenuCallbacks {
   onStatusChange: (concept: any, status: 'u' | 'dnu' | 'new') => void;
   onToggleCourse: (node: any) => void;
   onToggleRelated: (node: any) => void;
+  onViewEngagementDashboard?: (courseData: any) => void;
 }
 
 /**
@@ -74,8 +75,20 @@ function getCommandsForCourse(
   callbacks: ContextMenuCallbacks
 ): any[] {
   const courseData = ele.data();
+  const commands = [];
   
-  return [
+  // View Engagement Dashboard command
+  if (callbacks.onViewEngagementDashboard) {
+    commands.push({
+      content: '<span style="font-size:14px;">View Engagement Dashboard</span> <br> <i class="pi pi-chart-line" style="color:#3B82F6;"></i>',
+      select: () => {
+        console.log('[Context Menu] View engagement dashboard for course:', courseData);
+        callbacks.onViewEngagementDashboard!(courseData);
+      },
+    });
+  }
+  
+  commands.push(
     {
       content: '<span style="font-size:14px;">View Course</span> <br> <i class="pi pi-external-link" style="color:#3B82F6;"></i>',
       select: () => {
@@ -89,8 +102,10 @@ function getCommandsForCourse(
         console.log('[Context Menu] Course details:', courseData);
         // TODO: Implement course details panel
       },
-    },
-  ];
+    }
+  );
+  
+  return commands;
 }
 
 function getStatusCommands(

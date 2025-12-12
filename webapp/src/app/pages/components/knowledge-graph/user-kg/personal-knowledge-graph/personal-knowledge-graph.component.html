@@ -16,14 +16,8 @@
             </div>
           </div>
 
-          <!-- Checkboxes for different KG views and Engagement Charts button -->
+          <!-- Checkboxes for different KG views -->
           <div class="flex items-center gap-4">
-            <app-iconbutton
-              icon="bx-bar-chart-alt-2"
-              color="text-blue-500"
-              (click)="toggleEngagementCharts()"
-              pTooltip="View Engagement Charts"
-            ></app-iconbutton>
             <div class="flex items-center">
               <input
                 type="checkbox"
@@ -57,16 +51,8 @@
       </div>
       <hr />
       
-      <!-- Engagement Charts View -->
-      <div *ngIf="showEngagementCharts" class="w-full">
-        <app-engagement-charts
-          [courseName]="'Personal Dashboard'"
-          [engagementLevel]="getEngagementLevel()"
-        ></app-engagement-charts>
-      </div>
-
       <!-- Knowledge Graph View -->
-      <div *ngIf="!showEngagementCharts" class="w-full max-w-screen-2xl p-4">
+      <div class="w-full max-w-screen-2xl p-4">
         <app-concept-map-user-kg
           #conceptMap
           [user]="loggedInUser"

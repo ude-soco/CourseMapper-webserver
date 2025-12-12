@@ -76,12 +76,6 @@ export class NavbarComponent implements OnInit {
         command: () => this.onViewPersonalDashboard(),
       },
       {
-        label: 'Engagement Dashboard',
-        icon: 'pi pi-chart-line',
-        title: 'View your engagement analytics',
-        command: () => this.onViewEngagementDashboard(),
-      },
-      {
         label: 'Personal Knowledge Graphs',
         icon: 'pi pi-sitemap',
         title: 'View your personal knowledge graph',
@@ -171,9 +165,5 @@ export class NavbarComponent implements OnInit {
 
   onViewPkg(): void {
     this.router.navigate(['user/pkg']);
-  }
-
-  onViewEngagementDashboard(): void {
-    this.router.navigate(['user/engagement']);
   }
 }

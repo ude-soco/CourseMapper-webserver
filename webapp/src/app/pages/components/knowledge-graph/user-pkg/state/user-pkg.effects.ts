@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
+import { of, from } from 'rxjs';
 import { map, switchMap, catchError, withLatestFrom, filter, take } from 'rxjs/operators';
 import * as UserPkgActions from './user-pkg.actions';
 import { Neo4jService } from 'src/app/services/neo4j.service';
@@ -34,7 +34,7 @@ export class UserPkgEffects {
       ofType(UserPkgActions.loadUserPkg),
       switchMap(({ userId, topNConcepts }) =>
         this.neo4jService.getUserPkg(userId, topNConcepts).pipe(
-          map((response) => {
+          switchMap((response) => {
             console.log('[Effects] Received response:', response);
             
             // Debug: log relationship types
@@ -45,13 +45,34 @@ export class UserPkgEffects {
             }, {});
             console.log('[Effects] Relationship type counts:', typeCounts);
             
-            const graphData = this.transformToGraphData(userId, response.records);
-            return UserPkgActions.loadUserPkgSuccess({
-              graphData,
-              rawConceptRecords: response.records,
-              courses: response.courses,
-              materials: response.materials,
-            });
+            // Fetch engagement levels for courses
+            return from(this.neo4jService.getLevelofEngagement(userId)).pipe(
+              map((engagementResponse) => {
+                const coursesWithEngagement = this.mergeEngagementLevels(
+                  response.courses,
+                  engagementResponse
+                );
+                
+                const graphData = this.transformToGraphData(userId, response.records);
+                return UserPkgActions.loadUserPkgSuccess({
+                  graphData,
+                  rawConceptRecords: response.records,
+                  courses: coursesWithEngagement,
+                  materials: response.materials,
+                });
+              }),
+              catchError((error) => {
+                console.warn('[Effects] Failed to fetch engagement levels, using courses without engagement:', error);
+                // If engagement fetch fails, proceed without engagement levels
+                const graphData = this.transformToGraphData(userId, response.records);
+                return of(UserPkgActions.loadUserPkgSuccess({
+                  graphData,
+                  rawConceptRecords: response.records,
+                  courses: response.courses,
+                  materials: response.materials,
+                }));
+              })
+            );
           }),
           catchError((error) => {
             const errorMessage = error?.error?.error || error?.message || 'Failed to load knowledge graph';
@@ -61,6 +82,34 @@ export class UserPkgEffects {
       )
     )
   );
+
+  /**
+   * Merge engagement levels from Neo4j response with course data
+   */
+  private mergeEngagementLevels(courses: any[], engagementResponse: any): any[] {
+    if (!engagementResponse?.records || !Array.isArray(engagementResponse.records)) {
+      return courses;
+    }
+
+    // Create a map of courseId -> engagementLevel from Neo4j response
+    const engagementMap = new Map<string, string>();
+    engagementResponse.records.forEach((record: any) => {
+      const courseId = record.target?.properties?.cid || record.target?.properties?.courseId;
+      const engagementLevel = record.r?.properties?.level;
+      
+      if (courseId && engagementLevel) {
+        // Normalize engagement level (lowercase)
+        const normalizedLevel = String(engagementLevel).toLowerCase();
+        engagementMap.set(String(courseId), normalizedLevel);
+      }
+    });
+
+    // Merge engagement levels into courses
+    return courses.map(course => ({
+      ...course,
+      engagementLevel: engagementMap.get(course.courseId) || 'low', // Default to 'low' if not found
+    }));
+  }
 
   /**
    * Transform API records to Cytoscape graph data
