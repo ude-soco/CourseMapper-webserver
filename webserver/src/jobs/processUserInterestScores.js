@@ -1,10 +1,20 @@
 const fs = require('fs');
 const neo4j = require('neo4j-driver');
 const path = require('path');
+const os = require('os');
 const dotenv = require('dotenv');
 
-// Load environment variables
-dotenv.config();
+// Use OS temp directory for intermediate files
+function getTempDir() {
+  const tmpDir = path.join(os.tmpdir(), 'coursemapper-interest-scores');
+  if (!fs.existsSync(tmpDir)) {
+    fs.mkdirSync(tmpDir, { recursive: true });
+  }
+  return tmpDir;
+}
+
+// Load environment variables from webserver root
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 // Neo4j connection
 const driver = neo4j.driver(
@@ -449,7 +459,7 @@ async function processUserActivities(username) {
     console.log();
 
     // Load activities breakdown (centralized data location)
-    const activitiesPath = path.join(__dirname, '../../coursemapper-kg/recommendation/level-of-interest/data/activities_breakdown.json');
+    const activitiesPath = path.join(__dirname, '../../../coursemapper-kg/recommendation/level-of-interest/data/activities_breakdown.json');
     const activitiesData = JSON.parse(await fs.promises.readFile(activitiesPath, 'utf8'));
 
     // Find user by username (case-insensitive)
@@ -546,7 +556,7 @@ async function processUserActivities(username) {
     console.log();
 
     // Load activity weights
-    const weightsPath = path.join(__dirname, '../../coursemapper-kg/recommendation/level-of-interest/data/activity-weights.json');
+    const weightsPath = path.join(__dirname, '../../../coursemapper-kg/recommendation/level-of-interest/data/activity-weights.json');
     const weightsData = JSON.parse(await fs.promises.readFile(weightsPath, 'utf8'));
     
     // Create activity_id -> weight mapping
@@ -573,9 +583,10 @@ async function processUserActivities(username) {
     }
     console.log();
 
-    // Save intermediate files
-    const mappedConceptsPath = path.join(__dirname, 'jsonFiles', `mapped_concepts_${usernameSafe}.json`);
-    const conceptBasedPath = path.join(__dirname, 'jsonFiles', `concept_based_activities_${usernameSafe}.json`);
+    // Save intermediate files to OS temp directory
+    const tempDir = getTempDir();
+    const mappedConceptsPath = path.join(tempDir, `mapped_concepts_${usernameSafe}.json`);
+    const conceptBasedPath = path.join(tempDir, `concept_based_activities_${usernameSafe}.json`);
 
     await fs.promises.writeFile(mappedConceptsPath, JSON.stringify(mappingOutput, null, 2));
     await fs.promises.writeFile(conceptBasedPath, JSON.stringify(conceptBased, null, 2));
