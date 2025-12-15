@@ -65,13 +65,22 @@
       
       <!-- Graph Canvas -->
       <div class="graph-canvas">
+        <!-- Knowledge State / Engagement Level Graph -->
         <app-cytoscape-pkg
+          *ngIf="(viewMode$ | async) !== 'interest'"
           (conceptSelected)="onConceptSelected($event)"
           (conceptStatusChanged)="onConceptStatusChanged($event)"
           (courseNodeClicked)="onCourseNodeClicked($event)"
           (edgeClicked)="onEdgeClicked($event)"
           (visibleNodesChanged)="onVisibleNodesChanged($event)">
         </app-cytoscape-pkg>
+        
+        <!-- Interest Level Graph -->
+        <app-interest-level-graph
+          *ngIf="(viewMode$ | async) === 'interest'"
+          (conceptSelected)="onConceptSelected($event)"
+          (visibleNodesChanged)="onVisibleNodesChanged($event)">
+        </app-interest-level-graph>
       </div>
       
       <!-- Concept Details Panel -->
