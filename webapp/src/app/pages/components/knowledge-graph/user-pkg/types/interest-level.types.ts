@@ -51,6 +51,7 @@ export interface InterestGraphEdge {
     label: string;
     interestScore: number | null;
     relationshipType: 'interested_in';
+    tooltip?: string;
   };
 }
 

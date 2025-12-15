@@ -1,1 +1,4 @@
 <div id="cy-interest" class="cytoscape-container"></div>
+<div #edgeTooltip class="edge-tooltip" [style.display]="tooltipVisible ? 'block' : 'none'" [style.left.px]="tooltipX" [style.top.px]="tooltipY">
+  {{ tooltipText }}
+</div>

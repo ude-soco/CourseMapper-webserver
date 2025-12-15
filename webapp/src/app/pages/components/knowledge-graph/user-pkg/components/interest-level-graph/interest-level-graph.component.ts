@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil, distinctUntilChanged, filter } from 'rxjs/operators';
@@ -23,6 +23,13 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   
   @Output() conceptSelected = new EventEmitter<any>();
   @Output() visibleNodesChanged = new EventEmitter<any[]>();
+  @ViewChild('edgeTooltip', { static: false }) tooltipElement!: ElementRef;
+  
+  // Tooltip state
+  tooltipVisible = false;
+  tooltipText = '';
+  tooltipX = 0;
+  tooltipY = 0;
 
   constructor(private store: Store) {}
 
@@ -122,7 +129,7 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       wheelSensitivity: 0.2,
     });
 
-    // Add click event
+    // Add click event for nodes
     this.cy.on('tap', 'node', (event: any) => {
       const node = event.target;
       const nodeData = node.data();
@@ -142,6 +149,50 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       } else if (nodeData.type === 'user') {
         console.log('[Interest Level Graph] User node clicked');
       }
+    });
+    
+    // Add hover tooltip for edges
+    this.cy.on('mouseover', 'edge', (event: any) => {
+      const edge = event.target;
+      const edgeData = edge.data();
+      
+      if (edgeData.tooltip) {
+        // Highlight edge
+        edge.style({
+          'line-color': '#6366F1',
+          'target-arrow-color': '#6366F1',
+          'width': 4
+        });
+        
+        // Show tooltip at mouse position
+        const container = this.cy.container();
+        const containerRect = container.getBoundingClientRect();
+        
+        // Get edge midpoint position
+        const midpoint = edge.midpoint();
+        const renderedPosition = this.cy.zoom() * midpoint.x + this.cy.pan().x;
+        const renderedPositionY = this.cy.zoom() * midpoint.y + this.cy.pan().y;
+        
+        this.tooltipText = edgeData.tooltip;
+        this.tooltipX = renderedPosition + 10;
+        this.tooltipY = renderedPositionY - 20;
+        this.tooltipVisible = true;
+      }
+    });
+    
+    this.cy.on('mouseout', 'edge', (event: any) => {
+      const edge = event.target;
+      
+      // Reset edge style
+      edge.style({
+        'line-color': '#9CA3AF',
+        'target-arrow-color': '#9CA3AF',
+        'width': 3
+      });
+      
+      // Hide tooltip
+      this.tooltipVisible = false;
+      this.tooltipText = '';
     });
 
     // Emit visible nodes after render
@@ -199,6 +250,10 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       const scoreLabel = concept.interestScore !== null 
         ? `Interested_in : score (${concept.interestScore.toFixed(5).replace('.', ',')})`
         : 'Interested_in : score (null)';
+      
+      const scoreDescription = concept.interestScore !== null
+        ? `Interest Score: ${concept.interestScore.toFixed(5)}\n\nThis score (0-1) represents your level of interest in "${concept.conceptName}" based on your learning activities. Higher scores indicate stronger interest through interactions like viewing materials, marking concepts as understood, and engaging with related content.`
+        : `Interest Score: Not yet calculated\n\nThis concept is part of your enrolled courses, but no activity-based interest score has been calculated yet. Your score will be updated during the next nightly batch processing.`;
 
       edges.push({
         data: {
@@ -207,7 +262,8 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
           target: nodeId,
           label: scoreLabel,
           interestScore: concept.interestScore,
-          relationshipType: 'interested_in'
+          relationshipType: 'interested_in',
+          tooltip: scoreDescription
         }
       });
     });
