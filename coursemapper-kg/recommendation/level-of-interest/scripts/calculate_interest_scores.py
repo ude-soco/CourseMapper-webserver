@@ -14,10 +14,12 @@ Process:
 """
 
 import json
+import sys
 import numpy as np
 import tempfile
 from pathlib import Path
 from datetime import datetime
+
 
 
 def load_json(file_path):
@@ -464,7 +466,7 @@ def main(user_name):
 
 
 if __name__ == "__main__":
-    import sys
+
     
     # Determine which user to process
     if len(sys.argv) > 1:
