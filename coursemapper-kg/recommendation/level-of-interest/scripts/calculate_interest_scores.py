@@ -15,6 +15,7 @@ Process:
 
 import json
 import numpy as np
+import tempfile
 from pathlib import Path
 from datetime import datetime
 
@@ -233,11 +234,11 @@ def main(user_name="khaled"):
     
     # Define paths
     base_path = Path(__file__).parent
-    # Go up from scripts/ -> level-of-interest/ -> recommendation/ -> coursemapper-kg/ -> CourseMapper-webserver/ -> webserver/
-    webserver_path = base_path.parent.parent.parent.parent / "webserver"
-    activities_path = webserver_path / "test" / "jsonFiles" / f"concept_based_activities_{user_name}.json"
+    # Use OS temp directory (same as Node.js)
+    temp_dir = Path(tempfile.gettempdir()) / "coursemapper-interest-scores"
+    activities_path = temp_dir / f"concept_based_activities_{user_name}.json"
     weights_path = base_path.parent / "data" / "activity-weights.json"
-    output_path = webserver_path / "test" / "jsonFiles" / f"interest_scores_{user_name}.json"
+    output_path = temp_dir / f"interest_scores_{user_name}.json"
     
     print(f"Loading data...")
     print(f"  Activities: {activities_path}")
