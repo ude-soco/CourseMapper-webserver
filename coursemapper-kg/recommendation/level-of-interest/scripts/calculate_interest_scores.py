@@ -226,7 +226,7 @@ def z_score_normalize(raw_scores, k):
     return normalized
 
 
-def main(user_name="khaled"):
+def main(user_name):
     print("=" * 80)
     print("INTEREST SCORE CALCULATION")
     print("=" * 80)
@@ -470,7 +470,9 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         user_name = sys.argv[1].lower()
     else:
-        user_name = "khaled"  # Default to khaled if no argument
+        print("Error: No username provided.")
+        print("Usage: python calculate_interest_scores.py <username>")
+        sys.exit(1)
     
     print(f"Processing user: {user_name}")
     print()
