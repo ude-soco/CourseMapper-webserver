@@ -36,7 +36,7 @@
     style="max-width: 35.85%"
   >
     <!-- style="max-width: 35.85%; max-height: 75%" -->
-    <p-accordion styleClass="pAccRec" id="accordionComponent">
+    <p-accordion styleClass="pAccRec" id="accordionComponent" (onOpen)="onAccordionTabOpen($event)">
       <p-accordionTab [selected]="true" id="accordionHeader">
         <div
           class="innerAbstractBlock"
@@ -130,6 +130,7 @@
       <p-accordionTab
         header="Why is '{{ node_name }}' recommended?"
         id="accordionHeaderReason"
+        [cache]="false"
       >
         <div id="abstract_reason_Block" *ngIf="showVisual && node_roads">
           <app-cytoscape-roads [elements]="node_roads" [cyHeight]="cyHeightRec">
