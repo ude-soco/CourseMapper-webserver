@@ -194,9 +194,9 @@ export function getEdgeLabel(
     const edgeType = config.userToCourseEdgeType;
     const style = EDGE_STYLES[edgeType];
     if (style.showScore && score !== undefined) {
-      return `${style.label} (${score.toFixed(3)})`;
+      return `${style.label} (${score.toFixed(5)})`;
     }
-    return style.label;
+    return `score: ${score.toFixed(5)}`;
   }
   
   // User → Concept edge
@@ -211,7 +211,7 @@ export function getEdgeLabel(
     if (viewMode === 'interest') {
       const style = EDGE_STYLES['interest'];
       if (style.showScore && score !== undefined) {
-        return `${style.label} (${score.toFixed(3)})`;
+        return `Interested_in : score (${score.toFixed(5).replace('.', ',')})`;
       }
       return style.label;
     }
