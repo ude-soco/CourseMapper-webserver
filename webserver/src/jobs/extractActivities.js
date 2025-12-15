@@ -76,11 +76,11 @@ async function main() {
     console.log(`📊 Total users processed: ${processedCount}`);
 
   } catch (error) {
-    console.error("❌ Error during extraction:", error);
+    console.error("Error during extraction:", error);
     throw error; // Re-throw to signal failure to caller
   } finally {
     await mongoose.disconnect();
-    console.log("🔌 Disconnected from MongoDB");
+    console.log("Disconnected from MongoDB");
   }
 }
 

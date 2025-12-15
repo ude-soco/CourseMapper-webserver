@@ -43,6 +43,10 @@ async function processAllUsers() {
   const webserverDir = path.join(__dirname, '..');
   const activitiesPath = path.join(__dirname, '../../../coursemapper-kg/recommendation/level-of-interest/data/activities_breakdown.json');
 
+  // Ensure data directory exists
+  const dataDir = path.dirname(activitiesPath);
+  await fs.mkdir(dataDir, { recursive: true });
+
   console.log('═'.repeat(80));
   console.log('PROCESSING ALL USERS - INTEREST SCORES');
   console.log('═'.repeat(80));

@@ -3,9 +3,10 @@
  * 
  * Runs the complete interest score pipeline daily at midnight (00:00).
  * This scheduler orchestrates the entire workflow:
+ * 0. Process course enrollments (G10 activities) - Initialize INTERESTED_IN relationships
  * 1. Extract activities from MongoDB
  * 2. Map activities to concepts and calculate scores
- * 3. Update Neo4j with INTERESTED_IN relationships
+ * 3. Update Neo4j with INTERESTED_IN relationships (set scores)
  * 
  * Usage:
  *   - Import and register in Express app during server startup
@@ -56,6 +57,10 @@ async function runInterestScorePipeline() {
 
   try {
     const webserverDir = path.join(__dirname, '..', '..');
+    
+    // Step 0: Process course enrollments (G10 activities)
+    console.log('\n📚 STEP 0: Processing course enrollments...');
+    await runNodeScript(path.join(__dirname, 'processEnrollments.js'), webserverDir);
     
     // Step 1: Extract activities from MongoDB
     console.log('\n📦 STEP 1: Extracting activities from MongoDB...');

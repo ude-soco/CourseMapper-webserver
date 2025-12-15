@@ -468,7 +468,7 @@ async function processUserActivities(username) {
     );
 
     if (!userEntry) {
-      console.error(`❌ User "${username}" not found in activities breakdown`);
+      console.error(`User "${username}" not found in activities breakdown`);
       console.log('\nAvailable users:');
       Object.values(activitiesData).forEach(user => {
         let totalActivities = 0;
@@ -543,7 +543,7 @@ async function processUserActivities(username) {
       mapped_activities: allMappedActivities
     };
 
-    console.log(`\n✅ Mapping complete!`);
+    console.log(`\n Mapping complete!`);
     console.log(`Total activities: ${mappingOutput.total_activities_mapped}`);
     console.log(`Activities with concepts: ${mappingOutput.activities_with_concepts}`);
     console.log(`Success rate: ${((mappingOutput.activities_with_concepts / mappingOutput.total_activities_mapped) * 100).toFixed(2)}%`);
@@ -568,7 +568,7 @@ async function processUserActivities(username) {
     const conceptBased = transformToConceptBased(mappingOutput, activityWeights);
     const totalConcepts = Object.keys(conceptBased[userId]).length - 1; // -1 for username field
 
-    console.log(`✅ Transformation complete!`);
+    console.log(`Transformation complete!`);
     console.log(`Total unique concepts: ${totalConcepts}`);
     
     // Check for aggregated duplicates
@@ -610,8 +610,8 @@ async function main() {
   const username = process.argv[2];
 
   if (!username) {
-    console.error('❌ Usage: node processUserInterestScores.js <username>');
-    console.error('   Example: node processUserInterestScores.js "John Doe"');
+    console.error('Usage: node processUserInterestScores.js <username>');
+    console.error('Example: node processUserInterestScores.js "John Doe"');
     process.exit(1);
   }
 
