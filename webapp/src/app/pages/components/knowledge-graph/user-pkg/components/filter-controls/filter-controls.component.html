@@ -11,8 +11,8 @@
       </p-radioButton>
       <label for="knowledge" class="cursor-pointer text-sm font-medium text-gray-700 min-w-[110px]">Knowledge State</label>
       
-      <!-- Understanding Status Filter - Shows for both Knowledge and Interest modes -->
-      <div *ngIf="(viewMode$ | async) === 'knowledge' || (viewMode$ | async) === 'interest'" class="flex items-center gap-2 ml-2">
+      <!-- Understanding Status Filter - Only shows for Knowledge State view -->
+      <div *ngIf="(viewMode$ | async) === 'knowledge'" class="flex items-center gap-2 ml-2">
         <label class="text-sm font-medium text-gray-700 whitespace-nowrap"></label>
         <p-dropdown 
           [options]="understandingStatusOptions" 
