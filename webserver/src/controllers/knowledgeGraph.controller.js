@@ -1766,6 +1766,21 @@ export const getInterestConcepts = async (req, res) => {
     
     console.log(`[Interest Concepts] Found ${concepts.length} interest concepts for user ${userId}`);
     
+    // Check for duplicates
+    const conceptIds = concepts.map(c => c.conceptId);
+    const uniqueIds = new Set(conceptIds);
+    if (conceptIds.length !== uniqueIds.size) {
+      console.warn('[Interest Concepts] WARNING: Duplicates detected in response!');
+      const duplicates = conceptIds.filter((id, index) => conceptIds.indexOf(id) !== index);
+      console.warn('[Interest Concepts] Duplicate IDs:', [...new Set(duplicates)]);
+      
+      // Log duplicate concepts
+      duplicates.forEach(dupId => {
+        const dups = concepts.filter(c => c.conceptId === dupId);
+        console.warn(`[Interest Concepts] Concept ${dupId}:`, dups);
+      });
+    }
+    
     return res.status(200).send({
       userId,
       concepts

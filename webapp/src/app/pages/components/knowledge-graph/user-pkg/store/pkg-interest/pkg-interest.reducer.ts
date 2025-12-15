@@ -32,13 +32,20 @@ export const pkgInterestReducer = createReducer(
     error: null,
   })),
   
-  on(PkgInterestActions.loadInterestGraphSuccess, (state, { concepts }) => ({
-    ...state,
-    concepts,
-    loading: false,
-    loaded: true,
-    error: null,
-  })),
+  on(PkgInterestActions.loadInterestGraphSuccess, (state, { concepts }) => {
+    // Deduplicate concepts by conceptId as a safety measure
+    const uniqueConcepts = Array.from(
+      new Map(concepts.map(c => [c.conceptId, c])).values()
+    );
+    
+    return {
+      ...state,
+      concepts: uniqueConcepts,
+      loading: false,
+      loaded: true,
+      error: null,
+    };
+  }),
   
   on(PkgInterestActions.loadInterestGraphFailure, (state, { error }) => ({
     ...state,

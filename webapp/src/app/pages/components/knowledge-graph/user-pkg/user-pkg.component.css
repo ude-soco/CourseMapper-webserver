@@ -80,6 +80,10 @@
   background-color: #9B59B6;
 }
 
+.legend-dot.main-concept {
+  background-color: #3B82F6;
+}
+
 /* Empty State */
 .empty-state {
   display: flex;

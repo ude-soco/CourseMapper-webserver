@@ -753,18 +753,19 @@ export async function getInterestConcepts(userId, topN = null) {
   const query = `
     MATCH (u:User {uid: $userId})-[r:INTERESTED_IN]->(c:Concept)
     WHERE c.type = 'main_concept'
-    WITH c, r,
+    WITH DISTINCT c.cid as cid, c.name as name, c.wikipedia as wikipedia, c.abstract as abstract,
+         MAX(r.interestScore) as maxScore,
          CASE 
-           WHEN r.interestScore IS NULL THEN -1
-           ELSE r.interestScore 
+           WHEN MAX(r.interestScore) IS NULL THEN -1
+           ELSE MAX(r.interestScore)
          END as sortScore
-    ORDER BY sortScore DESC, c.name ASC
+    ORDER BY sortScore DESC, name ASC
     ${topN ? 'LIMIT $topN' : ''}
-    RETURN c.cid as conceptId,
-           c.name as conceptName,
-           r.interestScore as interestScore,
-           c.wikipedia as wikipedia,
-           c.abstract as abstract
+    RETURN cid as conceptId,
+           name as conceptName,
+           maxScore as interestScore,
+           wikipedia,
+           abstract
     ORDER BY sortScore DESC`;
   
   const params = { userId };
@@ -784,8 +785,13 @@ export async function getInterestConcepts(userId, topN = null) {
     abstract: record.get('abstract')
   }));
   
-  console.log(`[Interest Concepts] Found ${concepts.length} concepts for user ${userId}`);
+  // Deduplicate by conceptId as an extra safety measure
+  const uniqueConcepts = Array.from(
+    new Map(concepts.map(c => [c.conceptId, c])).values()
+  );
   
-  return concepts;
+  console.log(`[Interest Concepts] Found ${uniqueConcepts.length} unique concepts for user ${userId}`);
+  
+  return uniqueConcepts;
 }
 

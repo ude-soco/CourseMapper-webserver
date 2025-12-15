@@ -155,6 +155,10 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   private transformToGraphData(user: User, concepts: InterestConcept[]): InterestGraphData {
     const nodes: InterestGraphNode[] = [];
     const edges: InterestGraphEdge[] = [];
+    const seenConceptIds = new Set<string>();
+
+    console.log('[Interest Level Graph] Total concepts before dedup:', concepts.length);
+    console.log('[Interest Level Graph] Concepts:', concepts.map(c => ({ id: c.conceptId, name: c.conceptName })));
 
     // Create user node with user initials
     nodes.push({
@@ -165,9 +169,17 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Create concept nodes and edges
+    // Create concept nodes and edges with deduplication
     concepts.forEach((concept) => {
       const nodeId = `concept_${concept.conceptId}`;
+      
+      // Skip if we've already added this concept
+      if (seenConceptIds.has(concept.conceptId)) {
+        console.warn('[Interest Level Graph] Skipping duplicate concept:', concept.conceptId, concept.conceptName);
+        return;
+      }
+      
+      seenConceptIds.add(concept.conceptId);
       
       // Create concept node (blue)
       nodes.push({
