@@ -1751,6 +1751,32 @@ export const getUserInterestScores = async (req, res) => {
 };
 
 /**
+ * Get interest concepts for Interest Level graph
+ * Returns only INTERESTED_IN relationships with concept details
+ * 
+ * GET /api/pkg/:userId/interests
+ */
+export const getInterestConcepts = async (req, res) => {
+  const { userId } = req.params;
+  const topN = req.query.topN ? parseInt(req.query.topN, 10) : null;
+
+  try {
+    // Get concepts with INTERESTED_IN relationships from Neo4j
+    const concepts = await neo4j.getInterestConcepts(userId, topN);
+    
+    console.log(`[Interest Concepts] Found ${concepts.length} interest concepts for user ${userId}`);
+    
+    return res.status(200).send({
+      userId,
+      concepts
+    });
+  } catch (err) {
+    console.error('[Interest Concepts] Error fetching interest concepts:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
  * Get course hierarchy for advanced filters
  * Returns user's enrolled courses with their materials and slides
  * 

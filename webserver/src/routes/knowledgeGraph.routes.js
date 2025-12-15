@@ -521,6 +521,13 @@ module.exports = function (app) {
     controller.getUserInterestScores
   );
 
+  // Get user interest concepts for Interest Level graph
+  app.get(
+    "/api/pkg/:userId/interests",
+    [authJwt.verifyToken],
+    controller.getInterestConcepts
+  );
+
   // Get course hierarchy for advanced filters (courses -> materials -> slides)
   app.get(
     "/api/knowledge-graph/course-hierarchy",

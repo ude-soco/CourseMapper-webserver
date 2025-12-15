@@ -741,3 +741,51 @@ export async function getUserInterestScores(userId, minScore = 0.0) {
   
   return scoresMap;
 }
+
+/**
+ * Get interest concepts for Interest Level graph
+ * Returns concepts with INTERESTED_IN relationships (including NULL scores)
+ * @param {string} userId - User ID (uid property)
+ * @param {number|null} topN - Number of top concepts to return (null for all)
+ * @returns {Promise<Array>} Array of concept objects with interest scores
+ */
+export async function getInterestConcepts(userId, topN = null) {
+  const query = `
+    MATCH (u:User {uid: $userId})-[r:INTERESTED_IN]->(c:Concept)
+    WHERE c.type = 'main_concept'
+    WITH c, r,
+         CASE 
+           WHEN r.interestScore IS NULL THEN -1
+           ELSE r.interestScore 
+         END as sortScore
+    ORDER BY sortScore DESC, c.name ASC
+    ${topN ? 'LIMIT $topN' : ''}
+    RETURN c.cid as conceptId,
+           c.name as conceptName,
+           r.interestScore as interestScore,
+           c.wikipedia as wikipedia,
+           c.abstract as abstract
+    ORDER BY sortScore DESC`;
+  
+  const params = { userId };
+  if (topN) {
+    // Convert to Neo4j integer to avoid validation errors
+    params.topN = neo4j.int(topN);
+  }
+  
+  const { records } = await graphDb.driver.executeQuery(query, params);
+  
+  // Convert to array of concept objects
+  const concepts = records.map(record => ({
+    conceptId: record.get('conceptId'),
+    conceptName: record.get('conceptName'),
+    interestScore: record.get('interestScore'),
+    wikipedia: record.get('wikipedia'),
+    abstract: record.get('abstract')
+  }));
+  
+  console.log(`[Interest Concepts] Found ${concepts.length} concepts for user ${userId}`);
+  
+  return concepts;
+}
+
