@@ -70,12 +70,12 @@ class PKGInterestScoreUpdater:
         MATCH (c:Concept {cid: $concept_id})
         WHERE c.type = 'main_concept'
         MERGE (u)-[r:INTERESTED_IN]->(c)
-        SET r.score = $score,
+        SET r.interestScore = $score,
             r.updatedAt = datetime()
         RETURN u.uid as user_id, 
                c.cid as concept_id, 
                c.name as concept_name,
-               r.score as score,
+               r.interestScore as score,
                r.updatedAt as updated_at
         """
         
