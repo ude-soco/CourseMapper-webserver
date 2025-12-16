@@ -33,4 +33,20 @@ export class PkgService {
       map(response => response.concepts)
     );
   }
+  
+  /**
+   * Update (manually adjust) interest score for a user-concept pair
+   * This allows users to override calculated scores for better recommendations
+   * 
+   * @param userId - User ID
+   * @param conceptId - Concept ID
+   * @param score - New interest score (0-1)
+   * @returns Observable with update confirmation
+   */
+  updateInterestScore(userId: string, conceptId: string, score: number): Observable<any> {
+    return this.http.put(
+      `${environment.API_URL}/pkg/${userId}/interests/${conceptId}`,
+      { score }
+    );
+  }
 }

@@ -795,3 +795,30 @@ export async function getInterestConcepts(userId, topN = null) {
   return uniqueConcepts;
 }
 
+/**
+ * Update (manually adjust) interest score for a user-concept pair
+ * This allows users to override calculated scores
+ */
+export async function updateInterestScore(userId, conceptId, score) {
+  const query = `
+    MATCH (u:User {uid: $userId})-[r:INTERESTED_IN]->(c:Concept {cid: $conceptId})
+    SET r.interestScore = $score,
+        r.manuallyAdjusted = true,
+        r.adjustedAt = datetime()
+    RETURN r.interestScore as updatedScore, r.adjustedAt as adjustedAt
+  `;
+  
+  const params = { userId, conceptId, score };
+  
+  const { records } = await graphDb.driver.executeQuery(query, params);
+  
+  if (records.length === 0) {
+    throw new Error(`No INTERESTED_IN relationship found for user ${userId} and concept ${conceptId}`);
+  }
+  
+  return {
+    score: records[0].get('updatedScore'),
+    adjustedAt: records[0].get('adjustedAt')
+  };
+}
+

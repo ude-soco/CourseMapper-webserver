@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
-import { takeUntil, distinctUntilChanged, filter } from 'rxjs/operators';
+import { takeUntil, distinctUntilChanged, filter, take } from 'rxjs/operators';
 import cytoscape from 'cytoscape';
 import * as PkgInterestActions from '../../store/pkg-interest/pkg-interest.actions';
 import * as PkgInterestSelectors from '../../store/pkg-interest/pkg-interest.selectors';
@@ -9,6 +9,8 @@ import { InterestConcept, InterestGraphData, InterestGraphNode, InterestGraphEdg
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { getInitials } from 'src/app/_helpers/format';
 import { User } from 'src/app/models/User';
+import { PkgService } from 'src/app/services/pkg.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-interest-level-graph',
@@ -20,6 +22,7 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   private cy: any = null;
   private currentSearchTerm = '';
   private currentUser: User | null = null;
+  private tooltipTimeout: any = null;
   
   @Output() conceptSelected = new EventEmitter<any>();
   @Output() visibleNodesChanged = new EventEmitter<any[]>();
@@ -30,8 +33,21 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   tooltipText = '';
   tooltipX = 0;
   tooltipY = 0;
+  
+  // Score adjustment state
+  adjustedScore = 0;
+  originalScore = 0;
+  currentConceptId = '';
+  currentConceptName = '';
+  canEditScore = false;
+  hasScoreChanged = false;
+  isTooltipHovered = false;
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private pkgService: PkgService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     console.log('[Interest Level Graph] Component initialized');
@@ -173,9 +189,20 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         const renderedPosition = this.cy.zoom() * midpoint.x + this.cy.pan().x;
         const renderedPositionY = this.cy.zoom() * midpoint.y + this.cy.pan().y;
         
+        // Extract concept info from edge
+        const targetNode = this.cy.getElementById(edgeData.target);
+        const conceptData = targetNode.data();
+        
+        this.currentConceptId = conceptData.conceptId;
+        this.currentConceptName = conceptData.conceptName;
+        this.originalScore = edgeData.interestScore ?? 0;
+        this.adjustedScore = this.originalScore;
+        this.canEditScore = edgeData.interestScore !== null;
+        this.hasScoreChanged = false;
+        
         this.tooltipText = edgeData.tooltip;
-        this.tooltipX = renderedPosition + 10;
-        this.tooltipY = renderedPositionY - 20;
+        this.tooltipX = Math.min(renderedPosition + 10, window.innerWidth - 400);
+        this.tooltipY = Math.max(renderedPositionY - 20, 10);
         this.tooltipVisible = true;
       }
     });
@@ -190,9 +217,16 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         'width': 3
       });
       
-      // Hide tooltip
-      this.tooltipVisible = false;
-      this.tooltipText = '';
+      // Delay hiding tooltip to allow hovering over it
+      if (this.tooltipTimeout) {
+        clearTimeout(this.tooltipTimeout);
+      }
+      
+      this.tooltipTimeout = setTimeout(() => {
+        if (!this.isTooltipHovered) {
+          this.hideTooltip();
+        }
+      }, 200);
     });
 
     // Emit visible nodes after render
@@ -373,4 +407,119 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     const visibleNodes = this.cy.nodes().map((node: any) => node.data());
     this.visibleNodesChanged.emit(visibleNodes);
   }
+  
+  // Tooltip interaction methods
+  onTooltipMouseEnter(): void {
+    this.isTooltipHovered = true;
+    if (this.tooltipTimeout) {
+      clearTimeout(this.tooltipTimeout);
+      this.tooltipTimeout = null;
+    }
+  }
+  
+  onTooltipMouseLeave(): void {
+    this.isTooltipHovered = false;
+    this.tooltipTimeout = setTimeout(() => {
+      this.hideTooltip();
+    }, 300);
+  }
+  
+  hideTooltip(): void {
+    this.tooltipVisible = false;
+    this.tooltipText = '';
+    this.hasScoreChanged = false;
+  }
+  
+  // Score adjustment methods
+  onScoreChange(event: any): void {
+    this.adjustedScore = parseFloat(event.target.value);
+    this.hasScoreChanged = Math.abs(this.adjustedScore - this.originalScore) > 0.001;
+  }
+  
+  resetScore(): void {
+    this.adjustedScore = this.originalScore;
+    this.hasScoreChanged = false;
+  }
+  
+  saveAdjustedScore(): void {
+    if (!this.currentUser || !this.currentConceptId) {
+      return;
+    }
+    
+    console.log(`[Interest Level] Saving adjusted score: ${this.adjustedScore} for concept: ${this.currentConceptName}`);
+    
+    this.pkgService.updateInterestScore(
+      this.currentUser.id,
+      this.currentConceptId,
+      this.adjustedScore
+    ).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log('[Interest Level] Score updated successfully:', response);
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Score Updated',
+            detail: `Interest score for "${this.currentConceptName}" updated to ${this.adjustedScore.toFixed(3)}`
+          });
+          
+          // Update the edge label in the current graph without reloading
+          this.updateEdgeScore(this.currentConceptId, this.adjustedScore);
+          
+          // Update the concept in the store
+          this.updateConceptInStore(this.currentConceptId, this.adjustedScore);
+          
+          // Reset state
+          this.originalScore = this.adjustedScore;
+          this.hasScoreChanged = false;
+        },
+        error: (error) => {
+          console.error('[Interest Level] Error updating score:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Update Failed',
+            detail: error.error?.message || 'Failed to update interest score'
+          });
+        }
+      });
+  }
+  
+  private updateEdgeScore(conceptId: string, newScore: number): void {
+    if (!this.cy || !this.currentUser) return;
+    
+    const edgeId = `edge_${this.currentUser.id}_${conceptId}`;
+    const edge = this.cy.getElementById(edgeId);
+    
+    if (edge) {
+      const scoreLabel = `Interested_in : score (${newScore.toFixed(5).replace('.', ',')})`;
+      edge.data('label', scoreLabel);
+      edge.data('interestScore', newScore);
+      
+      // Also update the target concept node's interestScore
+      const targetNode = this.cy.getElementById(edge.data('target'));
+      if (targetNode) {
+        targetNode.data('interestScore', newScore);
+      }
+    }
+  }
+  
+  private updateConceptInStore(conceptId: string, newScore: number): void {
+    // Get current concepts from store
+    this.store.select(PkgInterestSelectors.selectInterestConcepts)
+      .pipe(take(1))
+      .subscribe(concepts => {
+        // Update the specific concept's score
+        const updatedConcepts = concepts.map(concept => 
+          concept.conceptId === conceptId 
+            ? { ...concept, interestScore: newScore }
+            : concept
+        );
+        
+        // Dispatch action to update the store
+        this.store.dispatch(PkgInterestActions.loadInterestGraphSuccess({ 
+          concepts: updatedConcepts 
+        }));
+      });
+  }
 }
+

@@ -1792,6 +1792,43 @@ export const getInterestConcepts = async (req, res) => {
 };
 
 /**
+ * Update (manually adjust) interest score for a user-concept pair
+ * Allows users to override calculated scores for better personalization
+ * 
+ * PUT /api/pkg/:userId/interests/:conceptId
+ */
+export const updateInterestScore = async (req, res) => {
+  const { userId, conceptId } = req.params;
+  const { score } = req.body;
+
+  // Validate score
+  if (typeof score !== 'number' || score < 0 || score > 1) {
+    return res.status(400).send({ 
+      error: 'Invalid score. Score must be a number between 0 and 1.' 
+    });
+  }
+
+  try {
+    // Update the interest score in Neo4j
+    const result = await neo4j.updateInterestScore(userId, conceptId, score);
+    
+    console.log(`[Interest Score Update] User ${userId} adjusted score for concept ${conceptId} to ${score}`);
+    
+    return res.status(200).send({
+      success: true,
+      userId,
+      conceptId,
+      score,
+      message: 'Interest score updated successfully',
+      updatedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('[Interest Score Update] Error updating interest score:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
  * Get course hierarchy for advanced filters
  * Returns user's enrolled courses with their materials and slides
  * 

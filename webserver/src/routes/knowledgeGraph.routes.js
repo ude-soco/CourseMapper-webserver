@@ -528,6 +528,13 @@ module.exports = function (app) {
     controller.getInterestConcepts
   );
 
+  // Update (manually adjust) interest score for a user-concept pair
+  app.put(
+    "/api/pkg/:userId/interests/:conceptId",
+    [authJwt.verifyToken],
+    controller.updateInterestScore
+  );
+
   // Get course hierarchy for advanced filters (courses -> materials -> slides)
   app.get(
     "/api/knowledge-graph/course-hierarchy",
