@@ -44,43 +44,54 @@
       <p>No occurrence details available</p>
     </div>
     
-    <div *ngIf="details.length > 0" class="space-y-2">
-      <div *ngFor="let detail of details" 
-           class="bg-gray-50 border border-gray-200 rounded-md p-3 transition-colors duration-200">
-        <div class="flex items-start gap-3 text-sm">
-          <!-- Slide Section -->
-          <div class="flex items-center gap-1.5 min-w-0 flex-1">
-            <i class="pi pi-file text-gray-500 flex-shrink-0"></i>
-            <span class="text-blue-600 font-medium hover:underline cursor-pointer truncate"
-                  (click)="onSlideClick($event, detail)"
-                  [title]="'Navigate to slide: ' + detail.slideName">
-              {{ detail.slideName }}
+    <!-- Tree View Structure -->
+    <div *ngIf="courseTree.length > 0" class="space-y-3">
+      <!-- Course Level -->
+      <div *ngFor="let course of courseTree" class="border border-gray-200 rounded-lg overflow-hidden">
+        <!-- Course Header -->
+        <div class="bg-blue-50 border-b border-blue-100 px-3 py-2">
+          <div class="flex items-center gap-2">
+            <i class="pi pi-bookmark text-blue-600"></i>
+            <span class="font-semibold text-gray-800 text-sm hover:underline cursor-pointer"
+                  (click)="onCourseClick($event, course.materials[0].slides[0].detail)"
+                  [title]="'Navigate to course: ' + (course.courseName || course.courseShortName)">
+              {{ course.courseName || course.courseShortName }}
             </span>
           </div>
-          
-          <span class="text-gray-300 flex-shrink-0">|</span>
-          
-          <!-- Material Section -->
-          <div class="flex items-center gap-1.5 min-w-0 flex-1">
-            <i class="pi text-red-500 flex-shrink-0" 
-               [ngClass]="detail.materialType === 'video' ? 'pi-video' : 'pi-file-pdf'"></i>
-            <span class="text-blue-600 hover:underline cursor-pointer truncate"
-                  (click)="onMaterialClick($event, detail)"
-                  [title]="'Navigate to material: ' + detail.materialName">
-              {{ detail.materialName }}
-            </span>
-          </div>
-          
-          <span class="text-gray-300 flex-shrink-0">|</span>
-          
-          <!-- Course Section -->
-          <div class="flex items-center gap-1.5 flex-shrink-0">
-            <i class="pi pi-bookmark text-blue-600 flex-shrink-0"></i>
-            <span class="text-blue-600 hover:underline cursor-pointer"
-                  (click)="onCourseClick($event, detail)"
-                  [title]="'Navigate to course: ' + (detail.courseName || detail.courseShortName)">
-              {{ detail.courseName || detail.courseShortName }}
-            </span>
+        </div>
+        
+        <!-- Materials under Course -->
+        <div class="bg-white">
+          <div *ngFor="let material of course.materials; let lastMaterial = last" 
+               [ngClass]="{'border-b border-gray-100': !lastMaterial}">
+            <!-- Material Header -->
+            <div class="px-3 py-2 pl-6">
+              <div class="flex items-center gap-2">
+                <i class="pi text-red-500"
+                   [ngClass]="material.materialType === 'video' ? 'pi-video' : 'pi-file-pdf'"></i>
+                <span class="text-sm text-gray-700 hover:underline cursor-pointer"
+                      (click)="onMaterialClick($event, material.slides[0].detail)"
+                      [title]="'Navigate to material: ' + material.materialName">
+                  {{ material.materialName }}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Slides under Material -->
+            <div class="bg-gray-50">
+              <div *ngFor="let slide of material.slides; let lastSlide = last"
+                   class="px-3 py-2 pl-12 hover:bg-gray-100 transition-colors cursor-pointer"
+                   [ngClass]="{'border-b border-gray-200': !lastSlide}"
+                   (click)="onSlideClick($event, slide.detail)">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-file text-gray-400 text-xs"></i>
+                  <span class="text-sm text-blue-600 hover:underline"
+                        [title]="'Navigate to slide: ' + slide.slideName">
+                    {{ slide.slideName }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

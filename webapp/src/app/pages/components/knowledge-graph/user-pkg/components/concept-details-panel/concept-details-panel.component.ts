@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
@@ -15,17 +15,39 @@ export interface ConceptData {
   [key: string]: any;
 }
 
+export interface SlideNode {
+  slideId?: string;
+  slideName: string;
+  detail: ConceptDetail;
+}
+
+export interface MaterialNode {
+  materialId: string;
+  materialName: string;
+  materialType?: string;
+  slides: SlideNode[];
+}
+
+export interface CourseNode {
+  courseId: string;
+  courseName: string;
+  courseShortName?: string;
+  materials: MaterialNode[];
+}
+
 @Component({
   selector: 'app-pkg-concept-details-panel',
   templateUrl: './concept-details-panel.component.html',
   styleUrls: ['./concept-details-panel.component.css']
 })
-export class PkgConceptDetailsPanelComponent {
+export class PkgConceptDetailsPanelComponent implements OnChanges {
   @Input() visible = false;
   @Input() concept: ConceptData | null = null;
   @Input() details: ConceptDetail[] = [];
   
   @Output() close = new EventEmitter<void>();
+
+  courseTree: CourseNode[] = [];
 
   constructor(
     private router: Router,
@@ -33,6 +55,54 @@ export class PkgConceptDetailsPanelComponent {
     private courseService: CourseService,
     private messageService: MessageService
   ) {}
+
+  ngOnChanges(): void {
+    if (this.details && this.details.length > 0) {
+      this.buildCourseTree();
+    }
+  }
+
+  private buildCourseTree(): void {
+    const courseMap = new Map<string, CourseNode>();
+
+    this.details.forEach(detail => {
+      const courseId = detail.courseId || 'unknown';
+      const materialId = detail.materialId || 'unknown';
+
+      // Get or create course node
+      if (!courseMap.has(courseId)) {
+        courseMap.set(courseId, {
+          courseId: courseId,
+          courseName: detail.courseName || 'Unknown Course',
+          courseShortName: detail.courseShortName,
+          materials: []
+        });
+      }
+
+      const courseNode = courseMap.get(courseId)!;
+
+      // Find or create material node within this course
+      let materialNode = courseNode.materials.find(m => m.materialId === materialId);
+      if (!materialNode) {
+        materialNode = {
+          materialId: materialId,
+          materialName: detail.materialName || 'Unknown Material',
+          materialType: detail.materialType,
+          slides: []
+        };
+        courseNode.materials.push(materialNode);
+      }
+
+      // Add slide to material
+      materialNode.slides.push({
+        slideId: detail.slideId,
+        slideName: detail.slideName || 'Unknown Slide',
+        detail: detail
+      });
+    });
+
+    this.courseTree = Array.from(courseMap.values());
+  }
 
   onClose(): void {
     this.close.emit();
@@ -123,6 +193,13 @@ export class PkgConceptDetailsPanelComponent {
       });
       return;
     }
+
+    // Clear any previous slide navigation state by dispatching null
+    this.store.dispatch(
+      NotificationActions.setCurrentlySelectedFollowingAnnotation({
+        followingAnnotation: null,
+      })
+    );
 
     // Set navigating flag
     this.courseService.navigatingToMaterial = true;
