@@ -45,6 +45,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   // Dynamic legend state
   showUnderstoodLegend = false;
   showNotUnderstoodLegend = false;
+  showUnknownLegend = false;
   showCourseLegend = false;
   showUserLegend = true; // User node is always present
   
@@ -109,6 +110,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
         if (viewMode === 'engagement') {
           this.showUnderstoodLegend = false;
           this.showNotUnderstoodLegend = false;
+          this.showUnknownLegend = false;
         }
       });
   }
@@ -117,6 +119,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
     if (!visibleNodes || visibleNodes.length === 0) {
       this.showUnderstoodLegend = false;
       this.showNotUnderstoodLegend = false;
+      this.showUnknownLegend = false;
       this.showCourseLegend = false;
       this.cdr.detectChanges();
       return;
@@ -133,12 +136,18 @@ export class UserPkgComponent implements OnInit, OnDestroy {
       node.relationshipType === 'dnu'
     );
     
+    const hasUnknown = visibleNodes.some((node: any) => 
+      (node.type === 'main_concept' || node.type === 'related_concept') &&
+      (node.relationshipType === 'unknown' || !node.relationshipType)
+    );
+    
     const hasCourses = visibleNodes.some((node: any) => 
       node.type === 'course'
     );
 
     this.showUnderstoodLegend = hasUnderstood;
     this.showNotUnderstoodLegend = hasNotUnderstood;
+    this.showUnknownLegend = hasUnknown;
     this.showCourseLegend = hasCourses;
     
     // Manually trigger change detection to update the view
@@ -165,7 +174,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
     this.rawConceptRecords$
       .pipe(take(1))
       .subscribe((records) => {
-        this.conceptDetails = this.extractConceptDetails(conceptData.name, records);
+        this.conceptDetails = this.extractConceptDetails(conceptData.cid, records);
       });
   }
   
@@ -229,7 +238,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
         next: () => {
           const statusMessage = event.status === 'u' ? 'understood' : 
                                 event.status === 'dnu' ? 'not understood' : 'new';
-          const conceptCount = conceptIdsToUpdate.length > 1 ? ` (${conceptIdsToUpdate.length} merged concepts)` : '';
+          const conceptCount = conceptIdsToUpdate.length > 1 ? ` (${conceptIdsToUpdate.length} concepts)` : '';
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
@@ -385,34 +394,41 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   }
 
   // Extract concept details from raw records (inline helper)
-  private extractConceptDetails(conceptName: string, rawConceptRecords: ConceptRecord[]): ConceptDetail[] {
-    const conceptNameLower = conceptName.toLowerCase().trim();
+  private extractConceptDetails(conceptId: string, rawConceptRecords: ConceptRecord[]): ConceptDetail[] {
     const details: ConceptDetail[] = [];
     
-    rawConceptRecords.forEach(record => {
-      if (record.name.toLowerCase().trim() === conceptNameLower) {
-        const slides = record.slides || [];
-        const validSlides = slides.filter(s => s.sid && s.name);
-        
-        if (validSlides.length > 0) {
-          validSlides.forEach(slide => {
-            details.push({
-              slideId: slide.sid || undefined,
-              slideName: slide.name || 'Unknown Slide',
-              materialId: record.materialId || record.mid || '',
-              materialName: record.materialName || 'Unknown Material',
-              materialType: record.materialType,
-              courseId: record.courseId,
-              courseName: record.courseName || 'Unknown Course',
-              courseShortName: record.courseShortName,
-              channelId: record.channelId,
-              relationshipType: record.relationshipType === 'u' || record.relationshipType === 'dnu' 
-                ? record.relationshipType : undefined,
-            });
-          });
-        } else {
+    // First, find the concept by ID to get its Wikipedia URL and name
+    const conceptRecord = rawConceptRecords.find(r => r.cid === conceptId);
+    
+    if (!conceptRecord) {
+      return details;
+    }
+    
+    const wikipediaUrl = conceptRecord.wikipedia;
+    const conceptName = conceptRecord.name;
+    const conceptNameLower = conceptName.toLowerCase().trim();
+    
+    // Filter records: if Wikipedia URL exists, match by URL; otherwise, match by name
+    const matchingRecords = rawConceptRecords.filter(record => {
+      if (wikipediaUrl) {
+        // Match by Wikipedia URL (case-insensitive)
+        return record.wikipedia && 
+               record.wikipedia.toLowerCase().trim() === wikipediaUrl.toLowerCase().trim();
+      } else {
+        // Fallback to name matching
+        return record.name.toLowerCase().trim() === conceptNameLower;
+      }
+    });
+    
+    matchingRecords.forEach(record => {
+      const slides = record.slides || [];
+      const validSlides = slides.filter(s => s.sid && s.name);
+      
+      if (validSlides.length > 0) {
+        validSlides.forEach(slide => {
           details.push({
-            slideName: 'Material Level',
+            slideId: slide.sid || undefined,
+            slideName: slide.name || 'Unknown Slide',
             materialId: record.materialId || record.mid || '',
             materialName: record.materialName || 'Unknown Material',
             materialType: record.materialType,
@@ -423,7 +439,20 @@ export class UserPkgComponent implements OnInit, OnDestroy {
             relationshipType: record.relationshipType === 'u' || record.relationshipType === 'dnu' 
               ? record.relationshipType : undefined,
           });
-        }
+        });
+      } else {
+        details.push({
+          slideName: 'Material Level',
+          materialId: record.materialId || record.mid || '',
+          materialName: record.materialName || 'Unknown Material',
+          materialType: record.materialType,
+          courseId: record.courseId,
+          courseName: record.courseName || 'Unknown Course',
+          courseShortName: record.courseShortName,
+          channelId: record.channelId,
+          relationshipType: record.relationshipType === 'u' || record.relationshipType === 'dnu' 
+            ? record.relationshipType : undefined,
+        });
       }
     });
     

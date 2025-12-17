@@ -72,6 +72,10 @@
   background-color: #A94442;
 }
 
+.legend-dot.unknown {
+  background-color: #5DADE2;
+}
+
 .legend-dot.course {
   background-color: #333333;
 }

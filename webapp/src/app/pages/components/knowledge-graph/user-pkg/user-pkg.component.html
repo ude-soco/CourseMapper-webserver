@@ -8,7 +8,7 @@
     <div class="pkg-header">
       <div class="flex items-center gap-5">
         <app-back-button></app-back-button>
-        <h2 class="text-xl font-semibold">Personal Knowledge Graph</h2>
+        <h2 class="text-xl font-semibold">Personal Knowledge Graphs</h2>
       </div>
     </div>
     <hr />
@@ -50,6 +50,10 @@
             <div *ngIf="showUnderstoodLegend" class="legend-item">
               <div class="legend-dot understood"></div>
               <span class="text-xs font-medium text-gray-700">Understood Concept</span>
+            </div>
+            <div *ngIf="showUnknownLegend" class="legend-item">
+              <div class="legend-dot unknown"></div>
+              <span class="text-xs font-medium text-gray-700">New Concept</span>
             </div>
             <div *ngIf="showCourseLegend" class="legend-item">
               <div class="legend-dot course"></div>

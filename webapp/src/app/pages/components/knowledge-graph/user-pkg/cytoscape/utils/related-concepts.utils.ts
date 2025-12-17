@@ -57,14 +57,9 @@ export function showRelatedConcepts(
 ): void {
   const mainConceptId = mainConceptNode.id();
   
-  // Filter to valid related concepts that are NOT "new" (unknown)
-  // Only show concepts that have been marked as understood or not understood
-  const validRelatedConcepts = relatedConcepts.filter(rc => 
-    rc.cid && rc.name && (rc.relationshipType === 'u' || rc.relationshipType === 'dnu')
-  );
   
-  if (validRelatedConcepts.length === 0) {
-    console.log('No related concepts to show (all are new/unknown)');
+  if (relatedConcepts.length === 0) {
+    console.log('No valid related concepts to show');
     return;
   }
 
@@ -72,10 +67,10 @@ export function showRelatedConcepts(
   const mainConceptPos = mainConceptNode.position();
   
   const radius = 280;
-  const angleStep = (2 * Math.PI) / validRelatedConcepts.length;
+  const angleStep = (2 * Math.PI) / relatedConcepts.length;
   let angleOffset = 0;
   
-  validRelatedConcepts.forEach((relatedConcept) => {
+  relatedConcepts.forEach((relatedConcept) => {
     const relatedNodeId = `concept-${relatedConcept.cid}`;
     
     // Check if node already exists (might be shown by another main concept)
