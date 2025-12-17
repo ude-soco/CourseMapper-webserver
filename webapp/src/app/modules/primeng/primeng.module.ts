@@ -30,6 +30,7 @@ import {OverlayPanelModule} from 'primeng/overlaypanel';
 import { MenuModule } from 'primeng/menu';
 import { ChartModule } from 'primeng/chart';
 import { AccordionModule } from 'primeng/accordion';
+import { TableModule } from 'primeng/table';
 
 
 const PrimeNgComponents = [
@@ -63,6 +64,7 @@ const PrimeNgComponents = [
   MenuModule,
   ChartModule,
   AccordionModule,
+  TableModule,
 
   
 ];

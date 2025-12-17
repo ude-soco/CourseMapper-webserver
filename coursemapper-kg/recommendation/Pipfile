@@ -41,6 +41,7 @@ pymongo = "*"
 pipenv = "*"
 pandas = "*"
 apscheduler = "*"
+torch-geometric = "*"
 
 [dev-packages]
 

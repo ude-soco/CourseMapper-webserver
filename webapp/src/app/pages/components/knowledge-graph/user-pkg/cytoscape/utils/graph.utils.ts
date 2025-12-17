@@ -207,34 +207,6 @@ export function createEngagementGraphData(
  * @param targetType - Target node type
  * @param score - Optional score for interest/engagement edges
  */
-<<<<<<< HEAD
-export function getEdgeLabelForViewMode(edgeType: string | undefined, viewMode: ViewMode, sourceType?: string, targetType?: string): string {
-  // Handle user -> course relationship in knowledge mode
-  if (viewMode === 'knowledge' && sourceType === 'user' && targetType === 'course') {
-    return 'Enrolled In';
-  }
-  
-  // Handle relationship type labels
-  if (edgeType === 'u') {
-    return 'Understood';
-  } else if (edgeType === 'dnu') {
-    return 'Not Understood';
-  } else if (edgeType === 'related_to') {
-    return 'Related To';
-  }
-
-  // For other view modes
-  switch (viewMode) {
-    case 'interest':
-      return 'interested in';
-    case 'engagement':
-      // For engagement view, the label should already include engagement level
-      // Return the edge label if it exists, otherwise fallback
-      return edgeType || 'engaged in';
-    default:
-      return edgeType || '';
-  }
-=======
 export function getEdgeLabelForViewMode(
   edgeType: string | undefined, 
   viewMode: ViewMode, 
@@ -249,7 +221,6 @@ export function getEdgeLabelForViewMode(
     edgeType as 'u' | 'dnu' | 'unknown',
     score
   );
->>>>>>> origin/dev2-monir-pkg
 }
 
 /**

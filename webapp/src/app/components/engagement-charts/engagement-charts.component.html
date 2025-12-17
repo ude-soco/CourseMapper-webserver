@@ -1,14 +1,14 @@
 <div class="engagement-charts-container bg-gray-100 min-h-screen">
   <div class="p-5">
     <!-- Header Section -->
-    <div class="mb-6 flex items-center gap-6">
+    <div class="mb-8 flex items-center gap-6">
       <div class="flex-1">
         <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ courseName }}</h2>
         <p class="text-lg text-gray-600">
           Level of Engagement: <span class="font-medium" [ngClass]="getEngagementColor()">{{ engagementLevel }}</span>
         </p>
       </div>
-      <div class="gauge-container" style="width: 200px; height: 120px;">
+      <div class="gauge-container flex-shrink-0" style="width: 200px; height: 120px;">
         <p-chart 
           type="doughnut" 
           [data]="gaugeData" 
@@ -23,7 +23,7 @@
 
     <!-- Tabs Section -->
     <div class="mb-6">
-      <div *ngIf="getHiddenChartsCount() > 0" class="mb-4 flex justify-end">
+      <div *ngIf="getHiddenChartsCount() > 0" class="mb-4 mt-2 flex justify-end">
         <button 
           class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
           (click)="showAllCharts()">
@@ -31,12 +31,335 @@
           <span>Show All Charts ({{ getHiddenChartsCount() }} hidden)</span>
         </button>
       </div>
-      <p-tabView [(activeIndex)]="activeTabIndex">
+      <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
         <p-tabPanel *ngFor="let tab of tabs; let i = index" [header]="tab.label">
-          <!-- Show charts in all tabs -->
+          <!-- Charts content -->
           <div class="mt-6">
+            <!-- Category Filter Section -->
+            <div class="mb-4 flex justify-end gap-2">
+              <div *ngIf="getHiddenCategoriesCount() > 0" class="mr-2 flex items-center gap-2">
+                <button
+                  class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                  (click)="showAllCategories()">
+                  <i class="pi pi-eye"></i>
+                  <span>Show All Categories ({{ getHiddenCategoriesCount() }} hidden)</span>
+                </button>
+              </div>
+              <!-- Sorting Button -->
+              <button
+                class="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm"
+                [ngClass]="isSortingActive() ? 'bg-purple-500 text-white hover:bg-purple-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                (click)="openSortingPanel($event)">
+                <i class="pi pi-sort-amount-down"></i>
+                <span>{{ isSortingActive() ? 'Sorted: ' + getSortOrderLabel() : 'Sort Charts' }}</span>
+              </button>
+              <p-overlayPanel #sortingPanel>
+                <div class="p-3" style="min-width: 200px;">
+                  <h4 class="font-semibold mb-3">Sort Charts by Activity Count</h4>
+                  <div class="flex flex-col gap-2">
+                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100">
+                      <input 
+                        type="radio" 
+                        name="sortOrder" 
+                        [checked]="sortOrder === 'none'"
+                        (change)="setSortOrder('none')"
+                        class="cursor-pointer">
+                      <i class="pi pi-bars text-gray-500"></i>
+                      <span>Default (by category)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100">
+                      <input 
+                        type="radio" 
+                        name="sortOrder" 
+                        [checked]="sortOrder === 'desc'"
+                        (change)="setSortOrder('desc')"
+                        class="cursor-pointer">
+                      <i class="pi pi-sort-amount-down text-purple-500"></i>
+                      <span>Highest first</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-100">
+                      <input 
+                        type="radio" 
+                        name="sortOrder" 
+                        [checked]="sortOrder === 'asc'"
+                        (change)="setSortOrder('asc')"
+                        class="cursor-pointer">
+                      <i class="pi pi-sort-amount-up text-purple-500"></i>
+                      <span>Lowest first</span>
+                    </label>
+                  </div>
+                  <div *ngIf="isSortingActive()" class="mt-3 pt-3 border-t border-gray-200">
+                    <button 
+                      class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors text-sm"
+                      (click)="clearSorting()">
+                      <i class="pi pi-times"></i>
+                      <span>Clear Sorting</span>
+                    </button>
+                  </div>
+                </div>
+              </p-overlayPanel>
+              <!-- Filter Categories Button -->
+              <button
+                class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                (click)="openCategoryFilter($event)">
+                <i class="pi pi-filter"></i>
+                <span>Filter Categories</span>
+              </button>
+              <p-overlayPanel #categoryFilterPanel>
+                <div class="p-3">
+                  <h4 class="font-semibold mb-3">Filter Activity Categories</h4>
+                  <div class="flex flex-col gap-2">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        [checked]="materialActivitiesCategoryVisible"
+                        (change)="toggleCategoryVisibility('material')"
+                        class="cursor-pointer">
+                      <span>Material Activities</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        [checked]="annotationActivitiesCategoryVisible"
+                        (change)="toggleCategoryVisibility('annotation')"
+                        class="cursor-pointer">
+                      <span>Annotation Activities</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        [checked]="accessActivitiesCategoryVisible"
+                        (change)="toggleCategoryVisibility('access')"
+                        class="cursor-pointer">
+                      <span>Access Activities</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        [checked]="kgActivitiesCategoryVisible"
+                        (change)="toggleCategoryVisibility('kg')"
+                        class="cursor-pointer">
+                      <span>Knowledge Graph Activities</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        [checked]="recommendationActivitiesCategoryVisible"
+                        (change)="toggleCategoryVisibility('recommendation')"
+                        class="cursor-pointer">
+                      <span>Recommendation Activities</span>
+                    </label>
+                  </div>
+                </div>
+              </p-overlayPanel>
+            </div>
+            <!-- No peers warning banner for same engagement level tab -->
+            <div *ngIf="isSameLevelTab() && hasNoPeersAtSameLevel()" class="mb-6 p-4 bg-amber-50 border border-amber-300 rounded-lg shadow-sm">
+              <div class="flex items-start gap-3">
+                <i class="pi pi-exclamation-triangle text-amber-500 mt-0.5" style="font-size: 1.25rem;"></i>
+                <div>
+                  <p class="text-base font-semibold text-amber-800">No other users at your engagement level</p>
+                  <p class="text-sm text-amber-700 mt-1">
+                    You are currently the only user classified as 
+                    <span class="font-semibold capitalize">{{ sameLevelStats?.currentUserEngagementLevel || 'N/A' }}</span> 
+                    engagement level for this course. The charts below show only your own activity data for reference. 
+                    Average and maximum values represent your own metrics since there are no other users to compare with.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Higher Level Summary Progress Chart -->
+            <div *ngIf="isHigherLevelTab() && higherLevelBoundaries && !hasNoUsersAtHigherLevel()" class="mb-8 bg-white rounded-lg shadow-md p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <i class="pi pi-chart-bar text-indigo-600" style="font-size: 1.5rem;"></i>
+                <h3 class="text-xl font-semibold text-gray-800">Overall Progress to {{ getHigherLevelSummaryData().higherLevel | titlecase }} Level</h3>
+              </div>
+              
+              <!-- Overall Progress Bar -->
+              <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-sm font-medium text-gray-700">Total Activities Progress</span>
+                  <span class="text-sm font-semibold" 
+                        [ngClass]="getHigherLevelSummaryData().meetsOverallThreshold ? 'text-green-600' : 'text-gray-600'">
+                    {{ getHigherLevelSummaryData().overallUserTotal }} / {{ getHigherLevelSummaryData().overallThresholdTotal }}
+                    <span class="ml-1">({{ getHigherLevelSummaryData().overallPercentage }}%)</span>
+                  </span>
+                </div>
+                <div class="relative h-8 bg-gray-200 rounded-full overflow-hidden">
+                  <!-- Progress fill -->
+                  <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500 ease-out rounded-full"
+                       [style.width.%]="getHigherLevelSummaryData().overallPercentage">
+                  </div>
+                  <!-- Threshold marker line -->
+                  <div class="absolute top-0 bottom-0 w-1 bg-red-500 z-10" 
+                       style="left: calc(100% - 2px);"
+                       title="Threshold to reach {{ getHigherLevelSummaryData().higherLevel | titlecase }} level">
+                    <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                      <span class="text-xs font-semibold text-red-600">Threshold</span>
+                    </div>
+                  </div>
+                  <!-- Checkmark or arrow icon -->
+                  <div class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <i *ngIf="getHigherLevelSummaryData().meetsOverallThreshold" 
+                       class="pi pi-check-circle text-white" style="font-size: 1.25rem;"></i>
+                    <i *ngIf="!getHigherLevelSummaryData().meetsOverallThreshold" 
+                       class="pi pi-arrow-right text-white opacity-70" style="font-size: 1rem;"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Category Breakdown -->
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
+                <div *ngFor="let category of getHigherLevelSummaryData().categories" 
+                     class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow">
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center" [ngClass]="category.bgColor">
+                      <i class="pi text-white text-sm" [ngClass]="category.icon"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700 truncate" [title]="category.name">
+                      {{ category.name.replace(' Activities', '') }}
+                    </span>
+                  </div>
+                  <!-- Category progress bar -->
+                  <div class="relative h-4 bg-gray-200 rounded-full overflow-hidden mb-2">
+                    <div class="h-full transition-all duration-500 ease-out rounded-full"
+                         [style.width.%]="category.percentage"
+                         [style.background-color]="category.color">
+                    </div>
+                  </div>
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="text-gray-500">
+                      {{ category.userTotal }} / {{ category.thresholdTotal }}
+                    </span>
+                    <span class="font-semibold" 
+                          [ngClass]="category.meetsThreshold ? 'text-green-600' : 'text-gray-600'">
+                      {{ category.percentage }}%
+                      <i *ngIf="category.meetsThreshold" class="pi pi-check ml-1"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Info Note -->
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                  <i class="pi pi-info-circle text-blue-500 mt-0.5" style="font-size: 1.1rem;"></i>
+                  <div>
+                    <p class="text-sm text-blue-800">
+                      <strong>How to read this chart:</strong> Each category shows your current activity count compared to the minimum threshold 
+                      required to reach the <span class="font-semibold capitalize">{{ getHigherLevelSummaryData().higherLevel }}</span> engagement level.
+                      The totals are aggregated from all sub-activities within each category.
+                    </p>
+                    <p class="text-sm text-blue-700 mt-2">
+                      <i class="pi pi-clock mr-1"></i>
+                      <strong>Note:</strong> If you exceed the threshold and don't immediately see your engagement level increase, 
+                      it will update the following day due to scheduled recalculation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- No users at higher level warning banner -->
+            <div *ngIf="isHigherLevelTab() && hasNoUsersAtHigherLevel()" class="mb-6 p-4 bg-amber-50 border border-amber-300 rounded-lg shadow-sm">
+              <div class="flex items-start gap-3">
+                <i class="pi pi-exclamation-triangle text-amber-500 mt-0.5" style="font-size: 1.25rem;"></i>
+                <div>
+                  <p class="text-base font-semibold text-amber-800">No users at the next engagement level yet</p>
+                  <p class="text-sm text-amber-700 mt-1">
+                    There are currently no users at the 
+                    <span class="font-semibold capitalize">{{ higherLevelBoundaries?.higherLevel || 'higher' }}</span> 
+                    engagement level for this course. Thresholds shown in the charts below are based on default values.
+                    Keep engaging with the course materials to be among the first to reach the next level!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sorted Charts View (shown when sorting is active) -->
+            <div *ngIf="isSortingActive()" class="mb-8">
+              <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-300">
+                <h3 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                  <i class="pi pi-sort-amount-down text-purple-500"></i>
+                  <span>Charts Sorted by Activity Count ({{ getSortOrderLabel() }})</span>
+                </h3>
+                <button 
+                  class="flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors text-sm"
+                  (click)="clearSorting()">
+                  <i class="pi pi-times"></i>
+                  <span>Clear Sorting</span>
+                </button>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <ng-container *ngFor="let chart of sortedCharts; let i = index">
+                  <div class="bg-white rounded-lg shadow-md p-4 relative">
+                    <!-- Rank badge -->
+                    <div class="absolute top-2 left-2 z-10 flex items-center gap-2">
+                      <span class="bg-purple-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                        #{{ i + 1 }}
+                      </span>
+                      <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded">
+                        {{ getCategoryDisplayName(chart.category) }}
+                      </span>
+                    </div>
+                    <div class="absolute top-2 right-2 z-10 flex gap-2">
+                      <button 
+                        class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                        pTooltip="{{getChartDescription(chart.chartName)}}"
+                        tooltipPosition="left"
+                        [escape]="false"
+                        title="Chart information">
+                        <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                      </button>
+                      <!-- Pie chart toggle button -->
+                      <button 
+                        *ngIf="!isTopPeersTab() && !isSameLevelTab()"
+                        class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                        (click)="toggleChartType(chart.chartName); $event.stopPropagation()"
+                        [title]="getChartType(chart.chartName) === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                        <i class="pi" [ngClass]="getChartType(chart.chartName) === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                      </button>
+                      <button 
+                        class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                        (click)="maximizeChart(chart.chartName); $event.stopPropagation()"
+                        title="Maximize chart">
+                        <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
+                      </button>
+                    </div>
+                    <h4 class="text-lg font-semibold mb-2 mt-8">{{ chart.title }}</h4>
+                    <p class="text-sm text-gray-500 mb-2">Total: <span class="font-semibold text-purple-600">{{ chart.totalValue }}</span></p>
+                    <div class="chart-wrapper" style="height: 300px;">
+                      <ng-container *ngIf="(isTopPeersTab() || isSameLevelTab()) || getChartType(chart.chartName) === 'bar'">
+                        <p-chart 
+                          type="bar"
+                          [data]="getChartDataForTab(chart.chartName)" 
+                          [options]="getChartOptions(chart.chartName)"
+                          [style]="{'height': '100%'}">
+                        </p-chart>
+                      </ng-container>
+                      <ng-container *ngIf="!isTopPeersTab() && !isSameLevelTab() && getChartType(chart.chartName) === 'pie'">
+                        <p-chart 
+                          type="pie"
+                          [data]="getChartDataForTab(chart.chartName)" 
+                          [options]="getChartOptions(chart.chartName)"
+                          [style]="{'height': '100%'}">
+                        </p-chart>
+                      </ng-container>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+              <div *ngIf="sortedCharts.length === 0" class="text-center py-8 text-gray-500">
+                <i class="pi pi-chart-bar text-4xl mb-3"></i>
+                <p>No charts available to sort. Make sure categories and charts are visible.</p>
+              </div>
+            </div>
+
+            <!-- Default Category-based View (hidden when sorting is active) -->
+            <ng-container *ngIf="!isSortingActive()">
             <!-- Material Activities Section -->
-            <div class="mb-8">
+            <div class="mb-8" *ngIf="materialActivitiesCategoryVisible">
               <h3 
                 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
                 <div class="flex items-center gap-2">
@@ -90,6 +413,25 @@
                 <div *ngIf="pdfActivitiesVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('pdfActivities')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('pdfActivities', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['pdfActivities'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('pdfActivities'); $event.stopPropagation()"
                       [title]="getChartType('pdfActivities') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
@@ -109,12 +451,22 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('pdfActivities')" 
-                      [data]="getChartData('pdfActivities')" 
-                      [options]="getChartOptions('pdfActivities')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="(isTopPeersTab() || isSameLevelTab()) || getChartType('pdfActivities') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('pdfActivities')" 
+                        [options]="getChartOptions('pdfActivities')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && !isSameLevelTab() && getChartType('pdfActivities') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('pdfActivities')" 
+                        [options]="getChartOptions('pdfActivities')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
 
@@ -122,6 +474,25 @@
                 <div *ngIf="videoActivitiesVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('videoActivities')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('videoActivities', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['videoActivities'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('videoActivities'); $event.stopPropagation()"
                       [title]="getChartType('videoActivities') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
@@ -141,12 +512,22 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('videoActivities')" 
-                      [data]="getChartData('videoActivities')" 
-                      [options]="getChartOptions('videoActivities')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('videoActivities') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('videoActivities')" 
+                        [options]="getChartOptions('videoActivities')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('videoActivities') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('videoActivities')" 
+                        [options]="getChartOptions('videoActivities')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
 
@@ -154,6 +535,25 @@
                 <div *ngIf="slidesAndVideoTimeVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('slidesAndVideoTime')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('slidesAndVideoTime', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['slidesAndVideoTime'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('slidesAndVideoTime'); $event.stopPropagation()"
                       [title]="getChartType('slidesAndVideoTime') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
@@ -173,19 +573,29 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('slidesAndVideoTime')" 
-                      [data]="getChartData('slidesAndVideoTime')" 
-                      [options]="getChartOptions('slidesAndVideoTime')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('slidesAndVideoTime') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('slidesAndVideoTime')" 
+                        [options]="getChartOptions('slidesAndVideoTime')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('slidesAndVideoTime') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('slidesAndVideoTime')" 
+                        [options]="getChartOptions('slidesAndVideoTime')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Annotation Activities Section -->
-            <div class="mb-8">
+            <div class="mb-8" *ngIf="annotationActivitiesCategoryVisible">
               <h3 
                 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
                 <div class="flex items-center gap-2">
@@ -247,6 +657,25 @@
                 <div *ngIf="addedAnnotationsVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('addedAnnotations')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('addedAnnotations', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['addedAnnotations'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('addedAnnotations'); $event.stopPropagation()"
                       [title]="getChartType('addedAnnotations') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
@@ -266,12 +695,22 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('addedAnnotations')" 
-                      [data]="getChartData('addedAnnotations')" 
-                      [options]="getChartOptions('addedAnnotations')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('addedAnnotations') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('addedAnnotations')" 
+                        [options]="getChartOptions('addedAnnotations')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('addedAnnotations') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('addedAnnotations')" 
+                        [options]="getChartOptions('addedAnnotations')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
 
@@ -279,6 +718,25 @@
                 <div *ngIf="annotationInteractionsVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('annotationInteractions')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('annotationInteractions', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['annotationInteractions'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('annotationInteractions'); $event.stopPropagation()"
                       [title]="getChartType('annotationInteractions') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
@@ -298,12 +756,22 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('annotationInteractions')" 
-                      [data]="getChartData('annotationInteractions')" 
-                      [options]="getChartOptions('annotationInteractions')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('annotationInteractions') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('annotationInteractions')" 
+                        [options]="getChartOptions('annotationInteractions')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('annotationInteractions') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('annotationInteractions')" 
+                        [options]="getChartOptions('annotationInteractions')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
 
@@ -311,6 +779,25 @@
                 <div *ngIf="likesDislikesVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('likesDislikes')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('likesDislikes', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['likesDislikes'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('likesDislikes'); $event.stopPropagation()"
                       [title]="getChartType('likesDislikes') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
@@ -330,12 +817,22 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('likesDislikes')" 
-                      [data]="getChartData('likesDislikes')" 
-                      [options]="getChartOptions('likesDislikes')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('likesDislikes') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('likesDislikes')" 
+                        [options]="getChartOptions('likesDislikes')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('likesDislikes') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('likesDislikes')" 
+                        [options]="getChartOptions('likesDislikes')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
 
@@ -343,6 +840,25 @@
                 <div *ngIf="tagsVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('tags')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('tags', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['tags'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('tags'); $event.stopPropagation()"
                       [title]="getChartType('tags') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
@@ -362,19 +878,29 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('tags')" 
-                      [data]="getChartData('tags')" 
-                      [options]="getChartOptions('tags')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('tags') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('tags')" 
+                        [options]="getChartOptions('tags')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('tags') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('tags')" 
+                        [options]="getChartOptions('tags')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Access Activities Section -->
-            <div class="mb-8">
+            <div class="mb-8" *ngIf="accessActivitiesCategoryVisible">
               <h3 
                 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
                 <div class="flex items-center gap-2">
@@ -395,15 +921,7 @@
                             [checked]="accessActivitiesVisible1"
                             (change)="accessActivitiesVisible1 = !accessActivitiesVisible1"
                             class="cursor-pointer">
-                          <span>Access Activity 1</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                          <input 
-                            type="checkbox" 
-                            [checked]="accessActivitiesVisible2"
-                            (change)="accessActivitiesVisible2 = !accessActivitiesVisible2"
-                            class="cursor-pointer">
-                          <span>Access Activity 2</span>
+                          <span>Access Activities by Type</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
@@ -429,6 +947,25 @@
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('accessActivities1')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('accessActivities1', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['accessActivities1'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('accessActivities1'); $event.stopPropagation()"
                       title="Toggle chart type">
                       <i class="pi" [ngClass]="getChartType('accessActivities1') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
@@ -447,44 +984,22 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('accessActivities1')" 
-                      [data]="getChartData('accessActivities1')" 
-                      [options]="getChartOptions('accessActivities1')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
-                  </div>
-                </div>
-
-                <!-- Access Activity 2 -->
-                <div *ngIf="accessActivitiesVisible2" class="bg-white rounded-lg shadow-md p-4 relative">
-                  <div class="absolute top-2 right-2 z-10 flex gap-2">
-                    <button 
-                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChartType('accessActivities2'); $event.stopPropagation()"
-                      title="Toggle chart type">
-                      <i class="pi" [ngClass]="getChartType('accessActivities2') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
-                    </button>
-                    <button 
-                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="maximizeChart('accessActivities2'); $event.stopPropagation()"
-                      title="Maximize chart">
-                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
-                    </button>
-                    <button 
-                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChart('accessActivities2'); $event.stopPropagation()"
-                      title="Close chart">
-                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
-                    </button>
-                  </div>
-                  <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('accessActivities2')" 
-                      [data]="getChartData('accessActivities2')" 
-                      [options]="getChartOptions('accessActivities2')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('accessActivities1') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('accessActivities1')" 
+                        [options]="getChartOptions('accessActivities1')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('accessActivities1') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('accessActivities1')" 
+                        [options]="getChartOptions('accessActivities1')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
 
@@ -492,6 +1007,25 @@
                 <div *ngIf="accessActivitiesVisible3" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('accessActivities3')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('accessActivities3', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['accessActivities3'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('accessActivities3'); $event.stopPropagation()"
                       title="Toggle chart type">
@@ -511,19 +1045,29 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('accessActivities3')" 
-                      [data]="getChartData('accessActivities3')" 
-                      [options]="getChartOptions('accessActivities3')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('accessActivities3') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('accessActivities3')" 
+                        [options]="getChartOptions('accessActivities3')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('accessActivities3') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('accessActivities3')" 
+                        [options]="getChartOptions('accessActivities3')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Knowledge Graph (KG) Activities Section -->
-            <div class="mb-8">
+            <div class="mb-8" *ngIf="kgActivitiesCategoryVisible">
               <h3 
                 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
                 <div class="flex items-center gap-2">
@@ -544,7 +1088,7 @@
                             [checked]="kgActivitiesVisible1"
                             (change)="kgActivitiesVisible1 = !kgActivitiesVisible1"
                             class="cursor-pointer">
-                          <span>Knowledge Graph Activity 1</span>
+                          <span>Knowledge Graph Summary</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
@@ -552,7 +1096,7 @@
                             [checked]="kgActivitiesVisible2"
                             (change)="kgActivitiesVisible2 = !kgActivitiesVisible2"
                             class="cursor-pointer">
-                          <span>Knowledge Graph Activity 2</span>
+                          <span>Knowledge Graph Marked Activities</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
@@ -560,7 +1104,7 @@
                             [checked]="kgActivitiesVisible3"
                             (change)="kgActivitiesVisible3 = !kgActivitiesVisible3"
                             class="cursor-pointer">
-                          <span>Knowledge Graph Activity 3</span>
+                          <span>Knowledge Graph Access by Location</span>
                         </label>
                       </div>
                     </div>
@@ -573,10 +1117,29 @@
                   (click)="toggleKgActivities()"></i>
               </h3>
               <div *ngIf="kgActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- KG Activity 1 -->
+                <!-- KG Activity 1 - Summary -->
                 <div *ngIf="kgActivitiesVisible1" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('kgActivities1')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('kgActivities1', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['kgActivities1'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('kgActivities1'); $event.stopPropagation()"
                       title="Toggle chart type">
@@ -596,19 +1159,48 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('kgActivities1')" 
-                      [data]="getChartData('kgActivities1')" 
-                      [options]="getChartOptions('kgActivities1')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('kgActivities1') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('kgActivities1')" 
+                        [options]="getChartOptions('kgActivities1')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('kgActivities1') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('kgActivities1')" 
+                        [options]="getChartOptions('kgActivities1')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
 
-                <!-- KG Activity 2 -->
+                <!-- KG Activity 2 - Marked Activities -->
                 <div *ngIf="kgActivitiesVisible2" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('kgActivities2')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('kgActivities2', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['kgActivities2'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('kgActivities2'); $event.stopPropagation()"
                       title="Toggle chart type">
@@ -628,19 +1220,48 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('kgActivities2')" 
-                      [data]="getChartData('kgActivities2')" 
-                      [options]="getChartOptions('kgActivities2')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('kgActivities2') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('kgActivities2')" 
+                        [options]="getChartOptions('kgActivities2')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('kgActivities2') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('kgActivities2')" 
+                        [options]="getChartOptions('kgActivities2')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
 
-                <!-- KG Activity 3 -->
+                <!-- KG Activity 3 - Access by Location -->
                 <div *ngIf="kgActivitiesVisible3" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('kgActivities3')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('kgActivities3', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['kgActivities3'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
                       (click)="toggleChartType('kgActivities3'); $event.stopPropagation()"
                       title="Toggle chart type">
@@ -660,19 +1281,29 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      [type]="getChartType('kgActivities3')" 
-                      [data]="getChartData('kgActivities3')" 
-                      [options]="getChartOptions('kgActivities3')"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('kgActivities3') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('kgActivities3')" 
+                        [options]="getChartOptions('kgActivities3')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && getChartType('kgActivities3') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('kgActivities3')" 
+                        [options]="getChartOptions('kgActivities3')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Recommendation Activities Section -->
-            <div class="mb-8">
+            <div class="mb-8" *ngIf="recommendationActivitiesCategoryVisible">
               <h3 
                 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-300 cursor-pointer flex items-center justify-between hover:text-gray-900">
                 <div class="flex items-center gap-2">
@@ -690,18 +1321,10 @@
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
                             type="checkbox" 
-                            [checked]="recommendationActivitiesVisible1"
-                            (change)="recommendationActivitiesVisible1 = !recommendationActivitiesVisible1"
-                            class="cursor-pointer">
-                          <span>Recommendation Activity 1</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                          <input 
-                            type="checkbox" 
                             [checked]="recommendationActivitiesVisible2"
                             (change)="recommendationActivitiesVisible2 = !recommendationActivitiesVisible2"
                             class="cursor-pointer">
-                          <span>Recommendation Activity 2</span>
+                          <span>Recommended Materials</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
@@ -709,7 +1332,7 @@
                             [checked]="recommendationActivitiesVisible3"
                             (change)="recommendationActivitiesVisible3 = !recommendationActivitiesVisible3"
                             class="cursor-pointer">
-                          <span>Recommendation Activity 3</span>
+                          <span>Recommended Concepts Marked</span>
                         </label>
                       </div>
                     </div>
@@ -722,35 +1345,34 @@
                   (click)="toggleRecommendationActivities()"></i>
               </h3>
               <div *ngIf="recommendationActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Recommendation Activity 1 -->
-                <div *ngIf="recommendationActivitiesVisible1" class="bg-white rounded-lg shadow-md p-4 relative">
-                  <div class="absolute top-2 right-2 z-10 flex gap-2">
-                    <button 
-                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="maximizeChart('recommendationActivities1'); $event.stopPropagation()"
-                      title="Maximize chart">
-                      <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
-                    </button>
-                    <button 
-                      class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChart('recommendationActivities1'); $event.stopPropagation()"
-                      title="Close chart">
-                      <i class="pi pi-times" style="font-size: 0.875rem;"></i>
-                    </button>
-                  </div>
-                  <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      type="bar" 
-                      [data]="recommendationActivitiesData1" 
-                      [options]="recommendationActivitiesOptions1"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
-                  </div>
-                </div>
-
                 <!-- Recommendation Activity 2 -->
                 <div *ngIf="recommendationActivitiesVisible2" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('recommendationActivities2')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('recommendationActivities2', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['recommendationActivities2'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('recommendationActivities2'); $event.stopPropagation()"
+                      [title]="getChartType('recommendationActivities2') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('recommendationActivities2') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                    </button>
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
                       (click)="maximizeChart('recommendationActivities2'); $event.stopPropagation()"
@@ -765,18 +1387,53 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      type="bar" 
-                      [data]="recommendationActivitiesData2" 
-                      [options]="recommendationActivitiesOptions2"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="(isTopPeersTab() || isSameLevelTab()) || getChartType('recommendationActivities2') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('recommendationActivities2')" 
+                        [options]="getChartOptions('recommendationActivities2')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && !isSameLevelTab() && getChartType('recommendationActivities2') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('recommendationActivities2')" 
+                        [options]="getChartOptions('recommendationActivities2')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
 
                 <!-- Recommendation Activity 3 -->
                 <div *ngIf="recommendationActivitiesVisible3" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <button 
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
+                      pTooltip="{{getChartDescription('recommendationActivities3')}}"
+                      tooltipPosition="left"
+                      [escape]="false"
+                      title="Chart information">
+                      <i class="pi pi-question-circle" style="font-size: 0.875rem;"></i>
+                    </button>
+                    <!-- Peer count selector for top peers tab (hidden in same level tab) -->
+                    <button 
+                      *ngIf="isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
+                      (click)="openPeerCountSelector('recommendationActivities3', $event); $event.stopPropagation()"
+                      title="Select number of peers to compare">
+                      <i class="pi pi-users" style="font-size: 0.875rem;"></i>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['recommendationActivities3'] || 3 }}</span>
+                    </button>
+                    <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
+                    <button 
+                      *ngIf="!isTopPeersTab() && !isSameLevelTab()"
+                      class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
+                      (click)="toggleChartType('recommendationActivities3'); $event.stopPropagation()"
+                      [title]="getChartType('recommendationActivities3') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('recommendationActivities3') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                    </button>
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
                       (click)="maximizeChart('recommendationActivities3'); $event.stopPropagation()"
@@ -791,16 +1448,28 @@
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <p-chart 
-                      type="bar" 
-                      [data]="recommendationActivitiesData3" 
-                      [options]="recommendationActivitiesOptions3"
-                      [style]="{'height': '100%'}">
-                    </p-chart>
+                    <ng-container *ngIf="(isTopPeersTab() || isSameLevelTab()) || getChartType('recommendationActivities3') === 'bar'">
+                      <p-chart 
+                        type="bar"
+                        [data]="getChartDataForTab('recommendationActivities3')" 
+                        [options]="getChartOptions('recommendationActivities3')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
+                    <ng-container *ngIf="!isTopPeersTab() && !isSameLevelTab() && getChartType('recommendationActivities3') === 'pie'">
+                      <p-chart 
+                        type="pie"
+                        [data]="getChartDataForTab('recommendationActivities3')" 
+                        [options]="getChartOptions('recommendationActivities3')"
+                        [style]="{'height': '100%'}">
+                      </p-chart>
+                    </ng-container>
                   </div>
                 </div>
               </div>
             </div>
+            </ng-container>
+            <!-- End of Default Category-based View -->
           </div>
         </p-tabPanel>
       </p-tabView>
@@ -833,25 +1502,655 @@
       </div>
       <!-- Line separator -->
       <div class="w-px bg-gray-300 h-full"></div>
-      <!-- Right half: Material List -->
+      <!-- Right half: Material List / Delta Values / Annotation Details -->
       <div class="w-1/2 h-full p-4 overflow-y-auto">
-        <div *ngIf="maximizedChartMaterialList && maximizedChartMaterialList.length > 0" class="h-full">
-          <div *ngFor="let group of maximizedChartMaterialList" class="mb-6">
-            <h4 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-300">
+        <!-- Annotation activity details for My Activities tab -->
+        <div *ngIf="isMyActivitiesTab() && isAnnotationChart()" class="h-full flex flex-col">
+          <h4 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-300">
+            {{ getAnnotationDetailsCategoryLabel() }}
+          </h4>
+          <!-- Loading state -->
+          <div *ngIf="annotationDetailsLoading" class="flex-1 flex items-center justify-center">
+            <div class="flex flex-col items-center gap-3">
+              <i class="pi pi-spin pi-spinner text-3xl text-blue-500"></i>
+              <span class="text-gray-600">Loading activity details...</span>
+            </div>
+          </div>
+          <!-- Annotation details table -->
+          <div *ngIf="!annotationDetailsLoading" class="flex-1 overflow-auto">
+            <div class="mb-3">
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input 
+                  pInputText 
+                  type="text" 
+                  (input)="filterAnnotationDetails($event)"
+                  placeholder="Search activities..." 
+                  class="p-inputtext-sm w-full">
+              </span>
+            </div>
+            <p-table 
+              [value]="annotationDetailsData" 
+              [paginator]="true" 
+              [rows]="10"
+              [rowsPerPageOptions]="[5, 10, 20]"
+              [showCurrentPageReport]="true"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+              styleClass="p-datatable-sm p-datatable-striped"
+              [scrollable]="true"
+              scrollHeight="flex">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="timestamp" style="width: 130px;">
+                    Date <p-sortIcon field="timestamp"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="verb" style="width: 100px;">
+                    Action <p-sortIcon field="verb"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="type" style="width: 120px;">
+                    Type <p-sortIcon field="type"></p-sortIcon>
+                  </th>
+                  <th *ngIf="annotationDetailsCategory === 'interactions'" pSortableColumn="interactionType" style="width: 100px;">
+                    Interaction <p-sortIcon field="interactionType"></p-sortIcon>
+                  </th>
+                  <th *ngIf="annotationDetailsCategory === 'likesdislikes'" pSortableColumn="action" style="width: 90px;">
+                    Like/Dislike <p-sortIcon field="action"></p-sortIcon>
+                  </th>
+                  <th *ngIf="annotationDetailsCategory === 'tags'" pSortableColumn="tagAction" style="width: 90px;">
+                    Tag Action <p-sortIcon field="tagAction"></p-sortIcon>
+                  </th>
+                  <th>Content</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-activity>
+                <tr>
+                  <td>{{ activity.timestamp | date:'short' }}</td>
+                  <td>
+                    <span class="px-2 py-1 text-xs rounded-full" 
+                          [ngClass]="getVerbBadgeClass(activity.verb)">
+                      {{ activity.verb }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="flex items-center gap-1">
+                      <i class="pi" [ngClass]="getTypeIcon(activity.type)"></i>
+                      {{ getTypeLabel(activity.type) }}
+                    </span>
+                  </td>
+                  <td *ngIf="annotationDetailsCategory === 'interactions'">
+                    <span class="px-2 py-1 text-xs rounded-full"
+                          [ngClass]="getInteractionBadgeClass(activity.interactionType)">
+                      {{ activity.interactionType }}
+                    </span>
+                  </td>
+                  <td *ngIf="annotationDetailsCategory === 'likesdislikes'">
+                    <span class="flex items-center gap-1">
+                      <i class="pi" [ngClass]="activity.action === 'like' ? 'pi-thumbs-up text-green-600' : 'pi-thumbs-down text-red-600'"></i>
+                      {{ activity.action }}
+                    </span>
+                  </td>
+                  <td *ngIf="annotationDetailsCategory === 'tags'">
+                    <span class="px-2 py-1 text-xs rounded-full"
+                          [ngClass]="activity.tagAction === 'added' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'">
+                      {{ activity.tagAction }}
+                    </span>
+                  </td>
+                  <td class="truncate max-w-xs" [title]="activity.content || activity.materialName || '-'">
+                    {{ activity.content || activity.materialName || '-' }}
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td [attr.colspan]="getAnnotationDetailsColspan()" class="text-center py-8 text-gray-500">
+                    <i class="pi pi-inbox text-3xl mb-2"></i>
+                    <p>No activities found for this category.</p>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+        <!-- KG activity details for My Activities tab (kgActivities2 and kgActivities3) -->
+        <div *ngIf="isMyActivitiesTab() && isKGChartWithDetails()" class="h-full flex flex-col">
+          <h4 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-300">
+            {{ getKGDetailsCategoryLabel() }}
+          </h4>
+          <!-- Loading state -->
+          <div *ngIf="kgDetailsLoading" class="flex-1 flex items-center justify-center">
+            <div class="flex flex-col items-center gap-3">
+              <i class="pi pi-spin pi-spinner text-3xl text-blue-500"></i>
+              <span class="text-gray-600">Loading KG activity details...</span>
+            </div>
+          </div>
+          <!-- KG details table -->
+          <div *ngIf="!kgDetailsLoading" class="flex-1 overflow-auto">
+            <div class="mb-3">
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input 
+                  pInputText 
+                  type="text" 
+                  (input)="filterKGDetails($event)"
+                  placeholder="Search activities..." 
+                  class="p-inputtext-sm w-full">
+              </span>
+            </div>
+            <p-table 
+              [value]="kgDetailsData" 
+              [paginator]="true" 
+              [rows]="10"
+              [rowsPerPageOptions]="[5, 10, 20]"
+              [showCurrentPageReport]="true"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+              styleClass="p-datatable-sm p-datatable-striped"
+              [scrollable]="true"
+              scrollHeight="flex">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="timestamp" style="width: 130px;">
+                    Date <p-sortIcon field="timestamp"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="verb" style="width: 120px;">
+                    Action <p-sortIcon field="verb"></p-sortIcon>
+                  </th>
+                  <!-- For accesses category: Only KG Type -->
+                  <th *ngIf="kgDetailsCategory === 'accesses'" pSortableColumn="kgType">
+                    KG Type <p-sortIcon field="kgType"></p-sortIcon>
+                  </th>
+                  <!-- For summary category: KG Type and View Type -->
+                  <th *ngIf="kgDetailsCategory === 'summary'" pSortableColumn="kgType" style="width: 110px;">
+                    KG Type <p-sortIcon field="kgType"></p-sortIcon>
+                  </th>
+                  <th *ngIf="kgDetailsCategory === 'summary'" pSortableColumn="viewType" style="width: 120px;">
+                    View Type <p-sortIcon field="viewType"></p-sortIcon>
+                  </th>
+                  <!-- For marked category: Mark Type -->
+                  <th *ngIf="kgDetailsCategory === 'marked'" pSortableColumn="markType" style="width: 140px;">
+                    Mark Type <p-sortIcon field="markType"></p-sortIcon>
+                  </th>
+                  <!-- Concept column only for summary and marked, not for accesses -->
+                  <th *ngIf="kgDetailsCategory !== 'accesses'" pSortableColumn="conceptName">
+                    Concept <p-sortIcon field="conceptName"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-activity>
+                <tr>
+                  <td>{{ activity.timestamp | date:'short' }}</td>
+                  <td>
+                    <span class="px-2 py-1 text-xs rounded-full" 
+                          [ngClass]="getVerbBadgeClass(activity.verb)">
+                      {{ activity.verb }}
+                    </span>
+                  </td>
+                  <!-- For accesses category: only KG Type -->
+                  <td *ngIf="kgDetailsCategory === 'accesses'">
+                    <span *ngIf="activity.kgType" class="px-2 py-1 text-xs rounded-full"
+                          [ngClass]="getKGTypeBadgeClass(activity.kgType)">
+                      {{ activity.kgType }}
+                    </span>
+                    <span *ngIf="!activity.kgType">-</span>
+                  </td>
+                  <!-- For summary category -->
+                  <td *ngIf="kgDetailsCategory === 'summary'">
+                    <span *ngIf="activity.kgType" class="px-2 py-1 text-xs rounded-full"
+                          [ngClass]="getKGTypeBadgeClass(activity.kgType)">
+                      {{ activity.kgType }}
+                    </span>
+                    <span *ngIf="!activity.kgType">-</span>
+                  </td>
+                  <td *ngIf="kgDetailsCategory === 'summary'">
+                    <span *ngIf="activity.viewType" class="flex items-center gap-1">
+                      <i class="pi" [ngClass]="getViewTypeIcon(activity.viewType)"></i>
+                      {{ activity.viewType }}
+                    </span>
+                    <span *ngIf="!activity.viewType">-</span>
+                  </td>
+                  <!-- For marked category -->
+                  <td *ngIf="kgDetailsCategory === 'marked'">
+                    <span class="px-2 py-1 text-xs rounded-full"
+                          [ngClass]="getMarkTypeBadgeClass(activity.markType)">
+                      {{ activity.markType }}
+                    </span>
+                  </td>
+                  <!-- Concept column only for summary and marked, not for accesses -->
+                  <td *ngIf="kgDetailsCategory !== 'accesses'" class="truncate max-w-xs" [title]="activity.conceptName || '-'">
+                    {{ activity.conceptName || '-' }}
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td [attr.colspan]="kgDetailsCategory === 'accesses' ? 3 : (kgDetailsCategory === 'summary' ? 5 : 4)" class="text-center py-8 text-gray-500">
+                    <i class="pi pi-inbox text-3xl mb-2"></i>
+                    <p>No KG activities found for this category.</p>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+        <!-- Recommendation activity details for My Activities tab (recommendationActivities2 and recommendationActivities3) -->
+        <div *ngIf="isMyActivitiesTab() && isRecommendationChartWithDetails()" class="h-full flex flex-col">
+          <h4 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-300">
+            {{ getRecommendationDetailsCategoryLabel() }}
+          </h4>
+          <!-- Loading state -->
+          <div *ngIf="recommendationDetailsLoading" class="flex-1 flex items-center justify-center">
+            <div class="flex flex-col items-center gap-3">
+              <i class="pi pi-spin pi-spinner text-3xl text-blue-500"></i>
+              <span class="text-gray-600">Loading recommendation activity details...</span>
+            </div>
+          </div>
+          <!-- Recommendation details table -->
+          <div *ngIf="!recommendationDetailsLoading" class="flex-1 overflow-auto">
+            <div class="mb-3">
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input 
+                  pInputText 
+                  type="text" 
+                  (input)="filterRecommendationDetails($event)"
+                  placeholder="Search activities..." 
+                  class="p-inputtext-sm w-full">
+              </span>
+            </div>
+            <p-table 
+              [value]="recommendationDetailsData" 
+              [paginator]="true" 
+              [rows]="10"
+              [rowsPerPageOptions]="[5, 10, 20]"
+              [showCurrentPageReport]="true"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+              styleClass="p-datatable-sm p-datatable-striped"
+              [scrollable]="true"
+              scrollHeight="flex">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="timestamp" style="width: 130px;">
+                    Date <p-sortIcon field="timestamp"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="verb" style="width: 120px;">
+                    Action <p-sortIcon field="verb"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="markType" style="width: 140px;">
+                    Mark Type <p-sortIcon field="markType"></p-sortIcon>
+                  </th>
+                  <!-- For materials category: Resource Type and Resource Name -->
+                  <th *ngIf="recommendationDetailsCategory === 'materials'" pSortableColumn="resourceType" style="width: 110px;">
+                    Type <p-sortIcon field="resourceType"></p-sortIcon>
+                  </th>
+                  <th *ngIf="recommendationDetailsCategory === 'materials'" pSortableColumn="resourceName">
+                    Resource Name <p-sortIcon field="resourceName"></p-sortIcon>
+                  </th>
+                  <!-- For concepts category: Concept Name -->
+                  <th *ngIf="recommendationDetailsCategory === 'concepts'" pSortableColumn="conceptName">
+                    Concept Name <p-sortIcon field="conceptName"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-activity>
+                <tr>
+                  <td>{{ activity.timestamp | date:'short' }}</td>
+                  <td>
+                    <span class="px-2 py-1 text-xs rounded-full" 
+                          [ngClass]="getVerbBadgeClass(activity.verb)">
+                      {{ activity.verb }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="px-2 py-1 text-xs rounded-full"
+                          [ngClass]="getRecommendationMarkTypeBadgeClass(activity.markType)">
+                      {{ activity.markType }}
+                    </span>
+                  </td>
+                  <!-- For materials category -->
+                  <td *ngIf="recommendationDetailsCategory === 'materials'">
+                    <span *ngIf="activity.resourceType" class="px-2 py-1 text-xs rounded-full"
+                          [ngClass]="getResourceTypeBadgeClass(activity.resourceType)">
+                      {{ activity.resourceType }}
+                    </span>
+                    <span *ngIf="!activity.resourceType">-</span>
+                  </td>
+                  <td *ngIf="recommendationDetailsCategory === 'materials'" class="truncate max-w-xs" [title]="activity.resourceName || '-'">
+                    {{ activity.resourceName || '-' }}
+                  </td>
+                  <!-- For concepts category -->
+                  <td *ngIf="recommendationDetailsCategory === 'concepts'" class="truncate max-w-xs" [title]="activity.conceptName || '-'">
+                    {{ activity.conceptName || '-' }}
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td [attr.colspan]="recommendationDetailsCategory === 'materials' ? 5 : 4" class="text-center py-8 text-gray-500">
+                    <i class="pi pi-inbox text-3xl mb-2"></i>
+                    <p>No recommendation activities found for this category.</p>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+        <!-- Access activity details for My Activities tab (accessActivities1) -->
+        <div *ngIf="isMyActivitiesTab() && isAccessChartWithDetails()" class="h-full flex flex-col">
+          <h4 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-300">
+            Access Activity Details & Frequency
+          </h4>
+          <!-- Loading state -->
+          <div *ngIf="accessDetailsLoading" class="flex-1 flex items-center justify-center">
+            <div class="flex flex-col items-center gap-3">
+              <i class="pi pi-spin pi-spinner text-3xl text-blue-500"></i>
+              <span class="text-gray-600">Loading access activity details...</span>
+            </div>
+          </div>
+          <!-- Access details -->
+          <div *ngIf="!accessDetailsLoading" class="flex-1 overflow-auto">
+            <!-- Summary section with frequencies -->
+            <div *ngIf="accessDetailsSummary" class="mb-4">
+              <h5 class="text-sm font-semibold text-gray-700 mb-2">Access Frequency by Type</h5>
+              <div class="grid grid-cols-2 gap-3 mb-3">
+                <!-- Course frequency -->
+                <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-blue-800">Course</span>
+                    <span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ accessDetailsSummary.totals.course }}</span>
+                  </div>
+                  <div *ngIf="accessDetailsSummary.courseFrequency.length > 0" class="space-y-1">
+                    <div *ngFor="let item of accessDetailsSummary.courseFrequency.slice(0, 3)" class="flex justify-between text-xs">
+                      <span class="text-gray-700 truncate mr-2">{{ item.name }}</span>
+                      <span class="font-semibold text-blue-600">{{ item.count }}x</span>
+                    </div>
+                  </div>
+                  <div *ngIf="accessDetailsSummary.courseFrequency.length === 0" class="text-xs text-gray-500 italic">No accesses</div>
+                </div>
+                <!-- Topic frequency -->
+                <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-green-800">Topic</span>
+                    <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ accessDetailsSummary.totals.topic }}</span>
+                  </div>
+                  <div *ngIf="accessDetailsSummary.topicFrequency.length > 0" class="space-y-1">
+                    <div *ngFor="let item of accessDetailsSummary.topicFrequency.slice(0, 3)" class="flex justify-between text-xs">
+                      <span class="text-gray-700 truncate mr-2">{{ item.name }}</span>
+                      <span class="font-semibold text-green-600">{{ item.count }}x</span>
+                    </div>
+                  </div>
+                  <div *ngIf="accessDetailsSummary.topicFrequency.length === 0" class="text-xs text-gray-500 italic">No accesses</div>
+                </div>
+                <!-- Channel frequency -->
+                <div class="bg-purple-50 rounded-lg p-3 border border-purple-200">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-purple-800">Channel</span>
+                    <span class="bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ accessDetailsSummary.totals.channel }}</span>
+                  </div>
+                  <div *ngIf="accessDetailsSummary.channelFrequency.length > 0" class="space-y-1">
+                    <div *ngFor="let item of accessDetailsSummary.channelFrequency.slice(0, 3)" class="flex justify-between text-xs">
+                      <span class="text-gray-700 truncate mr-2">{{ item.name }}</span>
+                      <span class="font-semibold text-purple-600">{{ item.count }}x</span>
+                    </div>
+                  </div>
+                  <div *ngIf="accessDetailsSummary.channelFrequency.length === 0" class="text-xs text-gray-500 italic">No accesses</div>
+                </div>
+                <!-- Material frequency -->
+                <div class="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-orange-800">Material</span>
+                    <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ accessDetailsSummary.totals.material }}</span>
+                  </div>
+                  <div *ngIf="accessDetailsSummary.materialFrequency.length > 0" class="space-y-1">
+                    <div *ngFor="let item of accessDetailsSummary.materialFrequency.slice(0, 3)" class="flex justify-between text-xs">
+                      <span class="text-gray-700 truncate mr-2">{{ item.name }}</span>
+                      <span class="font-semibold text-orange-600">{{ item.count }}x</span>
+                    </div>
+                  </div>
+                  <div *ngIf="accessDetailsSummary.materialFrequency.length === 0" class="text-xs text-gray-500 italic">No accesses</div>
+                </div>
+              </div>
+            </div>
+            <!-- Search and table -->
+            <div class="mb-3">
+              <span class="p-input-icon-left w-full">
+                <i class="pi pi-search"></i>
+                <input 
+                  pInputText 
+                  type="text" 
+                  (input)="filterAccessDetails($event)"
+                  placeholder="Search access activities..." 
+                  class="p-inputtext-sm w-full">
+              </span>
+            </div>
+            <p-table 
+              [value]="accessDetailsData" 
+              [paginator]="true" 
+              [rows]="10"
+              [rowsPerPageOptions]="[5, 10, 20]"
+              [showCurrentPageReport]="true"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+              styleClass="p-datatable-sm p-datatable-striped"
+              [scrollable]="true"
+              scrollHeight="flex">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="timestamp" style="width: 130px;">
+                    Date <p-sortIcon field="timestamp"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="type" style="width: 100px;">
+                    Type <p-sortIcon field="type"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="objectName">
+                    Name <p-sortIcon field="objectName"></p-sortIcon>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-activity>
+                <tr>
+                  <td>{{ activity.timestamp | date:'short' }}</td>
+                  <td>
+                    <span class="px-2 py-1 text-xs rounded-full" 
+                          [ngClass]="getAccessTypeBadgeClass(activity.type)">
+                      {{ getAccessTypeDisplayName(activity.type) }}
+                    </span>
+                  </td>
+                  <td class="truncate max-w-xs" [title]="activity.objectName || activity.courseName || activity.topicName || activity.channelName || activity.materialName || '-'">
+                    {{ activity.objectName || activity.courseName || activity.topicName || activity.channelName || activity.materialName || '-' }}
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="3" class="text-center py-8 text-gray-500">
+                    <i class="pi pi-inbox text-3xl mb-2"></i>
+                    <p>No access activities found.</p>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+        <!-- Delta values for top peers tab -->
+        <div *ngIf="isTopPeersTab() && maximizedChartDeltaValues && maximizedChartDeltaValues.length > 0" class="h-full">
+          <h4 class="text-sm font-semibold text-gray-800 mb-2 pb-1 border-b border-gray-300 flex items-center gap-2">
+            <i class="pi pi-users text-blue-600" style="font-size: 0.875rem;"></i>
+            Comparison with Top Peers
+          </h4>
+          <div class="space-y-3">
+            <div *ngFor="let delta of maximizedChartDeltaValues" 
+                 class="bg-white rounded border border-gray-200 px-3 py-2">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-medium text-gray-800">{{ delta.peerName }}</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full" 
+                      [ngClass]="delta.delta > 0 ? 'bg-red-100 text-red-600' : (delta.delta < 0 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600')">
+                  {{ delta.delta > 0 ? 'Behind by ' : (delta.delta < 0 ? 'Ahead by ' : '') }}{{ delta.delta > 0 ? '+' : '' }}{{ delta.delta === 0 ? 'Equal' : delta.delta }}
+                </span>
+              </div>
+              <div class="flex justify-between text-xs text-gray-500">
+                <span>You: <span class="font-medium text-blue-600">{{ delta.userValue }}</span></span>
+                <span>Peer: <span class="font-medium text-gray-700">{{ delta.peerValue }}</span></span>
+              </div>
+              <div class="mt-1">
+                <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all" 
+                       [style.width.%]="delta.peerValue > 0 ? Math.min(100, (delta.userValue / delta.peerValue) * 100) : 100"
+                       [ngClass]="delta.delta > 0 ? 'bg-red-400' : (delta.delta < 0 ? 'bg-green-400' : 'bg-blue-400')">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Delta values for same engagement level tab -->
+        <div *ngIf="isSameLevelTab() && maximizedChartDeltaValues && maximizedChartDeltaValues.length > 0" class="h-full">
+          <h4 class="text-sm font-semibold text-gray-800 mb-2 pb-1 border-b border-gray-300 flex items-center gap-2">
+            <i class="pi pi-chart-bar text-green-600" style="font-size: 0.875rem;"></i>
+            Comparison with Same Engagement Level Peers
+          </h4>
+          <!-- No peers message -->
+          <div *ngIf="hasNoPeersAtSameLevel()" class="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <div class="flex items-start gap-2">
+              <i class="pi pi-exclamation-triangle text-amber-500 mt-0.5" style="font-size: 1rem;"></i>
+              <div>
+                <p class="text-sm font-medium text-amber-800">No other users at your engagement level</p>
+                <p class="text-xs text-amber-600 mt-1">
+                  You are currently the only user classified as 
+                  <span class="font-semibold capitalize">{{ sameLevelStats?.currentUserEngagementLevel || 'N/A' }}</span> 
+                  engagement level for this course. The chart shows only your own activity data.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Peer count info (when peers exist) -->
+          <div *ngIf="!hasNoPeersAtSameLevel()" class="mb-2 text-xs text-gray-500 bg-gray-50 rounded px-2 py-1">
+            <i class="pi pi-info-circle mr-1"></i>
+            Comparing with {{ sameLevelStats?.sameLevelStats?.peerCount || sameLevelStats?.sameLevelStats?.usersWithSameEngagementLevel || 0 }} peer(s) 
+            classified as <span class="font-semibold capitalize">{{ sameLevelStats?.currentUserEngagementLevel || 'N/A' }}</span> engagement level
+          </div>
+          <div class="space-y-2">
+            <div *ngFor="let delta of maximizedChartDeltaValues" 
+                 class="bg-white rounded border border-gray-200 px-3 py-2">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-medium text-gray-800 flex items-center gap-1">
+                  <i class="pi" [ngClass]="delta.peerName.includes('Average') ? 'pi-chart-line text-green-500' : 'pi-arrow-up text-orange-500'" style="font-size: 0.75rem;"></i>
+                  {{ delta.peerName }}
+                </span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full" 
+                      [ngClass]="delta.delta > 0 ? 'bg-red-100 text-red-600' : (delta.delta < 0 ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600')">
+                  {{ delta.delta > 0 ? 'Behind by ' : (delta.delta < 0 ? 'Ahead by ' : '') }}{{ delta.delta === 0 ? 'Equal' : (delta.delta > 0 ? delta.delta : Math.abs(delta.delta)) }}
+                </span>
+              </div>
+              <div class="flex justify-between text-xs text-gray-500">
+                <span>You: <span class="font-medium text-blue-600">{{ delta.userValue }}</span></span>
+                <span>{{ delta.peerName.includes('Average') ? 'Avg' : 'Max' }}: <span class="font-medium" [ngClass]="delta.peerName.includes('Average') ? 'text-green-600' : 'text-orange-600'">{{ delta.peerValue }}</span></span>
+              </div>
+              <div class="mt-1">
+                <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full transition-all" 
+                       [style.width.%]="delta.peerValue > 0 ? Math.min(100, (delta.userValue / delta.peerValue) * 100) : 100"
+                       [ngClass]="delta.delta > 0 ? 'bg-red-400' : (delta.delta < 0 ? 'bg-green-400' : 'bg-blue-400')">
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="delta.description" class="mt-1 text-xs text-gray-400 italic">
+                {{ delta.description }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Delta values for higher engagement level boundaries tab -->
+        <div *ngIf="isHigherLevelTab() && maximizedChartDeltaValues && maximizedChartDeltaValues.length > 0" class="h-full">
+          <h4 class="text-sm font-semibold text-gray-800 mb-2 pb-1 border-b border-gray-300 flex items-center gap-2">
+            <i class="pi pi-arrow-up text-purple-600" style="font-size: 0.875rem;"></i>
+            Gap to {{ higherLevelBoundaries?.higherLevel | titlecase }} Level Threshold
+          </h4>
+          <!-- Info about threshold -->
+          <div class="mb-3 p-2 bg-indigo-50 border border-indigo-200 rounded-lg">
+            <div class="flex items-start gap-2">
+              <i class="pi pi-info-circle text-indigo-500 mt-0.5" style="font-size: 0.875rem;"></i>
+              <p class="text-xs text-indigo-700">
+                These thresholds represent the <strong>minimum values</strong> from users at the 
+                <span class="font-semibold capitalize">{{ higherLevelBoundaries?.higherLevel || 'higher' }}</span> 
+                engagement level. Meeting all thresholds helps you progress to the next level.
+              </p>
+            </div>
+          </div>
+          <div class="space-y-2 max-h-96 overflow-y-auto">
+            <div *ngFor="let delta of maximizedChartDeltaValues" 
+                 class="bg-white rounded border px-3 py-2"
+                 [ngClass]="delta.meetsThreshold ? 'border-green-300 bg-green-50' : 'border-gray-200'">
+              <!-- Metric label for multi-metric charts -->
+              <div *ngIf="delta.metricLabel" class="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
+                {{ delta.metricLabel }}
+              </div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm font-medium text-gray-800 flex items-center gap-1">
+                  <i class="pi" [ngClass]="delta.meetsThreshold ? 'pi-check-circle text-green-500' : 'pi-arrow-right text-purple-500'" style="font-size: 0.75rem;"></i>
+                  {{ delta.peerName }}
+                </span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full" 
+                      [ngClass]="delta.meetsThreshold ? 'bg-green-100 text-green-600' : 'bg-purple-100 text-purple-600'">
+                  {{ delta.meetsThreshold ? 'Threshold Met ✓' : 'Gap: ' + delta.delta }}
+                </span>
+              </div>
+              <div class="flex justify-between text-xs text-gray-500">
+                <span>Your Value: <span class="font-medium text-blue-600">{{ delta.userValue }}</span></span>
+                <span>Threshold: <span class="font-medium text-purple-600">{{ delta.peerValue }}</span></span>
+              </div>
+              <!-- Progress bar -->
+              <div class="mt-2">
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden relative">
+                  <div class="h-full rounded-full transition-all" 
+                       [style.width.%]="delta.peerValue > 0 ? Math.min(100, (delta.userValue / delta.peerValue) * 100) : (delta.userValue > 0 ? 100 : 0)"
+                       [ngClass]="delta.meetsThreshold ? 'bg-green-500' : 'bg-gradient-to-r from-blue-400 to-purple-500'">
+                  </div>
+                  <!-- Threshold marker -->
+                  <div class="absolute top-0 bottom-0 w-0.5 bg-purple-700" style="left: 100%;"></div>
+                </div>
+                <div class="flex justify-between mt-1 text-xs">
+                  <span class="text-gray-400">0</span>
+                  <span class="text-purple-600 font-medium">{{ delta.peerValue }}</span>
+                </div>
+              </div>
+              <!-- Gap info -->
+              <div class="mt-2 text-xs rounded px-2 py-1" 
+                   [ngClass]="delta.meetsThreshold ? 'bg-green-100 text-green-700' : 'bg-amber-50 text-amber-700'">
+                <i class="pi mr-1" [ngClass]="delta.meetsThreshold ? 'pi-check' : 'pi-arrow-up'"></i>
+                {{ delta.gapInfo }}
+              </div>
+              <div *ngIf="delta.description" class="mt-1 text-xs text-gray-400 italic">
+                {{ delta.description }}
+              </div>
+            </div>
+          </div>
+          <!-- Scheduling note -->
+          <div class="mt-3 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+            <div class="flex items-start gap-2">
+              <i class="pi pi-clock text-blue-500 mt-0.5" style="font-size: 0.875rem;"></i>
+              <p class="text-xs text-blue-700">
+                <strong>Note:</strong> If you exceed all thresholds but don't immediately see your engagement level increase, 
+                it will update the following day due to scheduled recalculation.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Material list for other tabs -->
+        <div *ngIf="!isTopPeersTab() && !isSameLevelTab() && !isHigherLevelTab() && maximizedChartMaterialList && maximizedChartMaterialList.length > 0" class="h-full">
+          <div *ngFor="let group of maximizedChartMaterialList" class="mb-2">
+            <h4 class="text-sm font-semibold text-gray-700 mb-1 pb-1 border-b border-gray-300">
               {{ group.label }}
             </h4>
-            <div *ngIf="group.items && group.items.length > 0" class="space-y-2">
+            <div *ngIf="group.items && group.items.length > 0" class="space-y-1">
               <div 
                 *ngFor="let material of group.items" 
-                class="p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-200 hover:border-blue-400"
+                class="material-link-item bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-200 hover:border-blue-400 flex items-center justify-between"
                 (click)="navigateToMaterial(material)">
-                <div class="flex items-center gap-2">
-                  <i class="pi" [ngClass]="material.type === 'pdf' ? 'pi-file-pdf text-red-600' : 'pi-video text-blue-600'" style="font-size: 1.25rem;"></i>
-                  <span class="text-gray-800 font-medium hover:text-blue-600 transition-colors flex-1">
+                <div class="flex items-center gap-2 flex-1 min-w-0">
+                  <i class="pi flex-shrink-0" [ngClass]="material.type === 'pdf' ? 'pi-file-pdf text-red-600' : 'pi-video text-blue-600'"></i>
+                  <span class="text-gray-800 font-medium hover:text-blue-600 transition-colors truncate">
                     {{ material.name }}
                   </span>
-                  <i class="pi pi-external-link text-gray-400 text-sm"></i>
                 </div>
+                <i class="pi pi-external-link text-gray-400 flex-shrink-0 ml-2"></i>
               </div>
             </div>
             <div *ngIf="!group.items || group.items.length === 0" class="text-gray-500 text-sm italic">
@@ -859,10 +2158,136 @@
             </div>
           </div>
         </div>
-        <div *ngIf="!maximizedChartMaterialList || maximizedChartMaterialList.length === 0" class="h-full flex items-center justify-center text-gray-500">
+        <!-- Slides and Video Time Details for My Activities tab -->
+        <div *ngIf="isMyActivitiesTab() && maximizedChart === 'slidesAndVideoTime' && slidesAndVideoTimeDetails" class="h-full flex flex-col overflow-y-auto">
+          <!-- PDF Slides Section -->
+          <div class="mb-4">
+            <h4 class="text-sm font-semibold text-gray-800 mb-2 pb-1 border-b border-gray-300 flex items-center gap-2">
+              <i class="pi pi-file-pdf text-red-600" style="font-size: 0.875rem;"></i>
+              Slides Viewed by PDF learning materials
+            </h4>
+            <div *ngIf="slidesAndVideoTimeDetails.pdfSlides && slidesAndVideoTimeDetails.pdfSlides.length > 0" class="space-y-2">
+              <div 
+                *ngFor="let pdf of slidesAndVideoTimeDetails.pdfSlides" 
+                class="bg-white rounded border border-gray-200 p-2">
+                <!-- PDF Header with name and slide count -->
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                    <i class="pi pi-file-pdf text-red-600 flex-shrink-0" style="font-size: 0.75rem;"></i>
+                    <span class="text-gray-800 font-medium truncate text-sm">{{ pdf.name }}</span>
+                  </div>
+                  <span class="text-xs font-medium text-indigo-600 flex-shrink-0 ml-2 px-1.5 py-0.5 bg-indigo-100 rounded-full">
+                    {{ pdf.uniqueSlidesViewed }} / {{ pdf.totalSlides }} slides
+                  </span>
+                </div>
+                <!-- Quick Actions -->
+                <div class="flex items-center gap-2 text-xs">
+                  <button 
+                    class="flex items-center gap-1 px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded transition-colors"
+                    (click)="navigateToPdfSlide(pdf.id, 1)"
+                    title="Go to first slide">
+                    <i class="pi pi-play" style="font-size: 0.625rem;"></i>
+                    <span>Start</span>
+                  </button>
+                </div>
+                <!-- Last Accessed Section -->
+                <div class="mt-2 pt-2 border-t border-gray-100">
+                  <div class="flex items-center justify-between text-xs text-gray-600">
+                    <span class="flex items-center gap-1">
+                      <i class="pi pi-history" style="font-size: 0.625rem;"></i>
+                      Last viewed: Slide {{ pdf.lastAccessedSlide }}
+                    </span>
+                    <button 
+                      class="flex items-center gap-1 px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded transition-colors"
+                      (click)="navigateToPdfSlide(pdf.id, pdf.lastAccessedSlide)"
+                      title="Resume from last viewed slide">
+                      <i class="pi pi-arrow-right" style="font-size: 0.625rem;"></i>
+                      <span>Resume</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!slidesAndVideoTimeDetails.pdfSlides || slidesAndVideoTimeDetails.pdfSlides.length === 0" class="text-gray-500 text-xs italic p-2">
+              No slides viewed
+            </div>
+          </div>
+          <!-- Video Time Section -->
+          <div>
+            <h4 class="text-sm font-semibold text-gray-800 mb-2 pb-1 border-b border-gray-300 flex items-center gap-2">
+              <i class="pi pi-video text-blue-600" style="font-size: 0.875rem;"></i>
+              Time Spent on Videos
+            </h4>
+            <div *ngIf="slidesAndVideoTimeDetails.videoTime && slidesAndVideoTimeDetails.videoTime.length > 0" class="space-y-2">
+              <div 
+                *ngFor="let video of slidesAndVideoTimeDetails.videoTime" 
+                class="bg-white rounded border border-gray-200 p-2">
+                <!-- Video Header with name and time -->
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                    <i class="pi pi-video text-blue-600 flex-shrink-0" style="font-size: 0.75rem;"></i>
+                    <span class="text-gray-800 font-medium truncate text-sm">{{ video.name }}</span>
+                  </div>
+                  <span class="text-xs font-medium text-orange-600 flex-shrink-0 ml-2 px-1.5 py-0.5 bg-orange-100 rounded-full">
+                    {{ video.timeInMinutes }} min
+                  </span>
+                </div>
+                <!-- Quick Actions -->
+                <div class="flex items-center gap-2 text-xs">
+                  <button 
+                    class="flex items-center gap-1 px-2 py-1 bg-green-50 hover:bg-green-100 text-green-700 rounded transition-colors"
+                    (click)="navigateToVideo(video.id, 0)"
+                    title="Start from beginning">
+                    <i class="pi pi-play" style="font-size: 0.625rem;"></i>
+                    <span>Start</span>
+                  </button>
+                </div>
+                <!-- Last Accessed Section -->
+                <div class="mt-2 pt-2 border-t border-gray-100">
+                  <div class="flex items-center justify-between text-xs text-gray-600">
+                    <span class="flex items-center gap-1">
+                      <i class="pi pi-history" style="font-size: 0.625rem;"></i>
+                      Last watched: {{ formatVideoTimestamp(video.lastAccessedTimestamp) }}
+                    </span>
+                    <button 
+                      class="flex items-center gap-1 px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded transition-colors"
+                      (click)="navigateToVideo(video.id, video.lastAccessedTimestamp)"
+                      title="Resume from last watched position">
+                      <i class="pi pi-arrow-right" style="font-size: 0.625rem;"></i>
+                      <span>Resume</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!slidesAndVideoTimeDetails.videoTime || slidesAndVideoTimeDetails.videoTime.length === 0" class="text-gray-500 text-xs italic p-2">
+              No video time tracked
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!(isMyActivitiesTab() && (isAnnotationChart() || isKGChartWithDetails() || isRecommendationChartWithDetails() || isAccessChartWithDetails() || (maximizedChart === 'slidesAndVideoTime' && slidesAndVideoTimeDetails))) && ((!isTopPeersTab() && (!maximizedChartMaterialList || maximizedChartMaterialList.length === 0)) || (isTopPeersTab() && (!maximizedChartDeltaValues || maximizedChartDeltaValues.length === 0)))" class="h-full flex items-center justify-center text-gray-500">
           <p>No additional details available</p>
         </div>
       </div>
     </div>
   </p-dialog>
+  
+  <!-- Peer count selector overlay panel -->
+  <p-overlayPanel #peerCountPanel>
+    <div class="p-2">
+      <h4 class="font-semibold mb-2 text-sm text-gray-700">Compare with top peers</h4>
+      <div *ngIf="getMaxAvailablePeers() === 0" class="text-sm text-gray-500 italic py-2">
+        No other peers enrolled in this course
+      </div>
+      <div *ngIf="getMaxAvailablePeers() > 0" class="flex flex-col gap-1">
+        <button 
+          *ngFor="let count of getAvailablePeerOptions()"
+          class="px-3 py-1.5 text-sm rounded hover:bg-blue-100 transition-colors text-left"
+          [ngClass]="(peerCounts[currentPeerCountChart] || 3) === count ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-50 text-gray-700'"
+          (click)="selectPeerCount(count)">
+          {{ count }} {{ count === 1 ? 'peer' : 'peers' }}
+        </button>
+      </div>
+    </div>
+  </p-overlayPanel>
 </div>

@@ -4,12 +4,15 @@
 
 .engagement-charts-container {
   width: 100%;
+  min-height: 100vh;
 }
 
 .chart-wrapper {
   position: relative;
   width: 100%;
+  min-height: 250px;
   overflow: hidden;
+  display: block;
 }
 
 /* Chart container styling */
@@ -17,17 +20,30 @@
   width: 100% !important;
   height: 100% !important;
   overflow: hidden;
+  display: block;
 }
 
 :host ::ng-deep .p-chart > canvas {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-/* Ensure charts are responsive */
+/* Ensure charts are responsive at all zoom levels */
 :host ::ng-deep canvas {
-  max-width: 100%;
-  height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Chart card responsiveness */
+.bg-white.rounded-lg {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.bg-white.rounded-lg .chart-wrapper {
+  flex: 1;
+  min-height: 280px;
 }
 
 /* Consistent spacing and styling */
@@ -47,11 +63,13 @@
 /* Gauge container styling */
 .gauge-container {
   position: relative;
+  overflow: visible;
+  margin-bottom: 0;
 }
 
 .gauge-label {
   position: absolute;
-  top: 50%;
+  top: 90%;
   left: 0;
   right: 0;
   bottom: 0;
@@ -59,6 +77,60 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  transform: translateY(-25%); /* Position in the center of the visible semi-circle */
+  transform: translateY(-10%); /* Position lower in the visible semi-circle */
+  z-index: 1;
+}
+
+/* Responsive grid for different screen sizes */
+@media (max-width: 768px) {
+  .chart-wrapper {
+    min-height: 200px;
+    height: 250px;
+  }
+  
+  .bg-white.rounded-lg {
+    min-height: 280px;
+  }
+  
+  .bg-white.rounded-lg .chart-wrapper {
+    min-height: 220px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .chart-wrapper {
+    min-height: 280px;
+  }
+  
+  .bg-white.rounded-lg {
+    min-height: 380px;
+  }
+  
+  .bg-white.rounded-lg .chart-wrapper {
+    min-height: 320px;
+  }
+}
+
+/* Force chart redraw on visibility change */
+:host ::ng-deep .p-tabview-panel {
+  width: 100%;
+}
+
+/* Reduce material link box size in maximized chart */
+.material-link-item {
+  padding: 0.375rem 0.5rem !important;
+  gap: 0.375rem !important;
+  min-height: auto !important;
+  line-height: 1;
+}
+
+.material-link-item .text-gray-800 {
+  font-size: 0.8125rem;
+  line-height: 1.2;
+}
+
+.material-link-item i {
+  font-size: 0.875rem !important;
+  flex-shrink: 0;
 }
 

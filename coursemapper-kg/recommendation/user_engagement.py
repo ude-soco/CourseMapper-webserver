@@ -105,7 +105,7 @@ def update_engagement_status(driver, user_id, course_id, new_level):
     Update the engagement level for a given user-course relationship in Neo4j.
     """
     with driver.session() as session:
-        session.write_transaction(
+        session.execute_write(
           lambda tx: tx.run(
                 """
                 MERGE (u:User {uid: $userId})

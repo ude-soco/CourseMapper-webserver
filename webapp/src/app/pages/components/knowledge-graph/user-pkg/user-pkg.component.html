@@ -69,13 +69,11 @@
           (conceptSelected)="onConceptSelected($event)"
           (conceptStatusChanged)="onConceptStatusChanged($event)"
           (courseNodeClicked)="onCourseNodeClicked($event)"
-<<<<<<< HEAD
           (courseEngagementDashboardRequested)="onCourseEngagementDashboardRequested($event)"
-          (edgeClicked)="onEdgeClicked($event)">
-=======
+          (courseViewRequested)="onCourseViewRequested($event)"
+          (courseDetailsRequested)="onCourseDetailsRequested($event)"
           (edgeClicked)="onEdgeClicked($event)"
           (visibleNodesChanged)="onVisibleNodesChanged($event)">
->>>>>>> origin/dev2-monir-pkg
         </app-cytoscape-pkg>
       </div>
       
@@ -86,6 +84,15 @@
         [details]="conceptDetails"
         (close)="closeConceptDetails()">
       </app-pkg-concept-details-panel>
+
+      <!-- Course Details Panel -->
+      <app-pkg-course-details-panel
+        [visible]="showCourseDetails"
+        [courseNode]="selectedCourseNode"
+        (close)="closeCourseDetails()"
+        (viewCourse)="onCourseDetailsViewCourse($event)"
+        (viewEngagementDashboard)="onCourseDetailsEngagementDashboard($event)">
+      </app-pkg-course-details-panel>
       
       <!-- Help Dialog -->
       <app-graph-help-dialog

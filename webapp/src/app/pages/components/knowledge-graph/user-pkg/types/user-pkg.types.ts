@@ -47,12 +47,7 @@ export interface CourseInfo {
   courseId: string;
   courseName: string;
   courseShortName: string;
-<<<<<<< HEAD
   engagementLevel?: string; // 'low', 'medium', 'high'
-=======
-  // Engagement level 
-  engagementLevel?: number;
->>>>>>> origin/dev2-monir-pkg
 }
 
 // Material info from backend
@@ -90,14 +85,10 @@ export interface CytoscapeNodeData {
   courseShortName?: string;
   allCourseIds?: string[];
   initials?: string;
-<<<<<<< HEAD
-  engagementLevel?: string; // For course nodes in engagement view
-=======
   // Interest score for interest view mode
   interestScore?: number;
   // Engagement level for engagement view mode (courses only)
-  engagementLevel?: number;
->>>>>>> origin/dev2-monir-pkg
+  engagementLevel?: string;
 }
 
 export interface CytoscapeNode {

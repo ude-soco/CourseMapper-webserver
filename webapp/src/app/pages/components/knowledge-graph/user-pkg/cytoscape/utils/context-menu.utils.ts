@@ -9,6 +9,8 @@ export interface ContextMenuCallbacks {
   onToggleCourse: (node: any) => void;
   onToggleRelated: (node: any) => void;
   onViewEngagementDashboard?: (courseData: any) => void;
+  onViewCourse?: (courseData: any) => void;
+  onShowCourseDetails?: (courseData: any) => void;
 }
 
 /**
@@ -99,14 +101,18 @@ function getCommandsForCourse(
       content: '<span style="font-size:14px;">View Course</span> <br> <i class="pi pi-external-link" style="color:#3B82F6;"></i>',
       select: () => {
         console.log('[Context Menu] View course:', courseData);
-        // TODO: Implement navigation to course
+        if (callbacks.onViewCourse) {
+          callbacks.onViewCourse(courseData);
+        }
       },
     },
     {
       content: '<span style="font-size:14px;">Course Details</span> <br> <i class="pi pi-info-circle" style="color:#6B7280;"></i>',
       select: () => {
         console.log('[Context Menu] Course details:', courseData);
-        // TODO: Implement course details panel
+        if (callbacks.onShowCourseDetails) {
+          callbacks.onShowCourseDetails(courseData);
+        }
       },
     }
   );

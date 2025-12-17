@@ -1,13 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-<<<<<<< HEAD
 import { of, from } from 'rxjs';
-import { map, switchMap, catchError, withLatestFrom, filter, take } from 'rxjs/operators';
-=======
-import { of } from 'rxjs';
 import { map, switchMap, catchError, withLatestFrom, filter, take, tap } from 'rxjs/operators';
->>>>>>> origin/dev2-monir-pkg
 import * as UserPkgActions from './user-pkg.actions';
 import * as UserPkgSelectors from './user-pkg.reducer';
 import { Neo4jService } from 'src/app/services/neo4j.service';
@@ -66,15 +61,9 @@ export class UserPkgEffects {
   loadUserPkg$ = createEffect(() =>
     this.actions$.pipe(
       ofType(UserPkgActions.loadUserPkg),
-<<<<<<< HEAD
-      switchMap(({ userId, topNConcepts }) =>
-        this.neo4jService.getUserPkg(userId, topNConcepts).pipe(
-          switchMap((response) => {
-=======
       switchMap(({ userId, topNConcepts, slideIds }) =>
         this.neo4jService.getUserPkg(userId, topNConcepts, slideIds).pipe(
-          map((response) => {
->>>>>>> origin/dev2-monir-pkg
+          switchMap((response) => {
             console.log('[Effects] Received response:', response);
             
             // Debug: log relationship types

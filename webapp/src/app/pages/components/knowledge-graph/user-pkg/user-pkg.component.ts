@@ -11,6 +11,7 @@ import { ConceptDetail, ConceptRecord } from './types/user-pkg.types';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { User } from 'src/app/models/User';
 import { ConceptData } from './components/concept-details-panel/concept-details-panel.component';
+import { CourseNodeData } from './components/course-details-panel/course-details-panel.component';
 import { UserConceptsService } from 'src/app/services/user-concepts.service';
 import { CourseService } from 'src/app/services/course.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
@@ -37,6 +38,10 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   conceptDetails: ConceptDetail[] = [];
   showConceptDetails = false;
   
+  // Course details panel state
+  selectedCourseNode: CourseNodeData | null = null;
+  showCourseDetails = false;
+  
   // Dynamic legend state
   showUnderstoodLegend = false;
   showNotUnderstoodLegend = false;
@@ -51,11 +56,8 @@ export class UserPkgComponent implements OnInit, OnDestroy {
     private router: Router,
     private messageService: MessageService,
     private userConceptsService: UserConceptsService,
-<<<<<<< HEAD
-    private courseService: CourseService
-=======
+    private courseService: CourseService,
     private cdr: ChangeDetectorRef
->>>>>>> origin/dev2-monir-pkg
   ) {}
 
   ngOnInit(): void {
@@ -248,6 +250,84 @@ export class UserPkgComponent implements OnInit, OnDestroy {
 
   onCourseNodeClicked(courseData: any): void {
     console.log('[User PKG] Course node clicked:', courseData);
+  }
+
+  onCourseViewRequested(courseData: any): void {
+    console.log('[User PKG] View course requested:', courseData);
+    const courseId = courseData.courseId || courseData.id?.replace('course-', '');
+    
+    if (!courseId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Course ID not found',
+      });
+      return;
+    }
+
+    // Set course ID in store and navigate to course welcome page
+    this.store.dispatch(CourseActions.setCourseId({ courseId: courseId }));
+    this.router.navigate(['course', courseId, 'welcome']);
+    
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Navigating',
+      detail: `Opening course: ${courseData.name || courseData.courseName}`,
+    });
+  }
+
+  onCourseDetailsRequested(courseData: any): void {
+    console.log('[User PKG] Course details requested:', courseData);
+    // Close concept details panel if open
+    this.showConceptDetails = false;
+    this.selectedConcept = null;
+    
+    // Open course details panel
+    this.selectedCourseNode = courseData;
+    this.showCourseDetails = true;
+    this.cdr.detectChanges();
+  }
+
+  closeCourseDetails(): void {
+    this.showCourseDetails = false;
+    this.selectedCourseNode = null;
+  }
+
+  onCourseDetailsViewCourse(courseDetails: any): void {
+    // Close the panel
+    this.closeCourseDetails();
+    
+    // Navigate to course welcome page
+    if (courseDetails._id) {
+      this.store.dispatch(CourseActions.setCourseId({ courseId: courseDetails._id }));
+      this.router.navigate(['course', courseDetails._id, 'welcome']);
+    }
+  }
+
+  onCourseDetailsEngagementDashboard(courseDetails: any): void {
+    // Close the panel
+    this.closeCourseDetails();
+    
+    // Navigate to engagement dashboard
+    if (courseDetails._id) {
+      this.courseService.GetCourseById(courseDetails._id).subscribe({
+        next: (course) => {
+          if (course) {
+            this.store.dispatch(CourseActions.setCurrentCourse({ selcetedCourse: course }));
+            this.store.dispatch(CourseActions.setCourseId({ courseId: course._id }));
+            this.router.navigate(['user/engagement']);
+          }
+        },
+        error: (error) => {
+          console.error('[User PKG] Error loading course:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to load course details',
+          });
+        }
+      });
+    }
   }
 
   onCourseEngagementDashboardRequested(courseData: any): void {
