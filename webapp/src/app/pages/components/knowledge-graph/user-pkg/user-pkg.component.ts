@@ -37,6 +37,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   // Dynamic legend state
   showUnderstoodLegend = false;
   showNotUnderstoodLegend = false;
+  showUnknownLegend = false;
   showCourseLegend = false;
   showUserLegend = true; // User node is always present
   
@@ -99,6 +100,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
         if (viewMode === 'engagement') {
           this.showUnderstoodLegend = false;
           this.showNotUnderstoodLegend = false;
+          this.showUnknownLegend = false;
         }
       });
   }
@@ -107,6 +109,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
     if (!visibleNodes || visibleNodes.length === 0) {
       this.showUnderstoodLegend = false;
       this.showNotUnderstoodLegend = false;
+      this.showUnknownLegend = false;
       this.showCourseLegend = false;
       this.cdr.detectChanges();
       return;
@@ -123,12 +126,18 @@ export class UserPkgComponent implements OnInit, OnDestroy {
       node.relationshipType === 'dnu'
     );
     
+    const hasUnknown = visibleNodes.some((node: any) => 
+      (node.type === 'main_concept' || node.type === 'related_concept') &&
+      (node.relationshipType === 'unknown' || !node.relationshipType)
+    );
+    
     const hasCourses = visibleNodes.some((node: any) => 
       node.type === 'course'
     );
 
     this.showUnderstoodLegend = hasUnderstood;
     this.showNotUnderstoodLegend = hasNotUnderstood;
+    this.showUnknownLegend = hasUnknown;
     this.showCourseLegend = hasCourses;
     
     // Manually trigger change detection to update the view

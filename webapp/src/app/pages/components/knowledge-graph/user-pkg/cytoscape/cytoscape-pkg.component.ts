@@ -414,6 +414,9 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       // Re-apply styles based on new edge type
       GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
       GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode);
+      
+      // Emit visible nodes to update the legend
+      this.emitVisibleNodes();
     }
   }
 

@@ -51,6 +51,10 @@
               <div class="legend-dot understood"></div>
               <span class="text-xs font-medium text-gray-700">Understood Concept</span>
             </div>
+            <div *ngIf="showUnknownLegend" class="legend-item">
+              <div class="legend-dot unknown"></div>
+              <span class="text-xs font-medium text-gray-700">New Concept</span>
+            </div>
             <div *ngIf="showCourseLegend" class="legend-item">
               <div class="legend-dot course"></div>
               <span class="text-xs font-medium text-gray-700">Course Node</span>
