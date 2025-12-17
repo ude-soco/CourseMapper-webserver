@@ -3,3 +3,17 @@
   min-width: 450px;
   max-height: 70vh;
 }
+
+/* Align dropdown height with small buttons */
+:host ::ng-deep .p-dropdown {
+  height: 2.5rem;
+}
+
+:host ::ng-deep .p-dropdown .p-dropdown-label {
+  padding: 0.5rem 0.75rem;
+  line-height: 1.5;
+}
+
+:host ::ng-deep .p-dropdown .p-dropdown-trigger {
+  width: 2.5rem;
+}

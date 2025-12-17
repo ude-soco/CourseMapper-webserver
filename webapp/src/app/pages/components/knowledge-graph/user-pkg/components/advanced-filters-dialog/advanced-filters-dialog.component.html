@@ -9,14 +9,14 @@
     
     <!-- Filter Profile Section -->
     <div class="border-b border-gray-200 pb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-2">Filter Profile</label>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Select saved filters</label>
       <div class="flex items-center gap-2">
         <div class="flex-1 relative">
           <p-dropdown
             [options]="profileOptions"
             [(ngModel)]="selectedProfileId"
             (onChange)="onProfileSelected($event.value)"
-            placeholder="New"
+            placeholder="New preset"
             [style]="{'width': '100%'}"
             optionLabel="label"
             optionValue="value"
@@ -30,7 +30,7 @@
           icon="pi pi-plus"
           class="p-button-sm p-button-success"
           (click)="saveAsNewProfile()"
-          pTooltip="Save as new profile"
+          pTooltip="Create New Profile"
           tooltipPosition="top">
         </button>
         

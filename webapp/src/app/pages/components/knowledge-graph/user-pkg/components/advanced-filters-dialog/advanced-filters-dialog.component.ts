@@ -373,7 +373,7 @@ export class AdvancedFiltersDialogComponent implements OnInit, OnDestroy {
   // Profile management methods
   private updateProfileOptions(): void {
     this.profileOptions = [
-      { label: 'New', value: null },
+      { label: 'New preset', value: null },
       ...this.profiles.map(p => ({ label: p.name, value: p._id! }))
     ];
   }
