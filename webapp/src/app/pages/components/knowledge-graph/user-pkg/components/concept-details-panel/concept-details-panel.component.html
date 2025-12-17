@@ -30,8 +30,10 @@
     <a *ngIf="concept?.wikipedia" 
        [href]="concept.wikipedia" 
        target="_blank" 
-       class="text-blue-600 text-sm hover:underline mt-2 inline-block">
-      <i class="pi pi-external-link mr-1"></i>Read more on Wikipedia
+       class="text-blue-600 text-sm hover:underline mt-2 inline-block"
+       pTooltip="Open Wikipedia article in new tab"
+       tooltipPosition="bottom">
+      Read more on Wikipedia
     </a>
   </div>
   
