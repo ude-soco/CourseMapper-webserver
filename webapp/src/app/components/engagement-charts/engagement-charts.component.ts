@@ -5,8 +5,10 @@ import { UIChart } from 'primeng/chart';
 import { Store } from '@ngrx/store';
 import { EngagementMetrics, MaterialDetail, EngagementService, AnnotationActivityDetail, KGActivityDetail, HigherLevelBoundariesResponse, AccessActivityDetail, AccessActivityFrequency, AccessActivitiesResponse } from 'src/app/services/engagement.service';
 import { MaterilasService } from 'src/app/services/materials.service';
+import { CourseService } from 'src/app/services/course.service';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
+import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
 
 @Component({
   selector: 'app-engagement-charts',
@@ -1100,17 +1102,35 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
     this.materialsService.getMaterialById(materialId).subscribe({
       next: (material) => {
         if (material) {
+          // Set navigating flag
+          this.courseService.navigatingToMaterial = true;
+
           const targetURL = `/course/${material.courseId}/channel/${material.channelId}/material/(material:${materialId}/pdf)`;
-          this.router.navigateByUrl(targetURL).then(() => {
-            // After navigation, set the current page
-            setTimeout(() => {
-              this.store.dispatch(
-                AnnotationActions.setCurrentPdfPage({
-                  pdfCurrentPage: slideNumber,
-                })
-              );
-            }, 200);
-          });
+          this.router.navigateByUrl(targetURL);
+
+          // Create an Annotation-like object for navigation to the specific slide
+          const navigationAnnotation: any = {
+            _id: `slide-${slideNumber}`,
+            materialId: materialId,
+            materialType: 'pdf',
+            content: `Slide ${slideNumber}`,
+            channelId: material.channelId,
+            courseId: material.courseId,
+            location: {
+              type: 'Current Slide',
+              startPage: slideNumber,
+              lastPage: slideNumber,
+            },
+            annotationId: `slide-${slideNumber}`,
+            startPage: slideNumber,
+          };
+
+          // Dispatch notification action to navigate to the specific slide
+          this.store.dispatch(
+            NotificationActions.setCurrentlySelectedFollowingAnnotation({
+              followingAnnotation: navigationAnnotation,
+            })
+          );
         }
       },
       error: (err) => {
@@ -1169,6 +1189,11 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
 
   toggleChartType(chartName: string): void {
     this.chartTypes[chartName] = this.chartTypes[chartName] === 'bar' ? 'pie' : 'bar';
+    // Clear cache for this chart when toggling type to ensure fresh data
+    const cacheKey = `${this.currentTabValue}_${chartName}`;
+    delete this.chartDataCache[cacheKey];
+    // Trigger change detection
+    this.cdr.markForCheck();
   }
 
   getChartType(chartName: string): 'bar' | 'pie' {
@@ -1396,12 +1421,12 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
             font: {
               size: 11
             },
-            // For grouped charts, use dataset labels (You, Higher Level Minimum)
+            // For grouped charts, use dataset labels (You, Higher Level Threshold)
             // For single charts, generate custom legend items
             generateLabels: isGroupedChart ? undefined : (chart: any) => {
               return [
                 { text: 'You', fillStyle: '#3b82f6', strokeStyle: '#3b82f6', lineWidth: 0 },
-                { text: `${higherLevelCapitalized} Level Minimum`, fillStyle: '#8b5cf6', strokeStyle: '#8b5cf6', lineWidth: 0 }
+                { text: `${higherLevelCapitalized} Level Threshold`, fillStyle: '#8b5cf6', strokeStyle: '#8b5cf6', lineWidth: 0 }
               ];
             }
           }
@@ -1424,7 +1449,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
               if (index === 0) {
                 return `Your Value: ${value}`;
               } else if (index === 1) {
-                return `${higherLevelCapitalized} Level Minimum: ${value}`;
+                return `${higherLevelCapitalized} Level Threshold: ${value}`;
               }
               return `${label}: ${value}`;
             },
@@ -1520,7 +1545,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
                   return `${activityLabel}: ${value}`;
                 } else if (delta !== undefined) {
                   const deltaSign = delta >= 0 ? '+' : '';
-                  return `${activityLabel}: ${value} (Δ ${deltaSign}${delta})`;
+                  return `${activityLabel}: ${value} (difference with you ${deltaSign}${delta})`;
                 }
                 return `${activityLabel}: ${value}`;
               }
@@ -1683,7 +1708,8 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
     private engagementService: EngagementService,
     private cdr: ChangeDetectorRef,
     private store: Store,
-    private materialsService: MaterilasService
+    private materialsService: MaterilasService,
+    private courseService: CourseService
   ) {
     // Initialize peer counts to 3 for all charts
     const chartNames = [
@@ -1902,7 +1928,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.addedAnnotationsData.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#a855f7', '#9333ea', '#7e22ce'] // Different shades of purple
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'] // Red, Blue, Yellow - highly distinct
         }]
       };
     }
@@ -1926,7 +1952,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.annotationInteractionsData.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#22c55e', '#16a34a', '#15803d'] // Different shades of green
+          backgroundColor: ['#9966FF', '#FF9F40', '#4BC0C0'] // Purple, Orange, Teal - highly distinct
         }]
       };
     }
@@ -1966,8 +1992,8 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         datasets: [{
           data: allData,
           backgroundColor: [
-            '#3b82f6', '#3b82f6', '#3b82f6', // blue for likes
-            '#f97316', '#f97316', '#f97316'  // orange for dislikes
+            '#36A2EB', '#4BC0C0', '#9966FF', // Blue, Teal, Purple for likes
+            '#FF6384', '#FF9F40', '#FFCE56'  // Red, Orange, Yellow for dislikes
           ]
         }]
       };
@@ -1991,7 +2017,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.tagsData.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#3b82f6', '#2563eb'] // Different shades of blue
+          backgroundColor: ['#FF6384', '#36A2EB'] // Red, Blue - highly distinct
         }]
       };
     }
@@ -2016,7 +2042,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.pdfActivitiesData.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#6b7280', '#4b5563'] // Different shades of gray
+          backgroundColor: ['#36A2EB', '#FF6384'] // Blue, Red - highly distinct
         }]
       };
     }
@@ -2039,7 +2065,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.videoActivitiesData.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#f97316', '#ea580c'] // Different shades of orange
+          backgroundColor: ['#FFCE56', '#9966FF'] // Yellow, Purple - highly distinct
         }]
       };
     }
@@ -2064,7 +2090,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.slidesAndVideoTimeData.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#8b5cf6', '#7c3aed'] // Different shades of purple
+          backgroundColor: ['#FF9F40', '#4BC0C0'] // Orange, Teal - highly distinct
         }]
       };
     }
@@ -2091,7 +2117,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.accessActivitiesData1.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#10b981', '#059669', '#047857', '#065f46']
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'] // Red, Blue, Yellow, Teal - highly distinct
         }]
       };
     }
@@ -2116,7 +2142,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.accessActivitiesData3.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#84cc16', '#65a30d', '#4d7c0f', '#365314']
+          backgroundColor: ['#9966FF', '#FF9F40', '#4BC0C0', '#FF6384'] // Purple, Orange, Teal, Red - highly distinct
         }]
       };
     }
@@ -2141,7 +2167,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.kgActivitiesData1.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#f59e0b', '#d97706']
+          backgroundColor: ['#36A2EB', '#FF9F40'] // Blue, Orange - highly distinct
         }]
       };
     }
@@ -2165,7 +2191,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.kgActivitiesData2.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#ec4899', '#db2777', '#be185d']
+          backgroundColor: ['#4BC0C0', '#FFCE56', '#FF6384'] // Teal, Yellow, Red - highly distinct
         }]
       };
     }
@@ -2189,7 +2215,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.kgActivitiesData3.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#8b5cf6', '#7c3aed', '#6d28d9']
+          backgroundColor: ['#9966FF', '#FF9F40', '#36A2EB'] // Purple, Orange, Blue - highly distinct
         }]
       };
     }
@@ -2214,7 +2240,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.recommendationActivitiesData2.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#14b8a6', '#0d9488']
+          backgroundColor: ['#4BC0C0', '#FF6384'] // Teal, Red - highly distinct
         }]
       };
     }
@@ -2237,7 +2263,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         labels: this.recommendationActivitiesData3.labels,
         datasets: [{
           data: data,
-          backgroundColor: ['#ef4444', '#dc2626']
+          backgroundColor: ['#FFCE56', '#9966FF'] // Yellow, Purple - highly distinct
         }]
       };
     }
@@ -2903,7 +2929,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       labels: ['Question', 'Note', 'External Resource'],
       datasets: [{
         data: [0, 0, 0],
-        backgroundColor: ['#a855f7', '#9333ea', '#7e22ce'] // Different shades of purple
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'] // Red, Blue, Yellow - highly distinct
       }]
     };
     this.addedAnnotationsPieOptions = this.createPieChartOptions('Added annotations');
@@ -2913,7 +2939,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       labels: ['Annotations followed', 'Annotations mentioned', 'Annotations replied'],
       datasets: [{
         data: [0, 0, 0],
-        backgroundColor: ['#22c55e', '#16a34a', '#15803d'] // Different shades of green
+        backgroundColor: ['#9966FF', '#FF9F40', '#4BC0C0'] // Purple, Orange, Teal - highly distinct
       }]
     };
     this.annotationInteractionsPieOptions = this.createPieChartOptions('Total annotation interactions');
@@ -2927,8 +2953,8 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       datasets: [{
         data: [0, 0, 0, 0, 0, 0],
         backgroundColor: [
-          '#3b82f6', '#3b82f6', '#3b82f6', // blue for likes
-          '#f97316', '#f97316', '#f97316'  // orange for dislikes
+          '#36A2EB', '#4BC0C0', '#9966FF', // Blue, Teal, Purple for likes
+          '#FF6384', '#FF9F40', '#FFCE56'  // Red, Orange, Yellow for dislikes
         ]
       }]
     };
@@ -2939,7 +2965,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       labels: ['Tags added', 'Tags viewed'],
       datasets: [{
         data: [0, 0],
-        backgroundColor: ['#3b82f6', '#2563eb'] // Different shades of blue
+        backgroundColor: ['#FF6384', '#36A2EB'] // Red, Blue - highly distinct
       }]
     };
     this.tagsPieOptions = this.createPieChartOptions('Total tags added/viewed');
@@ -2949,7 +2975,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       labels: ['PDFs started', 'PDFs completed'],
       datasets: [{
         data: [0, 0],
-        backgroundColor: ['#6b7280', '#4b5563'] // Different shades of gray
+        backgroundColor: ['#36A2EB', '#FF6384'] // Blue, Red - highly distinct
       }]
     };
     this.pdfActivitiesPieOptions = this.createPieChartOptions('PDF related activities');
@@ -2959,7 +2985,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       labels: ['Videos played', 'Videos completed'],
       datasets: [{
         data: [0, 0],
-        backgroundColor: ['#f97316', '#ea580c'] // Different shades of orange
+        backgroundColor: ['#FFCE56', '#9966FF'] // Yellow, Purple - highly distinct
       }]
     };
     this.videoActivitiesPieOptions = this.createPieChartOptions('Video related activities');
@@ -2969,7 +2995,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       labels: ['Total slides viewed', 'Time spent on videos (min)'],
       datasets: [{
         data: [0, 0],
-        backgroundColor: ['#8b5cf6', '#7c3aed'] // Different shades of purple
+        backgroundColor: ['#FF9F40', '#4BC0C0'] // Orange, Teal - highly distinct
       }]
     };
     this.slidesAndVideoTimePieOptions = this.createPieChartOptions('Total slides viewed and time spent on videos (min)');
@@ -3284,10 +3310,10 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
     const higherLevelCapitalized = higherLevel.charAt(0).toUpperCase() + higherLevel.slice(1);
     console.log(`getHigherLevelChartData: minimum=${minimumBoundary}, higherLevel=${higherLevel}`);
 
-    // Create chart data with user value and minimum boundary from higher level
+    // Create chart data with user value and centroid threshold from higher level
     // Using grouped bar to show comparison
     return {
-      labels: ['You', `${higherLevelCapitalized} Level Minimum`],
+      labels: ['You', `${higherLevelCapitalized} Level Threshold`],
       datasets: [{
         label: metricMapping.label,
         backgroundColor: ['#3b82f6', '#8b5cf6'], // Blue for user, purple for higher level boundary
@@ -3340,7 +3366,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
     
     console.log(`getGroupedHigherLevelChartData: userValues=`, userValues, `minimumValues=`, minimumValues);
     
-    // Create two datasets: You, Higher Level Minimum
+    // Create two datasets: You, Higher Level Threshold
     const datasets = [
       {
         label: 'You',
@@ -3348,7 +3374,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         data: userValues
       },
       {
-        label: `${higherLevelCapitalized} Level Minimum`,
+        label: `${higherLevelCapitalized} Level Threshold`,
         backgroundColor: '#8b5cf6', // Purple for higher level boundary
         data: minimumValues
       }
@@ -3605,27 +3631,27 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       };
     }
 
-    // Build labels in ascending order: [You, Nth Top Peer, ..., 2nd Top Peer, 1st Top Peer]
-    // This shows peers from lowest rank to highest (1st is best)
+    // Build labels in descending order: [You, 1st Top Peer, 2nd Top Peer, 3rd Top Peer]
+    // This shows peers from highest rank to lowest (1st is best)
     const peerLabels = topPeers.map((peer: any, index: number) => {
       const ordinal = this.getOrdinalNumber(index + 1);
       return `${ordinal} Top Peer`;
-    }).reverse(); // Reverse to show 3rd, 2nd, 1st order
+    });
     
     const labels = ['You', ...peerLabels];
 
-    // Build data matching the reversed label order
-    const peerData = topPeers.map((peer: any) => peer[metricMapping.metricKey] || 0).reverse();
+    // Build data matching the label order
+    const peerData = topPeers.map((peer: any) => peer[metricMapping.metricKey] || 0);
     const data = [userValue, ...peerData];
 
-    // Calculate delta values (difference between peer and user) in reversed order
+    // Calculate delta values (difference between peer and user)
     const deltaValues = topPeers.map((peer: any) => {
       const peerValue = peer[metricMapping.metricKey] || 0;
       return peerValue - userValue;
-    }).reverse();
+    });
 
-    // Generate distinct colors for user and each peer (reversed for peers)
-    const colors = this.generatePeerComparisonColors(topPeers.length + 1, true);
+    // Generate distinct colors for user and each peer
+    const colors = this.generatePeerComparisonColors(topPeers.length + 1, false);
 
     return {
       labels: labels,
@@ -3658,7 +3684,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
     const peerLabels = topPeers.map((peer: any, index: number) => {
       const ordinal = this.getOrdinalNumber(index + 1);
       return `${ordinal} Top Peer`;
-    }).reverse();
+    });
     const participantLabels = ['You', ...peerLabels];
     
     // X-axis labels are the participants (You + peers)
@@ -3689,8 +3715,8 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
           // User's data
           return userValues[metricIndex];
         } else {
-          // Peer's data (reversed order to match display)
-          const peerIndex = topPeers.length - participantIndex;
+          // Peer's data
+          const peerIndex = participantIndex - 1;
           const peer = topPeers[peerIndex];
           if (peer) {
             // Use peerKey for peer data
@@ -4190,6 +4216,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       return [];
     }
 
+    // Check if this chart has multiple metrics for grouped bar chart
+    const multiMetricMapping = this.getMultiMetricMappingForChart(chartName);
+    
+    if (multiMetricMapping) {
+      return this.getDeltaValuesForGroupedChart(chartName, multiMetricMapping);
+    }
+
     // Get metric mapping for the chart
     const metricMapping = this.getMetricMappingForChart(chartName);
     if (!metricMapping) {
@@ -4385,12 +4418,12 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
 
         deltas.push({
           metricLabel: metric.label,
-          peerName: `${higherLevelCapitalized} Level Minimum`,
+          peerName: `${higherLevelCapitalized} Level Threshold`,
           peerValue: minimumBoundary,
           userValue: userValue,
           delta: Math.round(boundaryDelta * 100) / 100,
           deltaPercent: userValue > 0 ? ((boundaryDelta / userValue) * 100).toFixed(1) : (boundaryDelta > 0 ? '+∞' : (boundaryDelta < 0 ? '-∞' : '0')),
-          description: `Minimum threshold for "${metric.label}" to reach ${higherLevel} level (based on ${usersCount} user(s))`,
+          description: `Target threshold for "${metric.label}" to reach ${higherLevel} level (based on cluster centroid)`,
           gapInfo: boundaryDelta > 0 
             ? `You need ${boundaryDelta} more to reach this threshold`
             : boundaryDelta < 0 
@@ -4421,17 +4454,17 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
 
       deltas.push({
         metricLabel: metricMapping.label,
-        peerName: `${higherLevelCapitalized} Level Minimum`,
+        peerName: `${higherLevelCapitalized} Level Threshold`,
         peerValue: minimumBoundary,
         userValue: userValue,
         delta: Math.round(boundaryDelta * 100) / 100,
         deltaPercent: userValue > 0 ? ((boundaryDelta / userValue) * 100).toFixed(1) : (boundaryDelta > 0 ? '+∞' : (boundaryDelta < 0 ? '-∞' : '0')),
-        description: `Lowest value among ${usersCount} user(s) with ${higherLevel} engagement level. This is the minimum threshold to reach the next level.`,
+        description: `Target threshold for ${higherLevel} engagement level (based on cluster centroid).`,
         gapInfo: boundaryDelta > 0 
-          ? `You need ${boundaryDelta} more to reach this boundary`
+          ? `You need ${boundaryDelta} more to reach this threshold`
           : boundaryDelta < 0 
-            ? `You are ${Math.abs(boundaryDelta)} above this boundary ✓`
-            : 'You have reached this boundary ✓',
+            ? `You are ${Math.abs(boundaryDelta)} above this threshold ✓`
+            : 'You have reached this threshold ✓',
         meetsThreshold: meetsThreshold
       });
     }
@@ -4511,17 +4544,17 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
     const currentLevel = this.higherLevelBoundaries?.currentUserEngagementLevel || 'current';
     const higherLevel = this.higherLevelBoundaries?.higherLevel || 'higher';
     const higherLevelCapitalized = higherLevel.charAt(0).toUpperCase() + higherLevel.slice(1);
-    const usersCount = this.higherLevelBoundaries?.higherLevelStats?.usersInHigherLevel || 0;
     
-    return `<strong>Higher Engagement Level Boundary</strong><br/><br/>` +
+    return `<strong>Higher Engagement Level Threshold</strong><br/><br/>` +
       `This chart shows what you need to achieve to reach the next engagement level (${higherLevelCapitalized}).<br/><br/>` +
       `<strong>Bars:</strong><br/>` +
       `• <span style="color:#3b82f6">Blue</span> = Your current ${metricLabel.toLowerCase()}<br/>` +
-      `• <span style="color:#8b5cf6">Purple</span> = Minimum boundary (lowest value among ${usersCount} user(s) at ${higherLevel} level)<br/><br/>` +
-      `<strong>Understanding the gap:</strong><br/>` +
-      `The purple bar represents the minimum threshold for ${metricLabel.toLowerCase()} at the ${higherLevel} engagement level. ` +
+      `• <span style="color:#8b5cf6">Purple</span> = Target threshold (average activity for ${higherLevel} level users)<br/><br/>` +
+      `<strong>Understanding the threshold:</strong><br/>` +
+      `The purple bar represents the target threshold for ${metricLabel.toLowerCase()} at the ${higherLevel} engagement level. ` +
+      `This value is based on the cluster centroid (average activity) of users at that level. ` +
       `Reaching or exceeding this value is one step towards advancing your engagement level.<br/><br/>` +
-      `<strong>Tip:</strong> Click maximize to see detailed information about the gap between your current activity and the next level boundary.`;
+      `<strong>Tip:</strong> Click maximize to see detailed information about the gap between your current activity and the next level threshold.`;
   }
 
   /**
