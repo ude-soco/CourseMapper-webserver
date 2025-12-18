@@ -102,6 +102,9 @@ export interface CytoscapeEdgeData {
   target: string;
   type?: string;
   label?: string;
+  // Interest score for interest view mode
+  interestScore?: number;
+  interestScoreUpdatedAt?: string;
   engagementLevel?: string; // For edges connecting user to courses
 }
 
@@ -143,4 +146,17 @@ export interface ConceptDetail {
   courseShortName?: string;
   channelId?: string;
   relationshipType?: 'u' | 'dnu';
+}
+
+// Interest score data structure
+export interface InterestScoreInfo {
+  score: number;
+  updatedAt: string;
+}
+
+// Interest scores response from API
+export interface InterestScoresResponse {
+  userId: string;
+  scores: { [conceptId: string]: InterestScoreInfo };
+  totalConcepts: number;
 }

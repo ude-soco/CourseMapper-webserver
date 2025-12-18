@@ -147,6 +147,22 @@ export const deleteFilterProfileFailure = createAction(
   props<{ error: string }>()
 );
 
+// Interest Scores
+export const loadUserInterestScores = createAction(
+  '[User PKG] Load Interest Scores',
+  props<{ userId: string; minScore?: number }>()
+);
+
+export const loadUserInterestScoresSuccess = createAction(
+  '[User PKG] Load Interest Scores Success',
+  props<{ scores: { [conceptId: string]: { score: number; updatedAt: string } } }>()
+);
+
+export const loadUserInterestScoresFailure = createAction(
+  '[User PKG] Load Interest Scores Failure',
+  props<{ error: string }>()
+);
+
 // Clear State
 export const clearUserPkg = createAction(
   '[User PKG] Clear'

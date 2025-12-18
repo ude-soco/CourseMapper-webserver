@@ -35,9 +35,22 @@ def glorot_seed(
     return a
 
 def normalize(mx):
+    """Normalize adjacency matrix using symmetric normalization.
+    
+    Handles zero-degree nodes (isolated nodes) by setting their values to 0.
+    Formula: D^(-1/2) * A * D^(-1/2) where D is the degree matrix.
+    """
     rowsum = np.array(mx.sum(1))
-    d_inv = np.power(rowsum, -0.5).flatten()
-    d_inv[np.isinf(d_inv)] = 0.0
+    
+    # Handle division by zero: replace zero values with 1 before taking power
+    # This prevents the FloatingPointError
+    rowsum_safe = np.where(rowsum == 0, 1, rowsum)
+    
+    d_inv = np.power(rowsum_safe, -0.5).flatten()
+    
+    # Set values corresponding to zero-degree nodes to 0
+    d_inv[rowsum.flatten() == 0] = 0.0
+    
     d_mat_inv = sp.diags(d_inv)
     norm_adj = d_mat_inv.dot(mx)
     norm_adj = norm_adj.dot(d_mat_inv)

@@ -63,13 +63,19 @@
               <div class="legend-dot user"></div>
               <span class="text-xs font-medium text-gray-700">User Node</span>
             </div>
+            <div *ngIf="showMainConceptLegend" class="legend-item">
+              <div class="legend-dot main-concept"></div>
+              <span class="text-xs font-medium text-gray-700">Main Concept</span>
+            </div>
           </div>
         </div>
       </div>
       
       <!-- Graph Canvas -->
       <div class="graph-canvas">
+        <!-- Knowledge State / Engagement Level Graph -->
         <app-cytoscape-pkg
+          *ngIf="(viewMode$ | async) !== 'interest'"
           (conceptSelected)="onConceptSelected($event)"
           (conceptStatusChanged)="onConceptStatusChanged($event)"
           (courseNodeClicked)="onCourseNodeClicked($event)"
@@ -79,6 +85,13 @@
           (edgeClicked)="onEdgeClicked($event)"
           (visibleNodesChanged)="onVisibleNodesChanged($event)">
         </app-cytoscape-pkg>
+        
+        <!-- Interest Level Graph -->
+        <app-interest-level-graph
+          *ngIf="(viewMode$ | async) === 'interest'"
+          (conceptSelected)="onConceptSelected($event)"
+          (visibleNodesChanged)="onVisibleNodesChanged($event)">
+        </app-interest-level-graph>
       </div>
       
       <!-- Concept Details Panel -->

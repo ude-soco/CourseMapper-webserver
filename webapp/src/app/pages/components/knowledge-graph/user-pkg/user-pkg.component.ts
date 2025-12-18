@@ -48,6 +48,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   showUnknownLegend = false;
   showCourseLegend = false;
   showUserLegend = true; // User node is always present
+  showMainConceptLegend = false;
   
   // Help dialog state
   showHelpDialog = false;
@@ -112,6 +113,9 @@ export class UserPkgComponent implements OnInit, OnDestroy {
           this.showNotUnderstoodLegend = false;
           this.showUnknownLegend = false;
         }
+        
+        // Show Main Concept legend only in Interest Level view
+        this.showMainConceptLegend = viewMode === 'interest';
       });
   }
 

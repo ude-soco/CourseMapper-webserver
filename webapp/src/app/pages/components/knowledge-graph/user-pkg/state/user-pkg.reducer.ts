@@ -22,6 +22,9 @@ export interface UserPkgState {
   courseHierarchyLoading: boolean;
   filterProfiles: any[];
   filterProfilesLoading: boolean;
+  interestScores: { [conceptId: string]: { score: number; updatedAt: string } } | null;
+  interestScoresLoading: boolean;
+  interestScoresError: string | null;
 }
 
 const initialState: UserPkgState = {
@@ -42,6 +45,9 @@ const initialState: UserPkgState = {
   courseHierarchyLoading: false,
   filterProfiles: [],
   filterProfilesLoading: false,
+  interestScores: null,
+  interestScoresLoading: false,
+  interestScoresError: null,
 };
 
 // Feature selector
@@ -126,6 +132,80 @@ export const selectFilterProfiles = createSelector(
 export const selectFilterProfilesLoading = createSelector(
   selectUserPkgState,
   (state) => state.filterProfilesLoading
+);
+
+export const selectInterestScores = createSelector(
+  selectUserPkgState,
+  (state) => state.interestScores
+);
+
+export const selectInterestScoresLoading = createSelector(
+  selectUserPkgState,
+  (state) => state.interestScoresLoading
+);
+
+export const selectInterestScoresError = createSelector(
+  selectUserPkgState,
+  (state) => state.interestScoresError
+);
+
+// Derived selector: Check if interest scores are loaded
+export const selectHasInterestScores = createSelector(
+  selectInterestScores,
+  (scores) => scores !== null && Object.keys(scores).length > 0
+);
+
+// Derived selector: Enrich graph data with interest scores
+export const selectGraphDataWithScores = createSelector(
+  selectGraphData,
+  selectInterestScores,
+  selectViewMode,
+  (graphData, interestScores, viewMode) => {
+    console.log('[Selector] Called - viewMode:', viewMode, 'hasScores:', !!interestScores, 'hasGraph:', !!graphData);
+    
+    if (!graphData || !interestScores || viewMode !== 'interest') {
+      console.log('[Selector] Returning original graph (condition not met)');
+      return graphData;
+    }
+
+    console.log('[Selector] Enriching graph with scores');
+    console.log('[Selector] Available score keys (first 5):', Object.keys(interestScores).slice(0, 5));
+    console.log('[Selector] Total scores:', Object.keys(interestScores).length);
+
+    // Clone the graph data to avoid mutations
+    const enrichedGraph: UserPkgGraphData = {
+      nodes: [...graphData.nodes],
+      edges: graphData.edges.map(edge => {
+        // Find the concept node this edge points to
+        const targetNode = graphData.nodes.find(n => n.data.id === edge.data.target);
+        
+        if (targetNode && targetNode.data.cid) {
+          const scoreInfo = interestScores[targetNode.data.cid];
+          
+          if (scoreInfo) {
+            console.log('[Selector] Found score for', targetNode.data.cid, ':', scoreInfo.score);
+            // Add interest score to edge data
+            return {
+              data: {
+                ...edge.data,
+                interestScore: scoreInfo.score,
+                interestScoreUpdatedAt: scoreInfo.updatedAt
+              }
+            };
+          } else {
+            console.log('[Selector] NO score for cid:', targetNode.data.cid);
+          }
+        } else {
+          console.log('[Selector] Target node missing cid:', edge.data.target);
+        }
+        
+        return edge;
+      })
+    };
+
+    console.log('[Selector] Enrichment complete, enriched edges:', enrichedGraph.edges.filter(e => e.data.interestScore).length);
+    return enrichedGraph;
+  }
 );
 
 // Reducer
@@ -272,6 +352,26 @@ export const userPkgReducer = createReducer(
   on(UserPkgActions.deleteFilterProfileSuccess, (state, { profileId }): UserPkgState => ({
     ...state,
     filterProfiles: state.filterProfiles.filter(p => p._id !== profileId),
+  })),
+
+  // Interest Scores
+  on(UserPkgActions.loadUserInterestScores, (state): UserPkgState => ({
+    ...state,
+    interestScoresLoading: true,
+    interestScoresError: null,
+  })),
+
+  on(UserPkgActions.loadUserInterestScoresSuccess, (state, { scores }): UserPkgState => ({
+    ...state,
+    interestScores: scores,
+    interestScoresLoading: false,
+    interestScoresError: null,
+  })),
+
+  on(UserPkgActions.loadUserInterestScoresFailure, (state, { error }): UserPkgState => ({
+    ...state,
+    interestScoresLoading: false,
+    interestScoresError: error,
   })),
 
   on(UserPkgActions.clearUserPkg, (): UserPkgState => initialState),

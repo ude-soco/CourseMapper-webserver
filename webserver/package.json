@@ -21,7 +21,10 @@
     "prod": "NODE_ENV=production npm-run-all build server",
     "transpile": "babel ./src  --out-dir dist-server --source-maps",
     "clean": "rimraf dist-server",
-    "watch:dev": "nodemon"
+    "watch:dev": "nodemon",
+    "interest-scores:pipeline": "node src/jobs/interestScoreJob.js --run-now",
+    "interest-scores:extract": "node src/jobs/extractActivities.js",
+    "interest-scores:process": "node src/jobs/processAllUsers.js"
   },
   "dependencies": {
     "@babel/cli": "^7.27.0",

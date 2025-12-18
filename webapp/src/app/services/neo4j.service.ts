@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { UserPkgResponse, RelatedConceptInfo } from '../pages/components/knowledge-graph/user-pkg/types/user-pkg.types';
+import { UserPkgResponse, RelatedConceptInfo, InterestScoresResponse } from '../pages/components/knowledge-graph/user-pkg/types/user-pkg.types';
 import { CourseHierarchy} from '../pages/components/knowledge-graph/user-pkg/components/advanced-filters-dialog/advanced-filters.types';
 type Neo4jResult = {
   records: any[];
@@ -305,6 +305,25 @@ export class Neo4jService {
   getCourseHierarchy(): Observable<{ courses: CourseHierarchy[] }> {
     return this.http.get<{ courses: CourseHierarchy[] }>(
       `${environment.API_URL}/knowledge-graph/course-hierarchy`
+    );
+  }
+
+  /**
+   * Get user interest scores from PKG
+   * Returns map of concept_id -> {score, updatedAt}
+   * @param userId - User ID
+   * @param minScore - Optional minimum score threshold
+   */
+  getUserInterestScores(userId: string, minScore?: number): Observable<InterestScoresResponse> {
+    let params = new HttpParams();
+    
+    if (minScore !== undefined) {
+      params = params.set('minScore', minScore.toString());
+    }
+
+    return this.http.get<InterestScoresResponse>(
+      `${environment.API_URL}/knowledge-graph/user/${userId}/interest-scores`,
+      { params }
     );
   }
 }

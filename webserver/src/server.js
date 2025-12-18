@@ -102,6 +102,10 @@ redis.connect(
 const xapiScheduler = require("./activity-logger/scheduler/scheduler");
 xapiScheduler.ActivityScheduler();
 
+// Interest Score Pipeline Scheduler
+const { initializeInterestScoreJob } = require("./jobs/interestScoreJob");
+initializeInterestScoreJob();
+
 // Create HTTP server
 const server = http.createServer(app);
 

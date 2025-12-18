@@ -757,3 +757,123 @@ export async function getRelatedConceptsForConcept(conceptCid) {
   
   return recordsToObjects(records);
 }
+
+/**
+ * Get user interest scores from INTERESTED_IN relationships
+ * Returns a map of concept_id -> score for all concepts the user is interested in
+ * @param {string} userId - User ID (uid property)
+ * @param {number|null} minScore - Minimum score threshold (optional)
+ * @returns {Promise<Object>} Map of concept_id -> {score, updatedAt}
+ */
+export async function getUserInterestScores(userId, minScore = 0.0) {
+  const query = `
+    MATCH (u:User {uid: $userId})-[r:INTERESTED_IN]->(c:Concept)
+    WHERE r.interestScore >= $minScore AND c.type = 'main_concept'
+    RETURN c.cid as concept_id,
+           r.interestScore as score,
+           r.updatedAt as updated_at
+    ORDER BY r.interestScore DESC`;
+  
+  const { records } = await graphDb.driver.executeQuery(
+    query,
+    { userId, minScore }
+  );
+  
+  // Convert to a map for easy lookup: concept_id -> {score, updatedAt}
+  const scoresMap = {};
+  records.forEach(record => {
+    const conceptId = record.get('concept_id');
+    const score = record.get('score');
+    const updatedAt = record.get('updated_at');
+    
+    scoresMap[conceptId] = {
+      score: score,
+      updatedAt: updatedAt
+    };
+  });
+  
+  console.log(`[Interest Scores] Found ${Object.keys(scoresMap).length} interest scores for user ${userId}`);
+  
+  return scoresMap;
+}
+
+/**
+ * Get interest concepts for Interest Level graph
+ * Returns concepts with INTERESTED_IN relationships (including NULL scores)
+ * @param {string} userId - User ID (uid property)
+ * @param {number|null} topN - Number of top concepts to return (null for all)
+ * @returns {Promise<Array>} Array of concept objects with interest scores
+ */
+export async function getInterestConcepts(userId, topN = null) {
+  const query = `
+    MATCH (u:User {uid: $userId})-[r:INTERESTED_IN]->(c:Concept)
+    WHERE c.type = 'main_concept'
+    WITH DISTINCT c.cid as cid, c.name as name, c.wikipedia as wikipedia, c.abstract as abstract,
+         MAX(r.interestScore) as maxScore,
+         CASE 
+           WHEN MAX(r.interestScore) IS NULL THEN -1
+           ELSE MAX(r.interestScore)
+         END as sortScore
+    ORDER BY sortScore DESC, name ASC
+    ${topN ? 'LIMIT $topN' : ''}
+    RETURN cid as conceptId,
+           name as conceptName,
+           maxScore as interestScore,
+           wikipedia,
+           abstract
+    ORDER BY sortScore DESC`;
+  
+  const params = { userId };
+  if (topN) {
+    // Convert to Neo4j integer to avoid validation errors
+    params.topN = neo4j.int(topN);
+  }
+  
+  const { records } = await graphDb.driver.executeQuery(query, params);
+  
+  // Convert to array of concept objects
+  const concepts = records.map(record => ({
+    conceptId: record.get('conceptId'),
+    conceptName: record.get('conceptName'),
+    interestScore: record.get('interestScore'),
+    wikipedia: record.get('wikipedia'),
+    abstract: record.get('abstract')
+  }));
+  
+  // Deduplicate by conceptId as an extra safety measure
+  const uniqueConcepts = Array.from(
+    new Map(concepts.map(c => [c.conceptId, c])).values()
+  );
+  
+  console.log(`[Interest Concepts] Found ${uniqueConcepts.length} unique concepts for user ${userId}`);
+  
+  return uniqueConcepts;
+}
+
+/**
+ * Update (manually adjust) interest score for a user-concept pair
+ * This allows users to override calculated scores
+ */
+export async function updateInterestScore(userId, conceptId, score) {
+  const query = `
+    MATCH (u:User {uid: $userId})-[r:INTERESTED_IN]->(c:Concept {cid: $conceptId})
+    SET r.interestScore = $score,
+        r.manuallyAdjusted = true,
+        r.adjustedAt = datetime()
+    RETURN r.interestScore as updatedScore, r.adjustedAt as adjustedAt
+  `;
+  
+  const params = { userId, conceptId, score };
+  
+  const { records } = await graphDb.driver.executeQuery(query, params);
+  
+  if (records.length === 0) {
+    throw new Error(`No INTERESTED_IN relationship found for user ${userId} and concept ${conceptId}`);
+  }
+  
+  return {
+    score: records[0].get('updatedScore'),
+    adjustedAt: records[0].get('adjustedAt')
+  };
+}
+

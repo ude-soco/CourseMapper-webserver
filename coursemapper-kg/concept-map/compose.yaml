@@ -11,11 +11,18 @@ services:
       REDIS_PORT: 6379
       REDIS_DB: 0
       REDIS_PASSWORD: 
+      MONGO_DB_URI: mongodb://mongo:27017
+      MONGO_DB_NAME: coursemapper_v2
       PIPELINES: concept-map
       WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
       WIKIPEDIA_FALLBACK: false
+      WIKIPEDIA_TIMEOUT: 30
+      WIKIPEDIA_MAX_RETRIES: 3
+      WIKIPEDIA_RETRY_DELAY: 2
       DBPEDIA_SPOTLIGHT_URL: ${DBPEDIA_SPOTLIGHT_URL}
     depends_on:
+      mongo:
+        condition: service_healthy
       neo4j:
         condition: service_healthy
       redis:
@@ -35,10 +42,17 @@ services:
       REDIS_PORT: 6379
       REDIS_DB: 0
       REDIS_PASSWORD: 
+      MONGO_DB_URI: mongodb://mongo:27017
+      MONGO_DB_NAME: coursemapper_v2
       PIPELINES: modify-graph
       WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
       WIKIPEDIA_FALLBACK: false
+      WIKIPEDIA_TIMEOUT: 30
+      WIKIPEDIA_MAX_RETRIES: 3
+      WIKIPEDIA_RETRY_DELAY: 2
     depends_on:
+      mongo:
+        condition: service_healthy
       neo4j:
         condition: service_healthy
       redis:
@@ -58,10 +72,17 @@ services:
       REDIS_PORT: 6379
       REDIS_DB: 0
       REDIS_PASSWORD: 
+      MONGO_DB_URI: mongodb://mongo:27017
+      MONGO_DB_NAME: coursemapper_v2
       PIPELINES: expand-material
       WIKIPEDIA_DATABASE_CONNECTION_STRING: "postgres://postgres:password@wp-pg:5432/"
       WIKIPEDIA_FALLBACK: false
+      WIKIPEDIA_TIMEOUT: 30
+      WIKIPEDIA_MAX_RETRIES: 3
+      WIKIPEDIA_RETRY_DELAY: 2
     depends_on:
+      mongo:
+        condition: service_healthy
       neo4j:
         condition: service_healthy
       redis:

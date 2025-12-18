@@ -1,10 +1,12 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil, combineLatest } from 'rxjs';
+import { Subject, takeUntil, combineLatest, switchMap, of } from 'rxjs';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ViewMode, AdvancedFilters } from '../../types/user-pkg.types';
 import * as UserPkgActions from '../../state/user-pkg.actions';
 import * as UserPkgSelectors from '../../state/user-pkg.reducer';
+import * as PkgInterestActions from '../../store/pkg-interest/pkg-interest.actions';
+import * as PkgInterestSelectors from '../../store/pkg-interest/pkg-interest.selectors';
 import { AdvancedFiltersDialogComponent, AdvancedFiltersResult } from '../advanced-filters-dialog/advanced-filters-dialog.component';
 import { FilterProfile, CourseHierarchy } from '../advanced-filters-dialog/advanced-filters.types';
 
@@ -15,11 +17,29 @@ import { FilterProfile, CourseHierarchy } from '../advanced-filters-dialog/advan
 })
 export class PkgFilterControlsComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
+  private currentViewMode: ViewMode = 'knowledge';
   
   // Selectors from store
   viewMode$ = this.store.select(UserPkgSelectors.selectViewMode);
-  searchQuery$ = this.store.select(UserPkgSelectors.selectSearchQuery);
-  topNConcepts$ = this.store.select(UserPkgSelectors.selectTopNConcepts);
+  
+  // Search query observable that switches based on view mode
+  searchQuery$ = this.viewMode$.pipe(
+    switchMap(viewMode => 
+      viewMode === 'interest' 
+        ? this.store.select(PkgInterestSelectors.selectSearchTerm)
+        : this.store.select(UserPkgSelectors.selectSearchQuery)
+    )
+  );
+  
+  // TopN observable that switches based on view mode
+  topNConcepts$ = this.viewMode$.pipe(
+    switchMap(viewMode => 
+      viewMode === 'interest' 
+        ? this.store.select(PkgInterestSelectors.selectTopN)
+        : this.store.select(UserPkgSelectors.selectTopNConcepts)
+    )
+  );
+  
   understandingStatus$ = this.store.select(UserPkgSelectors.selectUnderstandingStatus);
   advancedFilters$ = this.store.select(UserPkgSelectors.selectAdvancedFilters);
 
@@ -53,6 +73,11 @@ export class PkgFilterControlsComponent implements OnDestroy {
     private store: Store,
     private dialogService: DialogService
   ) {
+    // Track current view mode
+    this.viewMode$.pipe(takeUntil(this.destroy$)).subscribe(viewMode => {
+      this.currentViewMode = viewMode;
+    });
+    
     // Subscribe to advanced filters to track active state
     this.advancedFilters$
       .pipe(takeUntil(this.destroy$))
@@ -203,14 +228,25 @@ export class PkgFilterControlsComponent implements OnDestroy {
   }
 
   onSearchQueryChange(query: string): void {
-    this.store.dispatch(UserPkgActions.setSearchQuery({ searchQuery: query }));
+    // Dispatch to different state based on view mode
+    if (this.currentViewMode === 'interest') {
+      // For Interest Level view, dispatch to pkg-interest state
+      this.store.dispatch(PkgInterestActions.setSearchTerm({ term: query }));
+    } else {
+      // For Knowledge State and Engagement, dispatch to user-pkg state
+      this.store.dispatch(UserPkgActions.setSearchQuery({ searchQuery: query }));
+    }
   }
 
   onTopNChange(topN: number | 'All'): void {
-    // TopN change requires reloading data from backend
-    // This will be handled by the parent component which has the userId
-    // For now, just update the filter state
-    this.store.dispatch(UserPkgActions.setTopNConcepts({ topNConcepts: topN }));
+    // Dispatch to different state based on view mode
+    if (this.currentViewMode === 'interest') {
+      // For Interest Level view, dispatch to pkg-interest state
+      this.store.dispatch(PkgInterestActions.setTopN({ topN: topN === 'All' ? 'All' : topN }));
+    } else {
+      // For Knowledge State and Engagement, dispatch to user-pkg state
+      this.store.dispatch(UserPkgActions.setTopNConcepts({ topNConcepts: topN }));
+    }
   }
 
   openAdvancedFilters(): void {

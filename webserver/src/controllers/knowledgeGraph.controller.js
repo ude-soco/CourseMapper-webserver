@@ -1726,6 +1726,109 @@ export const getRelatedConcepts = async (req, res) => {
 };
 
 /**
+ * Get user interest scores from PKG
+ * Returns map of concept_id -> {score, updatedAt} for all concepts user is interested in
+ * 
+ * GET /api/knowledge-graph/user/:userId/interest-scores
+ */
+export const getUserInterestScores = async (req, res) => {
+  const { userId } = req.params;
+  const minScore = parseFloat(req.query.minScore) || 0.0;
+
+  try {
+    // Get interest scores from Neo4j
+    const scoresMap = await neo4j.getUserInterestScores(userId, minScore);
+    
+    return res.status(200).send({
+      userId,
+      scores: scoresMap,
+      totalConcepts: Object.keys(scoresMap).length
+    });
+  } catch (err) {
+    console.error('[Interest Scores] Error fetching interest scores:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
+ * Get interest concepts for Interest Level graph
+ * Returns only INTERESTED_IN relationships with concept details
+ * 
+ * GET /api/pkg/:userId/interests
+ */
+export const getInterestConcepts = async (req, res) => {
+  const { userId } = req.params;
+  const topN = req.query.topN ? parseInt(req.query.topN, 10) : null;
+
+  try {
+    // Get concepts with INTERESTED_IN relationships from Neo4j
+    const concepts = await neo4j.getInterestConcepts(userId, topN);
+    
+    console.log(`[Interest Concepts] Found ${concepts.length} interest concepts for user ${userId}`);
+    
+    // Check for duplicates
+    const conceptIds = concepts.map(c => c.conceptId);
+    const uniqueIds = new Set(conceptIds);
+    if (conceptIds.length !== uniqueIds.size) {
+      console.warn('[Interest Concepts] WARNING: Duplicates detected in response!');
+      const duplicates = conceptIds.filter((id, index) => conceptIds.indexOf(id) !== index);
+      console.warn('[Interest Concepts] Duplicate IDs:', [...new Set(duplicates)]);
+      
+      // Log duplicate concepts
+      duplicates.forEach(dupId => {
+        const dups = concepts.filter(c => c.conceptId === dupId);
+        console.warn(`[Interest Concepts] Concept ${dupId}:`, dups);
+      });
+    }
+    
+    return res.status(200).send({
+      userId,
+      concepts
+    });
+  } catch (err) {
+    console.error('[Interest Concepts] Error fetching interest concepts:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
+ * Update (manually adjust) interest score for a user-concept pair
+ * Allows users to override calculated scores for better personalization
+ * 
+ * PUT /api/pkg/:userId/interests/:conceptId
+ */
+export const updateInterestScore = async (req, res) => {
+  const { userId, conceptId } = req.params;
+  const { score } = req.body;
+
+  // Validate score
+  if (typeof score !== 'number' || score < 0 || score > 1) {
+    return res.status(400).send({ 
+      error: 'Invalid score. Score must be a number between 0 and 1.' 
+    });
+  }
+
+  try {
+    // Update the interest score in Neo4j
+    const result = await neo4j.updateInterestScore(userId, conceptId, score);
+    
+    console.log(`[Interest Score Update] User ${userId} adjusted score for concept ${conceptId} to ${score}`);
+    
+    return res.status(200).send({
+      success: true,
+      userId,
+      conceptId,
+      score,
+      message: 'Interest score updated successfully',
+      updatedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('[Interest Score Update] Error updating interest score:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
  * Get course hierarchy for advanced filters
  * Returns user's enrolled courses with their materials and slides
  * 

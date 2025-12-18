@@ -228,6 +228,9 @@ export class GraphRecommednedComponent {
           }
         } catch {}
 
+        // Initialize node_roads immediately with the raw data (before setTimeout)
+        this.node_roads = event.roads;
+
         setTimeout(() => {
           let accordionHeader = document.getElementById('accordionHeader')
             .childNodes[0].childNodes[0].childNodes[0] as HTMLElement;
@@ -263,7 +266,8 @@ export class GraphRecommednedComponent {
           }
           // Create a set of all required users
           let requiredUsers = new Set([]);
-          this.node_roads = event.roads.forEach((roads: any[]) => {
+          
+          event.roads.forEach((roads: any[]) => {
             roads.forEach((road) => {
               if (road.type === 'user') {
                 requiredUsers.add(road.id);
@@ -361,14 +365,17 @@ export class GraphRecommednedComponent {
   }
 
   chosenRB(key) {
-    this.logExplanationView(key);
     console.log(key);
     if (key === 'V') {
       this.showVisual = true;
       this.showTextual = false;
+      // Log visual explanation when radio button is clicked
+      this.logExplanationView('V');
     } else if (key === 'T') {
       this.showVisual = false;
       this.showTextual = true;
+      // Log textual explanation when radio button is clicked
+      this.logExplanationView('T');
 
       let accordionAbstract = document.getElementById('accordionHeader')
         .childNodes[0].childNodes[0] as HTMLElement;
@@ -378,6 +385,14 @@ export class GraphRecommednedComponent {
             this.cyHeight - 75 - 3 * accordionAbstract.offsetHeight - 20
           ).toString() + 'px';
       }, 2);
+    }
+  }
+
+  onAccordionTabOpen(event: any) {
+    // Check if the "Why is recommended?" tab was opened (index 1)
+    if (event.index === 1) {
+      // Log visual explanation when accordion opens (visual is default)
+      this.logExplanationView('V');
     }
   }
   logExplanationView(key: string) {
