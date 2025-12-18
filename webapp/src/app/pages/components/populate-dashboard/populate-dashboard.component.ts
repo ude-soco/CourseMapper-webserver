@@ -65,7 +65,7 @@ export class PopulateDashboardComponent {
   
   onCreateIndicatorClicked() {
     // Open OpenLAP indicator pool page in a new tab
-    const openlapUrl = environment.OPENLAP_URL + '/indicator/pool';
+    const openlapUrl = environment.OPENLAP_URL + '/indicators/overview';
     window.open(openlapUrl, '_blank');
   }
   

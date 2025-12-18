@@ -1,5 +1,5 @@
 const cron = require("node-cron");
-const SCHEDULE_EXPRESSION = process.env.CRON_SCHEDULE_EVERY_5_MINUTES;
+const SCHEDULE_EXPRESSION = process.env.CRON_SCHEDULE_EVERY_SECOND;
 const controller = require("../controller/activity-controller");
 const lrs = require("../lrs/lrs");
 
