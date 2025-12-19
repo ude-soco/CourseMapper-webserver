@@ -63,6 +63,7 @@ export interface EngagementMetrics {
     totalRecommendedMaterialMarkedNotHelpful?: number;
     // User interaction metrics
     totalUserMentionedRepliedActivities?: number;
+    totalActivities?: number;
     annotations: {
       note: number;
       question: number;

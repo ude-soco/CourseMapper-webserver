@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewChild, ViewChildren, QueryList, ChangeDetectorRef, HostListener, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewChild, ViewChildren, QueryList, ChangeDetectorRef, HostListener, OnDestroy, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { UIChart } from 'primeng/chart';
@@ -16,7 +16,7 @@ import * as NotificationActions from 'src/app/pages/components/notifications/sta
   styleUrls: ['./engagement-charts.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
+export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
   @Input() courseName: string = 'Course name';
   @Input() engagementLevel: string = 'Low';
   @Input() engagementMetrics: EngagementMetrics | null = null;
@@ -1339,8 +1339,8 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
             generateLabels: isGroupedChart ? undefined : (chart: any) => {
               return [
                 { text: 'You', fillStyle: '#3b82f6', strokeStyle: '#3b82f6', lineWidth: 0 },
-                { text: 'Average', fillStyle: '#10b981', strokeStyle: '#10b981', lineWidth: 0 },
-                { text: 'Maximum', fillStyle: '#f59e0b', strokeStyle: '#f59e0b', lineWidth: 0 }
+                { text: 'Average of all users', fillStyle: '#10b981', strokeStyle: '#10b981', lineWidth: 0 },
+                { text: 'Maximum user activity', fillStyle: '#f59e0b', strokeStyle: '#f59e0b', lineWidth: 0 }
               ];
             }
           }
@@ -1733,6 +1733,15 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
     this.loadPeerActivities();
     this.loadSameLevelStats();
     this.loadHigherLevelBoundaries();
+  }
+
+  ngAfterViewInit(): void {
+    // Refresh charts after the view is fully initialized
+    // This ensures charts are properly sized when first loaded
+    setTimeout(() => {
+      this.refreshAllCharts();
+      this.cdr.detectChanges();
+    }, 100);
   }
 
   /**
@@ -3167,7 +3176,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
 
     // Create chart data with user value, average, and maximum
     return {
-      labels: ['You', 'Average', 'Maximum'],
+      labels: ['You', 'Average of all users', 'Maximum user activity'],
       datasets: [{
         label: metricMapping.label,
         backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'], // Blue for user, green for average, orange for maximum
@@ -3230,12 +3239,12 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         data: userValues
       },
       {
-        label: 'Average',
+        label: 'Average of all users',
         backgroundColor: '#10b981', // Green for average
         data: averageValues
       },
       {
-        label: 'Maximum',
+        label: 'Maximum user activity',
         backgroundColor: '#f59e0b', // Orange for maximum
         data: maximumValues
       }
@@ -3299,12 +3308,8 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
       return this.getChartData(chartName);
     }
 
+    // Note: Centroid values are stored in minutes, no conversion needed
     let minimumBoundary = boundary.minimum || 0;
-    
-    // Special handling for time spent on videos - convert to minutes
-    if (metricMapping.metricKey === 'timeSpentOnVideos') {
-      minimumBoundary = Math.round(minimumBoundary / 60);
-    }
     
     const higherLevel = this.higherLevelBoundaries.higherLevel || 'Higher';
     const higherLevelCapitalized = higherLevel.charAt(0).toUpperCase() + higherLevel.slice(1);
@@ -3350,14 +3355,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
         userValue = this.getMetricValue(this.engagementMetrics.metrics, userKey);
       }
       
-      // Get boundary for this metric
+      // Get boundary for this metric (centroid values are stored in minutes)
       const boundary = this.higherLevelBoundaries?.boundaries?.[metric.key];
       let minimum = boundary?.minimum || 0;
       
-      // Special handling for time spent on videos - convert to minutes
+      // Special handling for time spent on videos - convert user value to minutes (user data is in seconds)
       if (userKey === 'timeSpentOnVideos' || metric.key === 'timeSpentOnVideos') {
         userValue = Math.round(userValue / 60);
-        minimum = Math.round(minimum / 60);
       }
       
       userValues.push(userValue);
@@ -3504,12 +3508,9 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
             categoryUserTotal += userValue;
 
             // Get threshold value from higher level boundaries
+            // Note: Centroid values are stored in minutes, no conversion needed
             const boundary = this.higherLevelBoundaries?.boundaries?.[metric.key];
             let thresholdValue = boundary?.minimum || 0;
-            // Special handling for time spent on videos - convert to minutes
-            if (metric.key === 'timeSpentOnVideos') {
-              thresholdValue = Math.round(thresholdValue / 60);
-            }
             categoryThresholdTotal += thresholdValue;
           }
         } else {
@@ -3525,6 +3526,22 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
             const boundary = this.higherLevelBoundaries?.boundaries?.[singleMetricMapping.metricKey];
             categoryThresholdTotal += boundary?.minimum || 0;
           }
+        }
+      }
+
+      // If categoryThresholdTotal is 0, try to use summary metrics from boundaries
+      // This handles cases where clustering only provides summary metrics for a course
+      if (categoryThresholdTotal === 0 && this.higherLevelBoundaries?.boundaries) {
+        if (categoryDef.name === 'Access Activities') {
+          const totalAccesses = this.higherLevelBoundaries.boundaries['totalAccesses']?.minimum || 0;
+          const totalDashboardAccesses = this.higherLevelBoundaries.boundaries['totalDashboardAccesses']?.minimum || 0;
+          categoryThresholdTotal = totalAccesses + totalDashboardAccesses;
+        } else if (categoryDef.name === 'Annotation Activities') {
+          categoryThresholdTotal = this.higherLevelBoundaries.boundaries['totalAddedAnnotations']?.minimum || 0;
+        } else if (categoryDef.name === 'Knowledge Graph Activities') {
+          categoryThresholdTotal = this.higherLevelBoundaries.boundaries['totalKnowledgeGraphAccesses']?.minimum || 0;
+        } else if (categoryDef.name === 'Recommendation Activities') {
+          categoryThresholdTotal = this.higherLevelBoundaries.boundaries['totalRecommendedMaterialViewed']?.minimum || 0;
         }
       }
 
@@ -3546,6 +3563,17 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
 
       overallUserTotal += categoryUserTotal;
       overallThresholdTotal += categoryThresholdTotal;
+    }
+
+    // Use totalActivities for overall totals if available to ensure accuracy
+    // especially when category-level thresholds are missing or incomplete
+    const totalActivitiesBoundary = this.higherLevelBoundaries?.boundaries?.['totalActivities'];
+    if (totalActivitiesBoundary && totalActivitiesBoundary.minimum > 0) {
+      overallThresholdTotal = totalActivitiesBoundary.minimum;
+    }
+
+    if (this.engagementMetrics?.metrics?.totalActivities) {
+      overallUserTotal = this.engagementMetrics.metrics.totalActivities;
     }
 
     const meetsOverallThreshold = overallUserTotal >= overallThresholdTotal;
@@ -4400,17 +4428,14 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy {
           userValue = Math.round(userValue / 60);
         }
 
-        // Get boundary for this metric
+        // Get boundary for this metric (centroid values are stored in minutes)
         const boundary = this.higherLevelBoundaries.boundaries[metric.key];
         if (!boundary) {
           continue;
         }
 
+        // Note: Centroid values are stored in minutes, no conversion needed
         let minimumBoundary = boundary.minimum || 0;
-        // Special handling for time spent on videos - convert to minutes
-        if (metric.key === 'timeSpentOnVideos') {
-          minimumBoundary = Math.round(minimumBoundary / 60);
-        }
         
         const usersCount = boundary.usersCount || 0;
         const boundaryDelta = minimumBoundary - userValue;

@@ -73,7 +73,7 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
           "pdfStarted": 10,
@@ -231,7 +231,7 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
           "pdfStarted": 2,
@@ -322,7 +322,7 @@
       "course_id": "692e1e0360484ffc22837654"
     },
     "activitiesProfile": {
-      "totalActivities": 186,
+      "totalActivities": 194,
       "annotations": {
         "totalAddedAnnotations": 0,
         "totalAnnotationsFollowed": 0,
@@ -362,10 +362,10 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 103,
-        "courseAccesses": 30,
-        "topicAccesses": 27,
-        "channelAccesses": 21,
+        "totalAccesses": 111,
+        "courseAccesses": 36,
+        "topicAccesses": 28,
+        "channelAccesses": 22,
         "materialAccesses": {
           "pdfAccess": 22,
           "videoAccess": 3
@@ -389,7 +389,7 @@
           "videosCompleted": 0,
           "videosPlayed": 7,
           "videosPauses": 4,
-          "timeSpentOnVideos": 160
+          "timeSpentOnVideos": 5.85
         },
         "pdf": {
           "pdfStarted": 18,
@@ -480,7 +480,7 @@
       "course_id": "69334f0b70d0bb27267da84c"
     },
     "activitiesProfile": {
-      "totalActivities": 24,
+      "totalActivities": 30,
       "annotations": {
         "totalAddedAnnotations": 0,
         "totalAnnotationsFollowed": 0,
@@ -520,10 +520,10 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 20,
-        "courseAccesses": 12,
-        "topicAccesses": 5,
-        "channelAccesses": 3,
+        "totalAccesses": 26,
+        "courseAccesses": 16,
+        "topicAccesses": 6,
+        "channelAccesses": 4,
         "materialAccesses": {
           "pdfAccess": 0,
           "videoAccess": 0
@@ -547,7 +547,7 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
           "pdfStarted": 0,
@@ -638,7 +638,7 @@
       "course_id": "693f2c699cf2c379802f4812"
     },
     "activitiesProfile": {
-      "totalActivities": 53,
+      "totalActivities": 108,
       "annotations": {
         "totalAddedAnnotations": 0,
         "totalAnnotationsFollowed": 0,
@@ -678,13 +678,13 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 32,
-        "courseAccesses": 10,
-        "topicAccesses": 7,
-        "channelAccesses": 7,
+        "totalAccesses": 49,
+        "courseAccesses": 15,
+        "topicAccesses": 15,
+        "channelAccesses": 9,
         "materialAccesses": {
-          "pdfAccess": 4,
-          "videoAccess": 4
+          "pdfAccess": 5,
+          "videoAccess": 5
         }
       },
       "dashboardAccess": {
@@ -702,15 +702,15 @@
       "materialProfile": {
         "video": {
           "videosStarted": 1,
-          "videosCompleted": 1,
-          "videosPlayed": 7,
-          "videosPauses": 3,
-          "timeSpentOnVideos": 28
+          "videosCompleted": 2,
+          "videosPlayed": 15,
+          "videosPauses": 7,
+          "timeSpentOnVideos": 1.0
         },
         "pdf": {
-          "pdfStarted": 4,
-          "pdfCompleted": 1,
-          "slidesViewed": 5,
+          "pdfStarted": 6,
+          "pdfCompleted": 2,
+          "slidesViewed": 29,
           "slidesNotUnderstood": 0
         }
       },
@@ -863,7 +863,7 @@
           "videosCompleted": 0,
           "videosPlayed": 6,
           "videosPauses": 3,
-          "timeSpentOnVideos": -1370
+          "timeSpentOnVideos": 0.07
         },
         "pdf": {
           "pdfStarted": 304,
@@ -1021,7 +1021,7 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
           "pdfStarted": 0,
@@ -1112,7 +1112,7 @@
       "course_id": "693f2c699cf2c379802f4812"
     },
     "activitiesProfile": {
-      "totalActivities": 86,
+      "totalActivities": 109,
       "annotations": {
         "totalAddedAnnotations": 0,
         "totalAnnotationsFollowed": 0,
@@ -1152,10 +1152,10 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 45,
-        "courseAccesses": 8,
-        "topicAccesses": 20,
-        "channelAccesses": 9,
+        "totalAccesses": 68,
+        "courseAccesses": 10,
+        "topicAccesses": 29,
+        "channelAccesses": 21,
         "materialAccesses": {
           "pdfAccess": 6,
           "videoAccess": 2
@@ -1179,7 +1179,7 @@
           "videosCompleted": 0,
           "videosPlayed": 5,
           "videosPauses": 3,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 1.15
         },
         "pdf": {
           "pdfStarted": 5,
@@ -1337,7 +1337,7 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
           "pdfStarted": 0,
@@ -1428,7 +1428,7 @@
       "course_id": "692e1e0360484ffc22837654"
     },
     "activitiesProfile": {
-      "totalActivities": 458,
+      "totalActivities": 459,
       "annotations": {
         "totalAddedAnnotations": 1,
         "totalAnnotationsFollowed": 1,
@@ -1468,8 +1468,8 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 270,
-        "courseAccesses": 123,
+        "totalAccesses": 271,
+        "courseAccesses": 124,
         "topicAccesses": 74,
         "channelAccesses": 33,
         "materialAccesses": {
@@ -1495,7 +1495,7 @@
           "videosCompleted": 0,
           "videosPlayed": 15,
           "videosPauses": 9,
-          "timeSpentOnVideos": -2670
+          "timeSpentOnVideos": 2.12
         },
         "pdf": {
           "pdfStarted": 42,

@@ -3,6 +3,15 @@ from datetime import datetime
 import copy
 from collections import defaultdict
 
+def safe_int(value, default=0):
+    """Safely convert a value to int, returning default if conversion fails."""
+    try:
+        if value is None or str(value).lower() == 'nan':
+            return default
+        return int(value)
+    except (ValueError, TypeError):
+        return default
+
 listOfStudentActivityDict2 = []
 
 studentActivitiesDict2 =  {
@@ -303,8 +312,8 @@ def processActivities(mydb):
             startedVideosIDList = []
             listOfStudentActivityDict2.append(copy.deepcopy(studentActivitiesDict2))
             # Initialize user-course statistics
-            playedTimeVidInSeconds=0
-            pausedTimeVideoInSeconds=0
+            # Track video events per video ID: {video_id: [(event_type, video_position, wall_clock_timestamp), ...]}
+            video_events = defaultdict(list)
 
             listOfStudentActivityDict2[index]['stdProfile']['stdId'] = index+1
             listOfStudentActivityDict2[index]['stdProfile']['stdUsername'] =user_id
@@ -673,17 +682,21 @@ def processActivities(mydb):
                     splittedThisActivityStringArray=  activity.split(' ')
                     if 'video' == splittedThisActivityStringArray[2] or 'youtube' == splittedThisActivityStringArray[2]:
                         listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['video']['videosPlayed'] += 1
-                        playedTimeVidInSeconds = playedTimeVidInSeconds+int(splittedThisActivityStringArray[4])
-                    #    x=set(startedVideosIDList)
-                    #    y=len(set(startedVideosIDList))
-                        if splittedThisActivityStringArray[4]=='0': # Meaning that the video is played from the beginning
-                            startedVideosIDList.append(splittedThisActivityStringArray[3])
+                        video_id = splittedThisActivityStringArray[3]
+                        video_position = safe_int(splittedThisActivityStringArray[4])
+                        wall_clock = splittedThisActivityStringArray[5] if len(splittedThisActivityStringArray) > 5 else ''
+                        video_events[video_id].append(('play', video_position, wall_clock))
+                        if video_position == 0:  # Meaning that the video is played from the beginning
+                            startedVideosIDList.append(video_id)
          
                 # Pauses in videos
                 elif 'paused' in activity:
                         splittedThisActivityStringArray=  activity.split(' ')
                         if 'video' == splittedThisActivityStringArray[2] or 'youtube' == splittedThisActivityStringArray[2]:
-                            pausedTimeVideoInSeconds = pausedTimeVideoInSeconds+int(splittedThisActivityStringArray[4])
+                            video_id = splittedThisActivityStringArray[3]
+                            video_position = safe_int(splittedThisActivityStringArray[4])
+                            wall_clock = splittedThisActivityStringArray[5] if len(splittedThisActivityStringArray) > 5 else ''
+                            video_events[video_id].append(('pause', video_position, wall_clock))
                             listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['video']['videosPauses'] +=1
  
                 elif 'mentioned user' in activity:
@@ -724,9 +737,35 @@ def processActivities(mydb):
                
             listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['video']['videosStarted']=len(set(startedVideosIDList))
          
-            # Total time spent on videos
-            listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['video']['timeSpentOnVideos']=pausedTimeVideoInSeconds-playedTimeVidInSeconds
-            # Total time spent on youtube
+            # Calculate total time spent on videos by properly pairing play-pause events
+            total_time_spent = 0
+            for video_id, events in video_events.items():
+                # Sort events by wall-clock timestamp to ensure chronological order
+                events.sort(key=lambda x: x[2])
+                
+                # Match each play with its subsequent pause
+                i = 0
+                while i < len(events):
+                    if events[i][0] == 'play':
+                        play_position = events[i][1]
+                        # Look for the next pause event
+                        j = i + 1
+                        while j < len(events) and events[j][0] != 'pause':
+                            j += 1
+                        if j < len(events):  # Found a matching pause
+                            pause_position = events[j][1]
+                            duration = pause_position - play_position
+                            # Only add positive durations (valid sessions)
+                            if duration > 0:
+                                total_time_spent += duration
+                            i = j + 1  # Move past the matched pause
+                        else:
+                            i += 1  # No matching pause, skip this play
+                    else:
+                        i += 1  # Skip orphan pause events
+            
+            # Convert seconds to minutes for timeSpentOnVideos
+            listOfStudentActivityDict2[index]['activitiesProfile']['materialProfile']['video']['timeSpentOnVideos'] = round(total_time_spent / 60, 2)
             index = index +1
  
     return listOfStudentActivityDict2

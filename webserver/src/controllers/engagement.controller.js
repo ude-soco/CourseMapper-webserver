@@ -235,6 +235,7 @@ async function processUserCourseActivities(userId, courseId, activities) {
     
     // User interaction metrics
     totalUserMentionedRepliedActivities: 0,
+    totalActivities: 0,
     
     // Detailed breakdowns
     annotations: {
@@ -671,6 +672,7 @@ async function processUserCourseActivities(userId, courseId, activities) {
   });
 
   // Final metrics calculation
+  metrics.totalActivities = activities.length;
   metrics.videosStarted = startedVideos.size;
   metrics.videosCompleted = completedVideos.size;
   // Guideline 2: Time spent on videos in seconds (calculated from timestamp differences)
