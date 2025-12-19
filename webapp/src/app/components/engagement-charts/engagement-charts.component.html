@@ -108,6 +108,7 @@
               <p-overlayPanel #categoryFilterPanel>
                 <div class="p-3">
                   <h4 class="font-semibold mb-3">Filter Activity Categories</h4>
+                  <p class="text-xs text-gray-500 mb-3">Filters apply only to this tab</p>
                   <div class="flex flex-col gap-2">
                     <label class="flex items-center gap-2 cursor-pointer">
                       <input
@@ -149,6 +150,85 @@
                         class="cursor-pointer">
                       <span>Recommendation Activities</span>
                     </label>
+                  </div>
+                  <!-- Apply to other courses section -->
+                  <div class="mt-4 pt-3 border-t border-gray-200">
+                    <div *ngIf="!showCourseSelectionPanel">
+                      <button 
+                        class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+                        (click)="openCourseSelectionPanel()">
+                        <i class="pi pi-share-alt"></i>
+                        <span>Apply to Other Courses</span>
+                      </button>
+                      <p class="text-xs text-gray-500 mt-2 text-center">Apply these filters to other course dashboards</p>
+                      
+                      <!-- Show indicator if filters are applied to other courses -->
+                      <div *ngIf="hasCrossCourseFilters()" class="mt-3 pt-2 border-t border-gray-100">
+                        <div class="flex items-center justify-center gap-2 text-green-600 text-xs mb-2">
+                          <i class="pi pi-check-circle"></i>
+                          <span>Filters applied to {{ getSelectedCoursesCount() }} course(s)</span>
+                        </div>
+                        <button 
+                          class="w-full flex items-center justify-center gap-2 px-2 py-1.5 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors text-xs"
+                          (click)="clearCrossCourseFilters()">
+                          <i class="pi pi-times"></i>
+                          <span>Clear Cross-Course Filters</span>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <!-- Course selection panel -->
+                    <div *ngIf="showCourseSelectionPanel" class="animate-fadeIn">
+                      <div class="flex items-center justify-between mb-3">
+                        <h5 class="font-medium text-sm text-gray-700">Select Courses</h5>
+                        <button 
+                          class="text-gray-400 hover:text-gray-600 transition-colors"
+                          (click)="closeCourseSelectionPanel()">
+                          <i class="pi pi-times" style="font-size: 0.875rem;"></i>
+                        </button>
+                      </div>
+                      
+                      <!-- Loading state -->
+                      <div *ngIf="isLoadingEnrolledCourses" class="flex items-center justify-center py-4">
+                        <i class="pi pi-spin pi-spinner text-blue-500" style="font-size: 1.25rem;"></i>
+                        <span class="ml-2 text-sm text-gray-500">Loading courses...</span>
+                      </div>
+                      
+                      <!-- No other courses -->
+                      <div *ngIf="!isLoadingEnrolledCourses && enrolledCourses.length === 0" class="text-center py-4">
+                        <i class="pi pi-info-circle text-gray-400" style="font-size: 1.5rem;"></i>
+                        <p class="text-sm text-gray-500 mt-2">No other enrolled courses found</p>
+                      </div>
+                      
+                      <!-- Course list -->
+                      <div *ngIf="!isLoadingEnrolledCourses && enrolledCourses.length > 0" class="max-h-48 overflow-y-auto">
+                        <div class="flex flex-col gap-2">
+                          <label *ngFor="let course of enrolledCourses" 
+                                 class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-50 transition-colors">
+                            <input
+                              type="checkbox"
+                              [checked]="selectedCoursesForFilters[course._id]"
+                              (change)="toggleCourseSelection(course._id)"
+                              class="cursor-pointer rounded border-gray-300 text-blue-500 focus:ring-blue-500">
+                            <span class="text-sm text-gray-700 truncate" [title]="course.name">
+                              {{ course.shortName || course.name }}
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      
+                      <!-- Apply button -->
+                      <div *ngIf="!isLoadingEnrolledCourses && enrolledCourses.length > 0" class="mt-3 pt-3 border-t border-gray-100">
+                        <button 
+                          class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded transition-colors text-sm"
+                          [ngClass]="getSelectedCoursesCount() > 0 ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-200 text-gray-400 cursor-not-allowed'"
+                          [disabled]="getSelectedCoursesCount() === 0"
+                          (click)="applyFiltersToSelectedCourses()">
+                          <i class="pi pi-check"></i>
+                          <span>Apply to {{ getSelectedCoursesCount() }} Course(s)</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </p-overlayPanel>

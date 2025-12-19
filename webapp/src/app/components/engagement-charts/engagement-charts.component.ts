@@ -78,12 +78,34 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
   kgActivitiesExpanded: boolean = true;
   recommendationActivitiesExpanded: boolean = true;
 
-  // Category visibility states for tab-level filtering
-  materialActivitiesCategoryVisible: boolean = true;
-  annotationActivitiesCategoryVisible: boolean = true;
-  accessActivitiesCategoryVisible: boolean = true;
-  kgActivitiesCategoryVisible: boolean = true;
-  recommendationActivitiesCategoryVisible: boolean = true;
+  // Per-tab category visibility states - each tab has its own filter settings
+  private tabCategoryVisibility: { [tabValue: string]: { [category: string]: boolean } } = {};
+  
+  // LocalStorage key for cross-course filter settings
+  private readonly CROSS_COURSE_FILTERS_KEY = 'engagement_dashboard_cross_course_filters';
+  
+  // Enrolled courses for cross-course filter selection
+  enrolledCourses: { _id: string; name: string; shortName?: string }[] = [];
+  selectedCoursesForFilters: { [courseId: string]: boolean } = {};
+  isLoadingEnrolledCourses: boolean = false;
+  showCourseSelectionPanel: boolean = false;
+
+  // Category visibility getters for current tab (for template binding)
+  get materialActivitiesCategoryVisible(): boolean {
+    return this.getCategoryVisibilityForCurrentTab('material');
+  }
+  get annotationActivitiesCategoryVisible(): boolean {
+    return this.getCategoryVisibilityForCurrentTab('annotation');
+  }
+  get accessActivitiesCategoryVisible(): boolean {
+    return this.getCategoryVisibilityForCurrentTab('access');
+  }
+  get kgActivitiesCategoryVisible(): boolean {
+    return this.getCategoryVisibilityForCurrentTab('kg');
+  }
+  get recommendationActivitiesCategoryVisible(): boolean {
+    return this.getCategoryVisibilityForCurrentTab('recommendation');
+  }
 
   // Chart visibility states - Annotation
   addedAnnotationsVisible: boolean = true;
@@ -450,32 +472,51 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     return 'Default';
   }
 
-  toggleCategoryVisibility(category: string): void {
-    switch(category) {
-      case 'material':
-        this.materialActivitiesCategoryVisible = !this.materialActivitiesCategoryVisible;
-        break;
-      case 'annotation':
-        this.annotationActivitiesCategoryVisible = !this.annotationActivitiesCategoryVisible;
-        break;
-      case 'access':
-        this.accessActivitiesCategoryVisible = !this.accessActivitiesCategoryVisible;
-        break;
-      case 'kg':
-        this.kgActivitiesCategoryVisible = !this.kgActivitiesCategoryVisible;
-        break;
-      case 'recommendation':
-        this.recommendationActivitiesCategoryVisible = !this.recommendationActivitiesCategoryVisible;
-        break;
+  /**
+   * Initialize category visibility for a tab if not already set
+   */
+  private initializeTabCategoryVisibility(tabValue: string): void {
+    if (!this.tabCategoryVisibility[tabValue]) {
+      this.tabCategoryVisibility[tabValue] = {
+        'material': true,
+        'annotation': true,
+        'access': true,
+        'kg': true,
+        'recommendation': true
+      };
     }
   }
 
+  /**
+   * Get category visibility for the current tab
+   */
+  private getCategoryVisibilityForCurrentTab(category: string): boolean {
+    this.initializeTabCategoryVisibility(this.currentTabValue);
+    return this.tabCategoryVisibility[this.currentTabValue]?.[category] ?? true;
+  }
+
+  /**
+   * Set category visibility for the current tab
+   */
+  private setCategoryVisibilityForCurrentTab(category: string, visible: boolean): void {
+    this.initializeTabCategoryVisibility(this.currentTabValue);
+    this.tabCategoryVisibility[this.currentTabValue][category] = visible;
+  }
+
+  toggleCategoryVisibility(category: string): void {
+    const currentVisibility = this.getCategoryVisibilityForCurrentTab(category);
+    this.setCategoryVisibilityForCurrentTab(category, !currentVisibility);
+  }
+
   showAllCategories(): void {
-    this.materialActivitiesCategoryVisible = true;
-    this.annotationActivitiesCategoryVisible = true;
-    this.accessActivitiesCategoryVisible = true;
-    this.kgActivitiesCategoryVisible = true;
-    this.recommendationActivitiesCategoryVisible = true;
+    this.initializeTabCategoryVisibility(this.currentTabValue);
+    this.tabCategoryVisibility[this.currentTabValue] = {
+      'material': true,
+      'annotation': true,
+      'access': true,
+      'kg': true,
+      'recommendation': true
+    };
   }
 
   getHiddenCategoriesCount(): number {
@@ -486,6 +527,203 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     if (!this.kgActivitiesCategoryVisible) count++;
     if (!this.recommendationActivitiesCategoryVisible) count++;
     return count;
+  }
+
+  /**
+   * Apply current tab's category filters to all other courses
+   * Saves filters to localStorage for cross-course persistence
+   */
+  applyFiltersToAllCourses(): void {
+    // This method is now replaced by applyFiltersToSelectedCourses
+    this.applyFiltersToSelectedCourses();
+  }
+
+  /**
+   * Open course selection panel and load enrolled courses
+   */
+  openCourseSelectionPanel(): void {
+    this.showCourseSelectionPanel = true;
+    this.loadEnrolledCourses();
+  }
+
+  /**
+   * Close course selection panel
+   */
+  closeCourseSelectionPanel(): void {
+    this.showCourseSelectionPanel = false;
+  }
+
+  /**
+   * Load user's enrolled courses
+   */
+  private loadEnrolledCourses(): void {
+    if (this.enrolledCourses.length > 0) {
+      // Already loaded
+      return;
+    }
+    
+    this.isLoadingEnrolledCourses = true;
+    this.courseService.fetchCourses().subscribe({
+      next: (courses) => {
+        // Filter out the current course from the list
+        this.enrolledCourses = courses
+          .filter(course => course._id !== this.courseId)
+          .map(course => ({
+            _id: course._id,
+            name: course.name,
+            shortName: course.shortName
+          }));
+        
+        // Initialize selection state for each course
+        this.enrolledCourses.forEach(course => {
+          if (this.selectedCoursesForFilters[course._id] === undefined) {
+            this.selectedCoursesForFilters[course._id] = false;
+          }
+        });
+        
+        // Check if there are existing cross-course filters and pre-select those courses
+        this.loadExistingCourseSelections();
+        
+        this.isLoadingEnrolledCourses = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading enrolled courses:', error);
+        this.isLoadingEnrolledCourses = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  /**
+   * Load existing course selections from localStorage
+   */
+  private loadExistingCourseSelections(): void {
+    const stored = localStorage.getItem(this.CROSS_COURSE_FILTERS_KEY);
+    if (stored) {
+      try {
+        const crossCourseFilters = JSON.parse(stored);
+        if (crossCourseFilters.selectedCourseIds) {
+          crossCourseFilters.selectedCourseIds.forEach((courseId: string) => {
+            this.selectedCoursesForFilters[courseId] = true;
+          });
+        }
+      } catch (e) {
+        console.error('Error loading existing course selections:', e);
+      }
+    }
+  }
+
+  /**
+   * Toggle course selection for filter application
+   */
+  toggleCourseSelection(courseId: string): void {
+    this.selectedCoursesForFilters[courseId] = !this.selectedCoursesForFilters[courseId];
+  }
+
+  /**
+   * Get count of selected courses
+   */
+  getSelectedCoursesCount(): number {
+    return Object.values(this.selectedCoursesForFilters).filter(selected => selected).length;
+  }
+
+  /**
+   * Apply current tab's category filters to selected courses
+   */
+  applyFiltersToSelectedCourses(): void {
+    const selectedCourseIds = Object.entries(this.selectedCoursesForFilters)
+      .filter(([_, selected]) => selected)
+      .map(([courseId, _]) => courseId);
+    
+    if (selectedCourseIds.length === 0) {
+      return;
+    }
+    
+    this.initializeTabCategoryVisibility(this.currentTabValue);
+    const currentFilters = this.tabCategoryVisibility[this.currentTabValue];
+    
+    // Save to localStorage for cross-course persistence
+    const crossCourseFilters = {
+      filters: currentFilters,
+      selectedCourseIds: selectedCourseIds,
+      appliedAt: new Date().toISOString(),
+      sourceCourseId: this.courseId
+    };
+    localStorage.setItem(this.CROSS_COURSE_FILTERS_KEY, JSON.stringify(crossCourseFilters));
+    this.showCourseSelectionPanel = false;
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Clear cross-course filter settings
+   */
+  clearCrossCourseFilters(): void {
+    localStorage.removeItem(this.CROSS_COURSE_FILTERS_KEY);
+    // Reset all course selections
+    Object.keys(this.selectedCoursesForFilters).forEach(courseId => {
+      this.selectedCoursesForFilters[courseId] = false;
+    });
+    this.cdr.detectChanges();
+  }
+
+  /**
+   * Load cross-course filters from localStorage if available
+   */
+  private loadCrossCourseFilters(): void {
+    const stored = localStorage.getItem(this.CROSS_COURSE_FILTERS_KEY);
+    if (stored) {
+      try {
+        const crossCourseFilters = JSON.parse(stored);
+        // Check if current course is in the selected courses list
+        const selectedCourseIds: string[] = crossCourseFilters.selectedCourseIds || [];
+        
+        if (selectedCourseIds.includes(this.courseId) && crossCourseFilters.filters) {
+          // Apply saved filters to all tabs for this course
+          this.allTabs.forEach(tab => {
+            this.tabCategoryVisibility[tab.value] = { ...crossCourseFilters.filters };
+          });
+        }
+      } catch (e) {
+        console.error('Error loading cross-course filters:', e);
+      }
+    }
+  }
+
+  /**
+   * Check if cross-course filters are currently active for any course
+   */
+  hasCrossCourseFilters(): boolean {
+    const stored = localStorage.getItem(this.CROSS_COURSE_FILTERS_KEY);
+    if (stored) {
+      try {
+        const crossCourseFilters = JSON.parse(stored);
+        const selectedCourseIds: string[] = crossCourseFilters.selectedCourseIds || [];
+        return selectedCourseIds.length > 0;
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Get list of course names where filters are applied
+   */
+  getAppliedFilterCourseNames(): string[] {
+    const stored = localStorage.getItem(this.CROSS_COURSE_FILTERS_KEY);
+    if (stored) {
+      try {
+        const crossCourseFilters = JSON.parse(stored);
+        const selectedCourseIds: string[] = crossCourseFilters.selectedCourseIds || [];
+        return this.enrolledCourses
+          .filter(course => selectedCourseIds.includes(course._id))
+          .map(course => course.name);
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
   }
 
   maximizeChart(chartName: string): void {
@@ -1727,6 +1965,10 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
   ngOnInit(): void {
     // Initialize the cached tab value based on activeTabIndex
     this.currentTabValue = this.tabs[this.activeTabIndex]?.value || 'my-activities';
+    // Load cross-course filters from localStorage if available
+    this.loadCrossCourseFilters();
+    // Initialize category visibility for current tab
+    this.initializeTabCategoryVisibility(this.currentTabValue);
     this.initializeCharts();
     this.initializePieCharts();
     this.initializeGauge();
