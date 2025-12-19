@@ -127,7 +127,7 @@ export class EngagementDashboardComponent implements OnInit, OnDestroy {
 
     try {
       // Fetch engagement level from Neo4j
-      await this.calculateEngagementLevel();
+      await this.viewEngagementLevel();
       
       // Fetch engagement metrics from MongoDB
       this.engagementService.getUserEngagementMetrics(
@@ -150,7 +150,7 @@ export class EngagementDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async calculateEngagementLevel(): Promise<void> {
+  private async viewEngagementLevel(): Promise<void> {
     if (!this.loggedInUser || !this.currentCourse) {
       this.engagementLevel = 'Low';
       return;
