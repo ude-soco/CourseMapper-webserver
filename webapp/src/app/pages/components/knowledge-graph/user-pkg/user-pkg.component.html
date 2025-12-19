@@ -22,7 +22,14 @@
     </div>
     
     <!-- Graph Visualization with Overlaid Controls -->
-    <div *ngIf="(isLoading$ | async) === false && (rawConceptRecords$ | async)?.length" class="graph-wrapper">
+    <div *ngIf="(isLoading$ | async) === false" class="graph-wrapper">
+      <!-- Empty Concepts Banner -->
+      <div *ngIf="!(rawConceptRecords$ | async)?.length" class="empty-concepts-banner">
+        <i class="pi pi-info-circle"></i>
+        <span>You have no marked concepts. 
+          Go to learning materials and mark concepts  as understood or not understood  build your personal knowledge graph</span>
+      </div>
+      
       <!-- Filter Controls Component -->
       <app-pkg-filter-controls></app-pkg-filter-controls>
       
@@ -91,12 +98,6 @@
         [visible]="showHelpDialog"
         (close)="closeHelpDialog()">
       </app-graph-help-dialog>
-    </div>
-
-    <!-- Empty State -->
-    <div *ngIf="(isLoading$ | async) === false && !(rawConceptRecords$ | async)?.length" class="empty-state">
-      <i class="pi pi-info-circle text-4xl text-gray-400 mb-3"></i>
-      <p class="text-gray-500">No knowledge graph data available. Start learning to build your graph!</p>
     </div>
   </div>
   </div>
