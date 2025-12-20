@@ -178,4 +178,5 @@ export class PersonalKnowledgeGraphComponent implements OnInit {
       this.showEngagementKg = false;
     }
   }
+
 }

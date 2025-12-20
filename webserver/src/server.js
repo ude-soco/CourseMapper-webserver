@@ -134,6 +134,7 @@ require("./routes/test.routes")(app);
 require("./routes/debug.routes")(app);
 require("./routes/notifications.routes")(app);
 require("./routes/knowledgeGraph.routes")(app);
+require("./routes/engagement.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);

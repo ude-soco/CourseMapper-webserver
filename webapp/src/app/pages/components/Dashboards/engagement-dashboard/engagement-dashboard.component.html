@@ -1,0 +1,34 @@
+<div *ngIf="loggedInUser">
+  <div class="flex flex-row w-full">
+    <div><app-sidebar></app-sidebar></div>
+
+    <div class="w-full">
+      <div class="p-4 bg-gray-200">
+        <div class="flex flex-wrap items-center gap-5">
+          <div>
+            <app-back-button></app-back-button>
+          </div>
+          <div>
+            <p class="flex w-full text-xl font-semibold">
+              Engagement Dashboard
+            </p>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="w-full">
+        <app-engagement-charts
+          [courseName]="getCourseName()"
+          [engagementLevel]="getEngagementLevel()"
+          [engagementMetrics]="getEngagementMetrics()"
+          [userId]="loggedInUser?.id || ''"
+          [courseId]="currentCourse?._id || ''"
+          [userName]="loggedInUser?.name || 'You'"
+        ></app-engagement-charts>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast position="bottom-left"></p-toast>
+

@@ -21,6 +21,7 @@ import { PopulateDashboardComponent } from '../pages/components/populate-dashboa
 import { ByPassUrlSanitizationPipe } from '../pipes/by-pass-url-sanitization.pipe';
 import { DragulaModule } from 'ng2-dragula';
 import { BackButtonComponent } from '../pages/components/back-button/back-button.component';
+import { EngagementChartsComponent } from './engagement-charts/engagement-charts.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { BackButtonComponent } from '../pages/components/back-button/back-button
     PopulateDashboardComponent,
     ByPassUrlSanitizationPipe,
     BackButtonComponent,
+    EngagementChartsComponent,
   ],
   imports: [
     CommonModule,
@@ -67,6 +69,7 @@ import { BackButtonComponent } from '../pages/components/back-button/back-button
     ByPassUrlSanitizationPipe,
     BackButtonComponent,
     PopulateDashboardComponent,
+    EngagementChartsComponent,
   ],
 })
 export class SharedComponentsModule {}

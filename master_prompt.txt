@@ -1,0 +1,461 @@
+Master Prompt for Cursor — Thesis Implementation Reference (Updated)
+
+Project Title: “Visualizing and Explaining Learner’s Engagement in
+CourseMapper”
+
+System Context (Backend + Frontend + Data Sources)
+
+Domain - Online learning platform (CourseMapper, MOOCs).
+
+Backend Architecture - MongoDB - Stores xAPI statements (all learner
+activity logs per course). - Stores per-user, per-course aggregated
+metrics when needed.
+
+### MongoDB xAPI Statement Example:
+
+Common xAPI Fields
+
+statement.actor.account.name → User ID
+
+statement.object.id → Unique material identifier (URL-based)
+
+statement.object.definition.type → Material type
+
+statement.verb.id → Action type
+
+statement.timestamp → Event time (ISO)
+
+statement.object.definition.extensions → Material metadata (course, topic, channel, material IDs)
+
+A video is played:
+{
+  "statement": {
+    "id": "f3393e94-2cc1-4508-81b9-4d1e7a28dab2",
+    "timestamp": {
+      "$date": "2025-12-15T21:35:08.076Z"
+    },
+    "actor": {
+      "objectType": "Agent",
+      "name": "Mark Baskhairun",
+      "mbox": "mailto:dsx0agtkp3@cmhvzylmfc.com",
+      "mbox_sha1sum": "5dabdd4b0701c447ea81fd4b55754cb6d41a002d",
+      "account": {
+        "homePage": "http://localhost:4200",
+        "name": "69341e455df31a19a4fe1628"
+      }
+    },
+    "verb": {
+      "id": "http://activitystrea.ms/schema/1.0/play",
+      "display": {
+        "en-US": "played"
+      }
+    },
+    "object": {
+      "objectType": "Activity",
+      "id": "http://localhost:4200/activity/course/693f2c699cf2c379802f4812/topic/693f2c779cf2c379802f49c1/channel/693f2c839cf2c379802f49fa/material/6940768d4ee1c4f661324a61",
+      "definition": {
+        "type": "http://www.CourseMapper.de/activityType/youtube",
+        "name": {
+          "en-US": "random"
+        },
+        "description": {
+          "en-US": ""
+        },
+        "extensions": {
+          "http://www.CourseMapper.de/extensions/youtube": {
+            "id": {
+              "$oid": "6940768d4ee1c4f661324a61"
+            },
+            "name": "random",
+            "description": "",
+            "type": "video",
+            "url": "https://www.youtube.com/watch?v=QLK9G5zyU-Q",
+            "channel_id": {
+              "$oid": "693f2c839cf2c379802f49fa"
+            },
+            "topic_id": {
+              "$oid": "693f2c779cf2c379802f49c1"
+            },
+            "course_id": {
+              "$oid": "693f2c699cf2c379802f4812"
+            },
+            "timestamp": 0
+          }
+        }
+      }
+    },
+    "context": {
+      "platform": "CourseMapper",
+      "language": "en-US"
+    }
+  },
+  "sent": false,
+  "__v": 0
+}
+
+A video is paused:
+{
+  "_id": {
+    "$oid": "69407f167dc6749b458976fd"
+  },
+  "statement": {
+    "id": "a179a06a-bb8f-4b29-bfbe-e0a794446b7d",
+    "timestamp": {
+      "$date": "2025-12-15T21:35:18.774Z"
+    },
+    "actor": {
+      "objectType": "Agent",
+      "name": "Mark Baskhairun",
+      "mbox": "mailto:dsx0agtkp3@cmhvzylmfc.com",
+      "mbox_sha1sum": "5dabdd4b0701c447ea81fd4b55754cb6d41a002d",
+      "account": {
+        "homePage": "http://localhost:4200",
+        "name": "69341e455df31a19a4fe1628"
+      }
+    },
+    "verb": {
+      "id": "http://id.tincanapi.com/verb/paused",
+      "display": {
+        "en-US": "paused"
+      }
+    },
+    "object": {
+      "objectType": "Activity",
+      "id": "http://localhost:4200/activity/course/693f2c699cf2c379802f4812/topic/693f2c779cf2c379802f49c1/channel/693f2c839cf2c379802f49fa/material/6940768d4ee1c4f661324a61",
+      "definition": {
+        "type": "http://www.CourseMapper.de/activityType/youtube",
+        "name": {
+          "en-US": "random"
+        },
+        "description": {
+          "en-US": ""
+        },
+        "extensions": {
+          "http://www.CourseMapper.de/extensions/youtube": {
+            "id": {
+              "$oid": "6940768d4ee1c4f661324a61"
+            },
+            "name": "random",
+            "description": "",
+            "type": "video",
+            "url": "https://www.youtube.com/watch?v=QLK9G5zyU-Q",
+            "channel_id": {
+              "$oid": "693f2c839cf2c379802f49fa"
+            },
+            "topic_id": {
+              "$oid": "693f2c779cf2c379802f49c1"
+            },
+            "course_id": {
+              "$oid": "693f2c699cf2c379802f4812"
+            },
+            "timestamp": 9
+          }
+        }
+      }
+    },
+    "context": {
+      "platform": "CourseMapper",
+      "language": "en-US"
+    }
+  },
+  "sent": false,
+  "__v": 0
+}
+
+A PDF is accessed:
+  "statement": {
+    "id": "9aeca52a-b6ec-46bb-aaa6-57748fef57e1",
+    "timestamp": {
+      "$date": "2025-12-15T21:36:49.725Z"
+    },
+    "actor": {
+      "objectType": "Agent",
+      "name": "Mark Baskhairun",
+      "mbox": "mailto:dsx0agtkp3@cmhvzylmfc.com",
+      "mbox_sha1sum": "5dabdd4b0701c447ea81fd4b55754cb6d41a002d",
+      "account": {
+        "homePage": "http://localhost:4200",
+        "name": "69341e455df31a19a4fe1628"
+      }
+    },
+    "verb": {
+      "id": "http://activitystrea.ms/schema/1.0/access",
+      "display": {
+        "en-US": "accessed"
+      }
+    },
+    "object": {
+      "objectType": "Activity",
+      "id": "http://localhost:4200/activity/course/693f2c699cf2c379802f4812/topic/693f2c779cf2c379802f49c1/channel/693f2c839cf2c379802f49fa/material/693f2cdf9cf2c379802f4a7a",
+      "definition": {
+        "type": "http://www.CourseMapper.de/activityType/pdf",
+        "name": {
+          "en-US": "wtv"
+        },
+        "description": {
+          "en-US": ""
+        },
+        "extensions": {
+          "http://www.CourseMapper.de/extensions/pdf": {
+            "id": {
+              "$oid": "693f2cdf9cf2c379802f4a7a"
+            },
+            "name": "wtv",
+            "description": "",
+            "type": "pdf",
+            "url": "/public/uploads/pdfs/",
+            "channel_id": {
+              "$oid": "693f2c839cf2c379802f49fa"
+            },
+            "topic_id": {
+              "$oid": "693f2c779cf2c379802f49c1"
+            },
+            "course_id": {
+              "$oid": "693f2c699cf2c379802f4812"
+            }
+          }
+        }
+      }
+    },
+    "context": {
+      "platform": "CourseMapper",
+      "language": "en-US"
+    }
+  },
+  "sent": false,
+  "__v": 0
+}
+
+A slide is viewed:
+{
+  "_id": {
+    "$oid": "69407f717dc6749b45897b9a"
+  },
+  "statement": {
+    "id": "92285591-bf74-4cfd-8cb3-d22880eb145a",
+    "timestamp": {
+      "$date": "2025-12-15T21:36:49.726Z"
+    },
+    "actor": {
+      "objectType": "Agent",
+      "name": "Mark Baskhairun",
+      "mbox": "mailto:dsx0agtkp3@cmhvzylmfc.com",
+      "mbox_sha1sum": "5dabdd4b0701c447ea81fd4b55754cb6d41a002d",
+      "account": {
+        "homePage": "http://localhost:4200",
+        "name": "69341e455df31a19a4fe1628"
+      }
+    },
+    "verb": {
+      "id": "http://id.tincanapi.com/verb/viewed",
+      "display": {
+        "en-US": "viewed"
+      }
+    },
+    "object": {
+      "objectType": "Activity",
+      "id": "http://localhost:4200/activity/course/693f2c699cf2c379802f4812/topic/693f2c779cf2c379802f49c1/channel/693f2c839cf2c379802f49fa/material/693f2cdf9cf2c379802f4a7a/slide/1",
+      "definition": {
+        "type": "http://id.tincanapi.com/activitytype/slide",
+        "name": {
+          "en-US": "wtv - Slide  1"
+        },
+        "description": {
+          "en-US": ""
+        },
+        "extensions": {
+          "http://www.CourseMapper.de/extensions/slide": {
+            "material_id": {
+              "$oid": "693f2cdf9cf2c379802f4a7a"
+            },
+            "material_name": "wtv",
+            "material_pageNr": "1",
+            "material_description": "",
+            "material_type": "pdf",
+            "material_url": "/public/uploads/pdfs/",
+            "channel_id": {
+              "$oid": "693f2c839cf2c379802f49fa"
+            },
+            "topic_id": {
+              "$oid": "693f2c779cf2c379802f49c1"
+            },
+            "course_id": {
+              "$oid": "693f2c699cf2c379802f4812"
+            }
+          }
+        }
+      }
+    },
+    "context": {
+      "platform": "CourseMapper",
+      "language": "en-US"
+    }
+  },
+  "sent": false,
+  "__v": 0
+}
+
+A PDF is completed:
+  "statement": {
+    "id": "d8cff2d4-1984-4b5d-aa4d-3a791a68a57a",
+    "timestamp": {
+      "$date": "2025-12-15T21:36:51.521Z"
+    },
+    "actor": {
+      "objectType": "Agent",
+      "name": "Mark Baskhairun",
+      "mbox": "mailto:dsx0agtkp3@cmhvzylmfc.com",
+      "mbox_sha1sum": "5dabdd4b0701c447ea81fd4b55754cb6d41a002d",
+      "account": {
+        "homePage": "http://localhost:4200",
+        "name": "69341e455df31a19a4fe1628"
+      }
+    },
+    "verb": {
+      "id": "http://activitystrea.ms/schema/1.0/complete",
+      "display": {
+        "en-US": "completed"
+      }
+    },
+    "object": {
+      "objectType": "Activity",
+      "id": "http://localhost:4200/activity/course/693f2c699cf2c379802f4812/topic/693f2c779cf2c379802f49c1/channel/693f2c839cf2c379802f49fa/material/693f2cdf9cf2c379802f4a7a",
+      "definition": {
+        "type": "http://www.CourseMapper.de/activityType/pdf",
+        "name": {
+          "en-US": "wtv"
+        },
+        "description": {
+          "en-US": ""
+        },
+        "extensions": {
+          "http://www.CourseMapper.de/extensions/pdf": {
+            "id": {
+              "$oid": "693f2cdf9cf2c379802f4a7a"
+            },
+            "name": "wtv",
+            "description": "",
+            "type": "pdf",
+            "url": "/public/uploads/pdfs/",
+            "channel_id": {
+              "$oid": "693f2c839cf2c379802f49fa"
+            },
+            "topic_id": {
+              "$oid": "693f2c779cf2c379802f49c1"
+            },
+            "course_id": {
+              "$oid": "693f2c699cf2c379802f4812"
+            }
+          }
+        }
+      }
+    },
+    "context": {
+      "platform": "CourseMapper",
+      "language": "en-US"
+    }
+  },
+  "sent": false,
+  "__v": 0
+}
+
+-   Neo4j
+    -   Stores PKG (Personal Knowledge Graph)
+    -   Stores course structure graph: courses → slides → concepts
+    -   Used for linking engagement metrics to course nodes.
+-   Python backend scripts
+    -   File: user_engagement.py
+    -   Important Update:
+        -   Engagement-level clustering is already pre-calculated.
+        -   No component in the IDE or frontend needs to re-run or
+            recompute engagement levels.
+        -   The script stores or exposes:
+            -   Each user’s engagement level per course.
+            -   Cluster statistics (min / avg / max thresholds).
+        -   The system should only fetch and link the engagement level
+            and activity values.
+
+-   Student Profiles JSON (Peer Comparison Reference):
+	- In addition to MongoDB xAPI statements, the system provides an output JSON file containing student profiles.
+	- This file is generated by the engagement analysis pipeline and is considered a read-only analytical artifact.
+
+Frontend Architecture (Angular) - Angular + TypeScript - State
+Management: NgRx - Actions - Reducers - Selectors - Effects - Charts: -
+ng-apexcharts - apexcharts
+
+Overall Goals 1. Build a robust multi-category Dashboard UI with charts
+for: - Material Activities - Annotation Activities - Access Activities -
+Knowledge Graph Activities - Recommendation Activities
+
+Tabs: - My Activities - My Activities vs. Top Peers - My Activities
+vs. Same Engagement Level - My Activities vs. Higher Engagement Level
+Boundaries
+
+2.  Fetch course-specific engagement data:
+    -   Retrieve user xAPI activity values from MongoDB.
+    -   Retrieve pre-calculated engagement level from Python clustering
+        outputs in Neo4j(no recomputation required).
+    -   Load values into NgRx store and visualize with ApexCharts.
+3.  Compare the user to others in the same engagement level:
+    -   Fetch all learners in the same pre-defined cluster.
+    -   Compute or retrieve average and max values.
+    -   Display them in “My Activities vs. Same Engagement Level
+        Characteristics”.
+4.  Fetch next higher engagement level boundaries:
+    -   Retrieve minimum thresholds of the next cluster from
+        pre-calculated clustering results.
+    -   Display these values in “My Activities vs. Higher Engagement
+        Level Boundaries”.
+5.  Provide additional chart styles:
+    -   Bar charts
+    -   Line charts
+    -   Pie charts
+    -   Donut charts
+    -   Radar charts (optional)
+6.  Link dashboard to user’s PKG (Neo4j):
+    -   Allow navigation from dashboard to PKG nodes.
+    -   Show concepts, recommendations, related material.
+
+Architecture Pattern Requirements
+
+Backend / API - Python endpoints should only fetch existing engagement
+levels—never re-run clustering. - Endpoints must return: - User’s
+engagement values - Pre-calculated cluster statistics - Peer-level
+thresholds - Return structured JSON. - Provide time filtering for
+progress charts.
+
+When creating the backend API endpoints, a few points should be taken into consideration: 
+1. Each video appears in MongoDB to be played twice when first played, even though it's just once. The backend should only consider it once for each unique video 
+2. The timestamp difference between video paused and video played should be used to calculate the time spent on video (minutes) (T: Video paused - T: Video played / 60) 
+3. The first time a PDF is accessed should be when the PDF is started and should change the values in the frontend where there is 'PDFs started' 
+4. All completed PDFs are also PDFs started 
+5. A completed action for a unique PDF should only be considered the first time. Any subsequent statements where the same PDF is completed should be disregarded
+
+NgRx Layer - Required: - Actions (e.g., loadUserEngagementForCourse) -
+Effects (API communication) - Reducers - Selectors - Store all needed
+metrics for comparisons and chart data.
+
+Angular Components - engagement-dashboard - engagement-category-card -
+engagement-chart - Reusable ApexChart configuration service
+
+ApexCharts Integration - Reusable chart config templates - Dynamic
+rendering via selectors - Responsive design
+
+Cursor Instructions Whenever implementing: 1. Follow system context
+strictly. 2. Use Angular + NgRx best practices. 3. Use modular
+ApexCharts configs. 4. Assume backend APIs and python script provide pre-calculated
+engagement level and cluster statistics. 5. Do not attempt to re-run
+clustering on the frontend or backend. 6. Use the scheduler.py to regularly run the engagement level clustering.  7. When uncertain, propose
+architecture-consistent structures. 8. Write production-ready, modular
+code.
+
+IMPORTANT:
+- Do NOT invent totally new patterns if there’s an obvious existing pattern in the codebase, especially for NgRx.
+- Prefer readability and maintainability over cleverness.
+- If something is ambiguous, ask me for clarification 
+
+## ADDITIONAL INFO FOR CURSOR
+
+- I prefer clear error messages and logging
+- I want comprehensive docstrings and type hints
+- Edge cases should be documented and tested

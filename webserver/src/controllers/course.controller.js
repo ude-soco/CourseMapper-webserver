@@ -27,12 +27,15 @@ const {
  */
 
 // User identification for the logging system
-const findUserById = async (userId) => {
+// Exported for reuse in other controllers (e.g., engagement.controller.js)
+export const findUserById = async (userId) => {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found!");
   return user;
 };
-const handleError = (res, error, message) => {
+
+// Exported for reuse in other controllers (e.g., engagement.controller.js)
+export const handleError = (res, error, message) => {
   console.error(error);
   return res.status(500).send({ error: message });
 };

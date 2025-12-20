@@ -62,6 +62,7 @@ import { UserPkgComponent } from './user-pkg/user-pkg.component';
 import { CytoscapePkgComponent } from './user-pkg/cytoscape/cytoscape-pkg.component';
 import { PkgFilterControlsComponent } from './user-pkg/components/filter-controls/filter-controls.component';
 import { PkgConceptDetailsPanelComponent } from './user-pkg/components/concept-details-panel/concept-details-panel.component';
+import { PkgCourseDetailsPanelComponent } from './user-pkg/components/course-details-panel/course-details-panel.component';
 import { AdvancedFiltersDialogComponent } from './user-pkg/components/advanced-filters-dialog/advanced-filters-dialog.component';
 import { ProfileNameDialogComponent } from './user-pkg/components/profile-name-dialog/profile-name-dialog.component';
 import { GraphHelpDialogComponent } from './user-pkg/components/graph-help-dialog/graph-help-dialog.component';
@@ -104,6 +105,7 @@ import { PkgInterestEffects } from './user-pkg/store/pkg-interest/pkg-interest.e
     CytoscapePkgComponent,
     PkgFilterControlsComponent,
     PkgConceptDetailsPanelComponent,
+    PkgCourseDetailsPanelComponent,
     AdvancedFiltersDialogComponent,
     ProfileNameDialogComponent,
     GraphHelpDialogComponent,

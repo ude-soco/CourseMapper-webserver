@@ -29,6 +29,7 @@ import { EmailValidationComponent } from './pages/components/email-validation/em
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
 import { PersonalKnowledgeGraphComponent } from './pages/components/knowledge-graph/user-kg/personal-knowledge-graph/personal-knowledge-graph.component';
 import { UserPkgComponent } from './pages/components/knowledge-graph/user-pkg/user-pkg.component';
+import { EngagementDashboardComponent } from './pages/components/Dashboards/engagement-dashboard/engagement-dashboard.component';
 import { CanDeactivateService } from './services/can-deactivate.service';
 
 const routes: Routes = [
@@ -46,6 +47,11 @@ const routes: Routes = [
   {
     path: 'user/pkg',
     component: UserPkgComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'user/engagement',
+    component: EngagementDashboardComponent,
     canActivate: [AuthGuardService],
   },
   {

@@ -168,12 +168,16 @@ export function createEngagementGraphData(
   let edgeIndex = 0;
   courses.forEach(course => {
     if (course.courseId) {
+      const engagementLevel = course.engagementLevel || 'low';
+      const engagementLevelCapitalized = capitalizeEngagementLevel(engagementLevel);
+      
       nodes.push({
         data: {
           id: `course-${course.courseId}`,
           name: course.courseName || course.courseShortName || 'Unknown Course',
           type: 'course',
-          courseId: course.courseId
+          courseId: course.courseId,
+          engagementLevel: engagementLevel
         }
       });
       
@@ -183,7 +187,8 @@ export function createEngagementGraphData(
           source: userNode?.data.id,
           target: `course-${course.courseId}`,
           type: 'engagement',
-          label: 'engaged in'
+          label: `Engaged (${engagementLevelCapitalized})`,
+          engagementLevel: engagementLevel
         }
       });
     }
@@ -216,4 +221,44 @@ export function getEdgeLabelForViewMode(
     edgeType as 'u' | 'dnu' | 'unknown',
     score
   );
+}
+
+/**
+ * Capitalize first letter of engagement level
+ */
+export function capitalizeEngagementLevel(level: string | undefined): string {
+  if (!level) return 'Low';
+  return level.charAt(0).toUpperCase() + level.slice(1).toLowerCase();
+}
+
+/**
+ * Get edge width based on engagement level
+ */
+export function getEngagementEdgeWidth(engagementLevel: string | undefined): number {
+  const level = (engagementLevel || 'low').toLowerCase();
+  switch (level) {
+    case 'high':
+      return 6;
+    case 'medium':
+      return 4;
+    case 'low':
+    default:
+      return 2;
+  }
+}
+
+/**
+ * Get course node size based on engagement level
+ */
+export function getEngagementNodeSize(engagementLevel: string | undefined): number {
+  const level = (engagementLevel || 'low').toLowerCase();
+  switch (level) {
+    case 'high':
+      return 100;
+    case 'medium':
+      return 85;
+    case 'low':
+    default:
+      return 70;
+  }
 }

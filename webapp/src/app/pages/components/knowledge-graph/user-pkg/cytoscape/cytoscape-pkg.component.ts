@@ -25,6 +25,9 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
   @Output() conceptSelected = new EventEmitter<any>();
   @Output() conceptStatusChanged = new EventEmitter<{concept: any, status: 'u' | 'dnu' | 'new'}>();
   @Output() courseNodeClicked = new EventEmitter<any>();
+  @Output() courseEngagementDashboardRequested = new EventEmitter<any>();
+  @Output() courseViewRequested = new EventEmitter<any>();
+  @Output() courseDetailsRequested = new EventEmitter<any>();
   @Output() edgeClicked = new EventEmitter<any>();
   @Output() visibleNodesChanged = new EventEmitter<any[]>();
 
@@ -271,6 +274,12 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
    */
   private applyEdgeLabels(): void {
     this.cy.edges().forEach((edge: any) => {
+      // For engagement view, preserve the label that already includes engagement level
+      if (this.currentViewMode === 'engagement' && edge.data('engagementLevel')) {
+        // Label should already be set in createEngagementGraphData, so don't override it
+        return;
+      }
+      
       const edgeType = edge.data('type');
       const sourceNode = edge.source();
       const targetNode = edge.target();
@@ -394,6 +403,9 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       onStatusChange: (concept, status) => this.handleStatusChange(concept, status),
       onToggleCourse: (node) => this.handleToggleCourse(node),
       onToggleRelated: (node) => this.handleToggleRelated(node),
+      onViewEngagementDashboard: (courseData) => this.handleViewEngagementDashboard(courseData),
+      onViewCourse: (courseData) => this.handleViewCourse(courseData),
+      onShowCourseDetails: (courseData) => this.handleShowCourseDetails(courseData),
     });
   }
 
@@ -466,6 +478,21 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  private handleViewEngagementDashboard(courseData: any): void {
+    console.log('[Cytoscape PKG] View engagement dashboard requested for course:', courseData);
+    this.courseEngagementDashboardRequested.emit(courseData);
+  }
+
+  private handleViewCourse(courseData: any): void {
+    console.log('[Cytoscape PKG] View course requested:', courseData);
+    this.courseViewRequested.emit(courseData);
+  }
+
+  private handleShowCourseDetails(courseData: any): void {
+    console.log('[Cytoscape PKG] Show course details requested:', courseData);
+    this.courseDetailsRequested.emit(courseData);
   }
 
   updateGraphStyles(): void {

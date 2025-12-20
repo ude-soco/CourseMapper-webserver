@@ -235,6 +235,61 @@ export async function getLevelOfEngagement(userId) {
   }
 }
 
+/**
+ * Get all users with a specific engagement level for a specific course
+ * @param {string} courseId - The course ID
+ * @param {string} engagementLevel - The engagement level to filter by (e.g., 'low', 'medium', 'high')
+ * @returns {Array} Array of user records with matching engagement level for the course
+ */
+export async function getAllUsersWithEngagementLevelForCourse(courseId, engagementLevel) {
+  try {
+    const { records, summary, keys } = await graphDb.driver.executeQuery(
+      `MATCH (u:User)-[r:ENGAGED_IN]->(target) 
+       WHERE target.cid = $courseId AND toLower(r.level) = toLower($level)
+       RETURN u, r, target`,
+      { courseId: String(courseId), level: String(engagementLevel) }
+    );
+    console.log(`Neo4j: Found ${records.length} users with ${engagementLevel} engagement level for course ${courseId}`);
+    return recordsToObjects(records);
+  } catch (error) {
+    console.error("Neo4j query error:", error);
+    return [];
+  }
+}
+
+/**
+ * Get all users with the next higher engagement level for a specific course
+ * Used for "My Activities vs. Higher Engagement Level Boundaries" tab
+ * @param {string} courseId - The course ID
+ * @param {string} currentEngagementLevel - The current user's engagement level (e.g., 'low', 'medium')
+ * @returns {Array} Array of user records with the next higher engagement level for the course
+ */
+export async function getUsersWithHigherEngagementLevelForCourse(courseId, currentEngagementLevel) {
+  try {
+    // Determine the next higher level
+    const levelHierarchy = { 'low': 'medium', 'medium': 'high' };
+    const higherLevel = levelHierarchy[currentEngagementLevel.toLowerCase()];
+    
+    // If already at 'high', there's no higher level - return empty array
+    if (!higherLevel) {
+      console.log(`Neo4j: User already at highest engagement level (${currentEngagementLevel}) for course ${courseId}`);
+      return [];
+    }
+    
+    const { records, summary, keys } = await graphDb.driver.executeQuery(
+      `MATCH (u:User)-[r:ENGAGED_IN]->(target) 
+       WHERE target.cid = $courseId AND toLower(r.level) = toLower($level)
+       RETURN u, r, target`,
+      { courseId: String(courseId), level: String(higherLevel) }
+    );
+    console.log(`Neo4j: Found ${records.length} users with ${higherLevel} engagement level (next higher from ${currentEngagementLevel}) for course ${courseId}`);
+    return recordsToObjects(records);
+  } catch (error) {
+    console.error("Neo4j query error:", error);
+    return [];
+  }
+}
+
 export async function getDNUEngagement(userId) {
   try {
     const { records, summary, keys } = await graphDb.driver.executeQuery(

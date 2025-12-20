@@ -13,7 +13,6 @@ nltk = "*"
 stanfordcorenlp = "*"
 psycopg = {extras = ["binary"], version = "*"}
 cm-worker = "*"
-html2text = "*"
 scipy = "==1.11.0"
 pdfminer-six = "*"
 python-dotenv = "*"
@@ -24,6 +23,8 @@ torch-geometric = "*"
 torch = "*"
 bertopic = "*"
 "pdfminer.six" = "==20201018"
+requests = "*"
+html2text = "*"
 
 [dev-packages]
 

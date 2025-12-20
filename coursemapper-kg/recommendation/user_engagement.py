@@ -7,6 +7,7 @@ import populateStudentProfiles as stdProfiling
 import DataProcessing as dp
 from config import Config
 from neo4j import GraphDatabase
+import json
 
 # Neo4j configuration (adjust these values as needed)
 NEO4J_URI = Config.NEO4J_URI
@@ -41,6 +42,9 @@ def exportStudentClusters():
 
     # Create an empty list to collect all clustered data
     all_clusters = []
+    
+    # Dictionary to store centroids for all courses
+    all_centroids = {}
 
     # Loop through each course
     for course_id in unique_courses:
@@ -65,6 +69,22 @@ def exportStudentClusters():
     
         # Create mapping dynamically: assign "low", "medium", "high" based on sorted order.
         mapping = {cluster: level for cluster, level in zip(sorted_clusters, ["low", "medium", "high"])}
+
+        # Log centroid values for each activity in each cluster
+        print(f"--- Centroids for Course: {course_id} ---")
+        cluster_means = course_df.groupby('cluster')[features].mean()
+        
+        # Store centroids for this course
+        course_centroids = {}
+        for cluster_idx, level in mapping.items():
+            print(f"Engagement Level: {level} (Cluster {cluster_idx})")
+            print(cluster_means.loc[cluster_idx])
+            print("-" * 30)
+            # Convert Series to dictionary and store
+            course_centroids[level] = cluster_means.loc[cluster_idx].to_dict()
+        
+        all_centroids[str(course_id)] = course_centroids
+
         # Append the processed DataFrame to the list
         course_df['engagement_level'] = course_df['cluster'].map(mapping)
 
@@ -86,6 +106,13 @@ def exportStudentClusters():
     final_df[columns_to_export].to_csv('student_clusters_all_courses.csv', index=False)
 
     print(f"Exported 'student_clusters_all_courses.csv' with {len(final_df)} students.")
+    
+    # Export centroids to JSON file for backend consumption
+    centroids_file_path = 'cluster_centroids.json'
+    with open(centroids_file_path, 'w') as f:
+        json.dump(all_centroids, f, indent=2)
+    print(f"Exported cluster centroids to '{centroids_file_path}'")
+    
     driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
     
     for _, row in final_df.iterrows():
@@ -105,7 +132,7 @@ def update_engagement_status(driver, user_id, course_id, new_level):
     Update the engagement level for a given user-course relationship in Neo4j.
     """
     with driver.session() as session:
-        session.write_transaction(
+        session.execute_write(
           lambda tx: tx.run(
                 """
                 MERGE (u:User {uid: $userId})

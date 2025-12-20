@@ -15,7 +15,6 @@ stanfordcorenlp = "*"
 torch = "*"
 transformers = "*"
 numpy = "*"
-pandas = "*"
 scikit-learn = "*"
 sentence-transformers = "*"
 neo4j = "*"
@@ -40,7 +39,9 @@ langdetect = "*"
 bertopic = "*"
 pymongo = "*"
 pipenv = "*"
-torch-geometric = "*"
+
+
+
 
 [dev-packages]
 
