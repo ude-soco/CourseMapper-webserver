@@ -55,7 +55,7 @@ function runPythonScript(scriptPath, cwd) {
     const proc = spawn('python', [scriptPath], {
       cwd,
       stdio: 'inherit',
-      shell: true
+      shell: false  // Don't use shell to avoid issues with spaces in paths
     });
 
     proc.on('close', (code) => {
