@@ -161,6 +161,35 @@
   border-left: 3px solid #2563eb;
 }
 
+.tooltip-link {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background-color: #eff6ff;
+  border-radius: 8px;
+  border: 1px solid #dbeafe;
+}
+
+.link-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.link-text:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.link-text i {
+  font-size: 14px;
+}
+
 .tooltip-actions {
   display: flex;
   gap: 10px;

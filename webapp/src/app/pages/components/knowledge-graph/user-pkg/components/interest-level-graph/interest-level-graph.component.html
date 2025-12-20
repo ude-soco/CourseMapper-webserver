@@ -54,6 +54,14 @@
       {{ tooltipText }}
     </div>
     
+    <!-- Show More Link -->
+    <div class="tooltip-link" *ngIf="canEditScore">
+      <a (click)="navigateToInterestDashboard()" class="link-text">
+        <i class="pi pi-external-link"></i>
+        Show more explanation
+      </a>
+    </div>
+    
     <!-- Action Buttons -->
     <div class="tooltip-actions" *ngIf="canEditScore && hasScoreChanged">
       <button class="btn-save" (click)="saveAdjustedScore()">

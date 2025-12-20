@@ -15,6 +15,7 @@ export interface InterestConcept {
   courseName?: string;
   courseShortName?: string;
   allConceptIds?: string[]; // All concept IDs sharing the same name (for batch updates)
+  activityCount?: number; // Total number of activities related to this concept
 }
 
 /**
@@ -53,6 +54,7 @@ export interface InterestGraphEdge {
     interestScore: number | null;
     relationshipType: 'interested_in';
     tooltip?: string;
+    activityCount?: number; // Total number of activities for this concept
   };
 }
 

@@ -216,7 +216,9 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         this.canEditScore = edgeData.interestScore !== null;
         this.hasScoreChanged = false;
         
-        this.tooltipText = edgeData.tooltip;
+        // Generate explanation text with actual activity count from edge data
+        const activityCount = edgeData.activityCount || 0;
+        this.tooltipText = this.generateExplanationText(conceptData.conceptName, activityCount);
         this.tooltipX = Math.min(renderedPosition + 10, window.innerWidth - 400);
         this.tooltipY = Math.max(renderedPositionY - 20, 10);
         this.tooltipVisible = true;
@@ -324,7 +326,8 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
           label: scoreLabel,
           interestScore: concept.interestScore,
           relationshipType: 'interested_in',
-          tooltip: scoreDescription
+          tooltip: scoreDescription,
+          activityCount: concept.activityCount || 0
         }
       });
     });
@@ -494,6 +497,15 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     this.tooltipVisible = false;
     this.tooltipText = '';
     this.hasScoreChanged = false;
+  }
+  
+  navigateToInterestDashboard(): void {
+    this.router.navigate(['/user/interest-level'], {
+      queryParams: {
+        conceptName: this.currentConceptName,
+        conceptId: this.currentConceptId
+      }
+    });
   }
   
   // Score adjustment methods
@@ -673,6 +685,10 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         conceptId
       }
     });
+  }
+
+  private generateExplanationText(conceptName: string, activityCount: number): string {
+    return `This score represents your level of interest in "${conceptName}" based on ${activityCount} learning ${activityCount === 1 ? 'activity' : 'activities'} across different courses in CourseMapper. Higher scores indicate stronger interest through interactions like viewing materials, marking concepts as Did Not Understand, and engaging with related concepts.`;
   }
 
   private handleToggleRelated(node: any): void {

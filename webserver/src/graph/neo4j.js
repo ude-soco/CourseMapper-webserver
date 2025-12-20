@@ -844,15 +844,65 @@ export async function getInterestConcepts(userId, topN = null) {
   
   const { records } = await graphDb.driver.executeQuery(query, params);
   
+  // Load interest scores data to get activity counts
+  const fs = await import('fs');
+  const path = await import('path');
+  const interestScoresPath = path.join(process.cwd(), '../coursemapper-kg/recommendation/level-of-interest/data/interest_scores.json');
+  let interestScoresData = {};
+  
+  try {
+    if (fs.existsSync(interestScoresPath)) {
+      const fileContent = fs.readFileSync(interestScoresPath, 'utf8');
+      interestScoresData = JSON.parse(fileContent);
+    }
+  } catch (err) {
+    console.warn('[Interest Concepts] Could not load interest_scores.json:', err.message);
+  }
+  
+  // Get user's interest data
+  const userInterestData = interestScoresData[userId];
+  
+  console.log(`[Interest Concepts] User data found:`, userInterestData ? 'YES' : 'NO');
+  if (userInterestData) {
+    console.log(`[Interest Concepts] Number of concepts in JSON:`, Object.keys(userInterestData.concepts || {}).length);
+  }
+  
   // Convert to array of concept objects
-  const concepts = records.map(record => ({
-    conceptId: record.get('conceptId'),
-    conceptName: record.get('conceptName'),
-    interestScore: record.get('interestScore'),
-    wikipedia: record.get('wikipedia'),
-    abstract: record.get('abstract'),
-    allConceptIds: record.get('allConceptIds') // All concept IDs with this name in database
-  }));
+  const concepts = records.map(record => {
+    const conceptName = record.get('conceptName');
+    let activityCount = 0;
+    
+    // Sum activity counts across all courses for this concept and user
+    if (userInterestData && userInterestData.concepts) {
+      // The JSON structure has concept names as keys, but a concept might appear in multiple courses
+      // We need to sum up all activity counts for this specific concept name
+      const conceptData = userInterestData.concepts[conceptName];
+      if (conceptData) {
+        // Check if this is a single course entry or we need to handle multiple courses
+        if (conceptData.total_activity_count !== undefined) {
+          // Single entry for this concept
+          activityCount = conceptData.total_activity_count;
+          console.log(`[Interest Concepts] ${conceptName}: ${activityCount} activities (from course: ${conceptData.course_name})`);
+        } else if (Array.isArray(conceptData)) {
+          // Multiple entries (one per course) - sum them up
+          activityCount = conceptData.reduce((sum, entry) => sum + (entry.total_activity_count || 0), 0);
+          console.log(`[Interest Concepts] ${conceptName}: ${activityCount} activities (summed from ${conceptData.length} courses)`);
+        }
+      } else {
+        console.log(`[Interest Concepts] ${conceptName}: No data found in interest_scores.json`);
+      }
+    }
+    
+    return {
+      conceptId: record.get('conceptId'),
+      conceptName: conceptName,
+      interestScore: record.get('interestScore'),
+      wikipedia: record.get('wikipedia'),
+      abstract: record.get('abstract'),
+      allConceptIds: record.get('allConceptIds'), // All concept IDs with this name in database
+      activityCount: activityCount // Total activities from interest_scores.json for this user and concept
+    };
+  });
   
   console.log(`[Interest Concepts] Found ${concepts.length} unique concepts (deduplicated by name) for user ${userId}`);
   
