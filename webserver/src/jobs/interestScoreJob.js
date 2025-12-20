@@ -16,6 +16,7 @@
 const cron = require('node-cron');
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 /**
  * Execute a Node.js script and return a promise
@@ -45,6 +46,76 @@ function runNodeScript(scriptPath, cwd) {
 }
 
 /**
+ * Execute a Python script and return a promise
+ */
+function runPythonScript(scriptPath, cwd) {
+  return new Promise((resolve, reject) => {
+    console.log(`\n Running Python script: ${scriptPath}`);
+    
+    const proc = spawn('python', [scriptPath], {
+      cwd,
+      stdio: 'inherit',
+      shell: true
+    });
+
+    proc.on('close', (code) => {
+      if (code !== 0) {
+        reject(new Error(`Python script failed with exit code ${code}`));
+      } else {
+        resolve();
+      }
+    });
+
+    proc.on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
+/**
+ * Check if activity-weights.json exists, generate if missing
+ */
+async function ensureActivityWeights() {
+  const weightsPath = path.join(__dirname, '../../../coursemapper-kg/recommendation/level-of-interest/data/activity-weights.json');
+  
+  // Check if file exists
+  if (fs.existsSync(weightsPath)) {
+    console.log('✓ activity-weights.json found');
+    return;
+  }
+  
+  console.log('⚠ activity-weights.json not found. Generating...');
+  console.log();
+  
+  try {
+    // Ensure data directory exists
+    const dataDir = path.dirname(weightsPath);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    
+    // Run Python script to generate weights
+    const scriptPath = path.join(__dirname, '../../../coursemapper-kg/recommendation/level-of-interest/scripts/calculate_activity_weights.py');
+    const scriptDir = path.dirname(scriptPath);
+    
+    await runPythonScript(scriptPath, scriptDir);
+    
+    // Move generated file to data directory if needed
+    const generatedPath = path.join(scriptDir, 'activity-weights.json');
+    if (fs.existsSync(generatedPath) && generatedPath !== weightsPath) {
+      fs.renameSync(generatedPath, weightsPath);
+      console.log(`✓ Moved activity-weights.json to data directory`);
+    }
+    
+    console.log('✓ activity-weights.json generated successfully');
+    console.log();
+  } catch (error) {
+    console.error('✗ Failed to generate activity-weights.json');
+    throw new Error(`Cannot generate activity-weights.json: ${error.message}. Please run 'python coursemapper-kg/recommendation/level-of-interest/scripts/calculate_activity_weights.py' manually.`);
+  }
+}
+
+/**
  * Run the complete interest score pipeline
  */
 async function runInterestScorePipeline() {
@@ -57,6 +128,10 @@ async function runInterestScorePipeline() {
 
   try {
     const webserverDir = path.join(__dirname, '..', '..');
+    
+    // Pre-check: Ensure activity-weights.json exists
+    console.log('\n🔍 PRE-CHECK: Verifying required files...');
+    await ensureActivityWeights();
     
     // Step 0: Process course enrollments (G10 activities)
     console.log('\n📚 STEP 0: Processing course enrollments...');
