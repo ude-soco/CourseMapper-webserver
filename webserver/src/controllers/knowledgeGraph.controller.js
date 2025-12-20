@@ -1829,6 +1829,50 @@ export const updateInterestScore = async (req, res) => {
 };
 
 /**
+ * Batch update interest scores for multiple concept IDs (handles duplicates)
+ * Updates all concept IDs that share the same concept name
+ * 
+ * PUT /api/pkg/:userId/interests/batch
+ */
+export const updateInterestScoreBatch = async (req, res) => {
+  const { userId } = req.params;
+  const { conceptIds, score } = req.body;
+
+  // Validate input
+  if (!Array.isArray(conceptIds) || conceptIds.length === 0) {
+    return res.status(400).send({ 
+      error: 'Invalid conceptIds. Must be a non-empty array.' 
+    });
+  }
+
+  if (typeof score !== 'number' || score < 0 || score > 1) {
+    return res.status(400).send({ 
+      error: 'Invalid score. Score must be a number between 0 and 1.' 
+    });
+  }
+
+  try {
+    // Update all concept IDs in Neo4j
+    const results = await neo4j.updateInterestScoreBatch(userId, conceptIds, score);
+    
+    console.log(`[Interest Score Batch Update] User ${userId} adjusted score for ${conceptIds.length} concepts to ${score}`);
+    
+    return res.status(200).send({
+      success: true,
+      userId,
+      conceptIds,
+      updatedCount: results.updatedCount,
+      score,
+      message: `Interest score updated successfully for ${results.updatedCount} concept instances`,
+      updatedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('[Interest Score Batch Update] Error updating interest scores:', err.message);
+    return res.status(500).send({ error: err.message });
+  }
+};
+
+/**
  * Get course hierarchy for advanced filters
  * Returns user's enrolled courses with their materials and slides
  * 

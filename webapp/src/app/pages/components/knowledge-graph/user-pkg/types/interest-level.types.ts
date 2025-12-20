@@ -14,6 +14,7 @@ export interface InterestConcept {
   abstract?: string;
   courseName?: string;
   courseShortName?: string;
+  allConceptIds?: string[]; // All concept IDs sharing the same name (for batch updates)
 }
 
 /**

@@ -39,9 +39,11 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   originalScore = 0;
   currentConceptId = '';
   currentConceptName = '';
+  currentConceptIds: string[] = []; // All concept IDs with the same name
   canEditScore = false;
   hasScoreChanged = false;
   isTooltipHovered = false;
+  conceptNameToIdsMap: Map<string, string[]> = new Map(); // Map concept names to all their IDs
 
   constructor(
     private store: Store,
@@ -195,6 +197,8 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         
         this.currentConceptId = conceptData.conceptId;
         this.currentConceptName = conceptData.conceptName;
+        // Get all concept IDs with the same name
+        this.currentConceptIds = this.conceptNameToIdsMap.get(conceptData.conceptName) || [conceptData.conceptId];
         this.originalScore = edgeData.interestScore ?? 0;
         this.adjustedScore = this.originalScore;
         this.canEditScore = edgeData.interestScore !== null;
@@ -241,9 +245,17 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     const nodes: InterestGraphNode[] = [];
     const edges: InterestGraphEdge[] = [];
     const seenConceptIds = new Set<string>();
+    this.conceptNameToIdsMap = new Map(); // Reset the map
 
     console.log('[Interest Level Graph] Total concepts before dedup:', concepts.length);
     console.log('[Interest Level Graph] Concepts:', concepts.map(c => ({ id: c.conceptId, name: c.conceptName })));
+
+    // Build map of concept names to all their IDs from backend data
+    concepts.forEach((concept) => {
+      // Use allConceptIds from backend if available, otherwise fallback to single conceptId
+      const allIds = concept.allConceptIds || [concept.conceptId];
+      this.conceptNameToIdsMap.set(concept.conceptName, allIds);
+    });
 
     // Create user node with user initials
     nodes.push({
@@ -460,15 +472,16 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   }
   
   saveAdjustedScore(): void {
-    if (!this.currentUser || !this.currentConceptId) {
+    if (!this.currentUser || !this.currentConceptIds.length) {
       return;
     }
     
     console.log(`[Interest Level] Saving adjusted score: ${this.adjustedScore} for concept: ${this.currentConceptName}`);
+    console.log(`[Interest Level] Updating ${this.currentConceptIds.length} concept IDs:`, this.currentConceptIds);
     
-    this.pkgService.updateInterestScore(
+    this.pkgService.updateInterestScoreForMultipleConcepts(
       this.currentUser.id,
-      this.currentConceptId,
+      this.currentConceptIds,
       this.adjustedScore
     ).pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -478,14 +491,16 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
           this.messageService.add({
             severity: 'success',
             summary: 'Score Updated',
-            detail: `Interest score for "${this.currentConceptName}" updated to ${this.adjustedScore.toFixed(3)}`
+            detail: `Interest score for "${this.currentConceptName}" updated to ${this.adjustedScore.toFixed(3)} (${this.currentConceptIds.length} concept instances)`
           });
           
           // Update the edge label in the current graph without reloading
           this.updateEdgeScore(this.currentConceptId, this.adjustedScore);
           
-          // Update the concept in the store
-          this.updateConceptInStore(this.currentConceptId, this.adjustedScore);
+          // Update all concepts with this name in the store
+          this.currentConceptIds.forEach(conceptId => {
+            this.updateConceptInStore(conceptId, this.adjustedScore);
+          });
           
           // Reset state
           this.originalScore = this.adjustedScore;

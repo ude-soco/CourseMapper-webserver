@@ -528,6 +528,14 @@ module.exports = function (app) {
     controller.getInterestConcepts
   );
 
+  // Batch update interest scores for multiple concept IDs (duplicates)
+  // MUST be defined BEFORE the :conceptId route to avoid "batch" being treated as a conceptId
+  app.put(
+    "/api/pkg/:userId/interests/batch",
+    [authJwt.verifyToken],
+    controller.updateInterestScoreBatch
+  );
+
   // Update (manually adjust) interest score for a user-concept pair
   app.put(
     "/api/pkg/:userId/interests/:conceptId",

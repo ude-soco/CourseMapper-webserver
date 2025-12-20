@@ -801,6 +801,7 @@ export async function getUserInterestScores(userId, minScore = 0.0) {
  * Get interest concepts for Interest Level graph
  * Returns concepts with INTERESTED_IN relationships (including NULL scores)
  * Deduplicates by concept name to avoid showing multiple nodes with same name
+ * Returns ALL concept IDs with same name from database (not just user's relationships)
  * @param {string} userId - User ID (uid property)
  * @param {number|null} topN - Number of top concepts to return (null for all)
  * @returns {Promise<Array>} Array of concept objects with interest scores
@@ -820,11 +821,20 @@ export async function getInterestConcepts(userId, topN = null) {
          END as sortScore
     ORDER BY sortScore DESC, conceptName ASC
     ${topN ? 'LIMIT $topN' : ''}
+    WITH conceptName, maxScore, representativeCid, wikipedia, abstract
+    
+    // Find ALL concept IDs with this name across the database
+    MATCH (allConcepts:Concept {name: conceptName})
+    WHERE allConcepts.type = 'main_concept'
+    WITH conceptName, maxScore, representativeCid, wikipedia, abstract,
+         COLLECT(DISTINCT allConcepts.cid) as allConceptIds
+    
     RETURN representativeCid as conceptId,
            conceptName,
            maxScore as interestScore,
            wikipedia,
-           abstract`;
+           abstract,
+           allConceptIds`;
   
   const params = { userId };
   if (topN) {
@@ -840,7 +850,8 @@ export async function getInterestConcepts(userId, topN = null) {
     conceptName: record.get('conceptName'),
     interestScore: record.get('interestScore'),
     wikipedia: record.get('wikipedia'),
-    abstract: record.get('abstract')
+    abstract: record.get('abstract'),
+    allConceptIds: record.get('allConceptIds') // All concept IDs with this name in database
   }));
   
   console.log(`[Interest Concepts] Found ${concepts.length} unique concepts (deduplicated by name) for user ${userId}`);
@@ -872,6 +883,33 @@ export async function updateInterestScore(userId, conceptId, score) {
   return {
     score: records[0].get('updatedScore'),
     adjustedAt: records[0].get('adjustedAt')
+  };
+}
+
+/**
+ * Batch update interest scores for multiple concept IDs
+ * Used when updating all duplicate concepts with the same name
+ */
+export async function updateInterestScoreBatch(userId, conceptIds, score) {
+  const query = `
+    UNWIND $conceptIds as conceptId
+    MATCH (u:User {uid: $userId})-[r:INTERESTED_IN]->(c:Concept {cid: conceptId})
+    SET r.interestScore = $score,
+        r.manuallyAdjusted = true,
+        r.adjustedAt = datetime()
+    RETURN count(r) as updatedCount
+  `;
+  
+  const params = { userId, conceptIds, score };
+  
+  const { records } = await graphDb.driver.executeQuery(query, params);
+  
+  const updatedCount = records[0]?.get('updatedCount') || 0;
+  
+  console.log(`[Neo4j] Batch updated ${updatedCount} INTERESTED_IN relationships for user ${userId}`);
+  
+  return {
+    updatedCount: updatedCount.toNumber ? updatedCount.toNumber() : updatedCount
   };
 }
 

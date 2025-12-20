@@ -49,4 +49,20 @@ export class PkgService {
       { score }
     );
   }
+
+  /**
+   * Update interest score for multiple concept IDs (duplicates with same name)
+   * This allows updating all instances of a concept when there are duplicates
+   * 
+   * @param userId - User ID
+   * @param conceptIds - Array of concept IDs to update
+   * @param score - New interest score (0-1)
+   * @returns Observable with update confirmation
+   */
+  updateInterestScoreForMultipleConcepts(userId: string, conceptIds: string[], score: number): Observable<any> {
+    return this.http.put(
+      `${environment.API_URL}/pkg/${userId}/interests/batch`,
+      { conceptIds, score }
+    );
+  }
 }
