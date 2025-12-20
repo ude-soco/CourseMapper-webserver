@@ -100,7 +100,9 @@
         placeholder="Search for Concepts"
         class="search-input w-48 border-0 outline-none text-sm" />
     </div>
+    <!-- Only show Filters button for Knowledge State view -->
     <button 
+      *ngIf="(viewMode$ | async) === 'knowledge'"
       pButton 
       type="button"
       [label]="hasActiveFilters ? 'Clear Filters' : 'Filters'"
@@ -148,13 +150,15 @@
   <!-- Top-N Dropdown - For Interest Level view -->
   <div *ngIf="(viewMode$ | async) === 'interest'" class="flex justify-end">
     <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center gap-2">
-      <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Top-N main concepts with Highest score</label>
+      <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Top-N Main Concepts</label>
       <p-dropdown 
         [options]="topNOptions" 
         [ngModel]="topNConcepts$ | async"
         (onChange)="onTopNChange($event.value)"
         [style]="{'border': '1px solid #d1d5db', 'border-radius': '6px', 'background': '#f9fafb', 'font-size': '14px', 'height': '40px', 'display': 'flex', 'align-items': 'center'}"
-        appendTo="body">
+        appendTo="body"
+        pTooltip="Limit results based on highest interest scores"
+        tooltipPosition="bottom">
       </p-dropdown>
     </div>
   </div>

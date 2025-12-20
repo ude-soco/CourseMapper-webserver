@@ -800,6 +800,7 @@ export async function getUserInterestScores(userId, minScore = 0.0) {
 /**
  * Get interest concepts for Interest Level graph
  * Returns concepts with INTERESTED_IN relationships (including NULL scores)
+ * Deduplicates by concept name to avoid showing multiple nodes with same name
  * @param {string} userId - User ID (uid property)
  * @param {number|null} topN - Number of top concepts to return (null for all)
  * @returns {Promise<Array>} Array of concept objects with interest scores
@@ -808,20 +809,22 @@ export async function getInterestConcepts(userId, topN = null) {
   const query = `
     MATCH (u:User {uid: $userId})-[r:INTERESTED_IN]->(c:Concept)
     WHERE c.type = 'main_concept'
-    WITH DISTINCT c.cid as cid, c.name as name, c.wikipedia as wikipedia, c.abstract as abstract,
+    WITH c.name as conceptName,
          MAX(r.interestScore) as maxScore,
+         COLLECT(DISTINCT c.cid)[0] as representativeCid,
+         COLLECT(DISTINCT c.wikipedia)[0] as wikipedia,
+         COLLECT(DISTINCT c.abstract)[0] as abstract,
          CASE 
            WHEN MAX(r.interestScore) IS NULL THEN -1
            ELSE MAX(r.interestScore)
          END as sortScore
-    ORDER BY sortScore DESC, name ASC
+    ORDER BY sortScore DESC, conceptName ASC
     ${topN ? 'LIMIT $topN' : ''}
-    RETURN cid as conceptId,
-           name as conceptName,
+    RETURN representativeCid as conceptId,
+           conceptName,
            maxScore as interestScore,
            wikipedia,
-           abstract
-    ORDER BY sortScore DESC`;
+           abstract`;
   
   const params = { userId };
   if (topN) {
@@ -840,14 +843,9 @@ export async function getInterestConcepts(userId, topN = null) {
     abstract: record.get('abstract')
   }));
   
-  // Deduplicate by conceptId as an extra safety measure
-  const uniqueConcepts = Array.from(
-    new Map(concepts.map(c => [c.conceptId, c])).values()
-  );
+  console.log(`[Interest Concepts] Found ${concepts.length} unique concepts (deduplicated by name) for user ${userId}`);
   
-  console.log(`[Interest Concepts] Found ${uniqueConcepts.length} unique concepts for user ${userId}`);
-  
-  return uniqueConcepts;
+  return concepts;
 }
 
 /**

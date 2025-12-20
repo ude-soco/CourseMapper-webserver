@@ -348,8 +348,26 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         style: {
           'background-color': '#3B82F6',
           'border-color': '#1E40AF',
-          'width': '60px',
-          'height': '60px',
+          'width': (elm: any) => {
+            const score = elm.data().interestScore;
+            // Base size of 45px, scale up to 85px based on score (0-1 range)
+            if (score === null || score === undefined) {
+              return 45; // Default size for concepts without scores
+            }
+            const baseSize = 45;
+            const maxAdditionalSize = 40;
+            return baseSize + (score * maxAdditionalSize);
+          },
+          'height': (elm: any) => {
+            const score = elm.data().interestScore;
+            // Base size of 45px, scale up to 85px based on score (0-1 range)
+            if (score === null || score === undefined) {
+              return 45; // Default size for concepts without scores
+            }
+            const baseSize = 45;
+            const maxAdditionalSize = 40;
+            return baseSize + (score * maxAdditionalSize);
+          },
           'border-width': '3px',
         }
       },
