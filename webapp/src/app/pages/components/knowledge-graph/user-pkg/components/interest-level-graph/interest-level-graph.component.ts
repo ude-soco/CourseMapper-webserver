@@ -162,14 +162,14 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       const node = event.target;
       const nodeData = node.data();
       
-      if (nodeData.type === 'concept') {
+      if (nodeData.type === 'concept' || nodeData.type === 'related_concept') {
         console.log('[Interest Level Graph] Concept node clicked:', nodeData);
         // Emit concept data in the same format as cytoscape-pkg
         this.conceptSelected.emit({
           id: nodeData.id,
-          name: nodeData.conceptName,
+          name: nodeData.conceptName || nodeData.label,
           cid: nodeData.conceptId,
-          type: 'main_concept',
+          type: nodeData.type === 'related_concept' ? 'related_concept' : 'main_concept',
           wikipedia: nodeData.wikipedia,
           abstract: nodeData.abstract,
           interestScore: nodeData.interestScore
