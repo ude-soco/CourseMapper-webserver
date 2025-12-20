@@ -116,6 +116,11 @@
   background-color: #3B82F6;
 }
 
+.legend-dot.related-concept {
+  background-color: #ce6f34;
+  border: 2px solid #a85a29;
+}
+
 /* Empty State */
 .empty-state {
   display: flex;

@@ -49,6 +49,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   showCourseLegend = false;
   showUserLegend = true; // User node is always present
   showMainConceptLegend = false;
+  showRelatedConceptLegend = false;
   
   // Help dialog state
   showHelpDialog = false;
@@ -114,8 +115,9 @@ export class UserPkgComponent implements OnInit, OnDestroy {
           this.showUnknownLegend = false;
         }
         
-        // Show Main Concept legend only in Interest Level view
+        // Show Main Concept and Related Concept legend only in Interest Level view
         this.showMainConceptLegend = viewMode === 'interest';
+        this.showRelatedConceptLegend = false; // Will be set by onVisibleNodesChanged when related concepts are shown
       });
   }
 
@@ -125,36 +127,32 @@ export class UserPkgComponent implements OnInit, OnDestroy {
       this.showNotUnderstoodLegend = false;
       this.showUnknownLegend = false;
       this.showCourseLegend = false;
+      this.showRelatedConceptLegend = false;
       this.cdr.detectChanges();
       return;
     }
 
-    // Check what types of nodes are visible
-    const hasUnderstood = visibleNodes.some((node: any) => 
-      (node.type === 'main_concept' || node.type === 'related_concept') &&
-      node.relationshipType === 'u'
-    );
-    
-    const hasNotUnderstood = visibleNodes.some((node: any) => 
-      (node.type === 'main_concept' || node.type === 'related_concept') &&
-      node.relationshipType === 'dnu'
-    );
-    
-    const hasUnknown = visibleNodes.some((node: any) => 
-      (node.type === 'main_concept' || node.type === 'related_concept') &&
-      (node.relationshipType === 'unknown' || !node.relationshipType)
-    );
-    
-    const hasCourses = visibleNodes.some((node: any) => 
-      node.type === 'course'
-    );
+    // Track node types in visible nodes
+    const nodeTypes = new Set<string>();
+    const relationshipTypes = new Set<string>();
 
-    this.showUnderstoodLegend = hasUnderstood;
-    this.showNotUnderstoodLegend = hasNotUnderstood;
-    this.showUnknownLegend = hasUnknown;
-    this.showCourseLegend = hasCourses;
-    
-    // Manually trigger change detection to update the view
+    visibleNodes.forEach((node: any) => {
+      const type = node.type;
+      nodeTypes.add(type);
+      
+      if (type === 'main_concept' || type === 'related_concept') {
+        const relType = node.relationshipType || node.type;
+        relationshipTypes.add(relType);
+      }
+    });
+
+    // Update legend visibility based on visible nodes
+    this.showCourseLegend = nodeTypes.has('course');
+    this.showUnderstoodLegend = relationshipTypes.has('u');
+    this.showNotUnderstoodLegend = relationshipTypes.has('dnu');
+    this.showUnknownLegend = relationshipTypes.has('unknown') || relationshipTypes.has('main_concept');
+    this.showRelatedConceptLegend = nodeTypes.has('related_concept');
+
     this.cdr.detectChanges();
   }
 

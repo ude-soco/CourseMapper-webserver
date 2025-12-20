@@ -11,6 +11,14 @@ import { getInitials } from 'src/app/_helpers/format';
 import { User } from 'src/app/models/User';
 import { PkgService } from 'src/app/services/pkg.service';
 import { MessageService } from 'primeng/api';
+import { Neo4jService } from 'src/app/services/neo4j.service';
+
+// Import cytoscape context menu
+declare var require: any;
+const cxtmenu = require('cytoscape-cxtmenu');
+if (typeof cytoscape !== 'undefined') {
+  cytoscape.use(cxtmenu);
+}
 
 @Component({
   selector: 'app-interest-level-graph',
@@ -44,11 +52,13 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   hasScoreChanged = false;
   isTooltipHovered = false;
   conceptNameToIdsMap: Map<string, string[]> = new Map(); // Map concept names to all their IDs
+  conceptsWithVisibleRelated: Set<string> = new Set(); // Track which concepts have related concepts shown
 
   constructor(
     private store: Store,
     private pkgService: PkgService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private neo4jService: Neo4jService
   ) {}
 
   ngOnInit(): void {
@@ -233,6 +243,9 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       }, 200);
     });
 
+    // Initialize context menu
+    this.initializeContextMenu();
+
     // Emit visible nodes after render
     setTimeout(() => {
       this.emitVisibleNodes();
@@ -384,6 +397,16 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         }
       },
       {
+        selector: 'node[type="related_concept"]',
+        style: {
+          'background-color': '#ce6f34',
+          'border-color': '#a85a29',
+          'width': '50px',
+          'height': '50px',
+          'border-width': '2px',
+        }
+      },
+      {
         selector: 'node.highlighted',
         style: {
           'border-width': '4px',
@@ -405,6 +428,17 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
           'color': '#374151',
           'text-outline-color': '#fff',
           'text-outline-width': 2,
+        }
+      },
+      {
+        selector: 'edge[label="related_to"]',
+        style: {
+          'width': 2,
+          'line-color': '#9CA3AF',
+          'target-arrow-color': '#9CA3AF',
+          'line-style': 'solid',
+          'label': 'data(label)',
+          'text-transform': 'uppercase',
         }
       }
     ];
@@ -548,11 +582,166 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
             : concept
         );
         
-        // Dispatch action to update the store
-        this.store.dispatch(PkgInterestActions.loadInterestGraphSuccess({ 
-          concepts: updatedConcepts 
-        }));
+        // Dispatch action to update store
+        this.store.dispatch(PkgInterestActions.loadInterestGraphSuccess({ concepts: updatedConcepts }));
       });
+  }
+
+  // Context Menu and Related Concepts Methods
+  
+  private initializeContextMenu(): void {
+    if (!this.cy) return;
+    
+    // Destroy existing menu if any
+    try {
+      (this.cy as any).cxtmenu('destroy');
+    } catch (e) {
+      // Ignore if no menu exists
+    }
+
+    // Context menu for concept nodes
+    (this.cy as any).cxtmenu({
+      menuRadius: 100,
+      fillColor: 'rgba(0, 0, 0, 0.75)',
+      activeFillColor: 'rgba(59, 130, 246, 0.85)',
+      activePadding: 20,
+      indicatorSize: 24,
+      separatorWidth: 3,
+      spotlightPadding: 4,
+      itemColor: 'white',
+      itemTextShadowColor: 'transparent',
+      zIndex: 9999,
+      atMouse: false,
+      outsideMenuCancel: false,
+      selector: 'node[type="concept"]',
+      commands: (ele: any) => {
+        const hasRelated = this.checkForRelatedConcepts(ele);
+        return [
+          {
+            content: hasRelated 
+              ? '<span style="font-size:14px;">Hide Related</span> <br> <i class="pi pi-link" style="color:#6B7280;"></i>'
+              : '<span style="font-size:14px;">Show Related</span> <br> <i class="pi pi-link" style="color:#8B5CF6;"></i>',
+            select: () => this.handleToggleRelated(ele),
+          }
+        ];
+      },
+    });
+  }
+
+  private checkForRelatedConcepts(node: any): boolean {
+    const conceptId = node.id();
+    return this.conceptsWithVisibleRelated.has(conceptId);
+  }
+
+  private handleToggleRelated(node: any): void {
+    const conceptId = node.id();
+    const conceptCid = node.data('conceptId');
+    const wasVisible = this.checkForRelatedConcepts(node);
+    
+    if (wasVisible) {
+      // Hide related concepts
+      this.hideRelatedConcepts(conceptId);
+      this.conceptsWithVisibleRelated.delete(conceptId);
+      this.emitVisibleNodes();
+    } else {
+      // Fetch and show related concepts
+      this.neo4jService.getRelatedConcepts(conceptCid).pipe(take(1)).subscribe({
+        next: (response) => {
+          this.showRelatedConcepts(node, response.relatedConcepts);
+          this.conceptsWithVisibleRelated.add(conceptId);
+          this.emitVisibleNodes();
+        },
+        error: (err) => {
+          console.error('[Interest Level Graph] Failed to fetch related concepts:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Failed to Load',
+            detail: 'Could not load related concepts'
+          });
+        }
+      });
+    }
+  }
+
+  private hideRelatedConcepts(mainConceptId: string): void {
+    const relatedEdges = this.cy.edges(`[source="${mainConceptId}"][label="related_to"]`);
+    
+    relatedEdges.forEach((edge: any) => {
+      const relatedNodeId = edge.data().target;
+      const relatedNode = this.cy.getElementById(relatedNodeId);
+      
+      // Remove the relationship edge
+      edge.remove();
+      
+      if (relatedNode.length > 0) {
+        // Check if this related concept has other edges from other main concepts
+        const otherRelatedEdges = this.cy.edges(`[target="${relatedNodeId}"][label="related_to"]`);
+        
+        // Only remove the node if no other main concepts are showing it
+        if (otherRelatedEdges.length === 0) {
+          relatedNode.remove();
+        }
+      }
+    });
+  }
+
+  private showRelatedConcepts(mainConceptNode: any, relatedConcepts: any[]): void {
+    if (!relatedConcepts || relatedConcepts.length === 0) {
+      console.log('[Interest Level Graph] No related concepts to show');
+      return;
+    }
+
+    const mainConceptId = mainConceptNode.id();
+    const mainConceptPos = mainConceptNode.position();
+    
+    const radius = 250;
+    const angleStep = (2 * Math.PI) / relatedConcepts.length;
+    let angleOffset = 0;
+    
+    relatedConcepts.forEach((relatedConcept) => {
+      const relatedNodeId = `concept-${relatedConcept.cid}`;
+      
+      // Check if node already exists
+      const existingNode = this.cy.getElementById(relatedNodeId);
+      
+      if (existingNode.length === 0) {
+        // Add related concept node
+        this.cy.add({
+          group: 'nodes',
+          data: {
+            id: relatedNodeId,
+            label: relatedConcept.name,
+            type: 'related_concept',
+            conceptId: relatedConcept.cid,
+            conceptName: relatedConcept.name,
+            wikipedia: relatedConcept.wikipedia,
+            abstract: relatedConcept.abstract,
+          },
+          position: {
+            x: mainConceptPos.x + radius * Math.cos(angleOffset),
+            y: mainConceptPos.y + radius * Math.sin(angleOffset)
+          }
+        });
+      }
+      
+      // Add edge from main concept to related concept (if doesn't exist)
+      const edgeId = `edge_${mainConceptId}_${relatedNodeId}`;
+      const existingEdge = this.cy.getElementById(edgeId);
+      
+      if (existingEdge.length === 0) {
+        this.cy.add({
+          group: 'edges',
+          data: {
+            id: edgeId,
+            source: mainConceptId,
+            target: relatedNodeId,
+            label: 'related_to'
+          }
+        });
+      }
+      
+      angleOffset += angleStep;
+    });
   }
 }
 
