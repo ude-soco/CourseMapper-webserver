@@ -1,5 +1,15 @@
 /* Interest Level Dashboard Styles */
 
+/* Gauge container styles (matching engagement dashboard) */
+.gauge-container {
+  position: relative;
+}
+
+.gauge-label {
+  pointer-events: none;
+  margin-top: -20px;
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-in;
 }

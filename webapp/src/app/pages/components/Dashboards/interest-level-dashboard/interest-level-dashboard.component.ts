@@ -76,30 +76,56 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
 
   // Activity group mapping from activity-weights.json
   private activityGroupMapping: { [key: string]: { name: string; groups: string[] } } = {
+    'recommendation': {
+      name: 'Recommendation Activities',
+      groups: ['G1', 'G5', 'G7', 'G9'] // Recommended Material, Explanation, Recommended Concepts, Mark Recommended DNU
+    },
+    'kg': {
+      name: 'Knowledge Graph Activities',
+      groups: ['G2', 'G3', 'G4'] // Concepts & Article, Mark U/DNU, Full Article
+    },
+    'material': {
+      name: 'Material Activities',
+      groups: ['G8'] // View Slides
+    },
     'annotation': {
       name: 'Annotation Activities',
       groups: ['G6'] // Follow Annotation
     },
-    'material': {
-      name: 'Material Activities',
-      groups: ['G1', 'G2', 'G4', 'G8'] // Recommended Material, Concepts & Article, Full Article, View Slides
-    },
     'access': {
-      name: 'Access activities',
+      name: 'Access Activities',
       groups: ['G10'] // Course Access
-    },
-    'kg': {
-      name: 'Knowledge graph activities',
-      groups: ['G2', 'G3', 'G4'] // Concepts & Article, Mark U/DNU, Full Article
-    },
-    'recommendation': {
-      name: 'Recommendation Activities',
-      groups: ['G1', 'G5', 'G7', 'G9'] // Recommended Material, Explanation, Recommended Concepts, Mark Recommended DNU
     }
   };
 
   // For "Concepts with Highest Score" tab
   topConcepts: Array<{ name: string; score: number; course: string }> = [];
+
+  // Gauge chart for interest score visualization
+  gaugeData: any;
+  gaugeOptions: any;
+
+  // Chart data for activity visualizations (using Chart.js format)
+  categoryChartData: { [key: string]: any } = {};
+  categoryChartOptions: { [key: string]: any } = {};
+
+  // Chart colors
+  chartColors = {
+    primary: '#3B82F6',
+    secondary: '#10B981',
+    accent: '#F59E0B',
+    danger: '#EF4444',
+    purple: '#8B5CF6'
+  };
+
+  // Total activities chart data
+  totalActivitiesChartData: any;
+  totalActivitiesChartOptions: any;
+
+  // Top concepts chart data
+  topConceptsChartData: any;
+  topConceptsChartOptions: any;
+  topConceptsLimit: number = 10;
 
   constructor(
     private route: ActivatedRoute,
@@ -158,6 +184,10 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
         this.conceptData = data;
         this.interestScore = data.normalized_scores.min_max_interpolation;
         this.initializeActivityCategories();
+        this.initializeGaugeChart();
+        this.initializeCategoryCharts();
+        this.initializeTotalActivitiesChart();
+        this.loadTopConcepts();
       },
       error: (err) => {
         console.error('Error loading concept interest data:', err);
@@ -200,7 +230,9 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
         expanded: false,
         visible: true
       };
-    }).filter(cat => cat.activities.length > 0); // Only show categories with activities
+    })
+    .filter(cat => cat.activities.length > 0) // Only show categories with activities
+    .sort((a, b) => b.totalContribution - a.totalContribution); // Sort by total contribution (weights) in descending order
   }
 
   toggleCategory(category: ActivityCategoryGroup): void {
@@ -242,5 +274,337 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   getContributionPercentage(contribution: number): string {
     if (!this.conceptData || this.conceptData.raw_score === 0) return '0%';
     return ((contribution / this.conceptData.raw_score) * 100).toFixed(1) + '%';
+  }
+
+  // Initialize gauge chart for interest score (matching engagement dashboard style)
+  private initializeGaugeChart(): void {
+    const score = this.interestScore;
+    const remaining = 1 - score;
+
+    this.gaugeData = {
+      labels: ['Interest Score', 'Remaining'],
+      datasets: [
+        {
+          data: [score, remaining],
+          backgroundColor: [
+            this.getInterestScoreColor() === 'text-green-600' ? '#10B981' :
+            this.getInterestScoreColor() === 'text-yellow-600' ? '#F59E0B' : '#EF4444',
+            '#E5E7EB'
+          ],
+          borderWidth: 0
+        }
+      ]
+    };
+
+    this.gaugeOptions = {
+      cutout: '70%',
+      rotation: -90,
+      circumference: 180,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          enabled: false
+        }
+      },
+      maintainAspectRatio: true
+    };
+  }
+
+  // Initialize Chart.js charts for each category
+  private initializeCategoryCharts(): void {
+    if (!this.conceptData) return;
+
+    this.activityCategories.forEach(category => {
+      this.initializeCategoryChart(category);
+    });
+  }
+
+  // Initialize total activities chart (for "Total Activities" tab)
+  private initializeTotalActivitiesChart(): void {
+    if (!this.conceptData) return;
+
+    // Get category labels and their total counts
+    const labels = this.activityCategories.map(cat => cat.categoryName);
+    const counts = this.activityCategories.map(cat => cat.totalCount);
+    const colors = [
+      '#3B82F6', // Blue for Recommendation
+      '#F59E0B', // Orange for KG
+      '#10B981', // Green for Material
+      '#8B5CF6', // Purple for Annotation
+      '#EF4444'  // Red for Access
+    ];
+
+    this.totalActivitiesChartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Activity Count',
+          data: counts,
+          backgroundColor: colors.slice(0, labels.length),
+          borderColor: colors.slice(0, labels.length),
+          borderWidth: 1
+        }
+      ]
+    };
+
+    this.totalActivitiesChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: 'Activity Distribution by Category',
+          font: {
+            size: 16,
+            weight: 'bold'
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              return `${context.label}: ${context.parsed.y} activities`;
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grace: '15%',
+          grid: {
+            display: true,
+            drawBorder: true,
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          title: {
+            display: true,
+            text: 'Number of Activities'
+          }
+        },
+        x: {
+          grid: {
+            display: true,
+            drawBorder: true,
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          title: {
+            display: true,
+            text: 'Activity Category'
+          },
+          ticks: {
+            autoSkip: false,
+            maxRotation: 0,
+            minRotation: 0
+          }
+        }
+      }
+    };
+  }
+
+  // Initialize chart for individual category using Chart.js format
+  private initializeCategoryChart(category: ActivityCategoryGroup): void {
+    const activities = category.activities.sort((a, b) => b.weight - a.weight);
+    const labels = activities.map(a => a.activity_name);
+    const counts = activities.map(a => a.count);
+    const contributions = activities.map(a => a.contribution);
+
+    // Bar chart data
+    this.categoryChartData[category.categoryKey] = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Activity Count',
+          data: counts,
+          backgroundColor: this.chartColors.primary,
+          borderColor: this.chartColors.primary,
+          borderWidth: 1
+        }
+      ]
+    };
+
+    // Chart options
+    this.categoryChartOptions[category.categoryKey] = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const index = context.dataIndex;
+              return [
+                `Count: ${counts[index]}`,
+                `Contribution: ${contributions[index].toFixed(3)}`
+              ];
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grace: '15%',
+          grid: {
+            display: true,
+            drawBorder: true,
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          title: {
+            display: true,
+            text: 'Activity Count'
+          }
+        },
+        x: {
+          grid: {
+            display: true,
+            drawBorder: true,
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          ticks: {
+            autoSkip: false,
+            maxRotation: 0,
+            minRotation: 0
+          }
+        }
+      }
+    };
+  }
+
+  // Load top concepts for the user
+  private loadTopConcepts(): void {
+    if (!this.loggedInUser) return;
+
+    this.interestLevelService.getTopConceptsByInterest(this.loggedInUser.id, this.topConceptsLimit).subscribe({
+      next: (concepts) => {
+        this.topConcepts = concepts;
+        this.initializeTopConceptsChart();
+      },
+      error: (err) => {
+        console.error('Error loading top concepts:', err);
+      }
+    });
+  }
+
+  // Initialize chart for top concepts with current concept highlighted
+  private initializeTopConceptsChart(): void {
+    if (this.topConcepts.length === 0) return;
+
+    // Separate current concept from top concepts
+    const currentConceptData = this.topConcepts.find(c => c.name === this.conceptName);
+    const otherTopConcepts = this.topConcepts.filter(c => c.name !== this.conceptName);
+
+    // Build the chart data with current concept first, followed by top N concepts
+    const labels: string[] = [];
+    const scores: number[] = [];
+    const backgroundColors: string[] = [];
+    const borderColors: string[] = [];
+
+    // Add current concept first (if it exists)
+    if (currentConceptData) {
+      labels.push(currentConceptData.name);
+      scores.push(currentConceptData.score);
+      backgroundColors.push('#F59E0B'); // Orange for current concept
+      borderColors.push('#D97706');
+    } else if (this.conceptData) {
+      // If current concept is not in top concepts, add it with its score
+      labels.push(this.conceptName);
+      scores.push(this.interestScore);
+      backgroundColors.push('#F59E0B'); // Orange for current concept
+      borderColors.push('#D97706');
+    }
+
+    // Add other top concepts (blue bars)
+    otherTopConcepts.forEach(concept => {
+      labels.push(concept.name);
+      scores.push(concept.score);
+      backgroundColors.push('#3B82F6'); // Blue for other concepts
+      borderColors.push('#2563EB');
+    });
+
+    this.topConceptsChartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Interest Score',
+          data: scores,
+          backgroundColor: backgroundColors,
+          borderColor: borderColors,
+          borderWidth: 2
+        }
+      ]
+    };
+
+    this.topConceptsChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: `Current Concept vs Top ${this.topConceptsLimit} Concepts`,
+          font: {
+            size: 16,
+            weight: 'bold'
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const score = context.parsed.y;
+              const conceptName = context.label;
+              const isCurrentConcept = conceptName === this.conceptName;
+              return [
+                `Score: ${score.toFixed(3)}`,
+                isCurrentConcept ? '(Current Concept)' : ''
+              ].filter(Boolean);
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 1.0,
+          grace: '5%',
+          grid: {
+            display: true,
+            drawBorder: true,
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          title: {
+            display: true,
+            text: 'Interest Score'
+          },
+          ticks: {
+            stepSize: 0.1
+          }
+        },
+        x: {
+          grid: {
+            display: true,
+            drawBorder: true,
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          title: {
+            display: true,
+            text: 'Concept'
+          },
+          ticks: {
+            autoSkip: false,
+            maxRotation: 0,
+            minRotation: 0
+          }
+        }
+      }
+    };
   }
 }
