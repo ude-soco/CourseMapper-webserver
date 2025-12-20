@@ -499,6 +499,11 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     this.adjustedScore = parseFloat(event.target.value);
     this.hasScoreChanged = Math.abs(this.adjustedScore - this.originalScore) > 0.001;
   }
+
+  onSliderChange(event: any): void {
+    this.adjustedScore = event.value;
+    this.hasScoreChanged = Math.abs(this.adjustedScore - this.originalScore) > 0.01;
+  }
   
   resetScore(): void {
     this.adjustedScore = this.originalScore;

@@ -1,4 +1,6 @@
 <div id="cy-interest" class="cytoscape-container"></div>
+
+<!-- Interest Score Tooltip -->
 <div #edgeTooltip class="edge-tooltip" 
      [style.display]="tooltipVisible ? 'block' : 'none'" 
      [style.left.px]="tooltipX" 
@@ -6,44 +8,66 @@
      (mouseenter)="onTooltipMouseEnter()"
      (mouseleave)="onTooltipMouseLeave()">
   
+  <!-- Header -->
   <div class="tooltip-header">
-    <strong>Interest Score</strong>
-    <span class="close-btn" (click)="hideTooltip()">×</span>
+    <div class="flex items-center gap-2">
+      <i class="pi pi-chart-line text-lg"></i>
+      <strong>Interest Score</strong>
+    </div>
+    <button 
+      class="close-btn"
+      (click)="hideTooltip()"
+      aria-label="Close tooltip">
+      <i class="pi pi-times"></i>
+    </button>
   </div>
   
+  <!-- Content -->
   <div class="tooltip-content">
+    <!-- Score Display -->
     <div class="score-display">
       <span class="score-value">{{ adjustedScore.toFixed(5) }}</span>
       <span class="score-label">({{ (adjustedScore * 100).toFixed(1) }}%)</span>
     </div>
     
+    <!-- Slider -->
     <div class="score-slider-container">
-      <input type="range" 
-             class="score-slider" 
-             min="0" 
-             max="1" 
-             step="0.001"
-             [value]="adjustedScore"
-             (input)="onScoreChange($event)"
-             [disabled]="!canEditScore" />
-      <div class="slider-labels">
+      <div class="slider-labels-top">
         <span>0</span>
-        <span>0.5</span>
+        <span>{{ adjustedScore.toFixed(2) }}</span>
         <span>1</span>
+      </div>
+      <div class="slider-wrapper">
+        <p-slider 
+          [(ngModel)]="adjustedScore" 
+          [min]="0" 
+          [max]="1" 
+          [step]="0.01"
+          [disabled]="!canEditScore"
+          (onChange)="onSliderChange($event)">
+        </p-slider>
       </div>
     </div>
     
+    <!-- Description -->
     <div class="tooltip-description">
       {{ tooltipText }}
     </div>
     
+    <!-- Action Buttons -->
     <div class="tooltip-actions" *ngIf="canEditScore && hasScoreChanged">
-      <button class="btn-save" (click)="saveAdjustedScore()">Save</button>
-      <button class="btn-cancel" (click)="resetScore()">Reset</button>
+      <button class="btn-save" (click)="saveAdjustedScore()">
+        <i class="pi pi-check"></i> Save
+      </button>
+      <button class="btn-cancel" (click)="resetScore()">
+        <i class="pi pi-times"></i> Reset
+      </button>
     </div>
     
+    <!-- Warning Message -->
     <div class="tooltip-info" *ngIf="!canEditScore">
-      <small>⚠️ Score not yet calculated. Complete activities to generate an interest score.</small>
+      <i class="pi pi-info-circle"></i>
+      <small>Score not yet calculated. Complete activities to generate an interest score.</small>
     </div>
   </div>
 </div>
