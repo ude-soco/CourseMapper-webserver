@@ -9,7 +9,10 @@
         (onClick)="onViewModeChange('knowledge')"
         inputId="knowledge">
       </p-radioButton>
-      <label for="knowledge" class="cursor-pointer text-sm font-medium text-gray-700 min-w-[110px]">Knowledge State</label>
+      <label for="knowledge" 
+             class="cursor-pointer text-sm font-medium text-gray-700 min-w-[110px]"
+             pTooltip="View concepts based on your understanding status"
+             tooltipPosition="right">Knowledge State</label>
       
       <!-- Understanding Status Filter - Only shows for Knowledge State view -->
       <div *ngIf="(viewMode$ | async) === 'knowledge'" class="flex items-center gap-2 ml-2">
@@ -22,7 +25,9 @@
           optionValue="value"
           [style]="{'border': '1px solid #d1d5db', 'border-radius': '6px', 'background': '#f9fafb', 'font-size': '14px', 'height': '36px', 'display': 'flex', 'align-items': 'center'}"
           [showClear]="false"
-          placeholder="All Concepts">
+          placeholder="All Concepts"
+          pTooltip="Filter by understanding status"
+          tooltipPosition="bottom">
           <ng-template let-option pTemplate="item">
             <div class="flex items-center gap-2">
               <i [class]="option.icon" 
@@ -57,7 +62,10 @@
         (onClick)="onViewModeChange('interest')"
         inputId="interest">
       </p-radioButton>
-      <label for="interest" class="cursor-pointer text-sm font-medium text-gray-700 min-w-[110px]">Interest Level</label>
+      <label for="interest" 
+             class="cursor-pointer text-sm font-medium text-gray-700 min-w-[110px]"
+             pTooltip="View concepts based on your interest level"
+             tooltipPosition="right">Interest Level</label>
     </div>
     
     <div class="flex items-center gap-3 min-h-[36px]">
@@ -68,7 +76,10 @@
         (onClick)="onViewModeChange('engagement')"
         inputId="engagement">
       </p-radioButton>
-      <label for="engagement" class="cursor-pointer text-sm font-medium text-gray-700 min-w-[110px]">Engagement Level</label>
+      <label for="engagement" 
+             class="cursor-pointer text-sm font-medium text-gray-700 min-w-[110px]"
+             pTooltip="View your engagement level with each course"
+             tooltipPosition="right">Engagement Level</label>
     </div>
   </div>
 </div>
@@ -77,14 +88,16 @@
 <div *ngIf="(viewMode$ | async) !== 'engagement'" class="absolute top-6 right-6 z-10 flex flex-col gap-3">
     <!-- Search Bar and Advanced Filters -->
   <div class="flex items-center gap-3">
-    <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center">
+    <div class="bg-white rounded-xl shadow-lg px-4 h-10 flex items-center"
+         pTooltip="Search concepts by name"
+         tooltipPosition="bottom">
       <i class="pi pi-search text-gray-400 text-sm mr-2"></i>
       <input 
         type="text" 
         #searchInput
         [ngModel]="searchQuery$ | async"
         (ngModelChange)="onSearchQueryChange($event)"
-        placeholder="Search for concepts"
+        placeholder="Search for Concepts"
         class="search-input w-48 border-0 outline-none text-sm" />
     </div>
     <button 
@@ -94,7 +107,9 @@
       [icon]="hasActiveFilters ? 'pi pi-times' : 'pi pi-filter'"
       class="p-button-sm"
       [ngClass]="{'p-button-danger': hasActiveFilters}"
-      (click)="hasActiveFilters ? clearAdvancedFilters() : openAdvancedFilters()">
+      (click)="hasActiveFilters ? clearAdvancedFilters() : openAdvancedFilters()"
+      [pTooltip]="hasActiveFilters ? 'Clear active filters' : 'Filter by courses, materials, and slides'"
+      tooltipPosition="bottom">
     </button>
   </div>
 
@@ -123,7 +138,9 @@
         [ngModel]="topNConcepts$ | async"
         (onChange)="onTopNChange($event.value)"
         [style]="{'border': '1px solid #d1d5db', 'border-radius': '6px', 'background': '#f9fafb', 'font-size': '14px', 'height': '40px', 'display': 'flex', 'align-items': 'center'}"
-        appendTo="body">
+        appendTo="body"
+        pTooltip="Limit results based on concept importance to learning material"
+        tooltipPosition="bottom">
       </p-dropdown>
     </div>
   </div>

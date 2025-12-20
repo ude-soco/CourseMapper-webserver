@@ -72,12 +72,44 @@
   background-color: #A94442;
 }
 
+.legend-dot.unknown {
+  background-color: #5DADE2;
+}
+
 .legend-dot.course {
   background-color: #333333;
 }
 
 .legend-dot.user {
   background-color: #9B59B6;
+}
+
+/* Empty Concepts Banner */
+.empty-concepts-banner {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-concepts-banner i {
+  color: #856404;
+  font-size: 1.25rem;
+}
+
+.empty-concepts-banner span {
+  color: #856404;
+  font-weight: 500;
+  font-size: 0.95rem;
 }
 
 .legend-dot.main-concept {

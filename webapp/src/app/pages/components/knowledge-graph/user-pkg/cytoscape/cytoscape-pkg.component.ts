@@ -341,6 +341,52 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       const edge = event.target;
       this.edgeClicked.emit(edge.data());
     });
+
+    // Hover tooltips for nodes
+    let tooltipDiv: HTMLElement | null = null;
+
+    this.cy.on('mouseover', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', (event: any) => {
+      const node = event.target;
+      const nodeType = node.data('type');
+      
+      // Create tooltip if it doesn't exist
+      if (!tooltipDiv) {
+        tooltipDiv = this.renderer.createElement('div');
+        this.renderer.setStyle(tooltipDiv, 'position', 'absolute');
+        this.renderer.setStyle(tooltipDiv, 'background', 'rgba(0, 0, 0, 0.85)');
+        this.renderer.setStyle(tooltipDiv, 'color', 'white');
+        this.renderer.setStyle(tooltipDiv, 'padding', '8px 12px');
+        this.renderer.setStyle(tooltipDiv, 'border-radius', '6px');
+        this.renderer.setStyle(tooltipDiv, 'font-size', '12px');
+        this.renderer.setStyle(tooltipDiv, 'pointer-events', 'none');
+        this.renderer.setStyle(tooltipDiv, 'z-index', '9999');
+        this.renderer.setStyle(tooltipDiv, 'white-space', 'nowrap');
+        this.renderer.setStyle(tooltipDiv, 'box-shadow', '0 2px 8px rgba(0,0,0,0.3)');
+        this.renderer.appendChild(document.body, tooltipDiv);
+      }
+
+      // Set tooltip text based on node type
+      let tooltipText = 'Right-click and hold to show options';
+
+      
+      this.renderer.setProperty(tooltipDiv, 'textContent', tooltipText);
+      this.renderer.setStyle(tooltipDiv, 'display', 'block');
+    });
+
+    this.cy.on('mousemove', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', (event: any) => {
+      if (tooltipDiv) {
+        const mouseX = event.originalEvent.clientX;
+        const mouseY = event.originalEvent.clientY;
+        this.renderer.setStyle(tooltipDiv, 'left', `${mouseX + 15}px`);
+        this.renderer.setStyle(tooltipDiv, 'top', `${mouseY + 15}px`);
+      }
+    });
+
+    this.cy.on('mouseout', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', () => {
+      if (tooltipDiv) {
+        this.renderer.setStyle(tooltipDiv, 'display', 'none');
+      }
+    });
   }
 
   private initializeContextMenu(): void {
@@ -386,6 +432,9 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       // Re-apply styles based on new edge type
       GraphUtils.updateNodeStyles(this.cy, this.currentViewMode);
       GraphUtils.updateEdgeStyles(this.cy, this.currentViewMode);
+      
+      // Emit visible nodes to update the legend
+      this.emitVisibleNodes();
     }
   }
 

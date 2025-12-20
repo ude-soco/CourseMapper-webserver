@@ -1854,9 +1854,10 @@ export const getCourseHierarchy = async (req, res) => {
       .filter(c => c.courseId)
       .map(c => c.courseId._id);
 
-    // Get all materials for enrolled courses
+    // Get all materials for enrolled courses (only PDFs, no videos)
     const materials = await Material.find({
-      courseId: { $in: enrolledCourseIds }
+      courseId: { $in: enrolledCourseIds },
+      type: 'pdf'
     }).select('_id name type courseId');
 
     // Get slides from Neo4j for each material
