@@ -385,6 +385,8 @@ export class UserPkgComponent implements OnInit, OnDestroy {
 
   onEdgeClicked(edgeData: any): void {
     console.log('[User PKG] Edge clicked:', edgeData);
+    // Edge clicks on interest level graph are now handled via context menu
+    // No action needed here for interest edges
   }
 
   openHelpDialog(): void {

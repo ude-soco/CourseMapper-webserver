@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil, distinctUntilChanged, filter, take } from 'rxjs/operators';
@@ -56,6 +57,7 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private router: Router,
     private pkgService: PkgService,
     private messageService: MessageService,
     private neo4jService: Neo4jService
@@ -621,7 +623,11 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       selector: 'node[type="concept"]',
       commands: (ele: any) => {
         const hasRelated = this.checkForRelatedConcepts(ele);
-        return [
+        const commands = [
+          {
+            content: '<span style="font-size:14px;">View Interest Dashboard</span> <br> <i class="pi pi-chart-line" style="color:#3B82F6;"></i>',
+            select: () => this.handleViewInterestDashboard(ele),
+          },
           {
             content: hasRelated 
               ? '<span style="font-size:14px;">Hide Related</span> <br> <i class="pi pi-link" style="color:#6B7280;"></i>'
@@ -629,6 +635,7 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
             select: () => this.handleToggleRelated(ele),
           }
         ];
+        return commands;
       },
     });
   }
@@ -636,6 +643,36 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   private checkForRelatedConcepts(node: any): boolean {
     const conceptId = node.id();
     return this.conceptsWithVisibleRelated.has(conceptId);
+  }
+
+  private handleViewInterestDashboard(node: any): void {
+    const nodeData = node.data();
+    const conceptName = nodeData.label || nodeData.name;
+    const conceptId = nodeData.conceptId;
+    
+    // Get the interest score from the edge connecting user to this concept
+    const userNode = this.cy.nodes('[type="user"]').first();
+    if (userNode.length === 0) {
+      console.error('[Interest Level Graph] User node not found');
+      return;
+    }
+    
+    const edge = this.cy.edges(`[source="${userNode.id()}"][target="${node.id()}"]`).first();
+    const interestScore = edge.length > 0 ? edge.data('score') : 0;
+    
+    console.log('[Interest Level Graph] Navigate to Interest Dashboard:', {
+      conceptName,
+      conceptId,
+      interestScore
+    });
+    
+    // Navigate to the interest level dashboard page
+    this.router.navigate(['/user/interest-level'], {
+      queryParams: {
+        conceptName,
+        conceptId
+      }
+    });
   }
 
   private handleToggleRelated(node: any): void {

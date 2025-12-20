@@ -30,6 +30,7 @@ import { RequestEmailValidationComponent } from './pages/components/email-valida
 import { PersonalKnowledgeGraphComponent } from './pages/components/knowledge-graph/user-kg/personal-knowledge-graph/personal-knowledge-graph.component';
 import { UserPkgComponent } from './pages/components/knowledge-graph/user-pkg/user-pkg.component';
 import { EngagementDashboardComponent } from './pages/components/Dashboards/engagement-dashboard/engagement-dashboard.component';
+import { InterestLevelDashboardComponent } from './pages/components/Dashboards/interest-level-dashboard/interest-level-dashboard.component';
 import { CanDeactivateService } from './services/can-deactivate.service';
 
 const routes: Routes = [
@@ -52,6 +53,11 @@ const routes: Routes = [
   {
     path: 'user/engagement',
     component: EngagementDashboardComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'user/interest-level',
+    component: InterestLevelDashboardComponent,
     canActivate: [AuthGuardService],
   },
   {
