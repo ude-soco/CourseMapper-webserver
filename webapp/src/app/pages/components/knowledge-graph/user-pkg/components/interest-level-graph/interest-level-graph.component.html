@@ -54,6 +54,12 @@
       {{ tooltipText }}
     </div>
     
+    <!-- Adjustment Info -->
+    <div class="tooltip-info" style="margin-top: 12px; margin-bottom: 16px; padding: 8px; background-color: #f0f9ff; border-left: 3px solid #3b82f6; border-radius: 4px;">
+      <i class="pi pi-info-circle" style="color: #3b82f6;"></i>
+      <small style="color: #1e40af;">Adjust the interest score to personalize recommendations. Your adjusted score helps improve future content suggestions.</small>
+    </div>
+    
     <!-- Show More Link -->
     <div class="tooltip-link" *ngIf="canEditScore">
       <a (click)="navigateToInterestDashboard()" class="link-text">

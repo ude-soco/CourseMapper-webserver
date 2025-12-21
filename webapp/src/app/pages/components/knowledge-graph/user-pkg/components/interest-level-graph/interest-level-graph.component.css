@@ -91,7 +91,7 @@
 }
 
 .score-slider-container {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .slider-labels-top {
@@ -115,23 +115,24 @@
 /* PrimeNG Slider Styling to match recommendation panel */
 :host ::ng-deep .p-slider {
   background: #D1D5DB;
-  height: 4px;
-  border-radius: 2px;
+  height: 6px;
+  border-radius: 3px;
 }
 
 :host ::ng-deep .p-slider .p-slider-range {
   background-color: #2563EB;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 :host ::ng-deep .p-slider .p-slider-handle {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   background-color: #2563EB;
-  border: 2px solid #2563EB;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-radius: 50%;
-  margin-top: -7px;
-  margin-left: -9px;
+  margin-top: -9px;
+  margin-left: -10px;
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
@@ -154,7 +155,7 @@
   color: #4b5563;
   line-height: 1.6;
   white-space: pre-line;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   padding: 12px 16px;
   background-color: #f3f4f6;
   border-radius: 8px;
@@ -162,7 +163,7 @@
 }
 
 .tooltip-link {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   padding: 12px 16px;
   background-color: #eff6ff;
   border-radius: 8px;
@@ -193,7 +194,7 @@
 .tooltip-actions {
   display: flex;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 .tooltip-actions button {
@@ -238,7 +239,7 @@
   background-color: #fef3c7;
   border: 1px solid #fbbf24;
   border-radius: 8px;
-  margin-top: 16px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
   gap: 10px;
