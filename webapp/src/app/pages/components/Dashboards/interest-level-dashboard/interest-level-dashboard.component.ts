@@ -42,6 +42,7 @@ interface ActivityCategoryGroup {
   totalContribution: number;
   expanded: boolean;
   visible: boolean;
+  showTextView?: boolean;
 }
 
 @Component({
@@ -260,6 +261,14 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
 
   toggleCategory(category: ActivityCategoryGroup): void {
     category.expanded = !category.expanded;
+  }
+
+  toggleCategoryView(category: ActivityCategoryGroup): void {
+    category.showTextView = !category.showTextView;
+  }
+
+  hasSingleActivity(category: ActivityCategoryGroup): boolean {
+    return category.activities.length === 1;
   }
 
   openActivityFilter(event: Event): void {
