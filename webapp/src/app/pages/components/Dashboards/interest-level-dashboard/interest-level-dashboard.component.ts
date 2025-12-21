@@ -75,26 +75,31 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   activityCategories: ActivityCategoryGroup[] = [];
 
   // Activity group mapping from activity-weights.json
-  private activityGroupMapping: { [key: string]: { name: string; groups: string[] } } = {
-    'recommendation': {
-      name: 'Recommendation Activities',
-      groups: ['G1', 'G5', 'G7', 'G9'] // Recommended Material, Explanation, Recommended Concepts, Mark Recommended DNU
-    },
+  private activityGroupMapping: { [key: string]: { name: string; groups: string[]; totalWeight: number } } = {
     'kg': {
       name: 'Knowledge Graph Activities',
-      groups: ['G2', 'G3', 'G4'] // Concepts & Article, Mark U/DNU, Full Article
+      groups: ['G2', 'G3', 'G4'], // Concepts & Article, Mark U/DNU, Full Article
+      totalWeight: 0.5 // 0.1944 + 0.1667 + 0.1389 normalized weights
     },
-    'material': {
-      name: 'Material Activities',
-      groups: ['G8'] // View Slides
+    'recommendation': {
+      name: 'Recommendation Activities',
+      groups: ['G1', 'G5', 'G7', 'G9'], // Recommended Material, Explanation, Recommended Concepts, Mark Recommended DNU
+      totalWeight: 0.3889 // 0.1944 + 0.1111 + 0.0556 + 0.0278 normalized weights
     },
     'annotation': {
       name: 'Annotation Activities',
-      groups: ['G6'] // Follow Annotation
+      groups: ['G6'], // Follow Annotation
+      totalWeight: 0.0556 // normalized weight
+    },
+    'material': {
+      name: 'Material Activities',
+      groups: ['G8'], // View Slides
+      totalWeight: 0.0278 // normalized weight
     },
     'access': {
       name: 'Access Activities',
-      groups: ['G10'] // Course Access
+      groups: ['G10'], // Course Access
+      totalWeight: 0.0278 // normalized weight
     }
   };
 
@@ -232,7 +237,12 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       };
     })
     .filter(cat => cat.activities.length > 0) // Only show categories with activities
-    .sort((a, b) => b.totalContribution - a.totalContribution); // Sort by total contribution (weights) in descending order
+    .sort((a, b) => {
+      // Sort by total weight from voting system (highest to lowest)
+      const weightA = this.activityGroupMapping[a.categoryKey]?.totalWeight || 0;
+      const weightB = this.activityGroupMapping[b.categoryKey]?.totalWeight || 0;
+      return weightB - weightA;
+    });
   }
 
   toggleCategory(category: ActivityCategoryGroup): void {
