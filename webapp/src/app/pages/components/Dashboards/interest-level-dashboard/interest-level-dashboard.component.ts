@@ -286,6 +286,12 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     return ((contribution / this.conceptData.raw_score) * 100).toFixed(1) + '%';
   }
 
+  // Format category contribution as percentage of total raw score
+  getCategoryContributionPercentage(totalContribution: number): string {
+    if (!this.conceptData || this.conceptData.raw_score === 0) return '0%';
+    return ((totalContribution / this.conceptData.raw_score) * 100).toFixed(1) + '%';
+  }
+
   // Initialize gauge chart for interest score (matching engagement dashboard style)
   private initializeGaugeChart(): void {
     const score = this.interestScore;
