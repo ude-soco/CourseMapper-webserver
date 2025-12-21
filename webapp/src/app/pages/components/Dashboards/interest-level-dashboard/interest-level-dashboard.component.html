@@ -28,6 +28,9 @@
               Interest Score: 
               <span class="font-medium" [ngClass]="getInterestScoreColor()">{{ interestScore.toFixed(2) }}</span>
             </p>
+            <p class="text-sm text-gray-600 mt-2">
+              <span class="font-medium">Course:</span> {{ conceptData?.course_name || 'N/A' }}
+            </p>
           </div>
           <!-- Gauge Chart -->
           <div class="gauge-container flex-shrink-0 relative" style="width: 200px; height: 120px;">
@@ -243,17 +246,6 @@
         </div>
       </div>
 
-    </div>
-
-    <!-- Footer -->
-    <div class="border-t border-gray-200 bg-gray-50 px-6 py-4">
-      <div class="flex items-center justify-between">
-        <div class="text-sm text-gray-600">
-          <span class="font-medium">Course:</span> {{ conceptData?.course_name || 'N/A' }}
-        </div>
-      </div>
-
-      </div>
     </div>
   </div>
 </div>
