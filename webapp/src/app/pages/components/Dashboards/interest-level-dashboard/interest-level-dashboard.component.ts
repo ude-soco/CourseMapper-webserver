@@ -482,10 +482,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
           callbacks: {
             label: (context: any) => {
               const index = context.dataIndex;
-              return [
-                `Count: ${counts[index]}`,
-                `Contribution: ${contributions[index].toFixed(3)}`
-              ];
+              return `Count: ${counts[index]}`;
             }
           }
         }
