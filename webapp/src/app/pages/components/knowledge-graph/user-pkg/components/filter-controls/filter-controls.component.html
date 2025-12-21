@@ -116,7 +116,7 @@
   </div>
 
   <!-- Active Filter Badge -->
-  <div *ngIf="activeProfileName" 
+  <div *ngIf="activeProfileName && (viewMode$ | async) === 'knowledge'" 
        class="bg-white rounded-xl shadow-lg px-4 py-2.5 flex items-center justify-between gap-3 cursor-help"
        [pTooltip]="activeProfileTooltip"
        tooltipPosition="left"
