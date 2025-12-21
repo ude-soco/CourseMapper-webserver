@@ -500,6 +500,9 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   }
   
   navigateToInterestDashboard(): void {
+    // Store current view mode before navigating
+    sessionStorage.setItem('pkgReturnView', 'interest');
+    
     this.router.navigate(['/user/interest-level'], {
       queryParams: {
         conceptName: this.currentConceptName,

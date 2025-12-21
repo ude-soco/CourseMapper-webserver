@@ -72,7 +72,16 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this.store.dispatch(UserPkgActions.clearUserPkg());
+    
+    // Don't clear state if we're navigating to dashboards
+    const currentUrl = this.router.url;
+    const navigatingToDashboard = 
+      currentUrl.includes('/user/interest-level') || 
+      currentUrl.includes('/user/engagement');
+    
+    if (!navigatingToDashboard) {
+      this.store.dispatch(UserPkgActions.clearUserPkg());
+    }
   }
 
   private initializeComponent(): void {
@@ -83,8 +92,19 @@ export class UserPkgComponent implements OnInit, OnDestroy {
       )
       .subscribe((user) => {
         this.currentUserId = user.id;
+        this.checkForReturnView();
         this.loadKnowledgeGraph();
       });
+  }
+
+  private checkForReturnView(): void {
+    // Check sessionStorage for return view mode
+    const returnView = sessionStorage.getItem('pkgReturnView');
+    if (returnView && (returnView === 'interest' || returnView === 'engagement' || returnView === 'knowledge')) {
+      this.store.dispatch(UserPkgActions.setViewMode({ viewMode: returnView as any }));
+      // Clear the stored view
+      sessionStorage.removeItem('pkgReturnView');
+    }
   }
 
   private subscribeToErrors(): void {
@@ -324,6 +344,9 @@ export class UserPkgComponent implements OnInit, OnDestroy {
       this.courseService.GetCourseById(courseDetails._id).subscribe({
         next: (course) => {
           if (course) {
+            // Store current view mode before navigating
+            sessionStorage.setItem('pkgReturnView', 'engagement');
+            
             this.store.dispatch(CourseActions.setCurrentCourse({ selcetedCourse: course }));
             this.store.dispatch(CourseActions.setCourseId({ courseId: course._id }));
             this.router.navigate(['user/engagement']);
@@ -358,6 +381,9 @@ export class UserPkgComponent implements OnInit, OnDestroy {
     this.courseService.GetCourseById(courseId).subscribe({
       next: (course) => {
         if (course) {
+          // Store current view mode before navigating
+          sessionStorage.setItem('pkgReturnView', 'engagement');
+          
           // Set the course in the store
           this.store.dispatch(CourseActions.setCurrentCourse({ selcetedCourse: course }));
           this.store.dispatch(CourseActions.setCourseId({ courseId: course._id }));
