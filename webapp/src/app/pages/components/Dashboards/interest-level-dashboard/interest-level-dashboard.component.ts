@@ -143,6 +143,23 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     { label: '50', value: 50 }
   ];
 
+  // Activity name mapping for user-friendly labels
+  private activityNameMapping: { [key: string]: string } = {
+    'user enrolled in course teaching this concept': 'You enrolled in course teaching this concept',
+    'user viewed article of concept': 'You viewed article of this concept',
+    'user marked concept as understood': 'You marked concept as understood',
+    'user marked concept as not understood': 'You marked concept as not understood',
+    'user viewed full article of concept': 'You viewed full article of this concept',
+    'user followed annotation for concept': 'You followed annotation for this concept',
+    'user viewed slide containing concept': 'You viewed slide containing this concept',
+    'user accessed course teaching concept': 'You accessed course teaching this concept',
+    'system recommended material containing concept': 'You received recommended material containing this concept',
+    'system recommended concept': 'You received recommendation for this concept',
+    'user viewed recommended material containing concept': 'You viewed recommended material containing this concept',
+    'user viewed explanation for concept': 'You viewed explanation for this concept',
+    'user marked recommended concept as not understood': 'You marked recommended concept as not understood'
+  };
+
   constructor(
     private route: ActivatedRoute,
     private store: Store<State>,
@@ -230,9 +247,11 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       // Determine which category this activity belongs to based on its group ID
       const groupId = activity.activity_id.split('_')[0]; // e.g., "G1" from "G1_A1"
 
+      // Find the first matching category and add activity only to that category
       for (const [categoryKey, categoryInfo] of Object.entries(this.activityGroupMapping)) {
         if (categoryInfo.groups.includes(groupId)) {
           categories[categoryKey].push(activity);
+          break; // Prevent activity from appearing in multiple categories
         }
       }
     });
@@ -269,6 +288,38 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
 
   hasSingleActivity(category: ActivityCategoryGroup): boolean {
     return category.activities.length === 1;
+  }
+
+  getFriendlyActivityName(activityName: string): string {
+    // Return mapped name if exists, otherwise return original with fallback formatting
+    const mapped = this.activityNameMapping[activityName.toLowerCase()];
+    if (mapped) {
+      return mapped;
+    }
+    
+    // Fallback: Replace 'user' with 'You', convert present tense verbs to past tense
+    let friendly = activityName.replace(/^user /i, 'You ');
+    
+    // Convert common present tense verbs to past tense
+    friendly = friendly.replace(/\bviews?\b/gi, 'viewed');
+    friendly = friendly.replace(/\bmarks?\b/gi, 'marked');
+    friendly = friendly.replace(/\baccess(es)?\b/gi, 'accessed');
+    friendly = friendly.replace(/\benrolls?\b/gi, 'enrolled');
+    friendly = friendly.replace(/\bfollows?\b/gi, 'followed');
+    friendly = friendly.replace(/\brecommends?\b/gi, 'recommended');
+    friendly = friendly.replace(/\bclicks?\b/gi, 'clicked');
+    friendly = friendly.replace(/\bopens?\b/gi, 'opened');
+    friendly = friendly.replace(/\breads?\b/gi, 'read');
+    friendly = friendly.replace(/\bwatches?\b/gi, 'watched');
+    friendly = friendly.replace(/\bcompletes?\b/gi, 'completed');
+    
+    // If string doesn't start with "You", add it
+    if (!friendly.match(/^You\b/i)) {
+      friendly = 'You ' + friendly.toLowerCase();
+    }
+    
+    // Capitalize first letter
+    return friendly.replace(/^(\w)/, (c) => c.toUpperCase());
   }
 
   openActivityFilter(event: Event): void {
@@ -423,6 +474,12 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
           title: {
             display: true,
             text: 'Number of Activities'
+          },
+          ticks: {
+            precision: 0,
+            callback: function(value: any) {
+              return Math.floor(value);
+            }
           }
         },
         x: {
@@ -451,7 +508,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   // Initialize chart for individual category using Chart.js format
   private initializeCategoryChart(category: ActivityCategoryGroup): void {
     const activities = category.activities.sort((a, b) => b.weight - a.weight);
-    const labels = activities.map(a => a.activity_name);
+    const labels = activities.map(a => this.getFriendlyActivityName(a.activity_name));
     const counts = activities.map(a => a.count);
     const contributions = activities.map(a => a.contribution);
 
@@ -499,6 +556,12 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
           title: {
             display: true,
             text: 'Activity Count'
+          },
+          ticks: {
+            precision: 0,
+            callback: function(value: any) {
+              return Math.floor(value);
+            }
           }
         },
         x: {
