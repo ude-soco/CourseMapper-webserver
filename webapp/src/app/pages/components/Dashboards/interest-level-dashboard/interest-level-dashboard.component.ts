@@ -130,7 +130,17 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   // Top concepts chart data
   topConceptsChartData: any;
   topConceptsChartOptions: any;
-  topConceptsLimit: number = 20;
+  topConceptsLimit: number | 'All' = 5;
+
+  // Top-N filter options (matching PKG filter controls)
+  readonly topNOptions = [
+    { label: '5', value: 5 },
+    { label: '10', value: 10 },
+    { label: '15', value: 15 },
+    { label: '20', value: 20 },
+    { label: '25', value: 25 },
+    { label: '50', value: 50 }
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -505,7 +515,10 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   private loadTopConcepts(): void {
     if (!this.loggedInUser) return;
 
-    this.interestLevelService.getTopConceptsByInterest(this.loggedInUser.id, this.topConceptsLimit).subscribe({
+    // Convert 'All' to a large number for the API call
+    const limit = this.topConceptsLimit === 'All' ? 1000 : this.topConceptsLimit;
+
+    this.interestLevelService.getTopConceptsByInterest(this.loggedInUser.id, limit).subscribe({
       next: (concepts) => {
         console.log(`Requested ${this.topConceptsLimit} concepts, received ${concepts.length} concepts`);
         this.topConcepts = concepts;
@@ -518,7 +531,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   }
 
   // Handle change in top concepts limit
-  onTopConceptsLimitChange(newLimit: number): void {
+  onTopConceptsLimitChange(newLimit: number | 'All'): void {
     this.topConceptsLimit = newLimit;
     this.loadTopConcepts();
   }

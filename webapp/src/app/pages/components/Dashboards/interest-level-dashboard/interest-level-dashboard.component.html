@@ -218,8 +218,22 @@
       <!-- Concepts with Highest Score Tab -->
       <div *ngIf="activeTabIndex === 2">
         <div *ngIf="topConceptsChartData">
-          <div class="mb-4">
+          <div class="mb-4 flex justify-between items-center">
             <h4 class="text-lg font-semibold text-gray-800">Current Concept vs Top Concepts</h4>
+            
+            <!-- Top-N Filter Dropdown -->
+            <div class="bg-white rounded-lg shadow px-4 h-10 flex items-center gap-2">
+              <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Top-N Main Concepts</label>
+              <p-dropdown 
+                [options]="topNOptions" 
+                [(ngModel)]="topConceptsLimit"
+                (onChange)="onTopConceptsLimitChange($event.value)"
+                [style]="{'border': '1px solid #d1d5db', 'border-radius': '6px', 'background': '#f9fafb', 'font-size': '14px', 'height': '40px', 'display': 'flex', 'align-items': 'center'}"
+                appendTo="body"
+                pTooltip="Limit results based on highest interest scores"
+                tooltipPosition="bottom">
+              </p-dropdown>
+            </div>
           </div>
           
           <div class="chart-container" style="position: relative; height: 800px; max-width: 100%;">
