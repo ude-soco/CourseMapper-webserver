@@ -266,7 +266,8 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
         totalCount: activities.reduce((sum, a) => sum + a.count, 0),
         totalContribution: activities.reduce((sum, a) => sum + a.contribution, 0),
         expanded: false,
-        visible: true
+        visible: true,
+        showTextView: activities.length === 1 // Default to text view if only one activity
       };
     })
     .filter(cat => cat.activities.length > 0) // Only show categories with activities
