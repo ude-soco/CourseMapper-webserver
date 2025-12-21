@@ -168,6 +168,9 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Set sessionStorage so back button returns to interest view
+    sessionStorage.setItem('pkgReturnView', 'interest');
+    
     // Get concept name and ID from route query params
     this.routeSubscription = this.route.queryParams.subscribe(params => {
       this.conceptName = params['conceptName'] || '';

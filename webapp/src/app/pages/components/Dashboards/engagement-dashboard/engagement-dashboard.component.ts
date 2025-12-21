@@ -62,6 +62,9 @@ export class EngagementDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Set sessionStorage so back button returns to engagement view
+    sessionStorage.setItem('pkgReturnView', 'engagement');
+    
     // Try to restore course from localStorage if not already set
     this.restoreCourseFromStorage();
     this.loadEngagementData();
