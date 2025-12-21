@@ -12,6 +12,7 @@ export interface ConceptData {
   type?: string;
   abstract?: string;
   wikipedia?: string;
+  interestScore?: number;
   [key: string]: any;
 }
 
