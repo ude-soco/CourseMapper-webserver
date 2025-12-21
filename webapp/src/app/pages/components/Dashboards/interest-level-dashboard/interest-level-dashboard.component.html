@@ -204,28 +204,42 @@
             </div>
           </div>
         </div>
+        
+        <!-- Empty State -->
+        <div *ngIf="!totalActivitiesChartData" class="text-center py-12">
+          <i class="pi pi-chart-bar text-5xl text-gray-300 mb-4"></i>
+          <p class="text-gray-500">No activity data available for this concept.</p>
+        </div>
       </div>
 
       <!-- Concepts with Highest Score Tab -->
       <div *ngIf="activeTabIndex === 2">
-        <div class="mb-4">
-          <h4 class="text-lg font-semibold text-gray-800">Current Concept vs Top Concepts</h4>
+        <div *ngIf="topConceptsChartData">
+          <div class="mb-4">
+            <h4 class="text-lg font-semibold text-gray-800">Current Concept vs Top Concepts</h4>
+          </div>
+          
+          <div class="chart-container" style="position: relative; height: 800px; max-width: 100%;">
+            <p-chart type="bar" [data]="topConceptsChartData" [options]="topConceptsChartOptions" [style]="{ height: '100%', width: '100%' }"></p-chart>
+          </div>
+
+          <!-- Legend explaining colors -->
+          <div class="flex items-center justify-center mt-4 gap-6">
+            <div class="flex items-center gap-2">
+              <div class="w-4 h-4 rounded" style="background-color: #F59E0B;"></div>
+              <span class="text-sm text-gray-600">Current Concept</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-4 h-4 rounded" style="background-color: #3B82F6;"></div>
+              <span class="text-sm text-gray-600">Other Concepts</span>
+            </div>
+          </div>
         </div>
         
-        <div class="chart-container" style="position: relative; height: 800px; max-width: 100%;">
-          <p-chart type="bar" [data]="topConceptsChartData" [options]="topConceptsChartOptions" [style]="{ height: '100%', width: '100%' }"></p-chart>
-        </div>
-
-        <!-- Legend explaining colors -->
-        <div class="flex items-center justify-center mt-4 gap-6">
-          <div class="flex items-center gap-2">
-            <div class="w-4 h-4 rounded" style="background-color: #F59E0B;"></div>
-            <span class="text-sm text-gray-600">Current Concept</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-4 h-4 rounded" style="background-color: #3B82F6;"></div>
-            <span class="text-sm text-gray-600">Other Concepts</span>
-          </div>
+        <!-- Empty State -->
+        <div *ngIf="!topConceptsChartData" class="text-center py-12">
+          <i class="pi pi-chart-line text-5xl text-gray-300 mb-4"></i>
+          <p class="text-gray-500">No concept data available to compare.</p>
         </div>
       </div>
 
