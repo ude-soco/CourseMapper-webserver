@@ -128,12 +128,12 @@
               <!-- Chart Visualization -->
               <div *ngIf="categoryChartData[category.categoryKey]" class="p-6 bg-white border-b border-gray-200">
                 <h6 class="text-sm font-semibold text-gray-700 mb-4">Activity Visualization</h6>
-                <div style="height: 800px;">
+                <div style="position: relative; height: 500px; max-width: 100%;">
                   <p-chart
                     type="bar"
                     [data]="categoryChartData[category.categoryKey]"
                     [options]="categoryChartOptions[category.categoryKey]"
-                    [style]="{'height': '100%'}">
+                    [style]="{'height': '100%', 'width': '100%'}">
                   </p-chart>
                 </div>
               </div>
@@ -186,12 +186,12 @@
           <p class="text-sm text-gray-600 mb-6">
             Total activities for "{{ conceptName }}" grouped by category
           </p>
-          <div style="height: 800px;">
+          <div style="position: relative; height: 500px; max-width: 100%;">
             <p-chart
               type="bar"
               [data]="totalActivitiesChartData"
               [options]="totalActivitiesChartOptions"
-              [style]="{'height': '100%'}">
+              [style]="{'height': '100%', 'width': '100%'}">
             </p-chart>
           </div>
           
@@ -208,8 +208,12 @@
 
       <!-- Concepts with Highest Score Tab -->
       <div *ngIf="activeTabIndex === 2">
-        <div class="chart-container" style="height: 850px;">
-          <p-chart type="bar" [data]="topConceptsChartData" [options]="topConceptsChartOptions" [style]="{ height: '100%' }"></p-chart>
+        <div class="mb-4">
+          <h4 class="text-lg font-semibold text-gray-800">Current Concept vs Top Concepts</h4>
+        </div>
+        
+        <div class="chart-container" style="position: relative; height: 800px; max-width: 100%;">
+          <p-chart type="bar" [data]="topConceptsChartData" [options]="topConceptsChartOptions" [style]="{ height: '100%', width: '100%' }"></p-chart>
         </div>
 
         <!-- Legend explaining colors -->

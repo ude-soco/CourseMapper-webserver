@@ -125,7 +125,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   // Top concepts chart data
   topConceptsChartData: any;
   topConceptsChartOptions: any;
-  topConceptsLimit: number = 10;
+  topConceptsLimit: number = 20;
 
   constructor(
     private route: ActivatedRoute,
@@ -352,6 +352,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     this.totalActivitiesChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      aspectRatio: 1,
       plugins: {
         legend: {
           display: false
@@ -402,6 +403,9 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
             minRotation: 0
           }
         }
+      },
+      onResize: (chart: any) => {
+        chart.canvas.parentNode.style.height = '500px';
       }
     };
   }
@@ -431,6 +435,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     this.categoryChartOptions[category.categoryKey] = {
       responsive: true,
       maintainAspectRatio: false,
+      aspectRatio: 1,
       plugins: {
         legend: {
           display: false
@@ -473,6 +478,9 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
             minRotation: 0
           }
         }
+      },
+      onResize: (chart: any) => {
+        chart.canvas.parentNode.style.height = '500px';
       }
     };
   }
@@ -483,6 +491,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
 
     this.interestLevelService.getTopConceptsByInterest(this.loggedInUser.id, this.topConceptsLimit).subscribe({
       next: (concepts) => {
+        console.log(`Requested ${this.topConceptsLimit} concepts, received ${concepts.length} concepts`);
         this.topConcepts = concepts;
         this.initializeTopConceptsChart();
       },
@@ -490,6 +499,12 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
         console.error('Error loading top concepts:', err);
       }
     });
+  }
+
+  // Handle change in top concepts limit
+  onTopConceptsLimitChange(newLimit: number): void {
+    this.topConceptsLimit = newLimit;
+    this.loadTopConcepts();
   }
 
   // Initialize chart for top concepts with current concept highlighted
@@ -544,13 +559,14 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     this.topConceptsChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      aspectRatio: 1,
       plugins: {
         legend: {
           display: false
         },
         title: {
           display: true,
-          text: `Current Concept vs Top ${this.topConceptsLimit} Concepts`,
+          text: 'Current Concept vs Top Concepts',
           font: {
             size: 16,
             weight: 'bold'
@@ -600,10 +616,13 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
           },
           ticks: {
             autoSkip: false,
-            maxRotation: 0,
-            minRotation: 0
+            maxRotation: 45,
+            minRotation: 45
           }
         }
+      },
+      onResize: (chart: any) => {
+        chart.canvas.parentNode.style.height = '800px';
       }
     };
   }
