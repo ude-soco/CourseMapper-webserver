@@ -357,13 +357,23 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   // Format contribution as percentage of total raw score
   getContributionPercentage(contribution: number): string {
     if (!this.conceptData || this.conceptData.raw_score === 0) return '0%';
-    return ((contribution / this.conceptData.raw_score) * 100).toFixed(1) + '%';
+    const percentage = (contribution / this.conceptData.raw_score) * 100;
+    // Show more decimal places for very small percentages to avoid displaying 0.0%
+    if (percentage < 0.1 && percentage > 0) {
+      return percentage.toFixed(4) + '%';
+    }
+    return percentage.toFixed(1) + '%';
   }
 
   // Format category contribution as percentage of total raw score
   getCategoryContributionPercentage(totalContribution: number): string {
     if (!this.conceptData || this.conceptData.raw_score === 0) return '0%';
-    return ((totalContribution / this.conceptData.raw_score) * 100).toFixed(1) + '%';
+    const percentage = (totalContribution / this.conceptData.raw_score) * 100;
+    // Show more decimal places for very small percentages to avoid displaying 0.0%
+    if (percentage < 0.1 && percentage > 0) {
+      return percentage.toFixed(4) + '%';
+    }
+    return percentage.toFixed(1) + '%';
   }
 
   // Initialize gauge chart for interest score (matching engagement dashboard style)
@@ -718,8 +728,8 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
           },
           ticks: {
             autoSkip: false,
-            maxRotation: 45,
-            minRotation: 45
+            maxRotation: 0,
+            minRotation: 0
           }
         }
       },
