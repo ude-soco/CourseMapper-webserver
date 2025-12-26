@@ -47,6 +47,8 @@ export class CardVideoComponent {
   @Input() public concepts: { name: string }[] = [];
   public conceptsNames: string[]= [];
 
+  isDescriptionExpanded = false;
+
   abstractParts: { text: string, isKeyphrase: boolean, keyphraseMeta?: any }[] = [];
   abstractPartsTruncated: { text: string; isKeyphrase: boolean; keyphraseMeta?: any }[] = [];
 
@@ -78,14 +80,16 @@ export class CardVideoComponent {
 
      if (this.videoElement?.description && this.videoElement?.keyphrases) {
       this.generateParts(
-      this.videoElement.description,
+      this.videoElement.description_full,
       this.videoElement.keyphrases,
       this.videoElement.keyphrases_concept_similarity_score
       );
       this.abstractPartsTruncated = this.truncateParts(this.abstractParts, this.DESCRIPTION_MAX_LENGTH);
     }
-  //  For debugging:
-   // console.log(this.videoElement);
+
+    // For debugging:
+    console.log(this.videoElement);
+    console.log('hi:', this.videoElement.keyphrases_concept_similarity_score);
   }
   
   public readVideo(videoElement: any): void {
@@ -106,19 +110,59 @@ export class CardVideoComponent {
     
     if (this.videoElement?.description && this.videoElement?.keyphrases) {
       this.generateParts(
-      this.videoElement.description,
+      this.videoElement.description_full,
       this.videoElement.keyphrases,
       this.videoElement.keyphrases_concept_similarity_score
       );
       this.abstractPartsTruncated = this.truncateParts(this.abstractParts, this.DESCRIPTION_MAX_LENGTH);
     }
+     this.buildDescriptionParts();
   }
+
+  private buildDescriptionParts(): void {
+  if (!this.videoElement?.description_full) return;
+
+  this.generateParts(
+    this.videoElement.description_full,
+    this.videoElement.keyphrases,
+    this.videoElement.keyphrases_concept_similarity_score
+  );
+
+  this.abstractPartsTruncated = this.truncateParts(
+    this.abstractParts,
+    this.DESCRIPTION_MAX_LENGTH
+  );
+}
+
+toggleDescription(): void {
+  const data = {
+    materialId: this.currentMaterial?._id,
+    resourceId: this.videoElement.id,
+    title: this.videoElement.title,
+    description: this.videoElement.description_full
+  };
+
+  if (!this.isDescriptionExpanded) {
+    this.materialsRecommenderService.logExpandAbstract(data).subscribe();
+  } else {
+    this.materialsRecommenderService.logCollapseAbstract(data).subscribe();
+  }
+
+  this.isDescriptionExpanded = !this.isDescriptionExpanded;
+}
+
+get canExpand(): boolean {
+  return (
+    this.videoElement?.description_full &&
+    this.videoElement.description_full.length > this.DESCRIPTION_MAX_LENGTH
+  );
+}
   getConceptsNames() {
     this.conceptsNames = this.concepts?.map(dnu => dnu.name) ?? [];
     }
 
   showLabelMoreDescription() {
-    if (this.videoElement?.description.length > 0 ) {
+    if (this.videoElement?.description_full.length > 0 ) {
     }
   }
 
@@ -439,14 +483,21 @@ truncateParts(
 }
 
 
-getSimilarityScoresAlignedToFixedYaxisPopUp(clickedKeyphrase: string): number[] {
-  if (!clickedKeyphrase) return [];
+hasPositiveScores = true; 
+ 
+ private getKeyphraseIndex(clickedKeyphrase: string): number {
+  if (!clickedKeyphrase) return -1;
+
   let originalKeyphrase = clickedKeyphrase;
 
-  // Search in abstractParts to get the originalKeyphrase
+  // Resolve variant → original keyphrase
   const part = this.abstractParts.find(
-    p => p.isKeyphrase && p.text === clickedKeyphrase && p.keyphraseMeta?.originalKeyphrase
+    (p) =>
+      p.isKeyphrase &&
+      p.text === clickedKeyphrase &&
+      p.keyphraseMeta?.originalKeyphrase
   );
+
   if (part?.keyphraseMeta?.originalKeyphrase) {
     originalKeyphrase = part.keyphraseMeta.originalKeyphrase;
   }
@@ -454,74 +505,75 @@ getSimilarityScoresAlignedToFixedYaxisPopUp(clickedKeyphrase: string): number[] 
   const cleanedKey = this.cleanKeyphrase(originalKeyphrase);
 
   // Find index in videoElement.keyphrases
-  const index = this.videoElement.keyphrases.findIndex(tuple => {
-    const candidate = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
+  return this.videoElement.keyphrases.findIndex((tuple) => {
+    const candidate = Array.isArray(tuple)
+      ? String(tuple[0])
+      : String(tuple);
     return this.cleanKeyphrase(candidate) === cleanedKey;
   });
-
-  if (index === -1) {
-    /* //  For debugging:
-    console.warn(`Keyphrase "${clickedKeyphrase}" (original: "${originalKeyphrase}") not found in article.keyphrases (after cleaning).`); */
-    return [];
-  }
-
-  const similarityObject = this.videoElement.keyphrases_concept_similarity_score[index];
-  return this.conceptsNames.map(dnu =>
-    similarityObject && Object.prototype.hasOwnProperty.call(similarityObject, dnu)
-      ? similarityObject[dnu]
-      : 0
-  );
 }
 
-hasPositiveScores = true;
+private destroyPopupChart(): void {
+  if (this.popupChart) {
+    this.popupChart.destroy();
+    this.popupChart = null;
+  }
+}
 
-generatePopupBarChart() {
-  if (!this.popupBarChartCanvas || !this.selectedKeyphrase) return;
+ generatePopupBarChart(): void {
+  if (!this.popupBarChartCanvas || !this.selectedKeyphrase) {
+    return;
+  }
 
   const canvas = this.popupBarChartCanvas.nativeElement;
 
-  const rawScores = this.getSimilarityScoresAlignedToFixedYaxisPopUp(this.selectedKeyphrase);
-  const originalLabels = this.conceptsNames;
+  // 1. Resolve clicked keyphrase → canonical keyphrase index
+  const keyphraseIndex = this.getKeyphraseIndex(this.selectedKeyphrase);
 
-  // Filter out negative scores and corresponding labels
-  let filteredData: number[] = [];
-  let filteredLabels: string[] = [];
-  let filteredColors: string[] = [];
-
-  rawScores.forEach((score, i) => {
-    if (score > 0) {
-      filteredData.push(score * 100);
-      filteredLabels.push(
-        originalLabels[i].length > 20
-          ? originalLabels[i].slice(0, 20) + '…'
-          : originalLabels[i]
-      );
-      filteredColors.push(this.conceptColors[i] || 'red');
-    }
-  });
-
-    // Limit to top 3 scores
-  const topN = 3;
-  filteredData = filteredData.slice(0, topN);
-  filteredLabels = filteredLabels.slice(0, topN);
-  filteredColors = filteredColors.slice(0, topN);
-
-  // Determine whether to show chart or message
-  this.hasPositiveScores = filteredData.length > 0;
-
-  if (!this.hasPositiveScores) {
-    // Destroy existing chart if any
-    if (this.popupChart) {
-      this.popupChart.destroy();
-      this.popupChart = null;
-    }
-    return; // message will be shown via template
+  if (
+    keyphraseIndex === -1 ||
+    !this.videoElement.keyphrases_concept_similarity_score?.[keyphraseIndex]
+  ) {
+    this.hasPositiveScores = false;
+    this.destroyPopupChart();
+    return;
   }
 
+  // 2. Backend-ranked similarity object (ORDER MATTERS)
+  const similarityObject =
+    this.videoElement.keyphrases_concept_similarity_score[keyphraseIndex];
+  // type: Record<string, number>
+
+  // 3. Take top 3 positive similarities IN BACKEND ORDER
+const rankedEntries = Object.entries(similarityObject as Record<string, number>)
+  .filter(([, score]) => score > 0)
+  .slice(0, 3);
+
+
+  this.hasPositiveScores = rankedEntries.length > 0;
+
+  if (!this.hasPositiveScores) {
+    this.destroyPopupChart();
+    return;
+  }
+
+  // 4. Prepare chart data
+  const labels = rankedEntries.map(([concept]) =>
+    concept.length > 20 ? concept.slice(0, 20) + '…' : concept
+  );
+
+  const data = rankedEntries.map(([, score]) => score * 100);
+
+  const colors = rankedEntries.map(([concept]) => {
+    const idx = this.conceptsNames.indexOf(concept);
+    return this.conceptColors[idx] || 'red';
+  });
+
+  // 5. Update or create chart
   if (this.popupChart) {
-    this.popupChart.data.labels = filteredLabels;
-    this.popupChart.data.datasets[0].data = filteredData;
-    this.popupChart.data.datasets[0].backgroundColor = filteredColors;
+    this.popupChart.data.labels = labels;
+    this.popupChart.data.datasets[0].data = data;
+    this.popupChart.data.datasets[0].backgroundColor = colors;
     this.popupChart.update('none');
     return;
   }
@@ -529,22 +581,21 @@ generatePopupBarChart() {
   this.popupChart = new Chart(canvas, {
     type: 'bar',
     data: {
-      labels: filteredLabels,
-      datasets: [{
-        label: 'Similarity Score (%)',
-        data: filteredData,
-        backgroundColor: filteredColors,
-        borderWidth: 1,
-        barThickness: 20,
-        categoryPercentage: 0.8,
-      }],
+      labels,
+      datasets: [
+        {
+          label: 'Similarity Score (%)',
+          data,
+          backgroundColor: colors,
+          barThickness: 20,
+        },
+      ],
     },
     options: {
       indexAxis: 'y',
       responsive: false,
       maintainAspectRatio: true,
       animation: { duration: 0 },
-      interaction: { mode: 'nearest', intersect: true },
       scales: {
         x: {
           beginAtZero: true,
@@ -557,30 +608,39 @@ generatePopupBarChart() {
         y: {
           grid: { display: false },
           title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } },
+
         },
       },
       plugins: {
-        tooltip: {
-          enabled: true,
-          callbacks: {
-            title: (tooltipItems) => filteredLabels[tooltipItems[0].dataIndex],
-            label: (tooltipItem) => (tooltipItem.raw as number).toFixed(2) + '%',
-          },
-        },
-        datalabels: {
-          anchor: 'end',
-          align: 'right',
-          formatter: (value) => (value as number).toFixed(2) + '%',
-          color: '#000',
-          font: { weight: 'bold' },
-        },
         legend: { display: false },
+        tooltip: {
+    enabled: true,
+    callbacks: {
+      // Use chart data labels for the title
+      title: (tooltipItems) => {
+        const idx = tooltipItems[0].dataIndex;
+        return labels[idx]; // 'labels' from rankedEntries
+      },
+      // Use chart data values for the label
+      label: (tooltipItem) => {
+        const value = tooltipItem.raw as number;
+        return value.toFixed(2) + '%';
+      },
+    },
+          },
+            datalabels: {
+           anchor: 'end',
+           align: 'right',
+           formatter: (value) => (value as number).toFixed(2) + '%',
+           color: '#000',
+           font: { weight: 'bold' },
+         },
+
       },
     },
     plugins: [ChartDataLabels],
   });
 }
-
 
 lastTarget: EventTarget | null = null;
 
