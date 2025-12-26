@@ -87,9 +87,9 @@ export class CardVideoComponent {
       this.abstractPartsTruncated = this.truncateParts(this.abstractParts, this.DESCRIPTION_MAX_LENGTH);
     }
 
-    // For debugging:
+ /*   // For debugging:
     console.log(this.videoElement);
-    console.log('hi:', this.videoElement.keyphrases_concept_similarity_score);
+    console.log('keyphrases_concept_similarity_score:', this.videoElement.keyphrases_concept_similarity_score); */
   }
   
   public readVideo(videoElement: any): void {

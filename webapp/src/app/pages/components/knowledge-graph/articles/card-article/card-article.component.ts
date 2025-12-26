@@ -124,10 +124,10 @@ export class CardArticleComponent {
     );
 
  
-      //  For debugging:
+  /*    //  For debugging:
 
     console.log(this.article); 
-    console.log('hi:', this.article.keyphrases_concept_similarity_score); /*
+    console.log('keyphrases_concept_similarity_score:', this.article.keyphrases_concept_similarity_score); 
     console.log("document_concept_similarity_colorband:", this.article.document_concept_similarity);
     console.log("coloredBandData:", this.coloredBandData);
     console.log("DNU Names:", this.conceptsNames);
