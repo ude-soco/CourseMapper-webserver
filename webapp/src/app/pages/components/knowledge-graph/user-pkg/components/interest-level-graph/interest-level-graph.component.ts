@@ -32,6 +32,8 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   private currentSearchTerm = '';
   private currentUser: User | null = null;
   private tooltipTimeout: any = null;
+  private lastEditedConceptId: string | null = null; // Track last edited concept for highlighting
+  private isUpdatingScore = false; // Flag to prevent re-render during score update
   
   @Output() conceptSelected = new EventEmitter<any>();
   @Output() visibleNodesChanged = new EventEmitter<any[]>();
@@ -103,6 +105,12 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(concepts => {
         if (concepts && concepts.length > 0) {
+          // Skip re-rendering if we're just updating a score in place
+          if (this.isUpdatingScore) {
+            console.log('[Interest Level Graph] Skipping re-render during score update');
+            this.isUpdatingScore = false;
+            return;
+          }
           console.log('[Interest Level Graph] Rendering graph with concepts:', concepts.length);
           this.renderGraph(concepts);
         }
@@ -124,6 +132,20 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
 
     const graphData = this.transformToGraphData(this.currentUser, concepts);
     
+    // Try to retrieve stored node positions
+    const storedPositions = this.getSavedNodePositions();
+    const hasStoredPositions = storedPositions && Object.keys(storedPositions).length > 0;
+    
+    // If positions exist, apply them to nodes before rendering
+    if (hasStoredPositions) {
+      graphData.nodes.forEach(node => {
+        const nodeId = node.data.id;
+        if (storedPositions[nodeId]) {
+          node.position = storedPositions[nodeId];
+        }
+      });
+    }
+    
     if (this.cy) {
       this.cy.destroy();
     }
@@ -139,21 +161,21 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       elements: [...graphData.nodes, ...graphData.edges],
       style: this.getCytoscapeStyle(),
       layout: {
-        name: 'cose',
-        idealEdgeLength: 100,
-        nodeOverlap: 20,
+        name: hasStoredPositions ? 'preset' : 'cose',
+        idealEdgeLength: 150,
+        nodeOverlap: 40,
         refresh: 20,
-        fit: true,
-        padding: 30,
+        fit: !hasStoredPositions, // Don't fit if we're using stored positions
+        padding: 50,
         randomize: false,
-        componentSpacing: 100,
-        nodeRepulsion: 400000,
-        edgeElasticity: 100,
-        nestingFactor: 5,
-        gravity: 80,
-        numIter: 1000,
-        initialTemp: 200,
-        coolingFactor: 0.95,
+        componentSpacing: 150,
+        nodeRepulsion: 800000,
+        edgeElasticity: 200,
+        nestingFactor: 1,
+        gravity: 50,
+        numIter: 2000,
+        initialTemp: 300,
+        coolingFactor: 0.99,
         minTemp: 1.0
       },
       wheelSensitivity: 0.2,
@@ -256,6 +278,16 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     }, 100);
 
     this.applySearchHighlight();
+    
+    // If we have a last edited concept, highlight it
+    if (this.lastEditedConceptId) {
+      this.highlightEditedConcept(this.lastEditedConceptId);
+      // Clear the edited concept marker after 5 seconds
+      setTimeout(() => {
+        this.lastEditedConceptId = null;
+        this.clearSavedNodePositions();
+      }, 5000);
+    }
   }
 
   private transformToGraphData(user: User, concepts: InterestConcept[]): InterestGraphData {
@@ -419,6 +451,14 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         }
       },
       {
+        selector: 'node.recently-edited',
+        style: {
+          'border-width': '5px',
+          'border-color': '#10B981',
+          'border-style': 'solid'
+        }
+      },
+      {
         selector: 'edge',
         style: {
           'width': 3,
@@ -550,13 +590,12 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
             detail: `Interest score for "${this.currentConceptName}" updated to ${this.adjustedScore.toFixed(3)} (${this.currentConceptIds.length} concept instances)`
           });
           
-          // Update the edge label in the current graph without reloading
+          // Update the edge label and node in the current graph without reloading
           this.updateEdgeScore(this.currentConceptId, this.adjustedScore);
           
-          // Update all concepts with this name in the store
-          this.currentConceptIds.forEach(conceptId => {
-            this.updateConceptInStore(conceptId, this.adjustedScore);
-          });
+          // Update store silently (set flag BEFORE dispatching)
+          this.isUpdatingScore = true;
+          this.updateAllConceptsInStore(this.currentConceptIds, this.adjustedScore);
           
           // Reset state
           this.originalScore = this.adjustedScore;
@@ -592,19 +631,21 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     }
   }
   
-  private updateConceptInStore(conceptId: string, newScore: number): void {
-    // Get current concepts from store
+  private updateAllConceptsInStore(conceptIds: string[], newScore: number): void {
+    // Get current concepts from store and update all matching concept IDs in a single dispatch
     this.store.select(PkgInterestSelectors.selectInterestConcepts)
       .pipe(take(1))
       .subscribe(concepts => {
-        // Update the specific concept's score
+        const conceptIdSet = new Set(conceptIds);
+        
+        // Update all concepts with matching IDs
         const updatedConcepts = concepts.map(concept => 
-          concept.conceptId === conceptId 
+          conceptIdSet.has(concept.conceptId)
             ? { ...concept, interestScore: newScore }
             : concept
         );
         
-        // Dispatch action to update store
+        // Single dispatch to update store
         this.store.dispatch(PkgInterestActions.loadInterestGraphSuccess({ concepts: updatedConcepts }));
       });
   }
@@ -803,6 +844,89 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       
       angleOffset += angleStep;
     });
+  }
+
+  // Node position persistence methods
+  private saveNodePositions(): void {
+    if (!this.cy || !this.currentUser) return;
+    
+    const positions: { [key: string]: { x: number; y: number } } = {};
+    
+    this.cy.nodes().forEach((node: any) => {
+      const pos = node.position();
+      positions[node.id()] = { x: pos.x, y: pos.y };
+    });
+    
+    const storageKey = `interest_graph_positions_${this.currentUser.id}`;
+    sessionStorage.setItem(storageKey, JSON.stringify(positions));
+    
+    console.log('[Interest Level] Saved node positions to sessionStorage');
+  }
+  
+  private getSavedNodePositions(): { [key: string]: { x: number; y: number } } | null {
+    if (!this.currentUser) return null;
+    
+    const storageKey = `interest_graph_positions_${this.currentUser.id}`;
+    const stored = sessionStorage.getItem(storageKey);
+    
+    if (stored) {
+      try {
+        const positions = JSON.parse(stored);
+        console.log('[Interest Level] Loaded node positions from sessionStorage');
+        return positions;
+      } catch (e) {
+        console.error('[Interest Level] Error parsing stored positions:', e);
+        return null;
+      }
+    }
+    
+    return null;
+  }
+  
+  private clearSavedNodePositions(): void {
+    if (!this.currentUser) return;
+    
+    const storageKey = `interest_graph_positions_${this.currentUser.id}`;
+    sessionStorage.removeItem(storageKey);
+    
+    console.log('[Interest Level] Cleared saved node positions');
+  }
+  
+  private highlightEditedConcept(conceptId: string): void {
+    if (!this.cy) return;
+    
+    // Find the node with this concept ID
+    const node = this.cy.getElementById(`concept_${conceptId}`);
+    
+    if (node && node.length > 0) {
+      // Add a temporary highlight class
+      node.addClass('recently-edited');
+      
+      // Center on this node without zooming too much
+      this.cy.animate({
+        center: { eles: node },
+        zoom: this.cy.zoom(), // Keep current zoom level
+        duration: 500
+      });
+      
+      // Flash the node
+      let flashCount = 0;
+      const flashInterval = setInterval(() => {
+        if (flashCount < 4) {
+          node.toggleClass('recently-edited');
+          flashCount++;
+        } else {
+          clearInterval(flashInterval);
+          node.addClass('recently-edited');
+          // Remove highlight after a delay
+          setTimeout(() => {
+            node.removeClass('recently-edited');
+          }, 3000);
+        }
+      }, 300);
+      
+      console.log('[Interest Level] Highlighted edited concept:', conceptId);
+    }
   }
 }
 

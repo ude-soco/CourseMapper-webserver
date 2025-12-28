@@ -40,6 +40,10 @@ export interface InterestGraphNode {
     abstract?: string;
     interestScore?: number | null;
   };
+  position?: {
+    x: number;
+    y: number;
+  };
 }
 
 /**
