@@ -191,6 +191,8 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   // Concept selection
   onConceptSelected(conceptData: any): void {
     this.selectedConcept = conceptData;
+    // Clear previous details first to prevent overlapping
+    this.conceptDetails = [];
     this.showConceptDetails = true;
     
     this.rawConceptRecords$

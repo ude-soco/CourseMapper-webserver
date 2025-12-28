@@ -58,12 +58,17 @@ export class PkgConceptDetailsPanelComponent implements OnChanges {
   ) {}
 
   ngOnChanges(): void {
+    // Clear the tree first to prevent overlapping
+    this.courseTree = [];
+    
     if (this.details && this.details.length > 0) {
       this.buildCourseTree();
     }
   }
 
   private buildCourseTree(): void {
+    // Clear any existing tree data
+    this.courseTree = [];
     const courseMap = new Map<string, CourseNode>();
 
     this.details.forEach(detail => {
