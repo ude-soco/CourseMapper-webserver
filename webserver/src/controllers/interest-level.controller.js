@@ -1,20 +1,22 @@
 const fs = require('fs').promises;
 const path = require('path');
 
+// Path to interest scores JSON file
+const INTEREST_SCORES_PATH = path.join(
+  __dirname,
+  '../../../coursemapper-kg/recommendation/level-of-interest/data/interest_scores.json'
+);
+
 /**
  * Get interest level data for a specific user and concept
+ * Reads from the JSON file which now contains manually adjusted scores as well
  */
 exports.getUserConceptInterest = async (req, res) => {
   try {
     const { userId, conceptName } = req.params;
     
     // Read interest_scores.json file
-    const interestScoresPath = path.join(
-      __dirname,
-      '../../../coursemapper-kg/recommendation/level-of-interest/data/interest_scores.json'
-    );
-    
-    const fileContent = await fs.readFile(interestScoresPath, 'utf8');
+    const fileContent = await fs.readFile(INTEREST_SCORES_PATH, 'utf8');
     const interestScoresData = JSON.parse(fileContent);
     
     // Get user data
@@ -35,7 +37,7 @@ exports.getUserConceptInterest = async (req, res) => {
       });
     }
     
-    // Return concept data
+    // Return concept data (already includes manually_adjusted flag if set)
     res.status(200).json(conceptData);
     
   } catch (error) {
@@ -55,12 +57,7 @@ exports.getAllUserInterests = async (req, res) => {
     const { userId } = req.params;
     
     // Read interest_scores.json file
-    const interestScoresPath = path.join(
-      __dirname,
-      '../../../coursemapper-kg/recommendation/level-of-interest/data/interest_scores.json'
-    );
-    
-    const fileContent = await fs.readFile(interestScoresPath, 'utf8');
+    const fileContent = await fs.readFile(INTEREST_SCORES_PATH, 'utf8');
     const interestScoresData = JSON.parse(fileContent);
     
     // Get user data
@@ -86,6 +83,7 @@ exports.getAllUserInterests = async (req, res) => {
 
 /**
  * Get top concepts by interest score for a user
+ * Reads from the JSON file which now contains manually adjusted scores
  */
 exports.getTopConceptsByInterest = async (req, res) => {
   try {
@@ -93,12 +91,7 @@ exports.getTopConceptsByInterest = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     
     // Read interest_scores.json file
-    const interestScoresPath = path.join(
-      __dirname,
-      '../../../coursemapper-kg/recommendation/level-of-interest/data/interest_scores.json'
-    );
-    
-    const fileContent = await fs.readFile(interestScoresPath, 'utf8');
+    const fileContent = await fs.readFile(INTEREST_SCORES_PATH, 'utf8');
     const interestScoresData = JSON.parse(fileContent);
     
     // Get user data
@@ -110,7 +103,7 @@ exports.getTopConceptsByInterest = async (req, res) => {
       });
     }
     
-    // Extract concepts and their scores
+    // Extract concepts and their scores (JSON file already has correct scores including manual adjustments)
     const concepts = Object.entries(userData.concepts).map(([name, data]) => ({
       name: name,
       score: data.normalized_scores?.min_max_interpolation || 0,
@@ -141,12 +134,7 @@ exports.getAllUserActivities = async (req, res) => {
     const { userId } = req.params;
     
     // Read interest_scores.json file
-    const interestScoresPath = path.join(
-      __dirname,
-      '../../../coursemapper-kg/recommendation/level-of-interest/data/interest_scores.json'
-    );
-    
-    const fileContent = await fs.readFile(interestScoresPath, 'utf8');
+    const fileContent = await fs.readFile(INTEREST_SCORES_PATH, 'utf8');
     const interestScoresData = JSON.parse(fileContent);
     
     // Get user data

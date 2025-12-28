@@ -578,7 +578,8 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     this.pkgService.updateInterestScoreForMultipleConcepts(
       this.currentUser.id,
       this.currentConceptIds,
-      this.adjustedScore
+      this.adjustedScore,
+      this.currentConceptName // Pass concept name to update JSON file
     ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {

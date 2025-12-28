@@ -1831,12 +1831,13 @@ export const updateInterestScore = async (req, res) => {
 /**
  * Batch update interest scores for multiple concept IDs (handles duplicates)
  * Updates all concept IDs that share the same concept name
+ * Also updates the interest_scores.json file to keep dashboard in sync
  * 
  * PUT /api/pkg/:userId/interests/batch
  */
 export const updateInterestScoreBatch = async (req, res) => {
   const { userId } = req.params;
-  const { conceptIds, score } = req.body;
+  const { conceptIds, score, conceptName } = req.body;
 
   // Validate input
   if (!Array.isArray(conceptIds) || conceptIds.length === 0) {
@@ -1855,6 +1856,17 @@ export const updateInterestScoreBatch = async (req, res) => {
     // Update all concept IDs in Neo4j
     const results = await neo4j.updateInterestScoreBatch(userId, conceptIds, score);
     
+    // Also update the JSON file if conceptName is provided
+    if (conceptName) {
+      try {
+        await updateInterestScoreInJsonFile(userId, conceptName, score);
+        console.log(`[Interest Score Batch Update] Also updated JSON file for concept "${conceptName}"`);
+      } catch (jsonError) {
+        console.warn('[Interest Score Batch Update] Could not update JSON file:', jsonError.message);
+        // Don't fail the request, Neo4j was already updated
+      }
+    }
+    
     console.log(`[Interest Score Batch Update] User ${userId} adjusted score for ${conceptIds.length} concepts to ${score}`);
     
     return res.status(200).send({
@@ -1871,6 +1883,45 @@ export const updateInterestScoreBatch = async (req, res) => {
     return res.status(500).send({ error: err.message });
   }
 };
+
+/**
+ * Helper function to update interest score in the JSON file
+ * @param {string} userId - User ID
+ * @param {string} conceptName - Concept name
+ * @param {number} score - New score
+ */
+async function updateInterestScoreInJsonFile(userId, conceptName, score) {
+  const fs = await import('fs');
+  const path = await import('path');
+  
+  const interestScoresPath = path.join(
+    process.cwd(),
+    '../coursemapper-kg/recommendation/level-of-interest/data/interest_scores.json'
+  );
+  
+  // Read current file
+  const fileContent = fs.readFileSync(interestScoresPath, 'utf8');
+  const interestScoresData = JSON.parse(fileContent);
+  
+  // Check if user and concept exist
+  if (interestScoresData[userId] && interestScoresData[userId].concepts[conceptName]) {
+    // Update all normalized scores with the manually adjusted value
+    interestScoresData[userId].concepts[conceptName].normalized_scores = {
+      min_max_interpolation: score,
+      z_score_k2: score,
+      z_score_k3: score
+    };
+    interestScoresData[userId].concepts[conceptName].manually_adjusted = true;
+    interestScoresData[userId].concepts[conceptName].adjusted_at = new Date().toISOString();
+    
+    // Write back to file
+    fs.writeFileSync(interestScoresPath, JSON.stringify(interestScoresData, null, 2), 'utf8');
+    
+    console.log(`[Interest Score] Updated JSON file for user ${userId}, concept "${conceptName}" to score ${score}`);
+  } else {
+    console.warn(`[Interest Score] User ${userId} or concept "${conceptName}" not found in JSON file`);
+  }
+}
 
 /**
  * Get course hierarchy for advanced filters

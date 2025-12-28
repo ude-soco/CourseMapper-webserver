@@ -57,12 +57,13 @@ export class PkgService {
    * @param userId - User ID
    * @param conceptIds - Array of concept IDs to update
    * @param score - New interest score (0-1)
+   * @param conceptName - Concept name (used to update JSON file for dashboard)
    * @returns Observable with update confirmation
    */
-  updateInterestScoreForMultipleConcepts(userId: string, conceptIds: string[], score: number): Observable<any> {
+  updateInterestScoreForMultipleConcepts(userId: string, conceptIds: string[], score: number, conceptName: string): Observable<any> {
     return this.http.put(
       `${environment.API_URL}/pkg/${userId}/interests/batch`,
-      { conceptIds, score }
+      { conceptIds, score, conceptName }
     );
   }
 }
