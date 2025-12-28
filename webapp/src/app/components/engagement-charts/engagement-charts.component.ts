@@ -3807,16 +3807,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
       overallThresholdTotal += categoryThresholdTotal;
     }
 
-    // Use totalActivities for overall totals if available to ensure accuracy
+    // Use totalActivities for threshold if available to ensure accuracy
     // especially when category-level thresholds are missing or incomplete
     const totalActivitiesBoundary = this.higherLevelBoundaries?.boundaries?.['totalActivities'];
     if (totalActivitiesBoundary && totalActivitiesBoundary.minimum > 0) {
       overallThresholdTotal = totalActivitiesBoundary.minimum;
     }
 
-    if (this.engagementMetrics?.metrics?.totalActivities) {
-      overallUserTotal = this.engagementMetrics.metrics.totalActivities;
-    }
 
     const meetsOverallThreshold = overallUserTotal >= overallThresholdTotal;
     const overallPercentage = overallThresholdTotal > 0
