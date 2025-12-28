@@ -19,6 +19,7 @@ export interface EngagementMetrics {
     totalAddedAnnotations: number;
     totalAnnotationsReplied: number;
     totalAnnotationsFollowed: number;
+    totalAnnotationsMentioned: number;
     totalLikesOnAnnotations: number;
     totalDislikesOnAnnotations: number;
     totalAddedTags: number;

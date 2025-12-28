@@ -2188,7 +2188,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     if (this.annotationInteractionsData) {
       const data = [
         metrics.totalAnnotationsFollowed || 0,
-        metrics.totalUserMentionedRepliedActivities || 0,
+        metrics.totalAnnotationsMentioned || 0,
         metrics.totalAnnotationsReplied || 0
       ];
       this.annotationInteractionsData = {
@@ -4202,7 +4202,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
         chartLabel: 'Annotation Interactions',
         metrics: [
           { key: 'totalAnnotationsFollowed', userKey: 'totalAnnotationsFollowed', peerKey: 'totalAnnotationsFollowed', label: 'Annotations followed' },
-          { key: 'totalUserMentionedRepliedActivities', userKey: 'totalUserMentionedRepliedActivities', peerKey: 'totalUserMentionedRepliedActivities', label: 'Annotations mentioned' },
+          { key: 'totalAnnotationsMentioned', userKey: 'totalAnnotationsMentioned', peerKey: 'totalAnnotationsMentioned', label: 'Annotations mentioned' },
           { key: 'totalAnnotationsReplied', userKey: 'totalAnnotationsReplied', peerKey: 'totalAnnotationsReplied', label: 'Annotations replied' }
         ]
       },

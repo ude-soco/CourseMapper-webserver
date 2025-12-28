@@ -235,6 +235,7 @@ async function processUserCourseActivities(userId, courseId, activities) {
     
     // User interaction metrics
     totalUserMentionedRepliedActivities: 0,
+    totalAnnotationsMentioned: 0,
     totalActivities: 0,
     
     // Detailed breakdowns
@@ -667,6 +668,10 @@ async function processUserCourseActivities(userId, courseId, activities) {
       if (normalizedObjectType === "annotation" || normalizedObjectType === "user" ||
           objectId.includes("annotation") || objectId.includes("user")) {
         metrics.totalUserMentionedRepliedActivities++;
+        // Track mentioned and replied separately
+        if (verb.toLowerCase().includes("mentioned")) {
+          metrics.totalAnnotationsMentioned++;
+        }
       }
     }
   });
@@ -973,6 +978,7 @@ export const getSameEngagementLevelStats = async (req, res) => {
         totalAddedAnnotations: metrics.totalAddedAnnotations || 0,
         totalAnnotationsReplied: metrics.totalAnnotationsReplied || 0,
         totalAnnotationsFollowed: metrics.totalAnnotationsFollowed || 0,
+        totalAnnotationsMentioned: metrics.totalAnnotationsMentioned || 0,
         totalLikesOnAnnotations: metrics.totalLikesOnAnnotations || 0,
         totalDislikesOnAnnotations: metrics.totalDislikesOnAnnotations || 0,
         totalAddedTags: metrics.totalAddedTags || 0,
@@ -1059,7 +1065,7 @@ export const getSameEngagementLevelStats = async (req, res) => {
     const statistics = {};
     const metricKeys = [
       // Annotation metrics
-      'totalAddedAnnotations', 'totalAnnotationsReplied', 'totalAnnotationsFollowed',
+      'totalAddedAnnotations', 'totalAnnotationsReplied', 'totalAnnotationsFollowed', 'totalAnnotationsMentioned',
       'totalLikesOnAnnotations', 'totalDislikesOnAnnotations', 'totalAddedTags', 'totalTagViewed',
       // Material metrics
       'videosStarted', 'videosCompleted', 'videosPauses', 'timeSpentOnVideos',
