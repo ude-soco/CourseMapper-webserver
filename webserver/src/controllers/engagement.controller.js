@@ -322,11 +322,20 @@ async function processUserCourseActivities(userId, courseId, activities) {
     }
 
     // Annotation interactions
-    if (verb.toLowerCase().includes("replied") && objectType === "annotation") {
-      metrics.totalAnnotationsReplied++;
+    if (verb.toLowerCase().includes("replied")) {
+      if (normalizedObjectType === "annotation" || normalizedObjectType === "user" || normalizedObjectType === "you" ||
+          objectId.includes("annotation") || objectId.includes("user")) {
+        metrics.totalAnnotationsReplied++;
+      }
     }
     if (verb.toLowerCase().includes("followed")) {
       metrics.totalAnnotationsFollowed++;
+    }
+    if (verb.toLowerCase().includes("mentioned")) {
+      if (normalizedObjectType === "annotation" || normalizedObjectType === "user" || normalizedObjectType === "you" ||
+          objectId.includes("annotation") || objectId.includes("user")) {
+        metrics.totalAnnotationsMentioned++;
+      }
     }
 
     // Likes/Dislikes
@@ -663,15 +672,11 @@ async function processUserCourseActivities(userId, courseId, activities) {
       }
     }
 
-    // User mentioned/replied activities
+    // User mentioned/replied activities (combined metric for backwards compatibility)
     if (verb.toLowerCase().includes("mentioned") || verb.toLowerCase().includes("replied")) {
-      if (normalizedObjectType === "annotation" || normalizedObjectType === "user" ||
+      if (normalizedObjectType === "annotation" || normalizedObjectType === "user" || normalizedObjectType === "you" ||
           objectId.includes("annotation") || objectId.includes("user")) {
         metrics.totalUserMentionedRepliedActivities++;
-        // Track mentioned and replied separately
-        if (verb.toLowerCase().includes("mentioned")) {
-          metrics.totalAnnotationsMentioned++;
-        }
       }
     }
   });
