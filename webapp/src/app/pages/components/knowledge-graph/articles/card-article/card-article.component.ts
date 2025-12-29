@@ -744,7 +744,7 @@ const rankedEntries = Object.entries(similarityObject as Record<string, number>)
 
   const percentage = (score * 100).toFixed(2);
   
-  return `The keyphrase "${keyphrase}" is most similar to the concept "${concept}" with a similarity of ${percentage}%.`;
+  return `The keyphrase "${keyphrase}" is the most similar to the concept "${concept}" with a similarity of ${percentage}%.`;
 }
 
 }
