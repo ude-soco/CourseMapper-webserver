@@ -140,11 +140,59 @@ export async function deleteMaterial(materialId) {
 }
 
 export async function deleteCourse(courseId) {
-  const { records, summary, keys } = await graphDb.driver.executeQuery(
-    "MATCH (c:Course) WHERE c.cid = $cid DETACH DELETE c",
-    { cid: courseId }
-  );
-  return recordsToObjects(records);
+  const session = graphDb.driver.session();
+  try {
+    const result = await session.executeWrite(async (tx) => {
+      // Step 1: Find and delete concepts that only belong to this course's slides
+      // A concept should be deleted only if ALL slides it belongs to are from materials of this course
+      await tx.run(
+        `
+        MATCH (lm:LearningMaterial {course_id: $courseId})-[:CONTAINS]->(s:Slide)-[:CONSISTS_OF]->(concept:Concept)
+        WITH concept
+        // Check if this concept is connected to ANY slides from OTHER courses
+        OPTIONAL MATCH (otherLm:LearningMaterial)-[:CONTAINS]->(otherSlide:Slide)-[:CONSISTS_OF]->(concept)
+        WHERE otherLm.course_id <> $courseId
+        WITH concept, COUNT(DISTINCT otherSlide) as otherSlideCount
+        WHERE otherSlideCount = 0
+        DETACH DELETE concept
+        `,
+        { courseId }
+      );
+      
+      // Step 2: Delete all slides that belong to this course's materials
+      await tx.run(
+        `
+        MATCH (lm:LearningMaterial {course_id: $courseId})-[:CONTAINS]->(s:Slide)
+        DETACH DELETE s
+        `,
+        { courseId }
+      );
+      
+      // Step 3: Delete all learning materials that belong to this course
+      await tx.run(
+        `
+        MATCH (lm:LearningMaterial {course_id: $courseId})
+        DETACH DELETE lm
+        `,
+        { courseId }
+      );
+      
+      // Step 4: Delete the course itself with all its relationships
+      const response = await tx.run(
+        "MATCH (c:Course {cid: $cid}) DETACH DELETE c",
+        { cid: courseId }
+      );
+      
+      return recordsToObjects(response.records);
+    });
+    console.log(`Deleted course ${courseId} with its materials, slides, and exclusive concepts`);
+    return result;
+  } catch (error) {
+    console.error("Error deleting course and related nodes:", error);
+    throw error;
+  } finally {
+    await session.close();
+  }
 }
 
 export async function getMaterialEdges(materialId) {
