@@ -211,7 +211,7 @@
                               (change)="toggleCourseSelection(course._id)"
                               class="cursor-pointer rounded border-gray-300 text-blue-500 focus:ring-blue-500">
                             <span class="text-sm text-gray-700 truncate" [title]="course.name">
-                              {{ course.shortName || course.name }}
+                              {{ course.name }}
                             </span>
                           </label>
                         </div>
@@ -1665,8 +1665,17 @@
                   </td>
                   <td *ngIf="annotationDetailsCategory === 'likesdislikes'">
                     <span class="flex items-center gap-1">
-                      <i class="pi" [ngClass]="activity.action === 'like' ? 'pi-thumbs-up text-green-600' : 'pi-thumbs-down text-red-600'"></i>
-                      {{ activity.action }}
+                      <i class="pi" [ngClass]="{
+                        'pi-thumbs-up text-green-600': activity.action === 'like',
+                        'pi-thumbs-down text-red-600': activity.action === 'dislike',
+                        'pi-thumbs-up-fill text-gray-400': activity.action === 'unlike',
+                        'pi-thumbs-down-fill text-gray-400': activity.action === 'undislike'
+                      }"></i>
+                      <span [ngClass]="{
+                        'text-green-700': activity.action === 'like',
+                        'text-red-700': activity.action === 'dislike',
+                        'text-gray-500 line-through': activity.action === 'unlike' || activity.action === 'undislike'
+                      }">{{ activity.action }}</span>
                     </span>
                   </td>
                   <td *ngIf="annotationDetailsCategory === 'tags'">

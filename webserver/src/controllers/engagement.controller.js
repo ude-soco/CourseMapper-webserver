@@ -1212,12 +1212,22 @@ export const getAnnotationActivityDetails = async (req, res) => {
       }
 
       // 3. Likes and Dislikes on annotations
+      // Only include "liked" and "disliked" actions, excluding "unliked" and "un-disliked"
       if ((category === 'all' || category === 'likesdislikes') &&
           (verb.toLowerCase() === "liked" || verb.toLowerCase() === "disliked") &&
           (objectType === "note" || objectType === "question" || objectType === "external-resource" || objectType === "annotation")) {
         result.likesAndDislikes.push({ 
           ...activityDetail, 
           action: verb.toLowerCase() === "liked" ? 'like' : 'dislike'
+        });
+      }
+      // Also track "unliked" and "un-disliked" actions separately for negative activity tracking
+      if ((category === 'all' || category === 'likesdislikes') &&
+          (verb.toLowerCase() === "unliked" || verb.toLowerCase() === "un-disliked") &&
+          (objectType === "note" || objectType === "question" || objectType === "external-resource" || objectType === "annotation")) {
+        result.likesAndDislikes.push({ 
+          ...activityDetail, 
+          action: verb.toLowerCase() === "unliked" ? 'unlike' : 'undislike'
         });
       }
 
