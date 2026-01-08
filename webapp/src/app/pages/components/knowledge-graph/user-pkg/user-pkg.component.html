@@ -23,8 +23,8 @@
     
     <!-- Graph Visualization with Overlaid Controls -->
     <div *ngIf="(isLoading$ | async) === false" class="graph-wrapper">
-      <!-- Empty Concepts Banner -->
-      <div *ngIf="!(rawConceptRecords$ | async)?.length" class="empty-concepts-banner">
+      <!-- Empty Concepts Banner (Only show in Knowledge State PKG, not Interest Level PKG) -->
+      <div *ngIf="!(rawConceptRecords$ | async)?.length && (viewMode$ | async) !== 'interest'" class="empty-concepts-banner">
         <i class="pi pi-info-circle"></i>
         <span>You have no marked concepts. 
           Go to learning materials and mark concepts  as understood or not understood  build your personal knowledge graph</span>
