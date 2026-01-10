@@ -1,6 +1,7 @@
 import pandas as pd
 import pymongo
 from bson.objectid import ObjectId
+import os
 
 from config import Config
 from .course_materials import CourseMaterials
@@ -14,6 +15,10 @@ class Prerequisite:
         self.course_id = course_id
         self.db = DBConnection()
         self.concepts = pd.DataFrame()
+        
+        # Get the project root directory (where the script is located)
+        self.output_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        print(f"Output directory set to: {self.output_dir}")
 
     def find_prerequisite_course(self):
         print("get list of courses")
@@ -54,8 +59,10 @@ class Prerequisite:
         related_relationships = clean_data.get_related_relationships()
         print("related_relationships", related_relationships)
 
-        concept_dict.to_csv("clean_data_simple.csv")
-        concept_dict = pd.read_csv("clean_data_simple.csv", index_col=0)
+        # Use absolute paths for CSV files
+        clean_data_path = os.path.join(self.output_dir, "clean_data_simple.csv")
+        concept_dict.to_csv(clean_data_path)
+        concept_dict = pd.read_csv(clean_data_path, index_col=0)
 
 
 
@@ -64,7 +71,8 @@ class Prerequisite:
         print("prerequisite", prerequisite)
         prerequisite_relationships = prerequisite.get_prerequisite_relationships()
         #results 
-        prerequisite_relationships.to_csv("prerequisite_relationships_datamining.csv")
+        prerequisite_path = os.path.join(self.output_dir, "prerequisite_relationships_datamining.csv")
+        prerequisite_relationships.to_csv(prerequisite_path)
 
         print("Add relationships to graph")
 

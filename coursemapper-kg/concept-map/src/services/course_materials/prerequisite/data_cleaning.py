@@ -60,6 +60,12 @@ class DataCleaning():
     def parse_data(self, url):
             def worker(url, result):
                 try:
+                    # Check if URL is valid and not empty
+                    if not url or not isinstance(url, str) or url.strip() == '':
+                        print(f"Invalid or empty URL provided: {url}")
+                        result.append(pd.DataFrame())
+                        return
+                    
                     g = Graph()
                     g.parse(url)
 
@@ -176,6 +182,14 @@ class DataCleaning():
         for url in url_list:
             # print(f"Processing URL #{counter}: {url}")
             try:
+                # Skip invalid URLs (None, NaN, empty strings)
+                if pd.isna(url) or not url or (isinstance(url, str) and url.strip() == ''):
+                    print(f"Skipping invalid URL at index {counter}")
+                    cats.append(set())
+                    supercats.append(set())
+                    counter += 1
+                    continue
+                
                 rel_con = self.parse_data(url)
                 # Get the initial category set
                 category = set(self.get_category(rel_con))
