@@ -20,11 +20,12 @@ dotenv.config();
 
 const db = require("../models");
 const Activity = db.activity;
+const Material = db.material;
 
 /**
  * Execute Python script to handle enrollment
  */
-function handleEnrollment(userId, courseId) {
+function handleEnrollment(userId, courseId, materialIds) {
   return new Promise((resolve, reject) => {
     const scriptPath = path.join(__dirname, '../../../coursemapper-kg/recommendation/level-of-interest/scripts/handle_enrollment.py');
     
@@ -33,7 +34,9 @@ function handleEnrollment(userId, courseId) {
       ? 'C:/Users/Belal Elbehairy/AppData/Local/Programs/Python/Python311/python.exe'
       : 'python';
     
-    const proc = spawn(pythonCmd, [scriptPath, userId, courseId], {
+    // Pass material IDs as comma-separated string
+    const materialIdsStr = materialIds.join(',');
+    const proc = spawn(pythonCmd, [scriptPath, userId, courseId, materialIdsStr], {
       stdio: 'pipe',
       shell: false
     });
@@ -118,7 +121,18 @@ async function processEnrollments() {
       console.log(`Processing: ${username} enrolled in course ${courseId}`);
       
       try {
-        const result = await handleEnrollment(userId, courseId);
+        // Query MongoDB to get all material IDs for this course
+        const materials = await Material.find({ courseId: courseId }).select('_id').lean();
+        const materialIds = materials.map(m => m._id.toString());
+        
+        if (materialIds.length === 0) {
+          console.log(`Warning: No materials found for course ${courseId}`);
+          continue;
+        }
+        
+        console.log(`Found ${materialIds.length} materials for course ${courseId}`);
+        
+        const result = await handleEnrollment(userId, courseId, materialIds);
         
         // Parse result to get concept count
         const match = result.match(/Initialized interest for (\d+) main concepts/);
