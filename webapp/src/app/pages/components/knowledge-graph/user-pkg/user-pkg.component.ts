@@ -198,10 +198,22 @@ export class UserPkgComponent implements OnInit, OnDestroy {
     this.conceptDetails = [];
     this.showConceptDetails = true;
     
-    this.rawConceptRecords$
+    // Check view mode to determine how to fetch concept details
+    this.viewMode$
       .pipe(take(1))
-      .subscribe((records) => {
-        this.conceptDetails = this.extractConceptDetails(conceptData.cid, records);
+      .subscribe((viewMode) => {
+        if (viewMode === 'interest') {
+          // For interest mode, fetch occurrence data on-demand
+          // Interest PKG doesn't load rawConceptRecords initially, so we need to fetch it
+          this.fetchConceptOccurrencesForInterest(conceptData);
+        } else {
+          // For knowledge/engagement modes, use existing rawConceptRecords
+          this.rawConceptRecords$
+            .pipe(take(1))
+            .subscribe((records) => {
+              this.conceptDetails = this.extractConceptDetails(conceptData.cid, records);
+            });
+        }
       });
   }
   
@@ -491,6 +503,127 @@ export class UserPkgComponent implements OnInit, OnDestroy {
       }
     });
     
+    return details;
+  }
+
+  // Fetch concept occurrences specifically for interest level PKG
+  // Interest PKG only loads InterestConcepts (without slide/material details)
+  // So we need to fetch occurrence data on-demand from the backend
+  private fetchConceptOccurrencesForInterest(conceptData: any): void {
+    if (!this.currentUserId) {
+      console.error('[Interest PKG] No user ID available');
+      return;
+    }
+
+    console.log('[Interest PKG] Fetching occurrences for concept:', conceptData);
+
+    // Check if rawConceptRecords already has data (might be loaded in knowledge mode first)
+    this.rawConceptRecords$
+      .pipe(take(1))
+      .subscribe((existingRecords) => {
+        if (existingRecords && existingRecords.length > 0) {
+          // rawConceptRecords already loaded, extract details from existing data
+          console.log('[Interest PKG] Using existing rawConceptRecords');
+          this.conceptDetails = this.extractConceptDetailsForInterest(
+            conceptData.cid,
+            conceptData.name,
+            existingRecords
+          );
+          
+          // Enrich selectedConcept with course info if available
+          const conceptRecord = existingRecords.find(r => 
+            r.cid === conceptData.cid || 
+            r.name.toLowerCase() === conceptData.name.toLowerCase()
+          );
+          if (conceptRecord && !this.selectedConcept?.['courseName']) {
+            this.selectedConcept = {
+              ...this.selectedConcept,
+              courseName: conceptRecord.courseName,
+              courseShortName: conceptRecord.courseShortName,
+              courseId: conceptRecord.courseId
+            };
+          }
+        } else {
+          // No existing data, show message that occurrences are not available
+          // In pure interest mode, rawConceptRecords is not loaded by default
+          console.log('[Interest PKG] No rawConceptRecords available, showing course info only');
+          this.conceptDetails = [];
+          
+          // Show informative message
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Occurrence Details',
+            detail: 'Switch to Knowledge view to see detailed occurrence information',
+          });
+        }
+      });
+  }
+
+  // Extract concept details specifically for interest level PKG
+  // This handles the data structure returned from the interest-specific API
+  private extractConceptDetailsForInterest(
+    conceptId: string,
+    conceptName: string,
+    rawConceptRecords: ConceptRecord[]
+  ): ConceptDetail[] {
+    const details: ConceptDetail[] = [];
+    const conceptNameLower = conceptName.toLowerCase().trim();
+
+    console.log('[Interest PKG] Extracting details for:', conceptName, 'from', rawConceptRecords.length, 'records');
+
+    // For interest PKG, we match by concept name (since the concept might appear in multiple courses)
+    // We also check Wikipedia URL if available for more accurate matching
+    const matchingRecords = rawConceptRecords.filter(record => {
+      const nameMatch = record.name.toLowerCase().trim() === conceptNameLower;
+      const wikipediaMatch = record.wikipedia && 
+        rawConceptRecords[0]?.wikipedia && 
+        record.wikipedia.toLowerCase().trim() === rawConceptRecords[0].wikipedia.toLowerCase().trim();
+      return nameMatch || wikipediaMatch;
+    });
+
+    console.log('[Interest PKG] Found', matchingRecords.length, 'matching records');
+
+    // Extract details from matching records
+    matchingRecords.forEach(record => {
+      const slides = record.slides || [];
+      const validSlides = slides.filter(s => s.sid && s.name);
+
+      if (validSlides.length > 0) {
+        // Create detail entry for each slide
+        validSlides.forEach(slide => {
+          details.push({
+            slideId: slide.sid || undefined,
+            slideName: slide.name || 'Unknown Slide',
+            materialId: record.materialId || record.mid || '',
+            materialName: record.materialName || 'Unknown Material',
+            materialType: record.materialType,
+            courseId: record.courseId,
+            courseName: record.courseName || 'Unknown Course',
+            courseShortName: record.courseShortName,
+            channelId: record.channelId,
+            relationshipType: record.relationshipType === 'u' || record.relationshipType === 'dnu' 
+              ? record.relationshipType : undefined,
+          });
+        });
+      } else if (record.materialId) {
+        // Material-level entry (no specific slides)
+        details.push({
+          slideName: 'Material Level',
+          materialId: record.materialId || record.mid || '',
+          materialName: record.materialName || 'Unknown Material',
+          materialType: record.materialType,
+          courseId: record.courseId,
+          courseName: record.courseName || 'Unknown Course',
+          courseShortName: record.courseShortName,
+          channelId: record.channelId,
+          relationshipType: record.relationshipType === 'u' || record.relationshipType === 'dnu' 
+            ? record.relationshipType : undefined,
+        });
+      }
+    });
+
+    console.log('[Interest PKG] Extracted', details.length, 'occurrence details');
+
     return details;
   }
 }
