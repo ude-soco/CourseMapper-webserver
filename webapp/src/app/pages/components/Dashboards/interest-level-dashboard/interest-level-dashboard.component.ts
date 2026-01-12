@@ -7,43 +7,21 @@ import { User } from 'src/app/models/User';
 import { Course } from 'src/app/models/Course';
 import { getCurrentCourse } from 'src/app/pages/courses/state/course.reducer';
 import { OverlayPanel } from 'primeng/overlaypanel';
-import { InterestLevelService } from 'src/app/services/interest-level.service';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil, filter } from 'rxjs/operators';
 
-interface ActivityBreakdown {
-  activity_id: string;
-  activity_name: string;
-  count: number;
-  weight: number;
-  contribution: number;
-  group_id?: string;
-  group_name?: string;
-}
+// Import NgRx store for interest dashboard
+import * as InterestDashboardActions from './store/interest-dashboard.actions';
+import * as InterestDashboardSelectors from './store/interest-dashboard.selectors';
+import * as PkgInterestActions from '../../knowledge-graph/user-pkg/store/pkg-interest/pkg-interest.actions';
 
-interface ConceptInterestData {
-  concept_ids: string[];
-  raw_score: number;
-  normalized_scores: {
-    min_max_interpolation: number;
-    z_score_k2: number;
-    z_score_k3: number;
-  };
-  activities_breakdown: ActivityBreakdown[];
-  total_activity_count: number;
-  course_id: string;
-  course_name: string;
-}
-
-interface ActivityCategoryGroup {
-  categoryName: string;
-  categoryKey: string;
-  activities: ActivityBreakdown[];
-  totalCount: number;
-  totalContribution: number;
-  expanded: boolean;
-  visible: boolean;
-  showTextView?: boolean;
-}
+// Import types
+import {
+  ActivityBreakdown,
+  ConceptInterestData,
+  ActivityCategoryGroup,
+  TopConcept
+} from './store/interest-dashboard.state';
 
 @Component({
   selector: 'app-interest-level-dashboard',
@@ -51,18 +29,37 @@ interface ActivityCategoryGroup {
   styleUrls: ['./interest-level-dashboard.component.css']
 })
 export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
-  conceptName: string = '';
-  conceptId: string = '';
-  interestScore: number = 0;
-  conceptData: ConceptInterestData | null = null;
+  private destroy$ = new Subject<void>();
+  
+  // Observables from Store
+  conceptName$ = this.store.select(InterestDashboardSelectors.selectConceptName);
+  conceptId$ = this.store.select(InterestDashboardSelectors.selectConceptId);
+  conceptData$ = this.store.select(InterestDashboardSelectors.selectConceptData);
+  activityCategories$ = this.store.select(InterestDashboardSelectors.selectActivityCategories);
+  topConcepts$ = this.store.select(InterestDashboardSelectors.selectTopConcepts);
+  loading$ = this.store.select(InterestDashboardSelectors.selectLoading);
+  loadingTopConcepts$ = this.store.select(InterestDashboardSelectors.selectLoadingTopConcepts);
+  interestScore$ = this.store.select(InterestDashboardSelectors.selectInterestScore);
+  gaugeChart$ = this.store.select(InterestDashboardSelectors.selectGaugeChart);
+  totalActivitiesChart$ = this.store.select(InterestDashboardSelectors.selectTotalActivitiesChart);
+  topConceptsChart$ = this.store.select(InterestDashboardSelectors.selectTopConceptsChart);
+  categoryCharts$ = this.store.select(InterestDashboardSelectors.selectCategoryCharts);
+  activeTabIndex$ = this.store.select(InterestDashboardSelectors.selectActiveTabIndex);
+  topConceptsLimit$ = this.store.select(InterestDashboardSelectors.selectTopConceptsLimit);
+  visibleCategories$ = this.store.select(InterestDashboardSelectors.selectVisibleCategories);
   
   loggedInUser: User | null = null;
   currentCourse: Course | null = null;
   
-  private courseSubscription: Subscription | null = null;
-  private userSubscription: Subscription | null = null;
-  private routeSubscription: Subscription | null = null;
-
+  // Local copies for template use (will be subscribed from store)
+  conceptName: string = '';
+  conceptId: string = '';
+  interestScore: number = 0;
+  conceptData: ConceptInterestData | null = null;
+  activityCategories: ActivityCategoryGroup[] = [];
+  topConcepts: TopConcept[] = [];
+  topConceptsLimit: number | 'All' = 5;
+  
   @ViewChild('activityFilterPanel') activityFilterPanel!: OverlayPanel;
 
   activeTabIndex: number = 0;
@@ -72,8 +69,8 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     { label: 'Concepts with Highest Score', value: 'highest-concepts' }
   ];
 
-  // Activity categories with their mapping to activity groups
-  activityCategories: ActivityCategoryGroup[] = [];
+  // Activity categories - now managed by store
+  // activityCategories: ActivityCategoryGroup[] = [];
 
   // Activity group mapping from activity-weights.json
   private activityGroupMapping: { [key: string]: { name: string; groups: string[]; totalWeight: number } } = {
@@ -104,14 +101,14 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     }
   };
 
-  // For "Concepts with Highest Score" tab
-  topConcepts: Array<{ name: string; score: number; course: string }> = [];
+  // For "Concepts with Highest Score" tab - now managed by store
+  // topConcepts: Array<{ name: string; score: number; course: string }> = [];
 
-  // Gauge chart for interest score visualization
+  // Gauge chart for interest score visualization - now managed by store
   gaugeData: any;
   gaugeOptions: any;
 
-  // Chart data for activity visualizations (using Chart.js format)
+  // Chart data for activity visualizations - now managed by store
   categoryChartData: { [key: string]: any } = {};
   categoryChartOptions: { [key: string]: any } = {};
 
@@ -124,14 +121,14 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     purple: '#8B5CF6'
   };
 
-  // Total activities chart data
+  // Total activities chart data - now managed by store
   totalActivitiesChartData: any;
   totalActivitiesChartOptions: any;
 
-  // Top concepts chart data
+  // Top concepts chart data - now managed by store
   topConceptsChartData: any;
   topConceptsChartOptions: any;
-  topConceptsLimit: number | 'All' = 5;
+  // topConceptsLimit: number | 'All' = 5; // now from store
 
   // Top-N filter options (matching PKG filter controls)
   readonly topNOptions = [
@@ -162,73 +159,109 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private store: Store<State>,
-    private interestLevelService: InterestLevelService
-  ) {
-    this.userSubscription = this.store
+    private store: Store<State>
+  ) {}
+
+  ngOnInit(): void {
+    // Set return view mode in PKG Interest store so back button returns to interest view
+    this.store.dispatch(PkgInterestActions.setReturnViewMode({ viewMode: 'interest' }));
+    
+    // Subscribe to user
+    this.store
       .select(getLoggedInUser)
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((user): user is User => user !== null)
+      )
       .subscribe((user) => {
-        if (user) {
-          this.loggedInUser = user;
-          if (this.conceptName) {
-            this.loadConceptData();
+        this.loggedInUser = user;
+      });
+
+    // Subscribe to current course
+    this.store
+      .select(getCurrentCourse)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((course) => {
+        this.currentCourse = course;
+      });
+    
+    // Subscribe to route params and initialize dashboard
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        const conceptName = params['conceptName'] || '';
+        const conceptId = params['conceptId'] || '';
+        
+        if (conceptName && conceptId) {
+          // Dispatch actions to set params and initialize dashboard
+          this.store.dispatch(InterestDashboardActions.setConceptParams({ conceptName, conceptId }));
+          
+          if (this.loggedInUser) {
+            this.store.dispatch(InterestDashboardActions.initializeDashboard({
+              userId: this.loggedInUser.id,
+              conceptName
+            }));
           }
         }
       });
-
-    this.courseSubscription = this.store
-      .select(getCurrentCourse)
-      .subscribe((course) => {
-        if (course) {
-          this.currentCourse = course;
-        }
-      });
-  }
-
-  ngOnInit(): void {
-    // Set sessionStorage so back button returns to interest view
-    sessionStorage.setItem('pkgReturnView', 'interest');
     
-    // Get concept name and ID from route query params
-    this.routeSubscription = this.route.queryParams.subscribe(params => {
-      this.conceptName = params['conceptName'] || '';
-      this.conceptId = params['conceptId'] || '';
-      
-      if (this.conceptName && this.loggedInUser) {
-        this.loadConceptData();
-      }
-    });
+    // Subscribe to store state for local copies (for chart libraries that need direct refs)
+    this.subscribeToStoreState();
   }
-
-  ngOnDestroy(): void {
-    if (this.courseSubscription) {
-      this.courseSubscription.unsubscribe();
-    }
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe();
-    }
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
-  }
-
-  private loadConceptData(): void {
-    if (!this.loggedInUser || !this.conceptName) return;
-
-    this.interestLevelService.getUserConceptInterest(this.loggedInUser.id, this.conceptName).subscribe({
-      next: (data) => {
+  
+  private subscribeToStoreState(): void {
+    // Subscribe to concept data for local processing
+    this.conceptData$.pipe(takeUntil(this.destroy$)).subscribe(data => {
+      if (data) {
         this.conceptData = data;
         this.interestScore = data.normalized_scores.min_max_interpolation;
+        // Initialize charts when data changes
         this.initializeActivityCategories();
         this.initializeGaugeChart();
         this.initializeCategoryCharts();
         this.initializeTotalActivitiesChart();
-        this.loadTopConcepts();
-      },
-      error: (err) => {
-        console.error('Error loading concept interest data:', err);
       }
     });
+    
+    // Subscribe to activity categories for local copy
+    this.activityCategories$.pipe(takeUntil(this.destroy$)).subscribe(categories => {
+      this.activityCategories = categories;
+    });
+    
+    // Subscribe to top concepts for local copy and chart initialization
+    this.topConcepts$.pipe(takeUntil(this.destroy$)).subscribe(concepts => {
+      this.topConcepts = concepts;
+      if (concepts.length > 0) {
+        this.initializeTopConceptsChart();
+      }
+    });
+    
+    // Subscribe to top concepts limit for local copy
+    this.topConceptsLimit$.pipe(takeUntil(this.destroy$)).subscribe(limit => {
+      this.topConceptsLimit = limit;
+    });
+    
+    // Subscribe to active tab index for local copy
+    this.activeTabIndex$.pipe(takeUntil(this.destroy$)).subscribe(index => {
+      this.activeTabIndex = index;
+    });
+    
+    // Subscribe to concept name/id for local copies
+    this.conceptName$.pipe(takeUntil(this.destroy$)).subscribe(name => {
+      this.conceptName = name;
+    });
+    
+    this.conceptId$.pipe(takeUntil(this.destroy$)).subscribe(id => {
+      this.conceptId = id;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    
+    // Clear dashboard state
+    this.store.dispatch(InterestDashboardActions.clearDashboard());
   }
 
   private initializeActivityCategories(): void {
@@ -257,7 +290,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     });
 
     // Build activity category groups
-    this.activityCategories = Object.entries(this.activityGroupMapping).map(([key, info]) => {
+    const activityCategories = Object.entries(this.activityGroupMapping).map(([key, info]) => {
       const activities = categories[key] || [];
       return {
         categoryName: info.name,
@@ -277,14 +310,17 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       const weightB = this.activityGroupMapping[b.categoryKey]?.totalWeight || 0;
       return weightB - weightA;
     });
+    
+    // Dispatch to store
+    this.store.dispatch(InterestDashboardActions.setActivityCategories({ categories: activityCategories }));
   }
 
   toggleCategory(category: ActivityCategoryGroup): void {
-    category.expanded = !category.expanded;
+    this.store.dispatch(InterestDashboardActions.toggleCategoryExpand({ categoryKey: category.categoryKey }));
   }
 
   toggleCategoryView(category: ActivityCategoryGroup): void {
-    category.showTextView = !category.showTextView;
+    this.store.dispatch(InterestDashboardActions.toggleCategoryView({ categoryKey: category.categoryKey }));
   }
 
   hasSingleActivity(category: ActivityCategoryGroup): boolean {
@@ -328,10 +364,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   }
 
   toggleCategoryVisibility(categoryKey: string): void {
-    const category = this.activityCategories.find(c => c.categoryKey === categoryKey);
-    if (category) {
-      category.visible = !category.visible;
-    }
+    this.store.dispatch(InterestDashboardActions.toggleCategoryVisibility({ categoryKey }));
   }
 
   getInterestScoreColor(): string {
@@ -347,7 +380,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(event: any): void {
-    this.activeTabIndex = event.index;
+    this.store.dispatch(InterestDashboardActions.setActiveTab({ tabIndex: event.index }));
   }
 
   getVisibleCategories(): ActivityCategoryGroup[] {
@@ -381,7 +414,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     const score = this.interestScore;
     const remaining = 1 - score;
 
-    this.gaugeData = {
+    const gaugeData = {
       labels: ['Interest Score', 'Remaining'],
       datasets: [
         {
@@ -396,7 +429,8 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       ]
     };
 
-    this.gaugeOptions = {
+    const gaugeOptions = {
+      responsive: true,
       cutout: '70%',
       rotation: -90,
       circumference: 180,
@@ -410,6 +444,13 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       },
       maintainAspectRatio: true
     };
+    
+    // Store in local properties for chart library
+    this.gaugeData = gaugeData;
+    this.gaugeOptions = gaugeOptions;
+    
+    // Dispatch to store
+    this.store.dispatch(InterestDashboardActions.setGaugeChart({ data: gaugeData, options: gaugeOptions }));
   }
 
   // Initialize Chart.js charts for each category
@@ -436,7 +477,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       '#EF4444'  // Red for Access
     ];
 
-    this.totalActivitiesChartData = {
+    const chartData = {
       labels: labels,
       datasets: [
         {
@@ -449,7 +490,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       ]
     };
 
-    this.totalActivitiesChartOptions = {
+    const chartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       aspectRatio: 1,
@@ -514,6 +555,13 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
         chart.canvas.parentNode.style.height = '500px';
       }
     };
+    
+    // Store in local properties for chart library
+    this.totalActivitiesChartData = chartData;
+    this.totalActivitiesChartOptions = chartOptions;
+    
+    // Dispatch to store
+    this.store.dispatch(InterestDashboardActions.setTotalActivitiesChart({ data: chartData, options: chartOptions }));
   }
 
   // Initialize chart for individual category using Chart.js format
@@ -524,7 +572,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     const contributions = activities.map(a => a.contribution);
 
     // Bar chart data
-    this.categoryChartData[category.categoryKey] = {
+    const chartData = {
       labels: labels,
       datasets: [
         {
@@ -538,7 +586,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
     };
 
     // Chart options
-    this.categoryChartOptions[category.categoryKey] = {
+    const chartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       aspectRatio: 1,
@@ -592,31 +640,31 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
         chart.canvas.parentNode.style.height = '500px';
       }
     };
+    
+    // Store in local properties for chart library
+    this.categoryChartData[category.categoryKey] = chartData;
+    this.categoryChartOptions[category.categoryKey] = chartOptions;
+    
+    // Dispatch to store
+    this.store.dispatch(InterestDashboardActions.setCategoryChart({ 
+      categoryKey: category.categoryKey,
+      data: chartData,
+      options: chartOptions
+    }));
   }
 
   // Load top concepts for the user
-  private loadTopConcepts(): void {
-    if (!this.loggedInUser) return;
-
-    // Convert 'All' to a large number for the API call
-    const limit = this.topConceptsLimit === 'All' ? 1000 : this.topConceptsLimit;
-
-    this.interestLevelService.getTopConceptsByInterest(this.loggedInUser.id, limit).subscribe({
-      next: (concepts) => {
-        console.log(`Requested ${this.topConceptsLimit} concepts, received ${concepts.length} concepts`);
-        this.topConcepts = concepts;
-        this.initializeTopConceptsChart();
-      },
-      error: (err) => {
-        console.error('Error loading top concepts:', err);
-      }
-    });
-  }
-
-  // Handle change in top concepts limit
   onTopConceptsLimitChange(newLimit: number | 'All'): void {
-    this.topConceptsLimit = newLimit;
-    this.loadTopConcepts();
+    this.store.dispatch(InterestDashboardActions.setTopConceptsLimit({ limit: newLimit }));
+    
+    if (this.loggedInUser) {
+      // Convert 'All' to a large number for the API call
+      const limit = newLimit === 'All' ? 1000 : newLimit;
+      this.store.dispatch(InterestDashboardActions.loadTopConcepts({ 
+        userId: this.loggedInUser.id, 
+        limit 
+      }));
+    }
   }
 
   // Initialize chart for top concepts with current concept highlighted
@@ -655,7 +703,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       borderColors.push('#2563EB');
     });
 
-    this.topConceptsChartData = {
+    const chartData = {
       labels: labels,
       datasets: [
         {
@@ -668,7 +716,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       ]
     };
 
-    this.topConceptsChartOptions = {
+    const chartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       aspectRatio: 1,
@@ -737,5 +785,12 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
         chart.canvas.parentNode.style.height = '800px';
       }
     };
+    
+    // Store in local properties for chart library
+    this.topConceptsChartData = chartData;
+    this.topConceptsChartOptions = chartOptions;
+    
+    // Dispatch to store
+    this.store.dispatch(InterestDashboardActions.setTopConceptsChart({ data: chartData, options: chartOptions }));
   }
 }

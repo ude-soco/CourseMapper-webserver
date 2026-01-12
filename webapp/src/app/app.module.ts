@@ -97,6 +97,8 @@ import { ChannelDashboardComponent } from './pages/components/Dashboards/channel
 import { MaterialDashboardComponent } from './pages/components/Dashboards/material-dashboard/material-dashboard.component';
 import { EngagementDashboardComponent } from './pages/components/Dashboards/engagement-dashboard/engagement-dashboard.component';
 import { InterestLevelDashboardComponent } from './pages/components/Dashboards/interest-level-dashboard/interest-level-dashboard.component';
+import { interestDashboardReducer, interestDashboardFeatureKey } from './pages/components/Dashboards/interest-level-dashboard/store/interest-dashboard.reducer';
+import { InterestDashboardEffects } from './pages/components/Dashboards/interest-level-dashboard/store/interest-dashboard.effects';
 // import { BackButtonComponent } from './pages/components/back-button/back-button.component';
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
@@ -172,7 +174,8 @@ import { RequestEmailValidationComponent } from './pages/components/email-valida
     }),
     SharedComponentsModule,
     StoreModule.forFeature('general', appReducer),
-    EffectsModule.forFeature([AppEffects]),
+    StoreModule.forFeature(interestDashboardFeatureKey, interestDashboardReducer),
+    EffectsModule.forFeature([AppEffects, InterestDashboardEffects]),
     InputTextareaModule,
     DragulaModule.forRoot(),
     SocketIoModule.forRoot(environment.socketConfig),
