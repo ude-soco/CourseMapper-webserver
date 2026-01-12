@@ -106,6 +106,93 @@ async function mapUsingMaterialInfo(session, activities, groupName) {
   return results;
 }
 
+// Helper function to map using concept_id directly (for G2.A1, G2.A2, G3, G4)
+async function mapUsingConceptId(session, activities, groupName) {
+  const results = [];
+  
+  for (const activity of activities) {
+    const result = {
+      activity_id: `${groupName}_${activity.activity_code}`,
+      activity_name: activity.activity_name,
+      count: activity.count,
+      group: groupName,
+      main_concepts: []
+    };
+
+    if (activity.instances && activity.instances.length > 0) {
+      const conceptsSet = new Set();
+      const conceptCourseMap = new Map();
+      
+      for (const instance of activity.instances) {
+        const conceptCid = instance.concept_cid; // Full CID (preferred)
+        const conceptName = instance.concept_name;
+        const courseId = instance.course_id;
+        const courseName = instance.course_name;
+
+        let cypher, params;
+        
+        // Prefer querying by CID if available, otherwise fallback to name
+        if (conceptCid) {
+          cypher = `
+            MATCH (c:Concept {cid: $conceptCid})
+            WHERE c.type = 'main_concept'
+            RETURN c.name as concept_name, c.cid as concept_id
+          `;
+          params = { conceptCid };
+        } else if (conceptName) {
+          cypher = `
+            MATCH (c:Concept {name: $conceptName})
+            WHERE c.type = 'main_concept'
+            RETURN c.name as concept_name, c.cid as concept_id
+          `;
+          params = { conceptName };
+        } else {
+          continue; // Skip if neither CID nor name available
+        }
+
+        try {
+          const queryResult = await session.run(cypher, params);
+          
+          queryResult.records.forEach(record => {
+            const conceptName = record.get('concept_name');
+            const conceptId = record.get('concept_id');
+            
+            if (conceptName && conceptId) {
+              const conceptKey = `${conceptName}|||${conceptId}`;
+              conceptsSet.add(conceptKey);
+              if (!conceptCourseMap.has(conceptKey)) {
+                conceptCourseMap.set(conceptKey, new Set());
+              }
+              if (courseId) {
+                conceptCourseMap.get(conceptKey).add(JSON.stringify({ course_id: courseId, course_name: courseName }));
+              }
+            }
+          });
+        } catch (error) {
+          console.error(`Error querying concept ${conceptCid || conceptName}:`, error.message);
+        }
+      }
+
+      result.main_concepts = Array.from(conceptsSet).map(key => {
+        const [name, id] = key.split('|||');
+        const courses = conceptCourseMap.get(key) || new Set();
+        const coursesArray = Array.from(courses).map(c => JSON.parse(c));
+        
+        return { 
+          concept_name: name, 
+          concept_id: id,
+          course_id: coursesArray.length > 0 ? coursesArray[0].course_id : null,
+          course_name: coursesArray.length > 0 ? coursesArray[0].course_name : null
+        };
+      });
+    }
+
+    results.push(result);
+  }
+
+  return results;
+}
+
 // Helper function to map G2.A3 using related concept_id -> main concept
 async function mapUsingRelatedConcept(session, activities, groupName) {
   const results = [];
@@ -505,10 +592,37 @@ async function processUserActivities(username) {
         allMappedActivities.push(...mapped);
       }
 
-      if (activityGroup.G2 && activityGroup.G2.A3) {
-        const mapped = await mapUsingRelatedConcept(session, [activityGroup.G2.A3], 'G2');
+      // G2: Process ALL three activities (A1, A2, A3)
+      if (activityGroup.G2) {
+        // G2.A1 and G2.A2 use concept_id directly (main concepts)
+        if (activityGroup.G2.A1 || activityGroup.G2.A2) {
+          const directActivities = [];
+          if (activityGroup.G2.A1) directActivities.push(activityGroup.G2.A1);
+          if (activityGroup.G2.A2) directActivities.push(activityGroup.G2.A2);
+          const mapped = await mapGroupActivities(session, { A1: activityGroup.G2.A1, A2: activityGroup.G2.A2 }, 'G2', mapUsingConceptId);
+          allMappedActivities.push(...mapped);
+        }
+        
+        // G2.A3 uses related_concept_id -> main concept (special handling)
+        if (activityGroup.G2.A3) {
+          const mapped = await mapUsingRelatedConcept(session, [activityGroup.G2.A3], 'G2');
+          allMappedActivities.push(...mapped);
+        }
+      }
+
+      // G3: User Marks Did not Understand main Concept (uses concept_id)
+      if (activityGroup.G3) {
+        const mapped = await mapGroupActivities(session, activityGroup.G3, 'G3', mapUsingConceptId);
         allMappedActivities.push(...mapped);
       }
+
+      // G4: View the full article of the main concept in slide KG (uses concept_id)
+      if (activityGroup.G4) {
+        const mapped = await mapGroupActivities(session, activityGroup.G4, 'G4', mapUsingConceptId);
+        allMappedActivities.push(...mapped);
+      }
+
+      // G5: Explanations (skip - no concept mapping in original code)
 
       if (activityGroup.G6) {
         const mapped = await mapGroupActivities(session, activityGroup.G6, 'G6', mapUsingMaterialInfo);
