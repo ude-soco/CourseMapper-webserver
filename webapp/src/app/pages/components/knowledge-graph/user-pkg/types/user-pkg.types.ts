@@ -160,3 +160,82 @@ export interface InterestScoresResponse {
   scores: { [conceptId: string]: InterestScoreInfo };
   totalConcepts: number;
 }
+
+// ===========================
+// Concept Details Panel Types
+// ===========================
+
+/**
+ * Concept data passed to concept details panel
+ */
+export interface ConceptData {
+  name: string;
+  type?: string;
+  abstract?: string;
+  wikipedia?: string;
+  interestScore?: number;
+  [key: string]: any;
+}
+
+/**
+ * Slide node for concept details tree
+ */
+export interface SlideNode {
+  slideId?: string;
+  slideName: string;
+  detail: ConceptDetail;
+}
+
+/**
+ * Material node for concept details tree
+ */
+export interface MaterialNode {
+  materialId: string;
+  materialName: string;
+  materialType?: string;
+  slides: SlideNode[];
+}
+
+/**
+ * Course node for concept details tree
+ */
+export interface CourseNode {
+  courseId: string;
+  courseName: string;
+  courseShortName?: string;
+  materials: MaterialNode[];
+}
+
+// ===========================
+// Course Details Panel Types
+// ===========================
+
+/**
+ * Course node data passed to course details panel
+ */
+export interface CourseNodeData {
+  id: string;
+  courseId: string;
+  name: string;
+  courseName?: string;
+  courseShortName?: string;
+  engagementLevel?: string;
+  type?: string;
+  [key: string]: any;
+}
+
+/**
+ * Detailed course information
+ */
+export interface CourseDetails {
+  _id: string;
+  name: string;
+  shortName?: string;
+  description?: string;
+  role?: string;
+  numberOfTopics?: number;
+  numberOfChannels?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+

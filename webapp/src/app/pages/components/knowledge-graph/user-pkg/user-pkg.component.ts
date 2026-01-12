@@ -7,11 +7,14 @@ import { MessageService } from 'primeng/api';
 
 import * as UserPkgActions from './state/user-pkg.actions';
 import * as UserPkgSelectors from './state/user-pkg.reducer';
-import { ConceptDetail, ConceptRecord } from './types/user-pkg.types';
+import { 
+  ConceptDetail, 
+  ConceptRecord, 
+  ConceptData, 
+  CourseNodeData 
+} from './types/user-pkg.types';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { User } from 'src/app/models/User';
-import { ConceptData } from './components/concept-details-panel/concept-details-panel.component';
-import { CourseNodeData } from './components/course-details-panel/course-details-panel.component';
 import { UserConceptsService } from 'src/app/services/user-concepts.service';
 import { CourseService } from 'src/app/services/course.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';

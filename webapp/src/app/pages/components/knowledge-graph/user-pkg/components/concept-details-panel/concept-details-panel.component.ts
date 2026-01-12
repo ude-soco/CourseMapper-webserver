@@ -2,39 +2,16 @@ import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
-import { ConceptDetail } from '../../types/user-pkg.types';
+import { 
+  ConceptDetail, 
+  ConceptData, 
+  SlideNode, 
+  MaterialNode, 
+  CourseNode 
+} from '../../types/user-pkg.types';
 import { CourseService } from 'src/app/services/course.service';
 import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
 import { State } from 'src/app/state/app.state';
-
-export interface ConceptData {
-  name: string;
-  type?: string;
-  abstract?: string;
-  wikipedia?: string;
-  interestScore?: number;
-  [key: string]: any;
-}
-
-export interface SlideNode {
-  slideId?: string;
-  slideName: string;
-  detail: ConceptDetail;
-}
-
-export interface MaterialNode {
-  materialId: string;
-  materialName: string;
-  materialType?: string;
-  slides: SlideNode[];
-}
-
-export interface CourseNode {
-  courseId: string;
-  courseName: string;
-  courseShortName?: string;
-  materials: MaterialNode[];
-}
 
 @Component({
   selector: 'app-pkg-concept-details-panel',

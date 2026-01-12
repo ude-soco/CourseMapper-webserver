@@ -2,32 +2,10 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
+import { CourseNodeData, CourseDetails } from '../../types/user-pkg.types';
 import { CourseService } from 'src/app/services/course.service';
 import * as CourseActions from 'src/app/pages/courses/state/course.actions';
 import { State } from 'src/app/state/app.state';
-
-export interface CourseNodeData {
-  id: string;
-  courseId: string;
-  name: string;
-  courseName?: string;
-  courseShortName?: string;
-  engagementLevel?: string;
-  type?: string;
-  [key: string]: any;
-}
-
-export interface CourseDetails {
-  _id: string;
-  name: string;
-  shortName?: string;
-  description?: string;
-  role?: string;
-  numberOfTopics?: number;
-  numberOfChannels?: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
 
 @Component({
   selector: 'app-pkg-course-details-panel',

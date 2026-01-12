@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { map, switchMap, catchError, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, catchError, withLatestFrom, tap } from 'rxjs/operators';
+import { MessageService } from 'primeng/api';
 import * as PkgInterestActions from './pkg-interest.actions';
 import * as PkgInterestSelectors from './pkg-interest.selectors';
 import { PkgService } from '../../../../../../services/pkg.service';
@@ -13,10 +14,14 @@ export class PkgInterestEffects {
   constructor(
     private actions$: Actions,
     private pkgService: PkgService,
-    private store: Store
+    private store: Store,
+    private messageService: MessageService
   ) {}
 
+  // ===========================
   // Load Interest Graph
+  // ===========================
+  
   loadInterestGraph$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PkgInterestActions.loadInterestGraph),
@@ -36,7 +41,93 @@ export class PkgInterestEffects {
     )
   );
 
-  // Reload when Top N changes
+  // ===========================
+  // Save Score Edit
+  // ===========================
+  
+  saveScoreEdit$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(PkgInterestActions.saveScoreEdit),
+      switchMap(({ userId, conceptId, conceptIds, conceptName, score }) => {
+        // If multiple concept IDs (duplicates), use batch update endpoint
+        if (conceptIds.length > 1) {
+          return this.pkgService.updateInterestScoreForMultipleConcepts(userId, conceptIds, score, conceptName).pipe(
+            map(() => {
+              console.log('[PKG Interest Effects] Successfully updated score for multiple concepts:', conceptIds);
+              return PkgInterestActions.saveScoreEditSuccess({ conceptId, conceptIds, score });
+            }),
+            catchError((error) => {
+              const errorMessage = error?.error?.error || error?.message || 'Failed to update interest score';
+              console.error('[PKG Interest Effects] Error updating score:', errorMessage);
+              return of(PkgInterestActions.saveScoreEditFailure({ error: errorMessage }));
+            })
+          );
+        } else {
+          // Single concept ID
+          return this.pkgService.updateInterestScore(userId, conceptId, score).pipe(
+            map(() => {
+              console.log('[PKG Interest Effects] Successfully updated score for concept:', conceptId);
+              return PkgInterestActions.saveScoreEditSuccess({ conceptId, conceptIds: [conceptId], score });
+            }),
+            catchError((error) => {
+              const errorMessage = error?.error?.error || error?.message || 'Failed to update interest score';
+              console.error('[PKG Interest Effects] Error updating score:', errorMessage);
+              return of(PkgInterestActions.saveScoreEditFailure({ error: errorMessage }));
+            })
+          );
+        }
+      })
+    )
+  );
+
+  // ===========================
+  // Show Success Message on Score Update
+  // ===========================
+  
+  showScoreUpdateSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(PkgInterestActions.saveScoreEditSuccess),
+        tap(({ conceptIds, score }) => {
+          const message = conceptIds.length > 1
+            ? `Successfully updated interest score for ${conceptIds.length} concepts to ${score.toFixed(3)}`
+            : `Successfully updated interest score to ${score.toFixed(3)}`;
+          
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Score Updated',
+            detail: message,
+            life: 3000,
+          });
+        })
+      ),
+    { dispatch: false }
+  );
+
+  // ===========================
+  // Show Error Message on Score Update Failure
+  // ===========================
+  
+  showScoreUpdateError$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(PkgInterestActions.saveScoreEditFailure),
+        tap(({ error }) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Update Failed',
+            detail: error,
+            life: 5000,
+          });
+        })
+      ),
+    { dispatch: false }
+  );
+
+  // ===========================
+  // Reload when Top N changes (Optional)
+  // ===========================
+  
   reloadOnTopNChange$ = createEffect(() =>
     this.actions$.pipe(
       ofType(PkgInterestActions.setTopN),
@@ -56,3 +147,4 @@ export class PkgInterestEffects {
     )
   );
 }
+
