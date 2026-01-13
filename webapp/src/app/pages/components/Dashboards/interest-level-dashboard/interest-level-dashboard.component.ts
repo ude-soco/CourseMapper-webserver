@@ -215,17 +215,21 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       if (data) {
         this.conceptData = data;
         this.interestScore = data.normalized_scores.min_max_interpolation;
-        // Initialize charts when data changes
+        // Initialize categories and gauge chart when data changes
         this.initializeActivityCategories();
         this.initializeGaugeChart();
-        this.initializeCategoryCharts();
-        this.initializeTotalActivitiesChart();
+        // Note: Category and total activities charts are initialized when activityCategories$ updates
       }
     });
     
-    // Subscribe to activity categories for local copy
+    // Subscribe to activity categories for local copy and chart initialization
     this.activityCategories$.pipe(takeUntil(this.destroy$)).subscribe(categories => {
       this.activityCategories = categories;
+      // Initialize charts when categories are available
+      if (categories.length > 0 && this.conceptData) {
+        this.initializeCategoryCharts();
+        this.initializeTotalActivitiesChart();
+      }
     });
     
     // Subscribe to top concepts for local copy and chart initialization
@@ -445,9 +449,9 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       maintainAspectRatio: true
     };
     
-    // Store in local properties for chart library
-    this.gaugeData = gaugeData;
-    this.gaugeOptions = gaugeOptions;
+    // Store in local properties for chart library (clone to avoid frozen state object errors)
+    this.gaugeData = JSON.parse(JSON.stringify(gaugeData));
+    this.gaugeOptions = JSON.parse(JSON.stringify(gaugeOptions));
     
     // Dispatch to store
     this.store.dispatch(InterestDashboardActions.setGaugeChart({ data: gaugeData, options: gaugeOptions }));
@@ -464,7 +468,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
 
   // Initialize total activities chart (for "Total Activities" tab)
   private initializeTotalActivitiesChart(): void {
-    if (!this.conceptData) return;
+    if (!this.conceptData || !this.activityCategories || this.activityCategories.length === 0) return;
 
     // Get category labels and their total counts
     const labels = this.activityCategories.map(cat => cat.categoryName);
@@ -556,9 +560,9 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       }
     };
     
-    // Store in local properties for chart library
-    this.totalActivitiesChartData = chartData;
-    this.totalActivitiesChartOptions = chartOptions;
+    // Store in local properties for chart library (clone to avoid frozen state object errors)
+    this.totalActivitiesChartData = JSON.parse(JSON.stringify(chartData));
+    this.totalActivitiesChartOptions = JSON.parse(JSON.stringify(chartOptions));
     
     // Dispatch to store
     this.store.dispatch(InterestDashboardActions.setTotalActivitiesChart({ data: chartData, options: chartOptions }));
@@ -566,7 +570,8 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
 
   // Initialize chart for individual category using Chart.js format
   private initializeCategoryChart(category: ActivityCategoryGroup): void {
-    const activities = category.activities.sort((a, b) => b.weight - a.weight);
+    // Clone activities array to avoid mutating frozen NgRx state
+    const activities = [...category.activities].sort((a, b) => b.weight - a.weight);
     const labels = activities.map(a => this.getFriendlyActivityName(a.activity_name));
     const counts = activities.map(a => a.count);
     const contributions = activities.map(a => a.contribution);
@@ -641,9 +646,9 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       }
     };
     
-    // Store in local properties for chart library
-    this.categoryChartData[category.categoryKey] = chartData;
-    this.categoryChartOptions[category.categoryKey] = chartOptions;
+    // Store in local properties for chart library (clone to avoid frozen state object errors)
+    this.categoryChartData[category.categoryKey] = JSON.parse(JSON.stringify(chartData));
+    this.categoryChartOptions[category.categoryKey] = JSON.parse(JSON.stringify(chartOptions));
     
     // Dispatch to store
     this.store.dispatch(InterestDashboardActions.setCategoryChart({ 
@@ -786,9 +791,9 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       }
     };
     
-    // Store in local properties for chart library
-    this.topConceptsChartData = chartData;
-    this.topConceptsChartOptions = chartOptions;
+    // Store in local properties for chart library (clone to avoid frozen state object errors)
+    this.topConceptsChartData = JSON.parse(JSON.stringify(chartData));
+    this.topConceptsChartOptions = JSON.parse(JSON.stringify(chartOptions));
     
     // Dispatch to store
     this.store.dispatch(InterestDashboardActions.setTopConceptsChart({ data: chartData, options: chartOptions }));
