@@ -3,12 +3,28 @@ import { Router } from '@angular/router';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { UIChart } from 'primeng/chart';
 import { Store } from '@ngrx/store';
-import { EngagementMetrics, MaterialDetail, EngagementService, AnnotationActivityDetail, KGActivityDetail, HigherLevelBoundariesResponse, AccessActivityDetail, AccessActivityFrequency, AccessActivitiesResponse } from 'src/app/services/engagement.service';
+import { take } from 'rxjs/operators';
+import { EngagementService } from 'src/app/services/engagement.service';
+import {
+  EngagementMetrics,
+  MaterialDetail,
+  AnnotationActivityDetail,
+  KGActivityDetail,
+  HigherLevelBoundariesResponse,
+  AccessActivityDetail,
+  AccessActivityFrequency,
+  AccessActivitiesResponse,
+  CategoryVisibility,
+  CrossCourseFilters
+} from 'src/app/pages/components/Dashboards/engagement-dashboard/state/engagement.models';
 import { MaterilasService } from 'src/app/services/materials.service';
 import { CourseService } from 'src/app/services/course.service';
 import * as AnnotationActions from 'src/app/pages/components/annotations/pdf-annotation/state/annotation.actions';
 import * as VideoActions from 'src/app/pages/components/annotations/video-annotation/state/video.action';
 import * as NotificationActions from 'src/app/pages/components/notifications/state/notifications.actions';
+import * as EngagementActions from 'src/app/pages/components/Dashboards/engagement-dashboard/state/engagement.actions';
+import * as EngagementSelectors from 'src/app/pages/components/Dashboards/engagement-dashboard/state/engagement.selectors';
+import { State } from 'src/app/state/app.state';
 
 @Component({
   selector: 'app-engagement-charts',
@@ -81,9 +97,6 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
   // Per-tab category visibility states - each tab has its own filter settings
   private tabCategoryVisibility: { [tabValue: string]: { [category: string]: boolean } } = {};
   
-  // LocalStorage key for cross-course filter settings
-  private readonly CROSS_COURSE_FILTERS_KEY = 'engagement_dashboard_cross_course_filters';
-  
   // Enrolled courses for cross-course filter selection
   enrolledCourses: { _id: string; name: string; shortName?: string }[] = [];
   selectedCoursesForFilters: { [courseId: string]: boolean } = {};
@@ -119,17 +132,17 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
   slidesAndVideoTimeVisible: boolean = true;
   
   // Chart visibility states - Access
-  accessActivitiesVisible1: boolean = true;
-  accessActivitiesVisible3: boolean = true;
+  accessByTypeVisible: boolean = true;
+  dashboardAccessesVisible: boolean = true;
   
   // Chart visibility states - KG
-  kgActivitiesVisible1: boolean = true;
-  kgActivitiesVisible2: boolean = true;
-  kgActivitiesVisible3: boolean = true;
+  kgAccessesAndViewsVisible: boolean = true;
+  kgConceptsMarkedVisible: boolean = true;
+  kgRecommendedConceptsVisible: boolean = true;
   
   // Chart visibility states - Recommendation
-  recommendationActivitiesVisible2: boolean = true;
-  recommendationActivitiesVisible3: boolean = true;
+  recommendedMaterialsVisible: boolean = true;
+  recommendedConceptsMarkedVisible: boolean = true;
 
   // Maximized chart state
   maximizedChart: string | null = null;
@@ -234,26 +247,26 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
       case 'slidesAndVideoTime':
         this.slidesAndVideoTimeVisible = !this.slidesAndVideoTimeVisible;
         break;
-      case 'accessActivities1':
-        this.accessActivitiesVisible1 = !this.accessActivitiesVisible1;
+      case 'accessByType':
+        this.accessByTypeVisible = !this.accessByTypeVisible;
         break;
-      case 'accessActivities3':
-        this.accessActivitiesVisible3 = !this.accessActivitiesVisible3;
+      case 'dashboardAccesses':
+        this.dashboardAccessesVisible = !this.dashboardAccessesVisible;
         break;
-      case 'kgActivities1':
-        this.kgActivitiesVisible1 = !this.kgActivitiesVisible1;
+      case 'kgAccessesAndViews':
+        this.kgAccessesAndViewsVisible = !this.kgAccessesAndViewsVisible;
         break;
-      case 'kgActivities2':
-        this.kgActivitiesVisible2 = !this.kgActivitiesVisible2;
+      case 'kgConceptsMarked':
+        this.kgConceptsMarkedVisible = !this.kgConceptsMarkedVisible;
         break;
-      case 'kgActivities3':
-        this.kgActivitiesVisible3 = !this.kgActivitiesVisible3;
+      case 'kgRecommendedConcepts':
+        this.kgRecommendedConceptsVisible = !this.kgRecommendedConceptsVisible;
         break;
-      case 'recommendationActivities2':
-        this.recommendationActivitiesVisible2 = !this.recommendationActivitiesVisible2;
+      case 'recommendedMaterials':
+        this.recommendedMaterialsVisible = !this.recommendedMaterialsVisible;
         break;
-      case 'recommendationActivities3':
-        this.recommendationActivitiesVisible3 = !this.recommendationActivitiesVisible3;
+      case 'recommendedConceptsMarked':
+        this.recommendedConceptsMarkedVisible = !this.recommendedConceptsMarkedVisible;
         break;
     }
   }
@@ -267,13 +280,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     if (!this.pdfActivitiesVisible) count++;
     if (!this.videoActivitiesVisible) count++;
     if (!this.slidesAndVideoTimeVisible) count++;
-    if (!this.accessActivitiesVisible1) count++;
-    if (!this.accessActivitiesVisible3) count++;
-    if (!this.kgActivitiesVisible1) count++;
-    if (!this.kgActivitiesVisible2) count++;
-    if (!this.kgActivitiesVisible3) count++;
-    if (!this.recommendationActivitiesVisible2) count++;
-    if (!this.recommendationActivitiesVisible3) count++;
+    if (!this.accessByTypeVisible) count++;
+    if (!this.dashboardAccessesVisible) count++;
+    if (!this.kgAccessesAndViewsVisible) count++;
+    if (!this.kgConceptsMarkedVisible) count++;
+    if (!this.kgRecommendedConceptsVisible) count++;
+    if (!this.recommendedMaterialsVisible) count++;
+    if (!this.recommendedConceptsMarkedVisible) count++;
     return count;
   }
 
@@ -285,13 +298,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     this.pdfActivitiesVisible = true;
     this.videoActivitiesVisible = true;
     this.slidesAndVideoTimeVisible = true;
-    this.accessActivitiesVisible1 = true;
-    this.accessActivitiesVisible3 = true;
-    this.kgActivitiesVisible1 = true;
-    this.kgActivitiesVisible2 = true;
-    this.kgActivitiesVisible3 = true;
-    this.recommendationActivitiesVisible2 = true;
-    this.recommendationActivitiesVisible3 = true;
+    this.accessByTypeVisible = true;
+    this.dashboardAccessesVisible = true;
+    this.kgAccessesAndViewsVisible = true;
+    this.kgConceptsMarkedVisible = true;
+    this.kgRecommendedConceptsVisible = true;
+    this.recommendedMaterialsVisible = true;
+    this.recommendedConceptsMarkedVisible = true;
     this.showAllCategories();
   }
 
@@ -385,34 +398,34 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
 
     // Access Activities charts
     if (this.accessActivitiesCategoryVisible) {
-      if (this.accessActivitiesVisible1) {
-        charts.push({ chartName: 'accessActivities1', title: 'Access by type', totalValue: this.getChartTotalValue('accessActivities1'), category: 'access' });
+      if (this.accessByTypeVisible) {
+        charts.push({ chartName: 'accessByType', title: 'Access by type', totalValue: this.getChartTotalValue('accessByType'), category: 'access' });
       }
-      if (this.accessActivitiesVisible3) {
-        charts.push({ chartName: 'accessActivities3', title: 'Dashboard accesses', totalValue: this.getChartTotalValue('accessActivities3'), category: 'access' });
+      if (this.dashboardAccessesVisible) {
+        charts.push({ chartName: 'dashboardAccesses', title: 'Dashboard accesses', totalValue: this.getChartTotalValue('dashboardAccesses'), category: 'access' });
       }
     }
 
     // KG Activities charts
     if (this.kgActivitiesCategoryVisible) {
-      if (this.kgActivitiesVisible1) {
-        charts.push({ chartName: 'kgActivities1', title: 'KG Accesses & Views', totalValue: this.getChartTotalValue('kgActivities1'), category: 'kg' });
+      if (this.kgAccessesAndViewsVisible) {
+        charts.push({ chartName: 'kgAccessesAndViews', title: 'KG Accesses & Views', totalValue: this.getChartTotalValue('kgAccessesAndViews'), category: 'kg' });
       }
-      if (this.kgActivitiesVisible2) {
-        charts.push({ chartName: 'kgActivities2', title: 'KG Concepts Marked', totalValue: this.getChartTotalValue('kgActivities2'), category: 'kg' });
+      if (this.kgConceptsMarkedVisible) {
+        charts.push({ chartName: 'kgConceptsMarked', title: 'KG Concepts Marked', totalValue: this.getChartTotalValue('kgConceptsMarked'), category: 'kg' });
       }
-      if (this.kgActivitiesVisible3) {
-        charts.push({ chartName: 'kgActivities3', title: 'Recommended Concepts', totalValue: this.getChartTotalValue('kgActivities3'), category: 'kg' });
+      if (this.kgRecommendedConceptsVisible) {
+        charts.push({ chartName: 'kgRecommendedConcepts', title: 'Recommended Concepts', totalValue: this.getChartTotalValue('kgRecommendedConcepts'), category: 'kg' });
       }
     }
 
     // Recommendation Activities charts
     if (this.recommendationActivitiesCategoryVisible) {
-      if (this.recommendationActivitiesVisible2) {
-        charts.push({ chartName: 'recommendationActivities2', title: 'Recommended Materials', totalValue: this.getChartTotalValue('recommendationActivities2'), category: 'recommendation' });
+      if (this.recommendedMaterialsVisible) {
+        charts.push({ chartName: 'recommendedMaterials', title: 'Recommended Materials', totalValue: this.getChartTotalValue('recommendedMaterials'), category: 'recommendation' });
       }
-      if (this.recommendationActivitiesVisible3) {
-        charts.push({ chartName: 'recommendationActivities3', title: 'Recommended Concepts Marked', totalValue: this.getChartTotalValue('recommendationActivities3'), category: 'recommendation' });
+      if (this.recommendedConceptsMarkedVisible) {
+        charts.push({ chartName: 'recommendedConceptsMarked', title: 'Recommended Concepts Marked', totalValue: this.getChartTotalValue('recommendedConceptsMarked'), category: 'recommendation' });
       }
     }
 
@@ -596,22 +609,18 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
   }
 
   /**
-   * Load existing course selections from localStorage
+   * Load existing course selections from NgRx store
    */
   private loadExistingCourseSelections(): void {
-    const stored = localStorage.getItem(this.CROSS_COURSE_FILTERS_KEY);
-    if (stored) {
-      try {
-        const crossCourseFilters = JSON.parse(stored);
-        if (crossCourseFilters.selectedCourseIds) {
-          crossCourseFilters.selectedCourseIds.forEach((courseId: string) => {
-            this.selectedCoursesForFilters[courseId] = true;
-          });
-        }
-      } catch (e) {
-        console.error('Error loading existing course selections:', e);
+    this.store.select(EngagementSelectors.selectCrossCourseFilters).pipe(
+      take(1)
+    ).subscribe((crossCourseFilters: CrossCourseFilters | null) => {
+      if (crossCourseFilters?.selectedCourseIds) {
+        crossCourseFilters.selectedCourseIds.forEach((courseId: string) => {
+          this.selectedCoursesForFilters[courseId] = true;
+        });
       }
-    }
+    });
   }
 
   /**
@@ -641,16 +650,15 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     }
     
     this.initializeTabCategoryVisibility(this.currentTabValue);
-    const currentFilters = this.tabCategoryVisibility[this.currentTabValue];
+    const currentFilters = this.tabCategoryVisibility[this.currentTabValue] as unknown as CategoryVisibility;
     
-    // Save to localStorage for cross-course persistence
-    const crossCourseFilters = {
+    // Dispatch action to save to NgRx store
+    this.store.dispatch(EngagementActions.applyCrossCourseFilters({
       filters: currentFilters,
       selectedCourseIds: selectedCourseIds,
-      appliedAt: new Date().toISOString(),
       sourceCourseId: this.courseId
-    };
-    localStorage.setItem(this.CROSS_COURSE_FILTERS_KEY, JSON.stringify(crossCourseFilters));
+    }));
+    
     this.showCourseSelectionPanel = false;
     this.cdr.detectChanges();
   }
@@ -659,7 +667,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
    * Clear cross-course filter settings
    */
   clearCrossCourseFilters(): void {
-    localStorage.removeItem(this.CROSS_COURSE_FILTERS_KEY);
+    this.store.dispatch(EngagementActions.clearCrossCourseFilters());
     // Reset all course selections
     Object.keys(this.selectedCoursesForFilters).forEach(courseId => {
       this.selectedCoursesForFilters[courseId] = false;
@@ -668,13 +676,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
   }
 
   /**
-   * Load cross-course filters from localStorage if available
+   * Load cross-course filters from NgRx store if available
    */
   private loadCrossCourseFilters(): void {
-    const stored = localStorage.getItem(this.CROSS_COURSE_FILTERS_KEY);
-    if (stored) {
-      try {
-        const crossCourseFilters = JSON.parse(stored);
+    this.store.select(EngagementSelectors.selectCrossCourseFilters).pipe(
+      take(1)
+    ).subscribe((crossCourseFilters: CrossCourseFilters | null) => {
+      if (crossCourseFilters) {
         // Check if current course is in the selected courses list
         const selectedCourseIds: string[] = crossCourseFilters.selectedCourseIds || [];
         
@@ -684,46 +692,39 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
             this.tabCategoryVisibility[tab.value] = { ...crossCourseFilters.filters };
           });
         }
-      } catch (e) {
-        console.error('Error loading cross-course filters:', e);
       }
-    }
+    });
   }
 
   /**
    * Check if cross-course filters are currently active for any course
    */
   hasCrossCourseFilters(): boolean {
-    const stored = localStorage.getItem(this.CROSS_COURSE_FILTERS_KEY);
-    if (stored) {
-      try {
-        const crossCourseFilters = JSON.parse(stored);
-        const selectedCourseIds: string[] = crossCourseFilters.selectedCourseIds || [];
-        return selectedCourseIds.length > 0;
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
+    let hasFilters = false;
+    this.store.select(EngagementSelectors.selectHasCrossCourseFilters).pipe(
+      take(1)
+    ).subscribe((result: boolean) => {
+      hasFilters = result;
+    });
+    return hasFilters;
   }
 
   /**
    * Get list of course names where filters are applied
    */
   getAppliedFilterCourseNames(): string[] {
-    const stored = localStorage.getItem(this.CROSS_COURSE_FILTERS_KEY);
-    if (stored) {
-      try {
-        const crossCourseFilters = JSON.parse(stored);
+    let courseNames: string[] = [];
+    this.store.select(EngagementSelectors.selectCrossCourseFilters).pipe(
+      take(1)
+    ).subscribe((crossCourseFilters: CrossCourseFilters | null) => {
+      if (crossCourseFilters) {
         const selectedCourseIds: string[] = crossCourseFilters.selectedCourseIds || [];
-        return this.enrolledCourses
+        courseNames = this.enrolledCourses
           .filter(course => selectedCourseIds.includes(course._id))
           .map(course => course.name);
-      } catch (e) {
-        return [];
       }
-    }
-    return [];
+    });
+    return courseNames;
   }
 
   maximizeChart(chartName: string): void {
@@ -810,7 +811,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           this.slidesAndVideoTimeDetails = null;
         }
         break;
-      case 'accessActivities1':
+      case 'accessByType':
         this.maximizedChartTitle = 'Access Activities by Type';
         this.maximizedChartMaterialList = [];
         if (isMyActivities) {
@@ -818,11 +819,11 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           this.loadAccessDetailsForMaximizedChart('all');
         }
         break;
-      case 'accessActivities3':
+      case 'dashboardAccesses':
         this.maximizedChartTitle = 'Dashboard Access Activities';
         this.maximizedChartMaterialList = [];
         break;
-      case 'kgActivities1':
+      case 'kgAccessesAndViews':
         this.maximizedChartTitle = 'Knowledge Graph Access & Views';
         this.maximizedChartMaterialList = [];
         if (isMyActivities) {
@@ -830,7 +831,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           this.loadKGDetailsForMaximizedChart('summary');
         }
         break;
-      case 'kgActivities2':
+      case 'kgConceptsMarked':
         this.maximizedChartTitle = 'Knowledge Graph Marked Activities';
         this.maximizedChartMaterialList = [];
         if (isMyActivities) {
@@ -838,7 +839,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           this.loadKGDetailsForMaximizedChart('marked');
         }
         break;
-      case 'kgActivities3':
+      case 'kgRecommendedConcepts':
         this.maximizedChartTitle = 'Knowledge Graph Summary';
         this.maximizedChartMaterialList = [];
         if (isMyActivities) {
@@ -846,7 +847,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           this.loadKGDetailsForMaximizedChart('accesses');
         }
         break;
-      case 'recommendationActivities2':
+      case 'recommendedMaterials':
         this.maximizedChartTitle = 'Recommended Materials';
         this.maximizedChartMaterialList = [];
         if (isMyActivities) {
@@ -854,7 +855,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           this.loadRecommendationDetailsForMaximizedChart('materials');
         }
         break;
-      case 'recommendationActivities3':
+      case 'recommendedConceptsMarked':
         this.maximizedChartTitle = 'Recommended Concepts Marked';
         this.maximizedChartMaterialList = [];
         if (isMyActivities) {
@@ -966,14 +967,14 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
    * Check if the maximized chart is a KG chart with details
    */
   isKGChartWithDetails(): boolean {
-    return ['kgActivities1', 'kgActivities2', 'kgActivities3'].includes(this.maximizedChart || '');
+    return ['kgAccessesAndViews', 'kgConceptsMarked', 'kgRecommendedConcepts'].includes(this.maximizedChart || '');
   }
 
   /**
    * Check if the maximized chart is an access chart with details
    */
   isAccessChartWithDetails(): boolean {
-    return this.maximizedChart === 'accessActivities1';
+    return this.maximizedChart === 'accessByType';
   }
 
   /**
@@ -1202,7 +1203,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
    * Check if the maximized chart is a recommendation chart with details
    */
   isRecommendationChartWithDetails(): boolean {
-    return ['recommendationActivities2', 'recommendationActivities3'].includes(this.maximizedChart || '');
+    return ['recommendedMaterials', 'recommendedConceptsMarked'].includes(this.maximizedChart || '');
   }
 
   /**
@@ -1449,13 +1450,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
         case 'pdfActivities': return this.pdfActivitiesPieData;
         case 'videoActivities': return this.videoActivitiesPieData;
         case 'slidesAndVideoTime': return this.slidesAndVideoTimePieData;
-        case 'accessActivities1': return this.accessActivitiesPieData1;
-        case 'accessActivities3': return this.accessActivitiesPieData3;
-        case 'kgActivities1': return this.kgActivitiesPieData1;
-        case 'kgActivities2': return this.kgActivitiesPieData2;
-        case 'kgActivities3': return this.kgActivitiesPieData3;
-        case 'recommendationActivities2': return this.recommendationActivitiesPieData2;
-        case 'recommendationActivities3': return this.recommendationActivitiesPieData3;
+        case 'accessByType': return this.accessActivitiesPieData1;
+        case 'dashboardAccesses': return this.accessActivitiesPieData3;
+        case 'kgAccessesAndViews': return this.kgActivitiesPieData1;
+        case 'kgConceptsMarked': return this.kgActivitiesPieData2;
+        case 'kgRecommendedConcepts': return this.kgActivitiesPieData3;
+        case 'recommendedMaterials': return this.recommendationActivitiesPieData2;
+        case 'recommendedConceptsMarked': return this.recommendationActivitiesPieData3;
         default: return null;
       }
     } else {
@@ -1467,13 +1468,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
         case 'pdfActivities': return this.pdfActivitiesData;
         case 'videoActivities': return this.videoActivitiesData;
         case 'slidesAndVideoTime': return this.slidesAndVideoTimeData;
-        case 'accessActivities1': return this.accessActivitiesData1;
-        case 'accessActivities3': return this.accessActivitiesData3;
-        case 'kgActivities1': return this.kgActivitiesData1;
-        case 'kgActivities2': return this.kgActivitiesData2;
-        case 'kgActivities3': return this.kgActivitiesData3;
-        case 'recommendationActivities2': return this.recommendationActivitiesData2;
-        case 'recommendationActivities3': return this.recommendationActivitiesData3;
+        case 'accessByType': return this.accessActivitiesData1;
+        case 'dashboardAccesses': return this.accessActivitiesData3;
+        case 'kgAccessesAndViews': return this.kgActivitiesData1;
+        case 'kgConceptsMarked': return this.kgActivitiesData2;
+        case 'kgRecommendedConcepts': return this.kgActivitiesData3;
+        case 'recommendedMaterials': return this.recommendationActivitiesData2;
+        case 'recommendedConceptsMarked': return this.recommendationActivitiesData3;
         default: return null;
       }
     }
@@ -1500,13 +1501,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
         case 'pdfActivities': return this.pdfActivitiesPieOptions;
         case 'videoActivities': return this.videoActivitiesPieOptions;
         case 'slidesAndVideoTime': return this.slidesAndVideoTimePieOptions;
-        case 'accessActivities1': return this.accessActivitiesPieOptions1;
-        case 'accessActivities3': return this.accessActivitiesPieOptions3;
-        case 'kgActivities1': return this.kgActivitiesPieOptions1;
-        case 'kgActivities2': return this.kgActivitiesPieOptions2;
-        case 'kgActivities3': return this.kgActivitiesPieOptions3;
-        case 'recommendationActivities2': return this.recommendationActivitiesPieOptions2;
-        case 'recommendationActivities3': return this.recommendationActivitiesPieOptions3;
+        case 'accessByType': return this.accessActivitiesPieOptions1;
+        case 'dashboardAccesses': return this.accessActivitiesPieOptions3;
+        case 'kgAccessesAndViews': return this.kgActivitiesPieOptions1;
+        case 'kgConceptsMarked': return this.kgActivitiesPieOptions2;
+        case 'kgRecommendedConcepts': return this.kgActivitiesPieOptions3;
+        case 'recommendedMaterials': return this.recommendationActivitiesPieOptions2;
+        case 'recommendedConceptsMarked': return this.recommendationActivitiesPieOptions3;
         default: return null;
       }
     } else {
@@ -1518,13 +1519,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
         case 'pdfActivities': return this.pdfActivitiesOptions;
         case 'videoActivities': return this.videoActivitiesOptions;
         case 'slidesAndVideoTime': return this.slidesAndVideoTimeOptions;
-        case 'accessActivities1': return this.accessActivitiesOptions1;
-        case 'accessActivities3': return this.accessActivitiesOptions3;
-        case 'kgActivities1': return this.kgActivitiesOptions1;
-        case 'kgActivities2': return this.kgActivitiesOptions2;
-        case 'kgActivities3': return this.kgActivitiesOptions3;
-        case 'recommendationActivities2': return this.recommendationActivitiesOptions2;
-        case 'recommendationActivities3': return this.recommendationActivitiesOptions3;
+        case 'accessByType': return this.accessActivitiesOptions1;
+        case 'dashboardAccesses': return this.accessActivitiesOptions3;
+        case 'kgAccessesAndViews': return this.kgActivitiesOptions1;
+        case 'kgConceptsMarked': return this.kgActivitiesOptions2;
+        case 'kgRecommendedConcepts': return this.kgActivitiesOptions3;
+        case 'recommendedMaterials': return this.recommendationActivitiesOptions2;
+        case 'recommendedConceptsMarked': return this.recommendationActivitiesOptions3;
         default: return null;
       }
     }
@@ -1544,13 +1545,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
         case 'pdfActivities': return this.pdfActivitiesOptions;
         case 'videoActivities': return this.videoActivitiesOptions;
         case 'slidesAndVideoTime': return this.slidesAndVideoTimeOptions;
-        case 'accessActivities1': return this.accessActivitiesOptions1;
-        case 'accessActivities3': return this.accessActivitiesOptions3;
-        case 'kgActivities1': return this.kgActivitiesOptions1;
-        case 'kgActivities2': return this.kgActivitiesOptions2;
-        case 'kgActivities3': return this.kgActivitiesOptions3;
-        case 'recommendationActivities2': return this.recommendationActivitiesOptions2;
-        case 'recommendationActivities3': return this.recommendationActivitiesOptions3;
+        case 'accessByType': return this.accessActivitiesOptions1;
+        case 'dashboardAccesses': return this.accessActivitiesOptions3;
+        case 'kgAccessesAndViews': return this.kgActivitiesOptions1;
+        case 'kgConceptsMarked': return this.kgActivitiesOptions2;
+        case 'kgRecommendedConcepts': return this.kgActivitiesOptions3;
+        case 'recommendedMaterials': return this.recommendationActivitiesOptions2;
+        case 'recommendedConceptsMarked': return this.recommendationActivitiesOptions3;
         default: return this.createDefaultChartOptions('Chart');
       }
     })();
@@ -1628,13 +1629,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
         case 'pdfActivities': return this.pdfActivitiesOptions;
         case 'videoActivities': return this.videoActivitiesOptions;
         case 'slidesAndVideoTime': return this.slidesAndVideoTimeOptions;
-        case 'accessActivities1': return this.accessActivitiesOptions1;
-        case 'accessActivities3': return this.accessActivitiesOptions3;
-        case 'kgActivities1': return this.kgActivitiesOptions1;
-        case 'kgActivities2': return this.kgActivitiesOptions2;
-        case 'kgActivities3': return this.kgActivitiesOptions3;
-        case 'recommendationActivities2': return this.recommendationActivitiesOptions2;
-        case 'recommendationActivities3': return this.recommendationActivitiesOptions3;
+        case 'accessByType': return this.accessActivitiesOptions1;
+        case 'dashboardAccesses': return this.accessActivitiesOptions3;
+        case 'kgAccessesAndViews': return this.kgActivitiesOptions1;
+        case 'kgConceptsMarked': return this.kgActivitiesOptions2;
+        case 'kgRecommendedConcepts': return this.kgActivitiesOptions3;
+        case 'recommendedMaterials': return this.recommendationActivitiesOptions2;
+        case 'recommendedConceptsMarked': return this.recommendationActivitiesOptions3;
         default: return this.createDefaultChartOptions('Chart');
       }
     })();
@@ -1728,13 +1729,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
         case 'pdfActivities': return this.pdfActivitiesOptions;
         case 'videoActivities': return this.videoActivitiesOptions;
         case 'slidesAndVideoTime': return this.slidesAndVideoTimeOptions;
-        case 'accessActivities1': return this.accessActivitiesOptions1;
-        case 'accessActivities3': return this.accessActivitiesOptions3;
-        case 'kgActivities1': return this.kgActivitiesOptions1;
-        case 'kgActivities2': return this.kgActivitiesOptions2;
-        case 'kgActivities3': return this.kgActivitiesOptions3;
-        case 'recommendationActivities2': return this.recommendationActivitiesOptions2;
-        case 'recommendationActivities3': return this.recommendationActivitiesOptions3;
+        case 'accessByType': return this.accessActivitiesOptions1;
+        case 'dashboardAccesses': return this.accessActivitiesOptions3;
+        case 'kgAccessesAndViews': return this.kgActivitiesOptions1;
+        case 'kgConceptsMarked': return this.kgActivitiesOptions2;
+        case 'kgRecommendedConcepts': return this.kgActivitiesOptions3;
+        case 'recommendedMaterials': return this.recommendationActivitiesOptions2;
+        case 'recommendedConceptsMarked': return this.recommendationActivitiesOptions3;
         default: return this.createDefaultChartOptions('Chart');
       }
     })();
@@ -1857,13 +1858,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     pdfActivities: 'bar',
     videoActivities: 'bar',
     slidesAndVideoTime: 'bar',
-    accessActivities1: 'bar',
-    accessActivities3: 'bar',
-    kgActivities1: 'bar',
-    kgActivities2: 'bar',
-    kgActivities3: 'bar',
-    recommendationActivities2: 'bar',
-    recommendationActivities3: 'bar'
+    accessByType: 'bar',
+    dashboardAccesses: 'bar',
+    kgAccessesAndViews: 'bar',
+    kgConceptsMarked: 'bar',
+    kgRecommendedConcepts: 'bar',
+    recommendedMaterials: 'bar',
+    recommendedConceptsMarked: 'bar'
   };
 
   // Chart data for Annotation Activities
@@ -1945,7 +1946,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     private router: Router,
     private engagementService: EngagementService,
     private cdr: ChangeDetectorRef,
-    private store: Store,
+    private store: Store<State>,
     private materialsService: MaterilasService,
     private courseService: CourseService
   ) {
@@ -1953,9 +1954,9 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     const chartNames = [
       'addedAnnotations', 'annotationInteractions', 'likesDislikes', 'tags',
       'pdfActivities', 'videoActivities', 'slidesAndVideoTime',
-      'accessActivities1', 'accessActivities3',
-      'kgActivities1', 'kgActivities2', 'kgActivities3',
-      'recommendationActivities2', 'recommendationActivities3'
+      'accessByType', 'dashboardAccesses',
+      'kgAccessesAndViews', 'kgConceptsMarked', 'kgRecommendedConcepts',
+      'recommendedMaterials', 'recommendedConceptsMarked'
     ];
     chartNames.forEach(name => {
       this.peerCounts[name] = 3;
@@ -3667,21 +3668,21 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     },
     { 
       name: 'Access Activities', 
-      charts: ['accessActivities1', 'accessActivities3'], 
+      charts: ['accessByType', 'dashboardAccesses'], 
       color: '#f59e0b', 
       bgColor: 'bg-amber-500',
       icon: 'pi-sign-in'
     },
     { 
       name: 'Knowledge Graph Activities', 
-      charts: ['kgActivities1', 'kgActivities2', 'kgActivities3'], 
+      charts: ['kgAccessesAndViews', 'kgConceptsMarked', 'kgRecommendedConcepts'], 
       color: '#8b5cf6', 
       bgColor: 'bg-purple-500',
       icon: 'pi-share-alt'
     },
     { 
       name: 'Recommendation Activities', 
-      charts: ['recommendationActivities2', 'recommendationActivities3'], 
+      charts: ['recommendedMaterials', 'recommendedConceptsMarked'], 
       color: '#ec4899', 
       bgColor: 'bg-pink-500',
       icon: 'pi-star'
@@ -4097,13 +4098,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
       'pdfActivities': { metricKey: 'pdfStarted', label: 'PDF Activities' },
       'videoActivities': { metricKey: 'videosStarted', label: 'Video Activities' },
       'slidesAndVideoTime': { metricKey: 'slidesViewed', label: 'Slides & Video Time' },
-      'accessActivities1': { metricKey: 'courseAccesses', label: 'Access Activities' },
-      'accessActivities3': { metricKey: 'dashboardCourseAccesses', label: 'Dashboard Access' },
-      'kgActivities1': { metricKey: 'totalKnowledgeGraphAccesses', label: 'KG Summary' },
-      'kgActivities2': { metricKey: 'totalSlideKnowledgeGraphMarkedUnderstood', label: 'KG Marked' },
-      'kgActivities3': { metricKey: 'courseKnowledgeGraphAccesses', label: 'KG Access by Location' },
-      'recommendationActivities2': { metricKey: 'totalRecommendedMaterialViewed', label: 'Recommended Materials' },
-      'recommendationActivities3': { metricKey: 'recommendedConceptsMarkedUnderstood', label: 'Recommended Concepts' }
+      'accessByType': { metricKey: 'courseAccesses', label: 'Access Activities' },
+      'dashboardAccesses': { metricKey: 'dashboardCourseAccesses', label: 'Dashboard Access' },
+      'kgAccessesAndViews': { metricKey: 'totalKnowledgeGraphAccesses', label: 'KG Summary' },
+      'kgConceptsMarked': { metricKey: 'totalSlideKnowledgeGraphMarkedUnderstood', label: 'KG Marked' },
+      'kgRecommendedConcepts': { metricKey: 'courseKnowledgeGraphAccesses', label: 'KG Access by Location' },
+      'recommendedMaterials': { metricKey: 'totalRecommendedMaterialViewed', label: 'Recommended Materials' },
+      'recommendedConceptsMarked': { metricKey: 'recommendedConceptsMarkedUnderstood', label: 'Recommended Concepts' }
     };
 
     return mappings[chartName] || null;
@@ -4143,7 +4144,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           { key: 'totalTagViewed', userKey: 'totalTagViewed', peerKey: 'totalTagViewed', label: 'Tags viewed' }
         ]
       },
-      'accessActivities1': {
+      'accessByType': {
         chartLabel: 'Access Activities',
         metrics: [
           { key: 'courseAccesses', userKey: 'courseAccesses', peerKey: 'courseAccesses', label: 'Course' },
@@ -4152,7 +4153,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           { key: 'materialAccesses', userKey: 'materialAccesses', peerKey: 'materialAccesses', label: 'Material' }
         ]
       },
-      'accessActivities3': {
+      'dashboardAccesses': {
         chartLabel: 'Dashboard Access',
         metrics: [
           { key: 'dashboardCourseAccesses', userKey: 'dashboardCourseAccesses', peerKey: 'dashboardCourseAccesses', label: 'Course' },
@@ -4161,14 +4162,14 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           { key: 'dashboardMaterialAccesses', userKey: 'dashboardMaterialAccesses', peerKey: 'dashboardMaterialAccesses', label: 'Material' }
         ]
       },
-      'kgActivities1': {
+      'kgAccessesAndViews': {
         chartLabel: 'KG Summary',
         metrics: [
           { key: 'totalKnowledgeGraphAccesses', userKey: 'totalKnowledgeGraphAccesses', peerKey: 'totalKnowledgeGraphAccesses', label: 'Total KG Accesses' },
           { key: 'totalKnowledgeGraphConceptViewed', userKey: 'totalKnowledgeGraphConceptViewed', peerKey: 'totalKnowledgeGraphConceptViewed', label: 'Concepts/Wiki Viewed' }
         ]
       },
-      'kgActivities2': {
+      'kgConceptsMarked': {
         chartLabel: 'KG Marked Activities',
         metrics: [
           { key: 'totalSlideKnowledgeGraphMarkedUnderstood', userKey: 'totalSlideKnowledgeGraphMarkedUnderstood', peerKey: 'totalSlideKnowledgeGraphMarkedUnderstood', label: 'Marked Understood' },
@@ -4176,7 +4177,7 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           { key: 'totalSlideKnowledgeGraphMarkedAsNew', userKey: 'totalSlideKnowledgeGraphMarkedAsNew', peerKey: 'totalSlideKnowledgeGraphMarkedAsNew', label: 'Marked as New' }
         ]
       },
-      'kgActivities3': {
+      'kgRecommendedConcepts': {
         chartLabel: 'KG Access by Location',
         metrics: [
           { key: 'courseKnowledgeGraphAccesses', userKey: 'courseKnowledgeGraphAccesses', peerKey: 'courseKnowledgeGraphAccesses', label: 'Course KG Access' },
@@ -4184,14 +4185,14 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
           { key: 'slideKnowledgeGraphAccesses', userKey: 'slideKnowledgeGraphAccesses', peerKey: 'slideKnowledgeGraphAccesses', label: 'Slide KG Access' }
         ]
       },
-      'recommendationActivities2': {
+      'recommendedMaterials': {
         chartLabel: 'Recommendation Materials',
         metrics: [
           { key: 'totalRecommendedMaterialMarkedHelpful', userKey: 'totalRecommendedMaterialMarkedHelpful', peerKey: 'totalRecommendedMaterialMarkedHelpful', label: 'Marked Helpful' },
           { key: 'totalRecommendedMaterialMarkedNotHelpful', userKey: 'totalRecommendedMaterialMarkedNotHelpful', peerKey: 'totalRecommendedMaterialMarkedNotHelpful', label: 'Marked Not Helpful' }
         ]
       },
-      'recommendationActivities3': {
+      'recommendedConceptsMarked': {
         chartLabel: 'Recommendation Marked',
         metrics: [
           { key: 'recommendedConceptsMarkedUnderstood', userKey: 'recommendedConceptsMarkedUnderstood', peerKey: 'recommendedConceptsMarkedUnderstood', label: 'Marked Understood' },
@@ -4765,13 +4766,13 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
       'annotationInteractions': 'This chart displays your interactions with annotations including replies, mentions, and followed annotations. More details can be found in the maximized view.',
       'likesDislikes': 'This chart shows the total number of likes and dislikes you have given to annotations. More details can be found in the maximized view.',
       'tags': 'This chart displays the number of tags you have added to materials and tags you have viewed. More details can be found in the maximized view.',
-      'accessActivities1': 'This chart shows how often you access different areas of the course including course pages, topics, channels, and materials. More details can be found in the maximized view.',
-      'accessActivities3': 'This chart shows your dashboard access activities including course dashboard visits. More details can be found in the maximized view.',
-      'kgActivities1': 'This chart displays your total Knowledge Graph accesses and the number of concepts/wiki pages you have viewed. More details can be found in the maximized view.',
-      'kgActivities2': 'This chart shows how many concepts you have marked as understood, not understood, or new within the Knowledge Graph. More details can be found in the maximized view.',
-      'kgActivities3': 'This chart shows where you accessed the Knowledge Graph from: course level, material level, or slide level. More details can be found in the maximized view.',
-      'recommendationActivities2': 'This chart shows how many recommended materials you have viewed. More details can be found in the maximized view.',
-      'recommendationActivities3': 'This chart displays how many recommended concepts you have marked as understood. More details can be found in the maximized view.'
+      'accessByType': 'This chart shows how often you access different areas of the course including course pages, topics, channels, and materials. More details can be found in the maximized view.',
+      'dashboardAccesses': 'This chart shows your dashboard access activities including course dashboard visits. More details can be found in the maximized view.',
+      'kgAccessesAndViews': 'This chart displays your total Knowledge Graph accesses and the number of concepts/wiki pages you have viewed. More details can be found in the maximized view.',
+      'kgConceptsMarked': 'This chart shows how many concepts you have marked as understood, not understood, or new within the Knowledge Graph. More details can be found in the maximized view.',
+      'kgRecommendedConcepts': 'This chart shows where you accessed the Knowledge Graph from: course level, material level, or slide level. More details can be found in the maximized view.',
+      'recommendedMaterials': 'This chart shows how many recommended materials you have viewed. More details can be found in the maximized view.',
+      'recommendedConceptsMarked': 'This chart displays how many recommended concepts you have marked as understood. More details can be found in the maximized view.'
     };
 
     return descriptions[chartName] || 'This chart displays your activity metrics for this category.';

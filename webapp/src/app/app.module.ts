@@ -48,6 +48,7 @@ import { SidebarTagsComponent } from './pages/components/tags/sidebar-tags/sideb
 import { TagsPageComponent } from './pages/components/tags/tags-page/tags-page.component';
 import { TagCommentItemComponent } from './pages/components/tags/tag-comment-item/tag-comment-item.component';
 import { TagReplyPanelComponent } from './pages/components/tags/tag-reply-panel/tag-reply-panel.component';
+import { engagementReducer } from './pages/components/Dashboards/engagement-dashboard/state/engagement.reducer';
 import { TagReplyItemComponent } from './pages/components/tags/tag-reply-item/tag-reply-item.component';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -170,6 +171,7 @@ import { RequestEmailValidationComponent } from './pages/components/email-valida
     }),
     SharedComponentsModule,
     StoreModule.forFeature('general', appReducer),
+    StoreModule.forFeature('engagement', engagementReducer),
     EffectsModule.forFeature([AppEffects]),
     InputTextareaModule,
     DragulaModule.forRoot(),

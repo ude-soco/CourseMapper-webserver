@@ -55,6 +55,11 @@ const routes: Routes = [
     canActivate: [AuthGuardService],
   },
   {
+    path: 'user/engagement/:courseId',
+    component: EngagementDashboardComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
     path: 'landingPage',
     component: LandingPageComponent,
     canActivate: [AuthGuardService],

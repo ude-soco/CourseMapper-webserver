@@ -791,7 +791,7 @@ export const getUserEngagementMetrics = async (req, res) => {
     });
 
     // Get engagement level from Neo4j
-    let engagementLevel = "medium";
+    let engagementLevel = "low";
     try {
       const engagementRecords = await getLevelOfEngagement(userId);
       // engagementRecords is already an array, not an object with .records property
