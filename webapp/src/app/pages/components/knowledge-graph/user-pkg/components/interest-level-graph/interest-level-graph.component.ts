@@ -67,7 +67,7 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     console.log('[Interest Level Graph] Component initialized');
-    this.subscribeToStore();
+    this.listenToStoreChanges();
     this.loadUserAndInitialize();
   }
 
@@ -99,7 +99,7 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
       });
   }
 
-  private subscribeToStore(): void {
+  private listenToStoreChanges(): void {
     // Subscribe to filtered concepts
     this.store.select(PkgInterestSelectors.selectFilteredInterestConcepts)
       .pipe(takeUntil(this.destroy$))
