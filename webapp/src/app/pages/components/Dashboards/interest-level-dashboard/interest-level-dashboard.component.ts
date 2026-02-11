@@ -325,7 +325,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
       });
     
     // Subscribe to store state for local copies (for chart libraries that need direct refs)
-    this.subscribeToStoreState();
+    this.listenToStoreChanges();
   }
   
   /**
@@ -363,7 +363,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
    * 
    * @returns void
    */
-  private subscribeToStoreState(): void {
+  private listenToStoreChanges(): void {
     // Subscribe to concept data for local processing
     this.conceptData$.pipe(takeUntil(this.destroy$)).subscribe(data => {
       if (data) {
@@ -1264,7 +1264,7 @@ export class InterestLevelDashboardComponent implements OnInit, OnDestroy {
    * 5. Backend returns top 10 concepts sorted by score
    * 6. Effect dispatches success action with new data
    * 7. Reducer updates topConcepts array in store
-   * 8. subscribeToStoreState() detects change and calls initializeTopConceptsChart()
+   * 8. listenToStoreChanges() detects change and calls initializeTopConceptsChart()
    * 9. Chart updates to show new comparison set
    * 
    * THESIS CONTEXT - USER CONTROL:

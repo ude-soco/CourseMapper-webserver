@@ -52,10 +52,10 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     console.log('[Cytoscape PKG] Component initialized');
-    this.subscribeToStore();
+    this.listenToStoreChanges();
   }
 
-  private subscribeToStore(): void {
+  private listenToStoreChanges(): void {
     // Subscribe to graph data, raw records, and courses together
     // Use selectGraphDataWithScores to get enriched data with interest scores
     combineLatest([

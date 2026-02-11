@@ -49,12 +49,12 @@ describe('InterestLevelGraphComponent', () => {
   });
 
   it('should initialize on ngOnInit', () => {
-    spyOn(component as any, 'subscribeToStore');
+    spyOn(component as any, 'listenToStoreChanges');
     spyOn(component as any, 'loadUserAndInitialize');
 
     component.ngOnInit();
 
-    expect((component as any).subscribeToStore).toHaveBeenCalled();
+    expect((component as any).listenToStoreChanges).toHaveBeenCalled();
     expect((component as any).loadUserAndInitialize).toHaveBeenCalled();
   });
 
