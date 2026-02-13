@@ -187,7 +187,7 @@ export function createEngagementGraphData(
           source: userNode?.data.id,
           target: `course-${course.courseId}`,
           type: 'engagement',
-          label: `Engaged (${engagementLevelCapitalized})`,
+          label: `Engaged_In (${engagementLevelCapitalized})`,
           engagementLevel: engagementLevel
         }
       });
