@@ -113,12 +113,33 @@ def exportStudentClusters():
         json.dump(all_centroids, f, indent=2)
     print(f"Exported cluster centroids to '{centroids_file_path}'")
     
+    # Build a set of (user_id, course_id) pairs where the user is a moderator
+    # Moderators should not have ENGAGED_IN relationships with courses they moderate
+    collection_roles = mydb["roles"]
+    collection_courses = mydb["courses"]
+    moderator_role_doc = collection_roles.find_one({"name": "moderator"})
+    moderator_pairs = set()
+    if moderator_role_doc:
+        moderator_role_id = moderator_role_doc["_id"]
+        for course in collection_courses.find({}):
+            course_id_str = str(course["_id"])
+            for user in course.get("users", []):
+                if user.get("role") == moderator_role_id:
+                    moderator_pairs.add((str(user["userId"]), course_id_str))
+    print(f"Found {len(moderator_pairs)} moderator-course pairs to exclude from engagement updates")
+
     driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
     
     for _, row in final_df.iterrows():
         user_id = row['stdUsername']
         course_id = row['course_id']
         new_level = row['engagement_level']
+
+        # Skip moderators - they should not have engagement relationships with their own courses
+        if (str(user_id), str(course_id)) in moderator_pairs:
+            print(f"Skipping moderator {user_id} for course {course_id} (moderator-course pair excluded)")
+            continue
+
         try:
             update_engagement_status(driver, user_id, course_id, new_level)
             print(f"Updated user {user_id} for course {course_id} to engagement level: {new_level}")
