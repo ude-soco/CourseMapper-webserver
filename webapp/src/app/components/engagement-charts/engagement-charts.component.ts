@@ -578,9 +578,9 @@ export class EngagementChartsComponent implements OnInit, OnChanges, OnDestroy, 
     this.isLoadingEnrolledCourses = true;
     this.courseService.fetchCourses().subscribe({
       next: (courses) => {
-        // Filter out the current course from the list
+        // Filter out the current course and courses where user is moderator
         this.enrolledCourses = courses
-          .filter(course => course._id !== this.courseId)
+          .filter(course => course._id !== this.courseId && course.role !== 'moderator')
           .map(course => ({
             _id: course._id,
             name: course.name,
