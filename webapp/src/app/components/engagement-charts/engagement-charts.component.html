@@ -211,7 +211,7 @@
                               (change)="toggleCourseSelection(course._id)"
                               class="cursor-pointer rounded border-gray-300 text-blue-500 focus:ring-blue-500">
                             <span class="text-sm text-gray-700 truncate" [title]="course.name">
-                              {{ course.shortName || course.name }}
+                              {{ course.name }}
                             </span>
                           </label>
                         </div>
@@ -998,16 +998,16 @@
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
                             type="checkbox" 
-                            [checked]="accessActivitiesVisible1"
-                            (change)="accessActivitiesVisible1 = !accessActivitiesVisible1"
+                            [checked]="accessByTypeVisible"
+                            (change)="accessByTypeVisible = !accessByTypeVisible"
                             class="cursor-pointer">
                           <span>Access Activities by Type</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
                             type="checkbox" 
-                            [checked]="accessActivitiesVisible3"
-                            (change)="accessActivitiesVisible3 = !accessActivitiesVisible3"
+                            [checked]="dashboardAccessesVisible"
+                            (change)="dashboardAccessesVisible = !dashboardAccessesVisible"
                             class="cursor-pointer">
                           <span>Dashboard Access Activities</span>
                         </label>
@@ -1023,11 +1023,11 @@
               </h3>
               <div *ngIf="accessActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Access Activity 1 -->
-                <div *ngIf="accessActivitiesVisible1" class="bg-white rounded-lg shadow-md p-4 relative">
+                <div *ngIf="accessByTypeVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      pTooltip="{{getChartDescription('accessActivities1')}}"
+                      pTooltip="{{getChartDescription('accessByType')}}"
                       tooltipPosition="left"
                       [escape]="false"
                       title="Chart information">
@@ -1037,46 +1037,46 @@
                     <button 
                       *ngIf="isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
-                      (click)="openPeerCountSelector('accessActivities1', $event); $event.stopPropagation()"
+                      (click)="openPeerCountSelector('accessByType', $event); $event.stopPropagation()"
                       title="Select number of peers to compare">
                       <i class="pi pi-users" style="font-size: 0.875rem;"></i>
-                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['accessActivities1'] || 3 }}</span>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['accessByType'] || 3 }}</span>
                     </button>
                     <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
                     <button 
                       *ngIf="isMyActivitiesTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChartType('accessActivities1'); $event.stopPropagation()"
+                      (click)="toggleChartType('accessByType'); $event.stopPropagation()"
                       title="Toggle chart type">
-                      <i class="pi" [ngClass]="getChartType('accessActivities1') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                      <i class="pi" [ngClass]="getChartType('accessByType') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="maximizeChart('accessActivities1'); $event.stopPropagation()"
+                      (click)="maximizeChart('accessByType'); $event.stopPropagation()"
                       title="Maximize chart">
                       <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChart('accessActivities1'); $event.stopPropagation()"
+                      (click)="toggleChart('accessByType'); $event.stopPropagation()"
                       title="Close chart">
                       <i class="pi pi-times" style="font-size: 0.875rem;"></i>
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <ng-container *ngIf="isTopPeersTab() || getChartType('accessActivities1') === 'bar'">
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('accessByType') === 'bar'">
                       <p-chart 
                         type="bar"
-                        [data]="getChartDataForTab('accessActivities1')" 
-                        [options]="getChartOptions('accessActivities1')"
+                        [data]="getChartDataForTab('accessByType')" 
+                        [options]="getChartOptions('accessByType')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
-                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('accessActivities1') === 'pie'">
+                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('accessByType') === 'pie'">
                       <p-chart 
                         type="pie"
-                        [data]="getChartDataForTab('accessActivities1')" 
-                        [options]="getChartOptions('accessActivities1')"
+                        [data]="getChartDataForTab('accessByType')" 
+                        [options]="getChartOptions('accessByType')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
@@ -1084,11 +1084,11 @@
                 </div>
 
                 <!-- Access Activity 3 -->
-                <div *ngIf="accessActivitiesVisible3" class="bg-white rounded-lg shadow-md p-4 relative">
+                <div *ngIf="dashboardAccessesVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      pTooltip="{{getChartDescription('accessActivities3')}}"
+                      pTooltip="{{getChartDescription('dashboardAccesses')}}"
                       tooltipPosition="left"
                       [escape]="false"
                       title="Chart information">
@@ -1098,46 +1098,46 @@
                     <button 
                       *ngIf="isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
-                      (click)="openPeerCountSelector('accessActivities3', $event); $event.stopPropagation()"
+                      (click)="openPeerCountSelector('dashboardAccesses', $event); $event.stopPropagation()"
                       title="Select number of peers to compare">
                       <i class="pi pi-users" style="font-size: 0.875rem;"></i>
-                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['accessActivities3'] || 3 }}</span>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['dashboardAccesses'] || 3 }}</span>
                     </button>
                     <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
                     <button 
                       *ngIf="isMyActivitiesTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChartType('accessActivities3'); $event.stopPropagation()"
+                      (click)="toggleChartType('dashboardAccesses'); $event.stopPropagation()"
                       title="Toggle chart type">
-                      <i class="pi" [ngClass]="getChartType('accessActivities3') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                      <i class="pi" [ngClass]="getChartType('dashboardAccesses') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="maximizeChart('accessActivities3'); $event.stopPropagation()"
+                      (click)="maximizeChart('dashboardAccesses'); $event.stopPropagation()"
                       title="Maximize chart">
                       <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChart('accessActivities3'); $event.stopPropagation()"
+                      (click)="toggleChart('dashboardAccesses'); $event.stopPropagation()"
                       title="Close chart">
                       <i class="pi pi-times" style="font-size: 0.875rem;"></i>
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <ng-container *ngIf="isTopPeersTab() || getChartType('accessActivities3') === 'bar'">
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('dashboardAccesses') === 'bar'">
                       <p-chart 
                         type="bar"
-                        [data]="getChartDataForTab('accessActivities3')" 
-                        [options]="getChartOptions('accessActivities3')"
+                        [data]="getChartDataForTab('dashboardAccesses')" 
+                        [options]="getChartOptions('dashboardAccesses')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
-                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('accessActivities3') === 'pie'">
+                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('dashboardAccesses') === 'pie'">
                       <p-chart 
                         type="pie"
-                        [data]="getChartDataForTab('accessActivities3')" 
-                        [options]="getChartOptions('accessActivities3')"
+                        [data]="getChartDataForTab('dashboardAccesses')" 
+                        [options]="getChartOptions('dashboardAccesses')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
@@ -1165,24 +1165,24 @@
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
                             type="checkbox" 
-                            [checked]="kgActivitiesVisible1"
-                            (change)="kgActivitiesVisible1 = !kgActivitiesVisible1"
+                            [checked]="kgAccessesAndViewsVisible"
+                            (change)="kgAccessesAndViewsVisible = !kgAccessesAndViewsVisible"
                             class="cursor-pointer">
                           <span>Knowledge Graph Summary</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
                             type="checkbox" 
-                            [checked]="kgActivitiesVisible2"
-                            (change)="kgActivitiesVisible2 = !kgActivitiesVisible2"
+                            [checked]="kgConceptsMarkedVisible"
+                            (change)="kgConceptsMarkedVisible = !kgConceptsMarkedVisible"
                             class="cursor-pointer">
                           <span>Knowledge Graph Marked Activities</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
                             type="checkbox" 
-                            [checked]="kgActivitiesVisible3"
-                            (change)="kgActivitiesVisible3 = !kgActivitiesVisible3"
+                            [checked]="kgRecommendedConceptsVisible"
+                            (change)="kgRecommendedConceptsVisible = !kgRecommendedConceptsVisible"
                             class="cursor-pointer">
                           <span>Knowledge Graph Access by Location</span>
                         </label>
@@ -1198,11 +1198,11 @@
               </h3>
               <div *ngIf="kgActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- KG Activity 1 - Summary -->
-                <div *ngIf="kgActivitiesVisible1" class="bg-white rounded-lg shadow-md p-4 relative">
+                <div *ngIf="kgAccessesAndViewsVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      pTooltip="{{getChartDescription('kgActivities1')}}"
+                      pTooltip="{{getChartDescription('kgAccessesAndViews')}}"
                       tooltipPosition="left"
                       [escape]="false"
                       title="Chart information">
@@ -1212,46 +1212,46 @@
                     <button 
                       *ngIf="isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
-                      (click)="openPeerCountSelector('kgActivities1', $event); $event.stopPropagation()"
+                      (click)="openPeerCountSelector('kgAccessesAndViews', $event); $event.stopPropagation()"
                       title="Select number of peers to compare">
                       <i class="pi pi-users" style="font-size: 0.875rem;"></i>
-                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['kgActivities1'] || 3 }}</span>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['kgAccessesAndViews'] || 3 }}</span>
                     </button>
                     <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
                     <button 
                       *ngIf="isMyActivitiesTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChartType('kgActivities1'); $event.stopPropagation()"
+                      (click)="toggleChartType('kgAccessesAndViews'); $event.stopPropagation()"
                       title="Toggle chart type">
-                      <i class="pi" [ngClass]="getChartType('kgActivities1') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                      <i class="pi" [ngClass]="getChartType('kgAccessesAndViews') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="maximizeChart('kgActivities1'); $event.stopPropagation()"
+                      (click)="maximizeChart('kgAccessesAndViews'); $event.stopPropagation()"
                       title="Maximize chart">
                       <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChart('kgActivities1'); $event.stopPropagation()"
+                      (click)="toggleChart('kgAccessesAndViews'); $event.stopPropagation()"
                       title="Close chart">
                       <i class="pi pi-times" style="font-size: 0.875rem;"></i>
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <ng-container *ngIf="isTopPeersTab() || getChartType('kgActivities1') === 'bar'">
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('kgAccessesAndViews') === 'bar'">
                       <p-chart 
                         type="bar"
-                        [data]="getChartDataForTab('kgActivities1')" 
-                        [options]="getChartOptions('kgActivities1')"
+                        [data]="getChartDataForTab('kgAccessesAndViews')" 
+                        [options]="getChartOptions('kgAccessesAndViews')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
-                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('kgActivities1') === 'pie'">
+                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('kgAccessesAndViews') === 'pie'">
                       <p-chart 
                         type="pie"
-                        [data]="getChartDataForTab('kgActivities1')" 
-                        [options]="getChartOptions('kgActivities1')"
+                        [data]="getChartDataForTab('kgAccessesAndViews')" 
+                        [options]="getChartOptions('kgAccessesAndViews')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
@@ -1259,11 +1259,11 @@
                 </div>
 
                 <!-- KG Activity 2 - Marked Activities -->
-                <div *ngIf="kgActivitiesVisible2" class="bg-white rounded-lg shadow-md p-4 relative">
+                <div *ngIf="kgConceptsMarkedVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      pTooltip="{{getChartDescription('kgActivities2')}}"
+                      pTooltip="{{getChartDescription('kgConceptsMarked')}}"
                       tooltipPosition="left"
                       [escape]="false"
                       title="Chart information">
@@ -1273,46 +1273,46 @@
                     <button 
                       *ngIf="isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
-                      (click)="openPeerCountSelector('kgActivities2', $event); $event.stopPropagation()"
+                      (click)="openPeerCountSelector('kgConceptsMarked', $event); $event.stopPropagation()"
                       title="Select number of peers to compare">
                       <i class="pi pi-users" style="font-size: 0.875rem;"></i>
-                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['kgActivities2'] || 3 }}</span>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['kgConceptsMarked'] || 3 }}</span>
                     </button>
                     <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
                     <button 
                       *ngIf="isMyActivitiesTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChartType('kgActivities2'); $event.stopPropagation()"
+                      (click)="toggleChartType('kgConceptsMarked'); $event.stopPropagation()"
                       title="Toggle chart type">
-                      <i class="pi" [ngClass]="getChartType('kgActivities2') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                      <i class="pi" [ngClass]="getChartType('kgConceptsMarked') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="maximizeChart('kgActivities2'); $event.stopPropagation()"
+                      (click)="maximizeChart('kgConceptsMarked'); $event.stopPropagation()"
                       title="Maximize chart">
                       <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChart('kgActivities2'); $event.stopPropagation()"
+                      (click)="toggleChart('kgConceptsMarked'); $event.stopPropagation()"
                       title="Close chart">
                       <i class="pi pi-times" style="font-size: 0.875rem;"></i>
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <ng-container *ngIf="isTopPeersTab() || getChartType('kgActivities2') === 'bar'">
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('kgConceptsMarked') === 'bar'">
                       <p-chart 
                         type="bar"
-                        [data]="getChartDataForTab('kgActivities2')" 
-                        [options]="getChartOptions('kgActivities2')"
+                        [data]="getChartDataForTab('kgConceptsMarked')" 
+                        [options]="getChartOptions('kgConceptsMarked')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
-                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('kgActivities2') === 'pie'">
+                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('kgConceptsMarked') === 'pie'">
                       <p-chart 
                         type="pie"
-                        [data]="getChartDataForTab('kgActivities2')" 
-                        [options]="getChartOptions('kgActivities2')"
+                        [data]="getChartDataForTab('kgConceptsMarked')" 
+                        [options]="getChartOptions('kgConceptsMarked')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
@@ -1320,11 +1320,11 @@
                 </div>
 
                 <!-- KG Activity 3 - Access by Location -->
-                <div *ngIf="kgActivitiesVisible3" class="bg-white rounded-lg shadow-md p-4 relative">
+                <div *ngIf="kgRecommendedConceptsVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      pTooltip="{{getChartDescription('kgActivities3')}}"
+                      pTooltip="{{getChartDescription('kgRecommendedConcepts')}}"
                       tooltipPosition="left"
                       [escape]="false"
                       title="Chart information">
@@ -1334,46 +1334,46 @@
                     <button 
                       *ngIf="isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
-                      (click)="openPeerCountSelector('kgActivities3', $event); $event.stopPropagation()"
+                      (click)="openPeerCountSelector('kgRecommendedConcepts', $event); $event.stopPropagation()"
                       title="Select number of peers to compare">
                       <i class="pi pi-users" style="font-size: 0.875rem;"></i>
-                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['kgActivities3'] || 3 }}</span>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['kgRecommendedConcepts'] || 3 }}</span>
                     </button>
                     <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
                     <button 
                       *ngIf="isMyActivitiesTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChartType('kgActivities3'); $event.stopPropagation()"
+                      (click)="toggleChartType('kgRecommendedConcepts'); $event.stopPropagation()"
                       title="Toggle chart type">
-                      <i class="pi" [ngClass]="getChartType('kgActivities3') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
+                      <i class="pi" [ngClass]="getChartType('kgRecommendedConcepts') === 'pie' ? 'pi-chart-bar' : 'pi-chart-pie'" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="maximizeChart('kgActivities3'); $event.stopPropagation()"
+                      (click)="maximizeChart('kgRecommendedConcepts'); $event.stopPropagation()"
                       title="Maximize chart">
                       <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChart('kgActivities3'); $event.stopPropagation()"
+                      (click)="toggleChart('kgRecommendedConcepts'); $event.stopPropagation()"
                       title="Close chart">
                       <i class="pi pi-times" style="font-size: 0.875rem;"></i>
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <ng-container *ngIf="isTopPeersTab() || getChartType('kgActivities3') === 'bar'">
+                    <ng-container *ngIf="isTopPeersTab() || getChartType('kgRecommendedConcepts') === 'bar'">
                       <p-chart 
                         type="bar"
-                        [data]="getChartDataForTab('kgActivities3')" 
-                        [options]="getChartOptions('kgActivities3')"
+                        [data]="getChartDataForTab('kgRecommendedConcepts')" 
+                        [options]="getChartOptions('kgRecommendedConcepts')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
-                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('kgActivities3') === 'pie'">
+                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('kgRecommendedConcepts') === 'pie'">
                       <p-chart 
                         type="pie"
-                        [data]="getChartDataForTab('kgActivities3')" 
-                        [options]="getChartOptions('kgActivities3')"
+                        [data]="getChartDataForTab('kgRecommendedConcepts')" 
+                        [options]="getChartOptions('kgRecommendedConcepts')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
@@ -1401,16 +1401,16 @@
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
                             type="checkbox" 
-                            [checked]="recommendationActivitiesVisible2"
-                            (change)="recommendationActivitiesVisible2 = !recommendationActivitiesVisible2"
+                            [checked]="recommendedMaterialsVisible"
+                            (change)="recommendedMaterialsVisible = !recommendedMaterialsVisible"
                             class="cursor-pointer">
                           <span>Recommended Materials</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                           <input 
                             type="checkbox" 
-                            [checked]="recommendationActivitiesVisible3"
-                            (change)="recommendationActivitiesVisible3 = !recommendationActivitiesVisible3"
+                            [checked]="recommendedConceptsMarkedVisible"
+                            (change)="recommendedConceptsMarkedVisible = !recommendedConceptsMarkedVisible"
                             class="cursor-pointer">
                           <span>Recommended Concepts Marked</span>
                         </label>
@@ -1426,11 +1426,11 @@
               </h3>
               <div *ngIf="recommendationActivitiesExpanded" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Recommendation Activity 2 -->
-                <div *ngIf="recommendationActivitiesVisible2" class="bg-white rounded-lg shadow-md p-4 relative">
+                <div *ngIf="recommendedMaterialsVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      pTooltip="{{getChartDescription('recommendationActivities2')}}"
+                      pTooltip="{{getChartDescription('recommendedMaterials')}}"
                       tooltipPosition="left"
                       [escape]="false"
                       title="Chart information">
@@ -1440,46 +1440,46 @@
                     <button 
                       *ngIf="isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
-                      (click)="openPeerCountSelector('recommendationActivities2', $event); $event.stopPropagation()"
+                      (click)="openPeerCountSelector('recommendedMaterials', $event); $event.stopPropagation()"
                       title="Select number of peers to compare">
                       <i class="pi pi-users" style="font-size: 0.875rem;"></i>
-                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['recommendationActivities2'] || 3 }}</span>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['recommendedMaterials'] || 3 }}</span>
                     </button>
                     <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
                     <button 
                       *ngIf="isMyActivitiesTab()"
                       class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChartType('recommendationActivities2'); $event.stopPropagation()"
-                      [title]="getChartType('recommendationActivities2') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
-                      <i class="pi" [ngClass]="getChartType('recommendationActivities2') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                      (click)="toggleChartType('recommendedMaterials'); $event.stopPropagation()"
+                      [title]="getChartType('recommendedMaterials') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('recommendedMaterials') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="maximizeChart('recommendationActivities2'); $event.stopPropagation()"
+                      (click)="maximizeChart('recommendedMaterials'); $event.stopPropagation()"
                       title="Maximize chart">
                       <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChart('recommendationActivities2'); $event.stopPropagation()"
+                      (click)="toggleChart('recommendedMaterials'); $event.stopPropagation()"
                       title="Close chart">
                       <i class="pi pi-times" style="font-size: 0.875rem;"></i>
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <ng-container *ngIf="(isTopPeersTab() || isSameLevelTab()) || getChartType('recommendationActivities2') === 'bar'">
+                    <ng-container *ngIf="(isTopPeersTab() || isSameLevelTab()) || getChartType('recommendedMaterials') === 'bar'">
                       <p-chart 
                         type="bar"
-                        [data]="getChartDataForTab('recommendationActivities2')" 
-                        [options]="getChartOptions('recommendationActivities2')"
+                        [data]="getChartDataForTab('recommendedMaterials')" 
+                        [options]="getChartOptions('recommendedMaterials')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
-                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('recommendationActivities2') === 'pie'">
+                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('recommendedMaterials') === 'pie'">
                       <p-chart 
                         type="pie"
-                        [data]="getChartDataForTab('recommendationActivities2')" 
-                        [options]="getChartOptions('recommendationActivities2')"
+                        [data]="getChartDataForTab('recommendedMaterials')" 
+                        [options]="getChartOptions('recommendedMaterials')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
@@ -1487,11 +1487,11 @@
                 </div>
 
                 <!-- Recommendation Activity 3 -->
-                <div *ngIf="recommendationActivitiesVisible3" class="bg-white rounded-lg shadow-md p-4 relative">
+                <div *ngIf="recommendedConceptsMarkedVisible" class="bg-white rounded-lg shadow-md p-4 relative">
                   <div class="absolute top-2 right-2 z-10 flex gap-2">
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      pTooltip="{{getChartDescription('recommendationActivities3')}}"
+                      pTooltip="{{getChartDescription('recommendedConceptsMarked')}}"
                       tooltipPosition="left"
                       [escape]="false"
                       title="Chart information">
@@ -1501,46 +1501,46 @@
                     <button 
                       *ngIf="isTopPeersTab() && !isSameLevelTab()"
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors relative"
-                      (click)="openPeerCountSelector('recommendationActivities3', $event); $event.stopPropagation()"
+                      (click)="openPeerCountSelector('recommendedConceptsMarked', $event); $event.stopPropagation()"
                       title="Select number of peers to compare">
                       <i class="pi pi-users" style="font-size: 0.875rem;"></i>
-                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['recommendationActivities3'] || 3 }}</span>
+                      <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" style="font-size: 0.625rem;">{{ peerCounts['recommendedConceptsMarked'] || 3 }}</span>
                     </button>
                     <!-- Pie chart toggle button - hidden in top peers and same level tabs -->
                     <button 
                       *ngIf="isMyActivitiesTab()"
                       class="bg-gray-100 hover:bg-green-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChartType('recommendationActivities3'); $event.stopPropagation()"
-                      [title]="getChartType('recommendationActivities3') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
-                      <i class="pi" [ngClass]="getChartType('recommendationActivities3') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
+                      (click)="toggleChartType('recommendedConceptsMarked'); $event.stopPropagation()"
+                      [title]="getChartType('recommendedConceptsMarked') === 'bar' ? 'Switch to pie chart' : 'Switch to bar chart'">
+                      <i class="pi" [ngClass]="getChartType('recommendedConceptsMarked') === 'bar' ? 'pi-chart-pie' : 'pi-chart-bar'" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-blue-100 rounded-full p-2 transition-colors"
-                      (click)="maximizeChart('recommendationActivities3'); $event.stopPropagation()"
+                      (click)="maximizeChart('recommendedConceptsMarked'); $event.stopPropagation()"
                       title="Maximize chart">
                       <i class="pi pi-window-maximize" style="font-size: 0.875rem;"></i>
                     </button>
                     <button 
                       class="bg-gray-100 hover:bg-red-100 rounded-full p-2 transition-colors"
-                      (click)="toggleChart('recommendationActivities3'); $event.stopPropagation()"
+                      (click)="toggleChart('recommendedConceptsMarked'); $event.stopPropagation()"
                       title="Close chart">
                       <i class="pi pi-times" style="font-size: 0.875rem;"></i>
                     </button>
                   </div>
                   <div class="chart-wrapper" style="height: 300px;">
-                    <ng-container *ngIf="(isTopPeersTab() || isSameLevelTab()) || getChartType('recommendationActivities3') === 'bar'">
+                    <ng-container *ngIf="(isTopPeersTab() || isSameLevelTab()) || getChartType('recommendedConceptsMarked') === 'bar'">
                       <p-chart 
                         type="bar"
-                        [data]="getChartDataForTab('recommendationActivities3')" 
-                        [options]="getChartOptions('recommendationActivities3')"
+                        [data]="getChartDataForTab('recommendedConceptsMarked')" 
+                        [options]="getChartOptions('recommendedConceptsMarked')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
-                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('recommendationActivities3') === 'pie'">
+                    <ng-container *ngIf="isMyActivitiesTab() && getChartType('recommendedConceptsMarked') === 'pie'">
                       <p-chart 
                         type="pie"
-                        [data]="getChartDataForTab('recommendationActivities3')" 
-                        [options]="getChartOptions('recommendationActivities3')"
+                        [data]="getChartDataForTab('recommendedConceptsMarked')" 
+                        [options]="getChartOptions('recommendedConceptsMarked')"
                         [style]="{'height': '100%'}">
                       </p-chart>
                     </ng-container>
@@ -1665,8 +1665,17 @@
                   </td>
                   <td *ngIf="annotationDetailsCategory === 'likesdislikes'">
                     <span class="flex items-center gap-1">
-                      <i class="pi" [ngClass]="activity.action === 'like' ? 'pi-thumbs-up text-green-600' : 'pi-thumbs-down text-red-600'"></i>
-                      {{ activity.action }}
+                      <i class="pi" [ngClass]="{
+                        'pi-thumbs-up text-green-600': activity.action === 'like',
+                        'pi-thumbs-down text-red-600': activity.action === 'dislike',
+                        'pi-thumbs-up-fill text-gray-400': activity.action === 'unlike',
+                        'pi-thumbs-down-fill text-gray-400': activity.action === 'undislike'
+                      }"></i>
+                      <span [ngClass]="{
+                        'text-green-700': activity.action === 'like',
+                        'text-red-700': activity.action === 'dislike',
+                        'text-gray-500 line-through': activity.action === 'unlike' || activity.action === 'undislike'
+                      }">{{ activity.action }}</span>
                     </span>
                   </td>
                   <td *ngIf="annotationDetailsCategory === 'tags'">
@@ -1691,7 +1700,7 @@
             </p-table>
           </div>
         </div>
-        <!-- KG activity details for My Activities tab (kgActivities2 and kgActivities3) -->
+        <!-- KG activity details for My Activities tab (kgConceptsMarked and kgRecommendedConcepts) -->
         <div *ngIf="isMyActivitiesTab() && isKGChartWithDetails()" class="h-full flex flex-col">
           <h4 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-300">
             {{ getKGDetailsCategoryLabel() }}
@@ -1811,7 +1820,7 @@
             </p-table>
           </div>
         </div>
-        <!-- Recommendation activity details for My Activities tab (recommendationActivities2 and recommendationActivities3) -->
+        <!-- Recommendation activity details for My Activities tab (recommendedMaterials and recommendedConceptsMarked) -->
         <div *ngIf="isMyActivitiesTab() && isRecommendationChartWithDetails()" class="h-full flex flex-col">
           <h4 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-300">
             {{ getRecommendationDetailsCategoryLabel() }}
@@ -1913,7 +1922,7 @@
             </p-table>
           </div>
         </div>
-        <!-- Access activity details for My Activities tab (accessActivities1) -->
+        <!-- Access activity details for My Activities tab (accessByType) -->
         <div *ngIf="isMyActivitiesTab() && isAccessChartWithDetails()" class="h-full flex flex-col">
           <h4 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-300">
             Access Activity Details & Frequency

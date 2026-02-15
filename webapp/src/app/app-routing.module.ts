@@ -58,6 +58,10 @@ const routes: Routes = [
   {
     path: 'user/interest-level',
     component: InterestLevelDashboardComponent,
+  },
+  {
+    path: 'user/engagement/:courseId',
+    component: EngagementDashboardComponent,
     canActivate: [AuthGuardService],
   },
   {
@@ -132,7 +136,7 @@ const routes: Routes = [
         path: 'channel/:channelId',
         loadChildren: () =>
           import('./pages/components/materials/materials.module').then(
-            (m) => m.MaterialsModule
+            (m) => m.MaterialsModule,
           ),
       },
       {

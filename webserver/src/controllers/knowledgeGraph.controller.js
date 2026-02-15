@@ -2137,7 +2137,7 @@ export const deletePkgFilterProfile = async (req, res) => {
     const profileName = profile.name;
     
     // Remove profile
-    profile.remove();
+    user.pkgAdvancedFilterProfiles.pull(profileId);
     await user.save();
     
     console.log(`[PKG Filter Profiles] Deleted profile "${profileName}" for user ${userId}`);

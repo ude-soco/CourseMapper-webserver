@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { of, from } from 'rxjs';
+import { of, from, forkJoin } from 'rxjs';
 import { map, switchMap, catchError, withLatestFrom, filter, take, tap } from 'rxjs/operators';
 import * as UserPkgActions from './user-pkg.actions';
 import * as UserPkgSelectors from './user-pkg.reducer';
 import { Neo4jService } from 'src/app/services/neo4j.service';
 import { FilterProfilesService } from 'src/app/services/pkg-filter-profiles.service';
+import { CourseService } from 'src/app/services/course.service';
 import { UserPkgGraphData, CytoscapeNode, CytoscapeEdge, ConceptRecord } from '../types/user-pkg.types';
 import { getLoggedInUser } from 'src/app/state/app.reducer';
 import { getInitials } from 'src/app/_helpers/format';
@@ -17,6 +18,7 @@ export class UserPkgEffects {
     private actions$: Actions,
     private neo4jService: Neo4jService,
     private filterProfilesService: FilterProfilesService,
+    private courseService: CourseService,
     private store: Store
   ) {}
 
@@ -62,6 +64,7 @@ export class UserPkgEffects {
     this.actions$.pipe(
       ofType(UserPkgActions.loadUserPkg),
       switchMap(({ userId, topNConcepts, slideIds }) =>
+        //retrieve all concepts for the user and fill rawconceptrecords
         this.neo4jService.getUserPkg(userId, topNConcepts, slideIds).pipe(
           switchMap((response) => {
             console.log('[Effects] Received response:', response);
@@ -74,11 +77,26 @@ export class UserPkgEffects {
             }, {});
             console.log('[Effects] Relationship type counts:', typeCounts);
             
-            // Fetch engagement levels for courses
-            return from(this.neo4jService.getLevelofEngagement(userId)).pipe(
-              map((engagementResponse) => {
+            // Fetch engagement levels and user's courses (with roles) in parallel
+            return forkJoin({
+              engagementResponse: from(this.neo4jService.getLevelofEngagement(userId)),
+              userCourses: this.courseService.fetchCourses()
+            }).pipe(
+              map(({ engagementResponse, userCourses }) => {
+                // Build a set of course IDs where user is moderator
+                const moderatorCourseIds = new Set(
+                  userCourses
+                    .filter(c => c.role === 'moderator')
+                    .map(c => c._id)
+                );
+
+                // Filter out moderator courses from the PKG response
+                const nonModeratorCourses = response.courses.filter(
+                  (c: any) => !moderatorCourseIds.has(String(c.courseId))
+                );
+
                 const coursesWithEngagement = this.mergeEngagementLevels(
-                  response.courses,
+                  nonModeratorCourses,
                   engagementResponse
                 );
                 
@@ -91,8 +109,8 @@ export class UserPkgEffects {
                 });
               }),
               catchError((error) => {
-                console.warn('[Effects] Failed to fetch engagement levels, using courses without engagement:', error);
-                // If engagement fetch fails, proceed without engagement levels
+                console.warn('[Effects] Failed to fetch engagement levels or user courses, using courses without engagement:', error);
+                // If fetch fails, proceed without filtering or engagement levels
                 const graphData = this.transformToGraphData(userId, response.records);
                 return of(UserPkgActions.loadUserPkgSuccess({
                   graphData,

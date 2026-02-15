@@ -235,6 +235,7 @@ async function processUserCourseActivities(userId, courseId, activities) {
     
     // User interaction metrics
     totalUserMentionedRepliedActivities: 0,
+    totalAnnotationsMentioned: 0,
     totalActivities: 0,
     
     // Detailed breakdowns
@@ -321,11 +322,20 @@ async function processUserCourseActivities(userId, courseId, activities) {
     }
 
     // Annotation interactions
-    if (verb.toLowerCase().includes("replied") && objectType === "annotation") {
-      metrics.totalAnnotationsReplied++;
+    if (verb.toLowerCase().includes("replied")) {
+      if (normalizedObjectType === "annotation" || normalizedObjectType === "user" || normalizedObjectType === "you" ||
+          objectId.includes("annotation") || objectId.includes("user")) {
+        metrics.totalAnnotationsReplied++;
+      }
     }
     if (verb.toLowerCase().includes("followed")) {
       metrics.totalAnnotationsFollowed++;
+    }
+    if (verb.toLowerCase().includes("mentioned")) {
+      if (normalizedObjectType === "annotation" || normalizedObjectType === "user" || normalizedObjectType === "you" ||
+          objectId.includes("annotation") || objectId.includes("user")) {
+        metrics.totalAnnotationsMentioned++;
+      }
     }
 
     // Likes/Dislikes
@@ -662,9 +672,9 @@ async function processUserCourseActivities(userId, courseId, activities) {
       }
     }
 
-    // User mentioned/replied activities
+    // User mentioned/replied activities (combined metric for backwards compatibility)
     if (verb.toLowerCase().includes("mentioned") || verb.toLowerCase().includes("replied")) {
-      if (normalizedObjectType === "annotation" || normalizedObjectType === "user" ||
+      if (normalizedObjectType === "annotation" || normalizedObjectType === "user" || normalizedObjectType === "you" ||
           objectId.includes("annotation") || objectId.includes("user")) {
         metrics.totalUserMentionedRepliedActivities++;
       }
@@ -781,7 +791,7 @@ export const getUserEngagementMetrics = async (req, res) => {
     });
 
     // Get engagement level from Neo4j
-    let engagementLevel = "medium";
+    let engagementLevel = "low";
     try {
       const engagementRecords = await getLevelOfEngagement(userId);
       // engagementRecords is already an array, not an object with .records property
@@ -973,6 +983,7 @@ export const getSameEngagementLevelStats = async (req, res) => {
         totalAddedAnnotations: metrics.totalAddedAnnotations || 0,
         totalAnnotationsReplied: metrics.totalAnnotationsReplied || 0,
         totalAnnotationsFollowed: metrics.totalAnnotationsFollowed || 0,
+        totalAnnotationsMentioned: metrics.totalAnnotationsMentioned || 0,
         totalLikesOnAnnotations: metrics.totalLikesOnAnnotations || 0,
         totalDislikesOnAnnotations: metrics.totalDislikesOnAnnotations || 0,
         totalAddedTags: metrics.totalAddedTags || 0,
@@ -1059,7 +1070,7 @@ export const getSameEngagementLevelStats = async (req, res) => {
     const statistics = {};
     const metricKeys = [
       // Annotation metrics
-      'totalAddedAnnotations', 'totalAnnotationsReplied', 'totalAnnotationsFollowed',
+      'totalAddedAnnotations', 'totalAnnotationsReplied', 'totalAnnotationsFollowed', 'totalAnnotationsMentioned',
       'totalLikesOnAnnotations', 'totalDislikesOnAnnotations', 'totalAddedTags', 'totalTagViewed',
       // Material metrics
       'videosStarted', 'videosCompleted', 'videosPauses', 'timeSpentOnVideos',
@@ -1201,12 +1212,22 @@ export const getAnnotationActivityDetails = async (req, res) => {
       }
 
       // 3. Likes and Dislikes on annotations
+      // Only include "liked" and "disliked" actions, excluding "unliked" and "un-disliked"
       if ((category === 'all' || category === 'likesdislikes') &&
           (verb.toLowerCase() === "liked" || verb.toLowerCase() === "disliked") &&
           (objectType === "note" || objectType === "question" || objectType === "external-resource" || objectType === "annotation")) {
         result.likesAndDislikes.push({ 
           ...activityDetail, 
           action: verb.toLowerCase() === "liked" ? 'like' : 'dislike'
+        });
+      }
+      // Also track "unliked" and "un-disliked" actions separately for negative activity tracking
+      if ((category === 'all' || category === 'likesdislikes') &&
+          (verb.toLowerCase() === "unliked" || verb.toLowerCase() === "un-disliked") &&
+          (objectType === "note" || objectType === "question" || objectType === "external-resource" || objectType === "annotation")) {
+        result.likesAndDislikes.push({ 
+          ...activityDetail, 
+          action: verb.toLowerCase() === "unliked" ? 'unlike' : 'undislike'
         });
       }
 

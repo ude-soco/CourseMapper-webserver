@@ -31,9 +31,12 @@ export class UserPkgComponent implements OnInit, OnDestroy {
 
   // Observables from Store
   loggedInUser$ = this.store.select(getLoggedInUser);
+  // u / dnu from nodejs
   rawConceptRecords$ = this.store.select(UserPkgSelectors.selectRawRecords);
+  // once the response is loaded from backend
   isLoading$ = this.store.select(UserPkgSelectors.selectIsLoading);
   error$ = this.store.select(UserPkgSelectors.selectError);
+  // Radio btn list
   viewMode$ = this.store.select(UserPkgSelectors.selectViewMode);
   
   // Concept details panel state
@@ -182,7 +185,7 @@ export class UserPkgComponent implements OnInit, OnDestroy {
   private loadKnowledgeGraph(): void {
     if (!this.currentUserId) return;
 
-    // Load course hierarchy for advanced filters (cached in store)
+    // Load course hierarchy for advanced filters (cached in store) for all courses the user is enrolled in 
     this.store.dispatch(UserPkgActions.loadCourseHierarchy());
 
     // Load user's knowledge graph

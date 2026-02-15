@@ -77,7 +77,7 @@ export const EDGE_STYLES: Record<EdgeType, EdgeConfig> = {
     textColor: '#44403C'
   },
   'engagement': {
-    label: 'Engaged In',
+    label: 'Engaged_In',
     color: '#92400E',
     arrowColor: '#92400E',
     textColor: '#78350F',
