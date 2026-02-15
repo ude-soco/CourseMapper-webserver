@@ -958,24 +958,8 @@ export const getSameEngagementLevelStats = async (req, res) => {
 
     console.log(`Same level user IDs from Neo4j for course ${courseId}: ${sameLevelUserIds.join(', ')}`);
 
-    // Filter out moderators of this course from the peer pool
-    const moderatorRole = await Role.findOne({ name: "moderator" });
-    let moderatorUserIds = new Set();
-    if (moderatorRole) {
-      const courseDoc = await Course.findById(courseId);
-      if (courseDoc) {
-        courseDoc.users.forEach(u => {
-          if (String(u.role) === String(moderatorRole._id)) {
-            moderatorUserIds.add(String(u.userId));
-          }
-        });
-      }
-    }
-
-    // Step 3: Get peer user IDs (excluding current user and moderators of this course)
-    const sameLevelUserIdsFiltered = sameLevelUserIds.filter(id => !moderatorUserIds.has(String(id)));
-    const peerUserIds = sameLevelUserIdsFiltered.filter(id => String(id) !== String(userId));
-    console.log(`Filtered out ${sameLevelUserIds.length - sameLevelUserIdsFiltered.length} moderator(s) from same-level peers`);
+    // Step 3: Get peer user IDs (excluding current user)
+    const peerUserIds = sameLevelUserIds.filter(id => String(id) !== String(userId));
     console.log(`Peer user IDs (excluding current user): ${peerUserIds.join(', ')}`);
 
     // Step 4: Fetch CURRENT USER's LIVE metrics from MongoDB
@@ -1814,28 +1798,9 @@ export const getPeerActivities = async (req, res) => {
         const jsonContent = fs.readFileSync(jsonPath, "utf-8");
         const allProfiles = JSON.parse(jsonContent);
         
-        // Get moderator user IDs for this course to exclude them from peer data
-        const moderatorRole = await Role.findOne({ name: "moderator" });
-        let moderatorUserIds = new Set();
-        if (moderatorRole) {
-          const courseDoc = await Course.findById(courseId);
-          if (courseDoc) {
-            courseDoc.users.forEach(u => {
-              if (String(u.role) === String(moderatorRole._id)) {
-                moderatorUserIds.add(String(u.userId));
-              }
-            });
-          }
-        }
-
-        // Filter by course ID, exclude moderators, and transform to flat structure for frontend
+        // Filter by course ID and transform to flat structure for frontend
         const peerActivities = allProfiles
-          .filter(profile => {
-            if (profile.stdProfile?.course_id !== String(courseId)) return false;
-            // Exclude moderators of this course
-            if (moderatorUserIds.has(String(profile.stdProfile?.stdUsername))) return false;
-            return true;
-          })
+          .filter(profile => profile.stdProfile?.course_id === String(courseId))
           .map(profile => {
             const ap = profile.activitiesProfile;
             return {

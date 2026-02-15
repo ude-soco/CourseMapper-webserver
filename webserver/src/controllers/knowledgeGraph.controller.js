@@ -305,24 +305,6 @@ export const createCourseNeo4j = async (req, res) => {
   const { courseName } = req.query;                     // Extract from query parameters
 
   try {
-    // Check if the user is a moderator of this specific course
-    // Moderators should not have an ENGAGED_IN relationship with their own course
-    const moderatorRole = await Role.findOne({ name: "moderator" });
-    const user = await User.findById(userId);
-    if (user && moderatorRole) {
-      const userCourse = user.courses.find(
-        (c) => String(c.courseId) === String(courseId)
-      );
-      if (userCourse && String(userCourse.role) === String(moderatorRole._id)) {
-        console.log(`Skipping ENGAGED_IN creation: user ${userId} is a moderator of course ${courseId}`);
-        return res.status(200).send({
-          success: true,
-          skipped: true,
-          message: "Moderators do not have an engagement relationship with their own course."
-        });
-      }
-    }
-
     const result = await neo4j.createUserCourseRelationship(
       userId,
       courseId,
@@ -775,28 +757,7 @@ export const getLevelOfEngagement = async (req, res) => {
 
   try {
     const records = await neo4j.getLevelOfEngagement(userid);
-
-    // Filter out courses where the user is a moderator
-    // Moderators should not have engagement levels for their own courses
-    const user = await User.findById(userid);
-    const moderatorRole = await Role.findOne({ name: "moderator" });
-    let filteredRecords = records;
-    if (user && moderatorRole) {
-      const moderatorCourseIds = new Set(
-        user.courses
-          .filter(c => String(c.role) === String(moderatorRole._id))
-          .map(c => String(c.courseId))
-      );
-      if (moderatorCourseIds.size > 0) {
-        filteredRecords = records.filter(record => {
-          const courseId = record?.target?.properties?.cid;
-          return !courseId || !moderatorCourseIds.has(String(courseId));
-        });
-        console.log(`[getLevelOfEngagement] Filtered out ${records.length - filteredRecords.length} moderator course(s) for user ${userid}`);
-      }
-    }
-
-    return res.status(200).send({ records: filteredRecords });
+    return res.status(200).send({ records });
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
@@ -1650,14 +1611,6 @@ export const getUserPKG = async (req, res) => {
       });
     }
 
-    // Filter out courses where the user is a moderator
-    // Moderators should not have a course relationship in the PKG for courses they moderate
-    const moderatorRole = await Role.findOne({ name: "moderator" });
-    const nonModeratorCourses = foundUser.courses.filter(c => {
-      if (!moderatorRole) return true;
-      return String(c.role) !== String(moderatorRole._id);
-    });
-
     // Get concept IDs from MongoDB and build status lookup map
     const understoodConcepts = foundUser.understoodConcepts || [];
     const didNotUnderstandConcepts = foundUser.didNotUnderstandConcepts || [];
@@ -1669,12 +1622,12 @@ export const getUserPKG = async (req, res) => {
     
     const allConceptIds = [...conceptStatusMap.keys()];
 
-    console.log(`[Personal KG] Loading graph: ${allConceptIds.length} concepts (${understoodConcepts.length} understood, ${didNotUnderstandConcepts.length} not understood)${slideFilter ? `, filtering by ${slideFilter.length} slides` : ''}`);    console.log(`[Personal KG] Excluded ${foundUser.courses.length - nonModeratorCourses.length} moderator course(s) from PKG`);
+    console.log(`[Personal KG] Loading graph: ${allConceptIds.length} concepts (${understoodConcepts.length} understood, ${didNotUnderstandConcepts.length} not understood)${slideFilter ? `, filtering by ${slideFilter.length} slides` : ''}`);
 
     if (allConceptIds.length === 0) {
       return res.status(200).send({ 
         records: [],
-        courses: nonModeratorCourses.map(c => ({
+        courses: foundUser.courses.map(c => ({
           courseId: c.courseId._id,
           courseName: c.courseId.name,
           courseShortName: c.courseId.shortName
@@ -1721,7 +1674,7 @@ export const getUserPKG = async (req, res) => {
     
     return res.status(200).send({ 
       records: enrichedRecords,
-      courses: nonModeratorCourses.map(c => ({
+      courses: foundUser.courses.map(c => ({
         courseId: c.courseId._id,
         courseName: c.courseId.name,
         courseShortName: c.courseId.shortName
@@ -1901,9 +1854,10 @@ export const getCourseHierarchy = async (req, res) => {
       .filter(c => c.courseId)
       .map(c => c.courseId._id);
 
-    // Get all materials for enrolled courses
+    // Get all materials for enrolled courses (only PDFs, no videos)
     const materials = await Material.find({
-      courseId: { $in: enrolledCourseIds }
+      courseId: { $in: enrolledCourseIds },
+      type: 'pdf'
     }).select('_id name type courseId');
 
     // Get slides from Neo4j for each material
@@ -2088,7 +2042,7 @@ export const deletePkgFilterProfile = async (req, res) => {
     const profileName = profile.name;
     
     // Remove profile
-    profile.remove();
+    user.pkgAdvancedFilterProfiles.pull(profileId);
     await user.save();
     
     console.log(`[PKG Filter Profiles] Deleted profile "${profileName}" for user ${userId}`);
