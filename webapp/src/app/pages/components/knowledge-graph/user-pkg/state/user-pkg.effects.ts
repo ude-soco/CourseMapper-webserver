@@ -62,6 +62,7 @@ export class UserPkgEffects {
     this.actions$.pipe(
       ofType(UserPkgActions.loadUserPkg),
       switchMap(({ userId, topNConcepts, slideIds }) =>
+        //retrieve all concepts for the user and fill rawconceptrecords
         this.neo4jService.getUserPkg(userId, topNConcepts, slideIds).pipe(
           switchMap((response) => {
             console.log('[Effects] Received response:', response);
