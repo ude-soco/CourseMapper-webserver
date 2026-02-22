@@ -81,6 +81,15 @@ neo4j.connect(
   process.env.NEO4J_PASSWORD
 );
 
+// Create connection to Neo4j
+const neo4j_MOOCentral = require("./graph/MOOCentral.neo4j");
+neo4j_MOOCentral.connect_MOOCentral(
+  process.env.NEO4J_URI_MOOC,
+  process.env.NEO4J_USER_MOOC,
+  process.env.NEO4J_PASSWORD_MOOC
+);
+
+
 const recs = require("./graph/recommendation.neo4j");
 recs.connect(
   process.env.NEO4J_URI,
