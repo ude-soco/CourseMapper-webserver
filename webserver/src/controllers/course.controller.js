@@ -38,28 +38,44 @@ const handleError = (res, error, message) => {
 };
 
 export const getAllCourses = async (req, res) => {
-  let courses;
-  try {
-    courses = await Course.find({})
-      .populate("topics", "-__v")
-      .populate({ path: "users", populate: { path: "role" } });
-  } catch (err) {
-    return res.status(500).send({ message: err });
-  }
+  let user;
+  let userId = req.userId;
   let results = [];
-  courses.forEach((c) => {
+  try {
+    user = await User.findById(userId)
+      .populate({ path: "courses", populate: { path: "role" } })
+      .populate({ path: "courses", populate: { path: "courseId", populate: [
+        { path: "users.role" }, 
+      ] } });
+
+    // Add explicit check for user existence
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+      
+  } catch (err) {
+    return res.status(500).send({ message: "Error finding user" });
+  }
+
+  user.courses?.forEach((object) => {
+    // Skip if courseId is null (deleted course)
+    if (!object?.courseId) {
+      return;
+    }
+    
     let course = {
-      _id: c.id,
-      name: c.name,
-      shortName: c.shortName,
-      description: c.description,
-      numberTopics: c.topics.length,
-      numberChannels: c.channels.length,
-      numberUsers: c.users.length,
-      channels: c.channels,
-      createdAt: c.createdAt,
-      users: c.users,
-      url: c.url,
+      _id: object.courseId._id,
+      name: object.courseId.name,
+      shortName: object.courseId.shortName,
+      description: object.courseId.description,
+      numberTopics: object.courseId.topics?.length,
+      numberChannels: object.courseId.channels?.length,
+      numberUsers: object.courseId.users?.length,
+      role: object?.role?.name,
+      channels: object.courseId.channels,
+      createdAt: object.courseId.createdAt,
+      users: object.courseId.users,
+      url: object.courseId.url,
     };
     results.push(course);
   });
@@ -80,6 +96,10 @@ export const getMyCourses = async (req, res) => {
       .populate({ path: "courses", populate: { path: "courseId", populate: [
         { path: "users.role" }, ] } })
 
+    // Add explicit check for user existence
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
       
   } catch (err) {
     return res.status(500).send({ message: "Error finding user" });
@@ -143,9 +163,8 @@ export const getMyCourses = async (req, res) => {
  * @param {string} req.params.courseId The id of the course
  */
 export const getCourse = async (req, res) => {
-  console.log("getCourse called with courseId: called");
   const courseId = req.params.courseId;
-  const userId = req.userId; //"63387f529dd66f86548d3537"
+  const userId = req.userId; 
 
   let foundUser;
   try {
@@ -198,12 +217,9 @@ export const getCourse = async (req, res) => {
     // Attach the found user's role to the course data
     const courseWithUserRole = {
       ...foundCourse.toObject(), // Convert the Mongoose document to a plain object
-      role: currentUser?.role.name || null, // Attach the role of the found user or null if not found
+      role: currentUser?.role?.name || null, // Attach the role of the found user or null if not found
     };
   
-    courseWithUserRole.users.forEach(user => {
-      console.log(`UserId: ${user.userId}, Role: ${user.role?.name}`);
-    });
   return res.status(200).send({
     course: courseWithUserRole,
     notificationSettings: notificationSettings[0],
@@ -514,10 +530,20 @@ export const newCourse = async (req, res, next) => {
     updatedAt: Date.now(),
     users: userList,
     url: imageUrl,
+    lrsStore: req.lrsStore || { status: 'none' }  // Add LRS store data from middleware
   });
   let courseSaved;
   try {
     courseSaved = await course.save();
+    
+    // Log LRS store creation status
+    if (req.lrsStore && req.lrsStore.status === 'active') {
+      console.log(`Course "${courseName}" saved with LRS store: ${req.lrsStore.storeId}`);
+    } else if (req.lrsStore && req.lrsStore.status === 'failed') {
+      console.warn(`Course "${courseName}" saved but LRS store creation failed: ${req.lrsStore.error}`);
+    } else {
+      console.log(`📝 Course "${courseName}" saved without LRS store`);
+    }
   } catch (err) {
     return res.status(500).send({ error: "Error saving course" });
   }

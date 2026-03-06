@@ -17,5 +17,10 @@ export interface Course {
   createdAt?:string;
   users?:User;
   topics?:Topic[];
+  lrsStore?: {
+    storeId: string;
+    endpoint: string;
+    auth: string;
+  };  
 
 }

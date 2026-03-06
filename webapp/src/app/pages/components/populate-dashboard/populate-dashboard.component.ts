@@ -4,9 +4,11 @@ import { MenuItem, ConfirmationService, MessageService } from 'primeng/api';
 import { ShowInfoError } from 'src/app/_helpers/show-info-error';
 import { Indicator } from 'src/app/models/Indicator';
 import { IndicatorService } from 'src/app/services/indicator.service';
+import { CourseService } from 'src/app/services/course.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { USER_KEY } from 'src/app/config/config';
 
 @Component({
   selector: 'app-populate-dashboard',
@@ -22,6 +24,7 @@ export class PopulateDashboardComponent {
   @Input() channelId: string;
   @Input() topicId: string;
   @Input() courseId : string;
+  
 
   indicator: Indicator;
   displayAddIndicatorDialogue: boolean = false;
@@ -48,6 +51,7 @@ export class PopulateDashboardComponent {
      
     private confirmationService: ConfirmationService,
     private indicatorService: IndicatorService,
+    private courseService: CourseService,
     private messageService: MessageService,
     public dragulaService: DragulaService,
     private router: Router,
@@ -64,9 +68,38 @@ export class PopulateDashboardComponent {
   }
   
   onCreateIndicatorClicked() {
-    // Open OpenLAP indicator pool page in a new tab
-    const openlapUrl = environment.OPENLAP_URL + '/indicators/overview';
-    window.open(openlapUrl, '_blank');
+    const courseId = this.courseId || this.selectedCourseId;
+    const baseUrl = `${environment.OPENLAP_URL}/indicators/overview`;
+    
+    if (courseId) {
+      this.courseService.getCourseLrsId(courseId).subscribe({
+        next: (lrsId) => this.openOpenLAPWithParams(baseUrl, lrsId),//success in fetching the lrs store id opens openlap with parameters
+        error: () => this.openOpenLAPWithParams(baseUrl, null)// error in fetching the lrs store id opens openlap without lrs id
+      });
+    } else {
+      this.openOpenLAPWithParams(baseUrl, null);
+    }
+  }
+  
+  private openOpenLAPWithParams(url: string, lrsId: string | null): void {
+    const params = new URLSearchParams({
+      platform: 'CourseMapper'
+    });
+    
+    const userId = this.getUserId();
+    if (userId) params.append('userId', userId);
+    if (lrsId) params.append('lrsId', lrsId);
+    
+    window.open(`${url}?${params.toString()}`, '_blank');
+  }
+  
+  private getUserId(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+      return user.id || null;
+    } catch {
+      return null;
+    }
   }
   
   toggleAddIndicatordialogue(visibility) {

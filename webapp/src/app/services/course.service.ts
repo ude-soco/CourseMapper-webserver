@@ -325,6 +325,18 @@ export class CourseService {
     );
   }
 
+ getCourseLrsId(id: string): Observable<string> {
+  if (!id) return of("");
+  
+  return this.http.get<any>(`${this.API_URL}/courses/${id}`).pipe(
+    map(response => {
+      // -> course -> lrsStore -> storeId
+      const storeId = response.course?.lrsStore?.storeId;
+      return storeId;
+    })
+  );
+}
+
   // sendToOldBackend(course){
   //   // userId should be taken from the coockies. for the time being it is hard coded
   //   this.http.post<any>('http://localhost:8090/new/course',
