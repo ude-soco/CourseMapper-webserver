@@ -81,7 +81,7 @@ jobs:
           org.opencontainers.image.documentation="${{ github.server_url }}/{{ github.repository }}/blob/main/${{ matrix.service }}/README.md"
 
     - name: Build and push container image
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         platforms:  ${{ inputs.platforms }}
         provenance: false
