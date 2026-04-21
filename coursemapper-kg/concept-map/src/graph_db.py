@@ -27,7 +27,8 @@ class GraphDB:
 
     def save_graph(self, graph: Graph):
         with self.driver.session() as session:
-            session.execute_write(_save_graph, graph)
+            # session.execute_write(_save_graph, graph),
+            session.write_transaction(_save_graph, graph)
 
     def get_node(self, material_id: str, node_id: str):
         records, _, _ = self.driver.execute_query(
