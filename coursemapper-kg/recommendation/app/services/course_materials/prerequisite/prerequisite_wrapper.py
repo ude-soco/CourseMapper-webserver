@@ -22,14 +22,14 @@ class Prerequisite:
 
 
         print("get concepts from neo4j")
-       
-        
+
+
         for _,lm in learning_materials.iterrows():
             self.find_prerequisite_one(lm)
-        
+
         self.find_prerequsite_all()
 
-    
+
     def find_prerequisite_lm(self,lm=None):
         self.find_prerequisite_one(lm)
         self.find_prerequsite_all()
@@ -40,7 +40,7 @@ class Prerequisite:
         self.concepts = pd.concat([self.concepts,concepts_one],ignore_index=True)
         print("concepts", self.concepts)
 
-    
+
     def find_prerequsite_all(self):
 
         print("clean data")
@@ -60,7 +60,7 @@ class Prerequisite:
         prerequisite = PrerequisiteRelationship(concept_dict,related_relationships)
         print("prerequisite", prerequisite)
         prerequisite_relationships = prerequisite.get_prerequisite_relationships()
-        #results 
+        #results
         prerequisite_relationships.to_csv("prerequisite_relationships_datamining.csv")
 
 

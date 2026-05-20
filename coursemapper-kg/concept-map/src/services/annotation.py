@@ -26,8 +26,8 @@ def new_getaddrinfo(*args, **kwargs):
 
 socket.getaddrinfo = new_getaddrinfo
 
+# override_dns('api.dbpedia-spotlight.org', '134.155.98.34')
 override_dns('api.dbpedia-spotlight.org', '134.155.98.34')
-
 
 def make_parallel_requests(url: str, headers: Dict[str, str], params: List[Any]) -> List[Tuple[dict, requests.Response]]:
     """
@@ -45,8 +45,17 @@ def make_parallel_requests(url: str, headers: Dict[str, str], params: List[Any])
     threads = []
 
     def make_request(url: str, headers: Dict[str, str], params: Any):
-        response = requests.get(url, headers=headers, params=params)
-        responses.append((params, response))
+        # response = requests.get(url, headers=headers, params=params)
+        # responses.append((params, response))
+        try:
+            if url is None or url.strip() == '':
+                raise ValueError(f"Invalid URL provided: {url}")
+            response = requests.get(url, headers=headers, params=params)
+            responses.append((params, response))
+        except Exception as e:
+            print(f"Error making request to {url} with params {params}: {e}")
+            # You might want to log this error or handle it differently
+            pass
 
     for param in params:
         thread = Thread(target=make_request, args=(url, headers, param))
@@ -100,6 +109,9 @@ class AnnotationService:
         List[Tuple[str, str]]: A list of keyphrase, annotation tuples for the keyphrases.
         """
         url = Config.DBPEDIA_SPOTLIGHT_URL  # URL for the English language API
+        if url is None or url.strip() == '':
+            raise ValueError("DBPEDIA_SPOTLIGHT_URL is not configured. Please set the environment variable or check the configuration.")
+        print(f"Using DBpedia Spotlight URL: {url}")
 
         headers = {
             'Accept': 'application/json'

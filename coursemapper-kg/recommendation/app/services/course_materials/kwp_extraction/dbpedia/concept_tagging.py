@@ -43,7 +43,8 @@ class DBpediaSpotlight:
         self.sparql.setTimeout(60)
         # close long connections and set length of timeout to avoid HTTP connection timeouts and Max retries exceeded with url
         # self.wiki_api = Wikipedia('en',headers={'Connection': 'close'},timeout=20)
-        self.wiki_api = Wikipedia("en")
+        # self.wiki_api = Wikipedia("en")
+        self.wiki_api = Wikipedia(user_agent="CourseMapper/1.0 (https://github.com/ude-soco/CourseMapper; coursemapper@example.com)", language="en")
         # self.model = SentenceTransformer('all-mpnet-base-v2')
         self.model = TransformerDocumentEmbeddings(
             "sentence-transformers/msmarco-distilbert-base-tas-b"
@@ -286,7 +287,7 @@ class DBpediaSpotlight:
         try:
             # <%s> dct:subject ?category .
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?categoryLabel ?category
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -374,7 +375,7 @@ class DBpediaSpotlight:
         concepts = []
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?propertyLabel ?property
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -562,7 +563,7 @@ class DBpediaSpotlight:
         categories = []
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?categoryLabel ?category
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -616,7 +617,7 @@ class DBpediaSpotlight:
         related = []
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?propertyLabel ?property
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -672,7 +673,7 @@ class DBpediaSpotlight:
         # logger.info("Getting categories for '%s'" % annotation["label"])
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?categoryLabel ?category
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -727,7 +728,7 @@ class DBpediaSpotlight:
         # logger.info("Getting related concepts for '%s'" % annotation["label"])
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?propertyLabel ?property
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -887,18 +888,18 @@ class DBpediaSpotlight:
             query = (
                 """
                 SELECT COUNT(*) AS ?count
-                WHERE { 
+                WHERE {
                 SELECT DISTINCT  ?s
-                WHERE { 
+                WHERE {
                     ?s rdfs:label ?l .
                     FILTER langMatches(lang(?l), "en")
-                    FILTER EXISTS { 
+                    FILTER EXISTS {
                         ?s dcterms:subject ?cc .
                         ?cc rdfs:label ?name .
                         ?name bif:contains "%s"
                     }
                 }
-            }     
+            }
             """
                 % condition
             )
@@ -925,18 +926,18 @@ class DBpediaSpotlight:
             query = (
                 """
                 SELECT COUNT(*) AS ?count
-                WHERE { 
+                WHERE {
                 SELECT DISTINCT  ?s
-                WHERE { 
+                WHERE {
                     ?s rdfs:label ?l .
                     FILTER langMatches(lang(?l), "en")
-                    FILTER EXISTS { 
+                    FILTER EXISTS {
                         ?s skos:broader ?cc .
                         ?cc rdfs:label ?name .
                         ?name bif:contains "%s"
                     }
                 }
-            }     
+            }
             """
                 % condition
             )
@@ -1041,18 +1042,18 @@ class DBpediaSpotlight:
             query = (
                 """
                 SELECT COUNT(*) AS ?count
-                WHERE { 
+                WHERE {
                 SELECT DISTINCT  ?s
-                WHERE { 
+                WHERE {
                     ?s rdfs:label ?l .
                     FILTER langMatches(lang(?l), "en")
-                    FILTER EXISTS { 
+                    FILTER EXISTS {
                         ?s dbo:wikiPageWikiLink ?cc .
                         ?cc rdfs:label ?name .
                         ?name bif:contains "%s"
                     }
                 }
-            }     
+            }
             """
                 % condition
             )
@@ -1081,7 +1082,7 @@ class DBpediaSpotlight:
                     PREFIX dbpedia: <http://dbpedia.org/resource/>
                     PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
 
-                    SELECT ?abstract  WHERE { 
+                    SELECT ?abstract  WHERE {
                     <%s> dbpedia-owl:abstract ?abstract .
                     FILTER(langMatches(lang(?abstract),"en"))
                     }
@@ -1109,7 +1110,7 @@ class DBpediaSpotlight:
                 query = (
                     """
                     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-                    SELECT ?wikipedia 
+                    SELECT ?wikipedia
                     WHERE {
                     ?url foaf:primaryTopic <%s> .
                     BIND(STR(?url) AS ?wikipedia)

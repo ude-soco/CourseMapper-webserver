@@ -1,4 +1,4 @@
-import pandas as pd 
+import pandas as pd
 from rdflib import Graph
 from langdetect import detect
 from bs4 import BeautifulSoup
@@ -25,7 +25,7 @@ class DataCleaning():
         #why delete duplicates?
         self.clean_data.drop_duplicates(subset= ["name"],keep="last",inplace=True)
         self.concepts = concepts.name.array
-        
+
         print("len of concepts",len(self.concepts))
         #wiki = wikipediaapi.Wikipedia('CoolBot/0.0 (https://example.org/coolbot/; coolbot@example.org) generic-library/0.0')
         self._wikipedia_service = WikipediaService()  # Initialize WikipediaService with config
@@ -35,8 +35,6 @@ class DataCleaning():
         print("getting full articles...")
         self.clean_data["article_contents"] = self.clean_data.apply(lambda x: self.get_full_article(x["wikipedia"]),axis=1)
         #self.clean_data["article_contents"] = self._get_full_articles_parallel()
-    
-
 
         self.get_dbpedia_data_simple(self.clean_data['uri'])
 
@@ -56,10 +54,16 @@ class DataCleaning():
         except:
             # print(type(text))
             return ""
-        
+
     def parse_data(self, url):
             def worker(url, result):
                 try:
+                    # Check if URL is valid and not empty
+                    if not url or not isinstance(url, str) or url.strip() == '':
+                        print(f"Invalid or empty URL provided: {url}")
+                        result.append(pd.DataFrame())
+                        return
+
                     g = Graph()
                     g.parse(url)
 
@@ -91,7 +95,7 @@ class DataCleaning():
                     result.append(raw_data)
                 except Exception as e:
                     print(f"An error occurred while fetching/parsing URL: {url}, Error: {e}")
-                    result.append(pd.DataFrame())  # Append an empty DataFrame if any error occurs    
+                    result.append(pd.DataFrame())  # Append an empty DataFrame if any error occurs
 
             result = []
             thread = threading.Thread(target=worker, args=(url, result))
@@ -102,13 +106,13 @@ class DataCleaning():
                 raise TimeoutException("Function execution exceeded the time limit")
 
             return result[0] if result else None
-    
+
     def get_category(self,rel_con):
         categories = rel_con["O"].loc[rel_con["O"].str.contains("Category:")]
         categories = categories.map(lambda x: x.lstrip('Category:')).array
         # words = self.get_concepts_mentioned(categories)
         return categories
-    
+
     def get_inoutlinks(self,wiki,concept):
         li= wiki.page(concept)
         try:
@@ -150,7 +154,7 @@ class DataCleaning():
 
         category = set(self.get_category(rel_con))
         supercat = []
-        
+
         for word in category:
             url ="http://dbpedia.org/resource/" + word
             try:
@@ -160,10 +164,10 @@ class DataCleaning():
             except Exception as e:
                 print(e)
         supercat = set(list(dict.fromkeys(supercat)))
-        
+
         return category, supercat, relrel_concept, relrel_concept_abs
-    
-    
+
+
     def get_relrel_concepts(self):
         return 0
 
@@ -176,11 +180,19 @@ class DataCleaning():
         for url in url_list:
             # print(f"Processing URL #{counter}: {url}")
             try:
+                # Skip invalid URLs (None, NaN, empty strings)
+                if pd.isna(url) or not url or (isinstance(url, str) and url.strip() == ''):
+                    print(f"Skipping invalid URL at index {counter}")
+                    cats.append(set())
+                    supercats.append(set())
+                    counter += 1
+                    continue
+
                 rel_con = self.parse_data(url)
                 # Get the initial category set
                 category = set(self.get_category(rel_con))
                 supercat = []
-                
+
                 for word in category:
                     word_url  ="http://dbpedia.org/resource/" + word
                     try:
@@ -214,7 +226,7 @@ class DataCleaning():
         self.clean_data["super_category"]=supercats
         self.clean_data["relrel_concepts"] = self.get_relrel_concepts()
 
-        
+
     # def _get_full_articles_parallel(self):
     #     """
     #     Fetch full articles in parallel using ThreadPoolExecutor.
@@ -225,13 +237,13 @@ class DataCleaning():
     #     # Function to fetch article for a single row
     #     def fetch_article(row):
     #         return self._wikipedia_service.get_full_article(row['wikipedia'], self.concepts)
-        
+
     #     # Process in parallel using ThreadPoolExecutor
     #     with ThreadPoolExecutor() as executor:
     #         article_contents = list(executor.map(fetch_article, records))
 
     #     return article_contents
-    
+
     def get_full_article(self,url):
         try:
             page = requests.get(url)
@@ -246,7 +258,7 @@ class DataCleaning():
         except Exception as e:
             print(e)
         return 0
-    
+
     def get_entropy(self,abstracts):
         abstracts = abstracts.str.encode('ascii', 'ignore').str.decode('ascii')
         # Fit model so we can get the probability of each documents containing each topics based on its abstracts
@@ -256,7 +268,7 @@ class DataCleaning():
         for probability in probs:
             ent.append(entropy(probability, base=10))
         return ent
-    
+
     def get_abstract(self,line):
         abstract = line.str.replace(r"[\^=/]", "", regex=True)["abstract"]
         abstract = line.str.encode('ascii', 'ignore').str.decode('ascii')["abstract"]
@@ -264,7 +276,7 @@ class DataCleaning():
         # print("get_abstract func", abstract)
         words = self.get_concepts_mentioned(abstract)
         return list(dict.fromkeys(words))
-    
+
     def get_concepts_mentioned(self,text):
 
         try:
@@ -272,13 +284,13 @@ class DataCleaning():
             for word in self.concepts:
                 if word in text:
                     words.append(word)
-            # print("words from get_concepts_mentioned", words)        
+            # print("words from get_concepts_mentioned", words)
             return list(dict.fromkeys(words))
         except:
             return []
-    
+
     def get_clean_data(self):
         return self.clean_data
-    
+
     def get_related_relationships(self):
         return self.related_relationships

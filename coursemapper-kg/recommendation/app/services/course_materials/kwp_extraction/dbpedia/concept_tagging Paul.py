@@ -41,13 +41,14 @@ class DBpediaSpotlight:
         self.sparql.setTimeout(60)
         # close long connections and set length of timeout to avoid HTTP connection timeouts and Max retries exceeded with url
         # self.wiki_api = Wikipedia('en',headers={'Connection': 'close'},timeout=20)
-        self.wiki_api = Wikipedia('en')
+        # self.wiki_api = Wikipedia('en')
+        self.wiki_api = Wikipedia(user_agent="CourseMapper/1.0 (https://github.com/ude-soco/CourseMapper; coursemapper@example.com)", language='en')
         # self.model = SentenceTransformer('all-mpnet-base-v2')
         #self.model = TransformerDocumentEmbeddings('sentence-transformers/msmarco-distilbert-base-tas-b')
         # self.model = TransformerDocumentEmbeddings('sentence-transformers/all-mpnet-base-v2')
         # self.model = TransformerDocumentEmbeddings('sentence-transformers/all-distilroberta-v1')
         self.model = TransformerDocumentEmbeddings('sentence-transformers/all-MiniLM-L12-v2')
-        
+
     def _chunkstext(self, text, length):
         return (text[0 + i:length + i] for i in range(0, len(text), length))
 
@@ -151,9 +152,9 @@ class DBpediaSpotlight:
                     # # Get hashed value for initial embedding and assigne to node['id']
                     node["id"]= str(abs(hash(str(ann_embeddings))))#set id to be initial embeddings as it is the only unique value
 
-                    
+
                 concepts = sorted(concepts, key=lambda x: x["slide_weight"]+x["weight"], reverse=True)
-                
+
                 # #If only top [threshold] main concepts per slide is needed
                 # threshold = 5
                 ## Weighting according to [material_text and node_text] similarity
@@ -273,7 +274,7 @@ class DBpediaSpotlight:
         concepts=[]
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?categoryLabel ?category
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -353,7 +354,7 @@ class DBpediaSpotlight:
         concepts=[]
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?propertyLabel ?property
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -419,7 +420,7 @@ class DBpediaSpotlight:
                     #         all_annotations.append(annotation)
                 except Exception as e:
                     logger.error("Failure %s - %s" % (node["name"], e))
-            
+
             # Get only top [threshold] nodes as related concepts
             threshold = 20
             # concepts = sorted(concepts, key=lambda x: x["weight"], reverse=True)[0:threshold]
@@ -495,7 +496,7 @@ class DBpediaSpotlight:
 
         return all_concepts
 
-    
+
     def check_relationship(self, annotations,all_annotations):
         """
         """
@@ -516,7 +517,7 @@ class DBpediaSpotlight:
             logger.error("Failure in expansion - %s", e)
 
         return all_annotations
-    
+
     def check_category_relationship(self, annotation, all_annotations):
         """
         """
@@ -524,7 +525,7 @@ class DBpediaSpotlight:
         categories=[]
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?categoryLabel ?category
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -564,7 +565,7 @@ class DBpediaSpotlight:
             logger.error("Failed to get categories for %s - %s" %
                          (annotation['uri'], e))
         return all_annotations
-    
+
     def check_related_relationship(self, annotation, all_annotations):
         """
         """
@@ -572,7 +573,7 @@ class DBpediaSpotlight:
         related=[]
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?propertyLabel ?property
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -620,7 +621,7 @@ class DBpediaSpotlight:
         # logger.info("Getting categories for '%s'" % annotation["label"])
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?categoryLabel ?category
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -646,7 +647,7 @@ class DBpediaSpotlight:
                     "mid": annotation["mid"],
                     "to": []
                 }
-                
+
                 for concept in all_annotations:
                     if node["id"] == concept["id"]:
                         edge_weight = self._get_semantic_similarity_score(
@@ -662,14 +663,14 @@ class DBpediaSpotlight:
         except Exception as e:
             logger.error("Failed to get categories for %s - %s" %
                          (annotation['uri'], e))
-    
+
     def get_related_concepts(self, annotation, all_annotations):
         """
         """
         # logger.info("Getting related concepts for '%s'" % annotation["label"])
         try:
             query = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?propertyLabel ?property
                 FROM <http://dbpedia.org>
                 WHERE {
@@ -804,7 +805,7 @@ class DBpediaSpotlight:
     #     return average_vector
 
     def _get_semantic_similarity_score(self, doc_embeddings, page_embeddings):
-        """ 
+        """
         """
 
         cos_sim = util.cos_sim(doc_embeddings, page_embeddings)
@@ -822,18 +823,18 @@ class DBpediaSpotlight:
             condition = condition.replace(" ", "_")
             query = """
                 SELECT COUNT(*) AS ?count
-                WHERE { 
+                WHERE {
                 SELECT DISTINCT  ?s
-                WHERE { 
+                WHERE {
                     ?s rdfs:label ?l .
                     FILTER langMatches(lang(?l), "en")
-                    FILTER EXISTS { 
+                    FILTER EXISTS {
                         ?s dct:subject ?cc .
                         ?cc rdfs:label ?name .
                         ?name bif:contains "%s"
                     }
                 }
-            }     
+            }
             """ % condition
             self.sparql.setQuery(query)
             self.sparql.setReturnFormat(JSON)
@@ -858,18 +859,18 @@ class DBpediaSpotlight:
 
             query = """
                 SELECT COUNT(*) AS ?count
-                WHERE { 
+                WHERE {
                 SELECT DISTINCT  ?s
-                WHERE { 
+                WHERE {
                     ?s rdfs:label ?l .
                     FILTER langMatches(lang(?l), "en")
-                    FILTER EXISTS { 
+                    FILTER EXISTS {
                         ?s skos:broader ?cc .
                         ?cc rdfs:label ?name .
                         ?name bif:contains "%s"
                     }
                 }
-            }     
+            }
             """ % condition
             self.sparql.setQuery(query)
             self.sparql.setReturnFormat(JSON)
@@ -971,18 +972,18 @@ class DBpediaSpotlight:
                                property["name"]).strip().replace(" ", "_")
             query = """
                 SELECT COUNT(*) AS ?count
-                WHERE { 
+                WHERE {
                 SELECT DISTINCT  ?s
-                WHERE { 
+                WHERE {
                     ?s rdfs:label ?l .
                     FILTER langMatches(lang(?l), "en")
-                    FILTER EXISTS { 
+                    FILTER EXISTS {
                         ?s dbo:wikiPageWikiLink ?cc .
                         ?cc rdfs:label ?name .
                         ?name bif:contains "%s"
                     }
                 }
-            }     
+            }
             """ % condition
 
             self.sparql.setQuery(query)
@@ -1008,7 +1009,7 @@ class DBpediaSpotlight:
                     PREFIX dbpedia: <http://dbpedia.org/resource/>
                     PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
 
-                    SELECT ?abstract  WHERE { 
+                    SELECT ?abstract  WHERE {
                     <%s> dbpedia-owl:abstract ?abstract .
                     FILTER(langMatches(lang(?abstract),"en"))
                     }
@@ -1034,7 +1035,7 @@ class DBpediaSpotlight:
             if node["type"] != "category":
                 query = """
                     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-                    SELECT ?wikipedia 
+                    SELECT ?wikipedia
                     WHERE {
                     ?url foaf:primaryTopic <%s> .
                     BIND(STR(?url) AS ?wikipedia)

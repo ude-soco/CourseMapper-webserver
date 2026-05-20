@@ -125,12 +125,12 @@ def get_concepts(job):
 
     start_time = time.time()
     data_service._extract_vector_relation(mid=material_id)
-    # gcn = GCN()
-    # gcn.load_data()
-    gcn = RRGCN()
-    gcn.rrgcn_1_2()
+    gcn = GCN()
+    gcn.load_data()
+    # gcn = RRGCN()
+    # gcn.rrgcn_1_1()
     # gcn = relational_conceptgcn_compgcn()
-    # gcn.compgcn_without_direction_weight('mult')
+    # gcn.compgcn_direction_weight('mult')
     ### ========
     ### LightGCN Variant
     # from ..services.course_materials.GCN.lightGCN import LightGCN
@@ -204,12 +204,17 @@ def get_sequence_concepts(job):
     # use GCN to get final embedding of each node
     start_time = time.time()
     data_service._extract_vector_relation(mid=material_id)
+    # Here we can change the model use for recommendation sequence generation
+    # Model 1
+    # gcn = GCN()
+    # gcn.load_data()
+    # Model 2
+    # gcn = RRGCN()
+    # gcn.rrgcn_1_1()
+    # Model 3
+    gcn = relational_conceptgcn_compgcn()
+    gcn.compgcn_direction_weight('mult')
 
-    gcn = RRGCN()
-    gcn.rrgcn_1_2()
-    
-    # gcn = relational_conceptgcn_compgcn()
-    # gcn.compgcn_without_direction_weight('mult')
 
     end_time = time.time()
     print("use gcn Execution time: ", end_time - start_time, flush=True)
@@ -226,13 +231,13 @@ def get_sequence_concepts(job):
     print("Get User model Execution time: ", end_time - start_time, flush=True)
 
     start_time = time.time()
-    # Get top-5 recommendation concept and interpretability
+    # Get top-10 recommendation concept and interpretability
     sequence_path = data_service._get_concept_sequence_recommendation(user_id=user_id, mid=material_id)
     end_time = time.time()
     logger.info(sequence_path)
-    
+
     print(
-        "Get top-5 recommendation concept and interpretability Execution time: ",
+        "Get top-10 recommendation concept and interpretability Execution time: ",
         end_time - start_time,
         flush=True,
     )

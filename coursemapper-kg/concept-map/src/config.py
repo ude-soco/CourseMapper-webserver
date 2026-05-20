@@ -20,7 +20,7 @@ class Config:
     NEO4J_SAVE_TO_DB = os.getenv('NEO4J_SAVE_TO_DB', 'true').lower() == 'true'
 
 
-    DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL')
+    DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://api.dbpedia-spotlight.org/en/annotate')
     MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
     MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME")
 
@@ -63,4 +63,4 @@ class Config:
                f'TOP_N_RELATED_CATEGORIES={Config.TOP_N_RELATED_CATEGORIES}\n' \
                f'TOP_N_RELATED_CONCEPTS={Config.TOP_N_RELATED_CONCEPTS}\n' \
                f'MONGO_DB_URI={Config.MONGO_DB_URI}\n' \
-               f'MONGO_DB_NAME={Config.MONGO_DB_NAME}\n' \
+               f'MONGO_DB_NAME={Config.MONGO_DB_NAME}\n'

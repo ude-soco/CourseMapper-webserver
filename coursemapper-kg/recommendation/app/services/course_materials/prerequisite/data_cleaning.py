@@ -1,4 +1,4 @@
-import pandas as pd 
+import pandas as pd
 from rdflib import Graph
 from langdetect import detect
 from bs4 import BeautifulSoup
@@ -29,6 +29,7 @@ class DataCleaning():
         self.clean_data["abstract_contents"] = self.clean_data.apply(lambda x: self.get_abstract(x),axis=1)
         print("getting full articles...")
         self.clean_data["article_contents"] = self.clean_data.apply(lambda x: self.get_full_article(x["wikipedia"]),axis=1)
+        print(f'getting dbpedia data from {self.clean_data["uri"].tolist()}')
         self.get_dbpedia_data_simple(self.clean_data["uri"])
         print("get inlink and outlink")
         self.clean_data["link_ratio"] = self.clean_data.apply(lambda x: self.get_inoutlinks(wiki,x["name"]),axis=1)
@@ -45,7 +46,7 @@ class DataCleaning():
         except:
             print(type(text))
             return ""
-        
+
     def parse_data(self, url):
             def worker(url, result):
                 g = Graph()
@@ -76,13 +77,13 @@ class DataCleaning():
                 raise TimeoutException("Function execution exceeded the time limit")
 
             return result[0] if result else None
-    
+
     def get_category(self,rel_con):
         categories = rel_con["O"].loc[rel_con["O"].str.contains("Category:")]
         categories = categories.map(lambda x: x.lstrip('Category:')).array
         # words = self.get_concepts_mentioned(categories)
         return categories
-    
+
     def get_inoutlinks(self,wiki,concept):
         li= wiki.page(concept)
         try:
@@ -124,7 +125,7 @@ class DataCleaning():
 
         category = set(self.get_category(rel_con))
         supercat = []
-        
+
         for word in category:
             url ="http://dbpedia.org/resource/" + word
             try:
@@ -134,10 +135,10 @@ class DataCleaning():
             except Exception as e:
                 print(e)
         supercat = set(list(dict.fromkeys(supercat)))
-        
+
         return category, supercat, relrel_concept, relrel_concept_abs
-    
-    
+
+
     def get_relrel_concepts(self):
         return 0
 
@@ -152,7 +153,7 @@ class DataCleaning():
                 rel_con = self.parse_data(url)
                 category = set(self.get_category(rel_con))
                 supercat = []
-                
+
                 for word in category:
                     url ="http://dbpedia.org/resource/" + word
                     try:
@@ -172,7 +173,7 @@ class DataCleaning():
         self.clean_data["category"] = cats
         self.clean_data["super_category"]=supercats
         self.clean_data["relrel_concepts"] = self.get_relrel_concepts()
-    
+
     def get_full_article(self,url):
         try:
             page = requests.get(url)
@@ -186,7 +187,7 @@ class DataCleaning():
         except Exception as e:
             print(e)
         return 0
-    
+
     def get_entropy(self,abstracts):
         abstracts = abstracts.str.encode('ascii', 'ignore').str.decode('ascii')
         # Fit model so we can get the probability of each documents containing each topics based on its abstracts
@@ -196,12 +197,12 @@ class DataCleaning():
         for probability in probs:
             ent.append(entropy(probability, base=10))
         return ent
-    
+
     def get_abstract(self,line):
         abstract = line.str.encode('ascii', 'ignore').str.decode('ascii')["abstract"]
         words = self.get_concepts_mentioned(abstract)
         return list(dict.fromkeys(words))
-    
+
     def get_concepts_mentioned(self,text):
         try:
             words = []
@@ -211,9 +212,9 @@ class DataCleaning():
             return list(dict.fromkeys(words))
         except:
             return []
-    
+
     def get_clean_data(self):
         return self.clean_data
-    
+
     def get_related_relationships(self):
         return self.related_relationships

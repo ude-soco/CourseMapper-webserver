@@ -73,10 +73,10 @@ def create_video_resource(tx, node, recommendation_type=''):
         "Creating youtube resource '%s'" % node["id"])
 
     tx.run(
-        """MERGE (c:Resource:Video {rid: $rid, uri: $uri, title: $title, 
-        description: $description, description_full: $description_full, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
-        keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, thumbnail: $thumbnail, 
-        duration: $duration, views: $views, publish_time: $pub_time, helpful_count: $helpful_count, 
+        """MERGE (c:Resource:Video {rid: $rid, uri: $uri, title: $title,
+        description: $description, description_full: $description_full, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding,
+        keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, thumbnail: $thumbnail,
+        duration: $duration, views: $views, publish_time: $pub_time, helpful_count: $helpful_count,
         not_helpful_count: $not_helpful_count, saves_count: $saves_count, like_count: $like_count, channel_title: $channel_title
         })
         """,
@@ -108,9 +108,9 @@ def create_wikipedia_resource(tx, node, recommendation_type=''):
     logger.info(
         "Creating wikipedia resource '%s'" % node["id"])
     tx.run(
-        """MERGE (c:Resource:Article {rid: $rid, uri: $uri, 
-        title: $title, abstract:$abstract, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding, 
-        keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, helpful_count: $helpful_count, 
+        """MERGE (c:Resource:Article {rid: $rid, uri: $uri,
+        title: $title, abstract:$abstract, keyphrases: $keyphrases, text: $text, document_embedding: $document_embedding,
+        keyphrase_embedding: $keyphrase_embedding, similarity_score: $similarity_score, helpful_count: $helpful_count,
         not_helpful_count: $not_helpful_count, saves_count: $saves_count
         })
         """,
@@ -135,7 +135,7 @@ def create_external_source_resource(tx, node):
     logger.info(
         "Creating ExternalSource resource '%s'" % node["id"])
     tx.run(
-        """MERGE (c:Resource:ExternalSource {rid: $rid, uri: $uri, 
+        """MERGE (c:Resource:ExternalSource {rid: $rid, uri: $uri,
         publish_time: $created_at, cid: $cid, description: $description, helpful_count: $helpful_count,
         not_helpful_count: $not_helpful_count, saves_count: $saves_count})""",
         rid=node["uri"],
@@ -147,7 +147,7 @@ def create_external_source_resource(tx, node):
         not_helpful_count=0,
         saves_count=0
         )
-    
+
 
 def create_concept_relationships(tx, node):
     """
@@ -233,10 +233,10 @@ def edit_resource(tx, resource, recommendation_type):
     """
     logger.info(
         "Editing resource '%s'" % resource["id"])
-    
+
     tx.run("""
         MATCH (b: Resource)
-        WHERE b.rid = $rid 
+        WHERE b.rid = $rid
         SET b.similarity_score = $similarity_score, b.views = $views, b.like_count = $like_count, b.channel_title = $channel_title
         RETURN b
         """, rid=resource["id"],
@@ -256,7 +256,7 @@ def create_lr_relationships(tx, mid, node):
     # logger.info(
     #     "Creating concepts relationships to learning material '%s'" % mid)
     # MERGE (m)-[r:CONTAINS {weight: $weight}]->(c)""",
-    tx.run("""MATCH (m:LearningMaterial) WHERE m.mid = $mid 
+    tx.run("""MATCH (m:LearningMaterial) WHERE m.mid = $mid
             OPTIONAL MATCH (c:Concept) WHERE c.cid = $cid and c.mid = $mid
             MERGE (m)-[r:LM_CONSISTS_OF {weight: $weight}]->(c)""",
            weight=node["weight"],
@@ -269,7 +269,7 @@ def create_slide_concept_relationships(tx, sid, node):
     """
     # logger.info(
     #     "Creating slide relationships to concepts '%s'" % node["id"])
-    tx.run("""MATCH (s:Slide) WHERE s.sid = $sid 
+    tx.run("""MATCH (s:Slide) WHERE s.sid = $sid
             OPTIONAL MATCH (c:Concept) WHERE c.cid = $cid and c.mid = $mid
             MERGE (s)-[r:CONSISTS_OF {weight: $weight}]->(c)""",
            sid=sid,
@@ -284,7 +284,7 @@ def create_lm_slide_relationships(tx, mid, sid):
     logger.info(
         "Creating learning material relationships to slide '%s'" % sid)
     tx.run("""MATCH (s:Slide) WHERE s.sid = $sid
-            OPTIONAL MATCH (m:LearningMaterial) WHERE m.mid = $mid 
+            OPTIONAL MATCH (m:LearningMaterial) WHERE m.mid = $mid
             MERGE (m)-[r:CONTAINS]->(s)""",
            mid=mid,
            sid=sid)
@@ -401,8 +401,8 @@ def retrieve_all_concepts(tx, mid):
     """
     logger.info("Geting the concepts of learning material '%s'" % mid)
     result = tx.run("""MATCH (c:Concept)
-        WHERE c.mid = $mid 
-        RETURN LABELS(c) as labels, ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, 
+        WHERE c.mid = $mid
+        RETURN LABELS(c) as labels, ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri,
         c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract""",
                     mid=mid)
 
@@ -413,8 +413,8 @@ def retrieve_slide_concepts(tx, sid):
     """
     """
     logger.info("Getting the concepts of slide '%s'" % sid)
-    result = tx.run("""MATCH p=(s: Slide)-[r]->(c: Concept) WHERE s.sid = $sid RETURN LABELS(c) as labels, 
-    ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as 
+    result = tx.run("""MATCH p=(s: Slide)-[r]->(c: Concept) WHERE s.sid = $sid RETURN LABELS(c) as labels,
+    ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as
     wikipedia, c.abstract as abstract""",
                     sid=sid)
 
@@ -426,18 +426,18 @@ def retrieve_slide_resources(tx, sid):
     """
     logger.info("Getting the resources for slide '%s'" % sid)
     result_video = tx.run("""
-    MATCH p=(a: Video)-[r]->(s: Slide) 
-    WHERE s.sid = $sid 
-    RETURN LABELS(a) as labels, ID(a) as id, a.rid as rid, a.uri as uri, a.title as title, 
+    MATCH p=(a: Video)-[r]->(s: Slide)
+    WHERE s.sid = $sid
+    RETURN LABELS(a) as labels, ID(a) as id, a.rid as rid, a.uri as uri, a.title as title,
     a.description as description, a.description_full as description_full, a.keyphrases as keyphrases, a.thumbnail as thumbnail,
-    a.duration as duration, a.views as views, a.publish_time as pub_time, a.helpful_count as helpful_count, 
+    a.duration as duration, a.views as views, a.publish_time as pub_time, a.helpful_count as helpful_count,
     a.not_helpful_count as not_helpful_count""", sid=sid)
 
     result_article = tx.run("""
-    MATCH p=(a: Article)-[r]->(s: Slide) 
-    WHERE s.sid = $sid 
-    RETURN LABELS(a) as labels, ID(a) as id, a.rid as rid, a.uri as uri, a.title as title, 
-    a.abstract as abstract, a.keyphrases as keyphrases, a.helpful_count as helpful_count, 
+    MATCH p=(a: Article)-[r]->(s: Slide)
+    WHERE s.sid = $sid
+    RETURN LABELS(a) as labels, ID(a) as id, a.rid as rid, a.uri as uri, a.title as title,
+    a.abstract as abstract, a.keyphrases as keyphrases, a.helpful_count as helpful_count,
         a.not_helpful_count as not_helpful_count""",
                             sid=sid)
     return list(result_video) + list(result_article)
@@ -453,8 +453,8 @@ def retrieve_concept_resources(tx, mid, cid):
     MATCH p=(a: Video)-[r: CONTAINS]->(c: Concept)
     WHERE c.cid = $cid AND c.mid = $mid
     RETURN LABELS(a) as labels, ID(a) as id, a.rid as rid, a.uri as uri, a.title as title,
-    a.description as description, a.description_full as description_full, a.keyphrases as keyphrases, a.thumbnail as thumbnail, a.duration as duration, a.views as views, 
-        a.publish_time as publish_time, r.weight as similarity_score, a.helpful_count as helpful_count, 
+    a.description as description, a.description_full as description_full, a.keyphrases as keyphrases, a.thumbnail as thumbnail, a.duration as duration, a.views as views,
+        a.publish_time as publish_time, r.weight as similarity_score, a.helpful_count as helpful_count,
         a.not_helpful_count as not_helpful_count""",
                           cid=cid, mid=mid).data()
 
@@ -462,7 +462,7 @@ def retrieve_concept_resources(tx, mid, cid):
     MATCH p=(a: Article)-[r: CONTAINS]->(c: Concept)
     WHERE c.cid = $cid AND c.mid = $mid
     RETURN LABELS(a) as labels, ID(a) as id, a.rid as rid, a.uri as uri, a.title as title,
-    a.abstract as abstract, a.keyphrases as keyphrases, a.helpful_count as helpful_count, 
+    a.abstract as abstract, a.keyphrases as keyphrases, a.helpful_count as helpful_count,
         a.not_helpful_count as not_helpful_count, r.weight as similarity_score""",
                             cid=cid, mid=mid).data()
     return list(result_video) + list(result_article)
@@ -473,10 +473,10 @@ def retrieve_relationships(tx, mid):
     """
     logger.info("Geting the relationships of learning material '%s'" % mid)
     result = tx.run("""
-        MATCH p=(a)-[r]->(b) 
+        MATCH p=(a)-[r]->(b)
         WHERE TYPE(r) <> 'LM_CONSISTS_OF'
-        AND a.mid = $mid 
-        AND b.mid = $mid 
+        AND a.mid = $mid
+        AND b.mid = $mid
         RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""",
                     mid=mid)
 
@@ -503,16 +503,16 @@ def create_user_v2(tx, user):
         userEmail=user["user_email"],
         embedding="").single()
     return user_id
-    
+
 
 def retrieve_user_concept_relationships(tx, uid, relation_type):
     """
     """
     logger.info("Geting the user relationships to concepts")
     result = tx.run("""
-        MATCH p=(a)-[r]->(b:Concept) 
+        MATCH p=(a)-[r]->(b:Concept)
         WHERE TYPE(r) <> '%s'
-        AND a.uid = $uid 
+        AND a.uid = $uid
         RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""" % relation_type,
                     uid=uid)
 
@@ -525,8 +525,8 @@ def retrieve_slide_to_concepts_relationships(tx, sid):
 
     logger.info("Getting the relationships of slide '%s'" % sid)
     result = tx.run("""
-        MATCH p=(a: Slide)-[r]->(b: Concept) 
-        WHERE a.sid = $sid  
+        MATCH p=(a: Slide)-[r]->(b: Concept)
+        WHERE a.sid = $sid
         RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""",
                     sid=sid)
 
@@ -540,8 +540,8 @@ def retrieve_resource_to_slide_relationships(tx, sid):
     logger.info("Getting the relationships of resource '%s'" % sid)
 
     result = tx.run("""
-            MATCH p=(a: Resource)-[r]->(b: Slide) 
-            WHERE b.sid = $sid  
+            MATCH p=(a: Resource)-[r]->(b: Slide)
+            WHERE b.sid = $sid
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target""",
                     sid=sid)
 
@@ -555,8 +555,8 @@ def retrieve_resource_to_concept_relationships(tx, cid):
     logger.info("Getting the relationships of resource to concept '%s'" % cid)
 
     result = tx.run("""
-            MATCH p=(a: Resource)-[r: CONTAINS]->(b: Concept) 
-            WHERE b.cid = $cid  
+            MATCH p=(a: Resource)-[r: CONTAINS]->(b: Concept)
+            WHERE b.cid = $cid
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""",
                     cid=cid)
 
@@ -570,8 +570,8 @@ def retrieve_user_to_concept_relationships(tx, uid):
     logger.info("Getting the relationships of user '%s' to concept" % uid)
 
     result = tx.run("""
-            MATCH p=(a: User)-[r]->(b: Concept) 
-            WHERE a.uid = $uid  
+            MATCH p=(a: User)-[r]->(b: Concept)
+            WHERE a.uid = $uid
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target""",
                     uid=uid)
 
@@ -595,8 +595,8 @@ def connect_user_dnu_concept(tx, user_id, non_understood):
                 )
                     RETURN 'Relationship created' AS message
                 }
-                RETURN 
-                CASE 
+                RETURN
+                CASE
                     WHEN r IS NOT NULL THEN 'Relationship already exists'
                     ELSE message
                 END AS message;''',  uid=user_id,
@@ -624,7 +624,7 @@ def relationship_already_exists(tx, user_id, concept_id):
     """
     logger.info("relationship_already_exists called")
     uid=user_id
-    
+
     result= tx.run( '''MATCH (u:User {uid: $uid})-[r:dnu]->(c:Concept {cid: $cid}) RETURN count(r) AS count''',  uid=user_id,
                                     cid=concept_id)
 
@@ -639,7 +639,7 @@ def connect_user_u_concept(tx, user_id, understood):
     for id in understood:
         # user understand the concept, the relationship is "u"
 
-        tx.run("""MATCH (u:User) WHERE u.uid = $uid 
+        tx.run("""MATCH (u:User) WHERE u.uid = $uid
             OPTIONAL MATCH (c:Concept) WHERE c.cid = $cid
             MERGE (u)-[r:u {weight: 0}]->(c)""",
                uid=user_id,
@@ -661,7 +661,7 @@ def reset_user_concept_relationships(tx, user_id, new_concepts):
         tx.run('''MATCH p=(u)-[r:u]->(c) where u.uid=$uid And c.cid = $cid  delete r''',
                uid=user_id,
                cid=id)
-        
+
 # get user embedding but saving in the database!!
 # the name of the function must be adjusted then!!
 def get_user_embedding_bak(tx, user_id, mid):
@@ -778,7 +778,7 @@ def get_user_embedding(tx,user_id, mid):
             get the position of each dnu concept
             dnu_position(dict,key is id of concept, value is position) : give each dnu concepts a position value according to the timestamps
         """
-        # filter concept_timestamps, we only need timestamp of dnu concept which belongs to mid 
+        # filter concept_timestamps, we only need timestamp of dnu concept which belongs to mid
         filtered_timestamps = {
             id_: concept_timestamps.get(id_, default_timestamp) for id_ in dnu_concept_ids_list
         }
@@ -805,9 +805,9 @@ def get_user_embedding(tx,user_id, mid):
                     dnu_weight_matrix[i][j] = 1.0  # The diagonal is 1
                 else:
                     # calculate cosine similarity weight
-                    dot_product = np.dot(embeddings[i], embeddings[j])  
-                    norm_i = np.linalg.norm(embeddings[i])  
-                    norm_j = np.linalg.norm(embeddings[j])  
+                    dot_product = np.dot(embeddings[i], embeddings[j])
+                    norm_i = np.linalg.norm(embeddings[i])
+                    norm_j = np.linalg.norm(embeddings[j])
                     dnu_weight_matrix[i][j] = dot_product / (norm_i * norm_j)
 
         #step 2: Calculate mask matrix
@@ -821,51 +821,51 @@ def get_user_embedding(tx,user_id, mid):
                     mask_matrix[i][j] = -10  # ti>tj , -10
 
         #step 3: Calculate sequential matrix
-        sequential_matrix = np.where(mask_matrix == -10, 0, dnu_weight_matrix + mask_matrix) # if the value of mask matrix is -10, then the value of sequential_matrix will be 0 
+        sequential_matrix = np.where(mask_matrix == -10, 0, dnu_weight_matrix + mask_matrix) # if the value of mask matrix is -10, then the value of sequential_matrix will be 0
 
         #step 4: update the dnu_embedding matrix
         embedding_matrix = np.vstack(embeddings) # construct dnu embedding matrix
         new_dnu_embeddings= np.dot(sequential_matrix,embedding_matrix) #update dnu embedding
-        
+
 
         for idx, concept_id in enumerate(dnu_concept_ids_list):
             dnu_concept_mid[concept_id]["embedding"] = new_dnu_embeddings[idx]
-            
+
         """
-            construct the embedding of user 
+            construct the embedding of user
         """
         # Extract the list of all dnu concept IDs
         dnu_ids = list(dnu_concept_mid.keys())
 
         # Extract embedding and weight information according to dnu concept IDs
         dnu_embeddings = [dnu_concept_mid[id]["embedding"] for id in dnu_ids]
-        weights = [dnu_concept_mid[id]["weight"] for id in dnu_ids] 
-        
+        weights = [dnu_concept_mid[id]["weight"] for id in dnu_ids]
+
         # Extract positions
-        dnu_positions = [dnu_position[id] for id in dnu_ids] 
+        dnu_positions = [dnu_position[id] for id in dnu_ids]
 
         # Step 1: calculate w_c
         w_c_list = []
         for i in range(num_nodes):
             W_cos = weights[i]  # calculate W_cos
             # calculate W_pos
-            W_pos = dnu_positions[i] / (num_nodes - 1)  
+            W_pos = dnu_positions[i] / (num_nodes - 1)
             # calculate W_c
             w_c = 0.5 * (W_cos + W_pos)
             w_c_list.append(w_c)
         # Step 2: get W_sum
         W_sum = sum(w_c_list)
         # Step 3: get e_L
-        embeddings_sum = np.zeros_like(dnu_embeddings[0]) 
+        embeddings_sum = np.zeros_like(dnu_embeddings[0])
         for i in range(num_nodes):
-            embeddings_sum += w_c_list[i] * dnu_embeddings[i] 
-        e_L = embeddings_sum / W_sum  
+            embeddings_sum += w_c_list[i] * dnu_embeddings[i]
+        e_L = embeddings_sum / W_sum
 
         # write user embedding into neo4j
         tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
             uid=user_id,
             embedding=','.join(str(i) for i in e_L))
-        logger.info("get user embedding")  
+        logger.info("get user embedding")
 def _truncate(num):
     return re.sub(r'^(\d+\.\d{,2})\d*$', r'\1', str(num))
 
@@ -940,7 +940,7 @@ class NeoDataBase:
     #     session = self.driver.session()
     #     tx = session.begin_transaction()
     #     user = None
-        
+
     #     # _uid = get_user(tx, user_id)
     #     user = get_user_v2(tx, user["id"])
     #     print("get_user_v2 -> ->", user)
@@ -978,7 +978,7 @@ class NeoDataBase:
         """
         logger.info("Geting the concepts of learning material '%s'" % mid)
         result = tx.run("""MATCH (c:Concept)
-            WHERE c.mid = $mid 
+            WHERE c.mid = $mid
             RETURN LABELS(c) as labels, ID(c) AS id, c.cid as cid, c.name AS name, c.uri as uri, c.type as type, c.weight as weight, c.wikipedia as wikipedia, c.abstract as abstract""",
                         mid=mid)
 
@@ -989,10 +989,10 @@ class NeoDataBase:
         """
         logger.info("Geting the relationships of learning material '%s'" % mid)
         result = tx.run("""
-            MATCH p=(a)-[r]->(b) 
+            MATCH p=(a)-[r]->(b)
             WHERE TYPE(r) <> 'LM_CONSISTS_OF'
-            AND a.mid = $mid 
-            AND b.mid = $mid 
+            AND a.mid = $mid
+            AND b.mid = $mid
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""",
                         mid=mid)
 
@@ -1024,15 +1024,15 @@ class NeoDataBase:
         """
         logger.info("Geting all nodes of learning material '%s'" % mid)
         concepts = tx.run("""MATCH (c:Concept)
-                        WHERE c.mid = $mid 
+                        WHERE c.mid = $mid
                         RETURN LABELS(c) as labels, ID(c) AS id, c.abstract as abstract, c.cid as cid, c.final_embedding as final_embedding, c.initial_embedding as initial_embedding, c.mid as mid, c.name AS name, c.type as type, c.uri as uri, c.weight as weight, c.wikipedia as wikipedia""",
                           mid=mid)
         slides = tx.run("""MATCH (c:Slide)
-                        WHERE c.mid = $mid 
+                        WHERE c.mid = $mid
                         RETURN LABELS(c) as labels, ID(c) AS id, c.concepts as concepts, c.final_embedding as final_embedding, c.initial_embedding as initial_embedding, c.mid as mid, c.name AS name, c.sid as sid, c.text as text, c.type as type""",
                         mid=mid)
         LMs = tx.run("""MATCH (c:LearningMaterial)
-                        WHERE c.mid = $mid 
+                        WHERE c.mid = $mid
                         RETURN LABELS(c) as labels, ID(c) AS id, c.mid as mid, c.name AS name""",
                      mid=mid)
         results = list(concepts) + list(slides) + list(LMs)
@@ -1047,15 +1047,15 @@ class NeoDataBase:
         #     mid=mid)
         rel1 = tx.run("""
             MATCH p=(a:Slide)-[r:CONSISTS_OF]->(b:LearningMaterial)
-            WHERE a.mid = $mid 
-            AND b.mid = $mid 
+            WHERE a.mid = $mid
+            AND b.mid = $mid
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target""",
                       mid=mid)
         rel2 = tx.run("""
-            MATCH p=(a)-[r]->(b) 
+            MATCH p=(a)-[r]->(b)
             WHERE NOT EXISTS {MATCH (a:Slide)-[r:CONSISTS_OF]->(b:LearningMaterial)}
-            AND a.mid = $mid 
-            AND b.mid = $mid 
+            AND a.mid = $mid
+            AND b.mid = $mid
             RETURN TYPE(r) as type, ID(a) as source, ID(b) as target, r.weight as weight""",
 
                       mid=mid)
@@ -1402,7 +1402,7 @@ class NeoDataBase:
                 "SET r.weight = $weight "
                 "RETURN TYPE(r) as type, ID(a) as source, ID(b) as target""" % relation_type,
                 rid=rid, cid=cid, weight=weight)
-            
+
     def get_lm(self, mid):
         """
         """
@@ -1463,7 +1463,7 @@ class NeoDataBase:
         with self.driver.session() as session:
             logger.info("Get concept id for '%s'" % name)
             concepts = session.run(
-                """MATCH p=(s: Slide)-[r: CONSISTS_OF]->(c: Concept) 
+                """MATCH p=(s: Slide)-[r: CONSISTS_OF]->(c: Concept)
                 WHERE c.name = $name RETURN ID(c) as id, c.cid as cid, c.name as name, c.weight as weight""",
                 name=name).data()
 
@@ -1486,13 +1486,13 @@ class NeoDataBase:
             return concept_names
         else:
             return []
-    
+
     def construct_user_model(self, user_id, non_understood, understood, new_concepts, mid):
         """
         """
         session = self.driver.session()
         tx = session.begin_transaction()
-        
+
         try:
             if self.user_exists(user_id):
                 logger.info("Found  user")
@@ -1500,9 +1500,9 @@ class NeoDataBase:
                 # logger.info("create  user %s" % user)
                 create_user(tx, user_id)
                 logger.info(" user created")
-            print("connect_user_dnu_concept",user_id, non_understood ) 
-            execute_query_once(tx, user_id, non_understood)   
-            # connect_user_dnu_concept(tx, user_id, non_understood)  
+            print("connect_user_dnu_concept",user_id, non_understood )
+            execute_query_once(tx, user_id, non_understood)
+            # connect_user_dnu_concept(tx, user_id, non_understood)
             connect_user_u_concept(tx, user_id, understood)
             reset_user_concept_relationships(tx, user_id, new_concepts)
             get_user_embedding(tx, user_id, mid)
@@ -1515,7 +1515,7 @@ class NeoDataBase:
             session.close()
             self.close()
 
-    
+
 
     def user_exists(self, user_id):
         """
@@ -1536,7 +1536,7 @@ class NeoDataBase:
                 """MATCH (n:Concept)
                     WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
                     AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding}
-                    AND n.mid =$mid 
+                    AND n.mid =$mid
                     AND n.type <> $type
                     return n
                     """,
@@ -1545,7 +1545,7 @@ class NeoDataBase:
                 type="category"
             ).data()
         return list(result)
-    
+
     def get_concept_has_not_read(self, user_id, mid):
         logger.info("Get only ordinary candidate concept")
         with self.driver.session() as session:
@@ -1553,7 +1553,7 @@ class NeoDataBase:
                 """MATCH (n:Concept)
                     WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
                     AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding}
-                    AND n.mid =$mid 
+                    AND n.mid =$mid
                     AND n.type <> $type
                     AND NOT EXISTS {
                         MATCH (p1:Concept)-[:PREREQUISITE_TO]-(p2:Concept)
@@ -1567,6 +1567,31 @@ class NeoDataBase:
             ).data()
 
         return list(result)
+
+    # Get only prerequisite candidate concept
+    # def get_prerequisite_concept_has_not_read(self, user_id, mid):
+    #     logger.info("Get only prerequisite candidate concept")
+    #     with self.driver.session() as session:
+    #         result = session.run(
+    #             """
+    #             MATCH (n:Concept)
+    #             WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
+    #             AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding}
+    #             AND n.type <> $type
+    #             AND n.mid = $mid
+    #             AND EXISTS {
+    #                 MATCH (p1:Concept)-[:PREREQUISITE_TO]-(p2:Concept)
+    #                 WHERE n = p1 OR n = p2
+    #             }
+    #             return n
+    #             """,
+    #             uid=user_id,
+    #             mid = mid,
+    #             type="category"
+    #         ).data()
+    #     return list(result)
+
+    # Get BOTH prerequisite and non-prerequisite candidate concept
     def get_prerequisite_concept_has_not_read(self, user_id, mid):
         logger.info("Get only prerequisite candidate concept")
         with self.driver.session() as session:
@@ -1574,13 +1599,9 @@ class NeoDataBase:
                 """
                 MATCH (n:Concept)
                 WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
-                AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding} 
+                AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding}
                 AND n.type <> $type
                 AND n.mid = $mid
-                AND EXISTS {
-                    MATCH (p1:Concept)-[:PREREQUISITE_TO]-(p2:Concept)
-                    WHERE n = p1 OR n = p2
-                }
                 return n
                 """,
                 uid=user_id,
@@ -1588,7 +1609,7 @@ class NeoDataBase:
                 type="category"
             ).data()
         return list(result)
-    
+
     def get_user(self, user_id):
         logger.info("Get user")
         with self.driver.session() as session:
@@ -1604,7 +1625,7 @@ class NeoDataBase:
         logger.info("get_road_user_c_related_concept")
         with self.driver.session() as session:
             result = session.run("""
-                MATCH p = (u:User)-[r:dnu]->(c:Concept)-[r1]->(f:Concept)<-[r2]-(d:Concept) 
+                MATCH p = (u:User)-[r:dnu]->(c:Concept)-[r1]->(f:Concept)<-[r2]-(d:Concept)
                 where u.uid=$uid and d.cid=$cid and f.type <> $type
                 RETURN r1.weight+r2.weight as weight,f.name as name,p,c.name as dnu,f.type as type""",
                                  uid=uid,
@@ -1620,7 +1641,7 @@ class NeoDataBase:
         logger.info("get_road_user_c_category_concept")
         with self.driver.session() as session:
             result = session.run("""
-                MATCH p = (u:User)-[r:dnu]->(c:Concept)-[r1]->(f:Concept)<-[r2]-(d:Concept) 
+                MATCH p = (u:User)-[r:dnu]->(c:Concept)-[r1]->(f:Concept)<-[r2]-(d:Concept)
                 where u.uid=$uid and d.cid=$cid and f.type= $type
                 RETURN r1.weight+r2.weight as weight,f.name as name,p, c.name as dnu,f.type as type""",
                                  uid=uid,
@@ -1636,7 +1657,7 @@ class NeoDataBase:
         logger.info("get_road_user_c_slide_concept")
         with self.driver.session() as session:
             result = session.run("""
-                MATCH p = (u:User)-[r:dnu]->(c:Concept)<-[r1]-(s:Slide)-[r2]->(d:Concept) 
+                MATCH p = (u:User)-[r:dnu]->(c:Concept)<-[r1]-(s:Slide)-[r2]->(d:Concept)
                 where u.uid=$uid and d.cid=$cid and s.mid=$mid
                 RETURN r1.weight+r2.weight as weight, s.name as name,p,c.name as dnu,s.type as type""",
                                  uid=uid,
@@ -1654,7 +1675,7 @@ class NeoDataBase:
         logger.info("get_road_user_concept_relatedconcept")
         with self.driver.session() as session:
             result = session.run("""
-                MATCH p = (u:User)-[r:dnu]->(c:Concept)-[r1]->(d:Concept) 
+                MATCH p = (u:User)-[r:dnu]->(c:Concept)-[r1]->(d:Concept)
                 where u.uid=$uid and d.cid=$cid
                 RETURN r1.weight as weight,p,c.name as dnu""",
                                  uid=uid,
@@ -1663,7 +1684,7 @@ class NeoDataBase:
             #     print("road related", x)
            # print("get_road_user_concept_relatedconcept", result)
         #print("road related",result)
-        
+
         return list(result)
 
     def find_concept(self, ids):
@@ -1730,12 +1751,12 @@ class NeoDataBase:
             annotations.append(c)
         return annotations
 
-    
+
     def get_all_concepts(self,mid):
         logger.info("get all concepts %s" % mid)
         with self.driver.session() as session:
             nodes = session.run("""MATCH (n:Concept)
-                WHERE n.mid = $mid 
+                WHERE n.mid = $mid
                 RETURN n.name as label, n.cid as id, n.uri as uri, n.type as type, n.mid as mid, n.initial_embedding as initial_embedding, n.weight as weight""",
                                 mid=mid).data()
         annotations = []
@@ -1786,7 +1807,7 @@ class NeoDataBase:
     def find_concept_for_each_slide(self, mid, name):
         logger.info("find concept from %s" % name)
         with self.driver.session() as session:
-            nodes = session.run("""MATCH p=(s:Slide)-[r:CONSISTS_OF]->(n:Concept) 
+            nodes = session.run("""MATCH p=(s:Slide)-[r:CONSISTS_OF]->(n:Concept)
                 WHERE s.mid = $mid and s.name = $name and NOT EXISTS {MATCH (n:Concept)-[d:RELATED_TO]->(c:Concept)}
                 RETURN n.name as label , n.cid as id, n.uri as uri, n.type as type, n.mid as mid, n.initial_embedding as initial_embedding""",
                                 mid=mid,
@@ -1885,7 +1906,7 @@ class NeoDataBase:
         session = self.driver.session()
         tx = session.begin_transaction()
         try:
-            tx.run("""MATCH (n:Concept)-[r:RELATED_TO]->(m:Concept) WHERE n.type <> "category"  
+            tx.run("""MATCH (n:Concept)-[r:RELATED_TO]->(m:Concept) WHERE n.type <> "category"
                     and m.type <> "category"
                     and n.mid = $mid
                     and m.mid = $mid
@@ -2000,8 +2021,8 @@ class NeoDataBase:
             for prerequisite_relationship in prerequisite_relationships:
                 f.write(str(prerequisite_relationship["source"]) + " " + str(prerequisite_relationship["weight"])
                         + " " + str(prerequisite_relationship["target"]) + "\n")
-    
-    
+
+
     # def relation(self,mid):
     #     # Get relationships between nodes (concept-related concept, concept-category)
     #     print("+++++++++++++++++++++++++++++++++++mid = "+str(mid))
@@ -2043,7 +2064,7 @@ class NeoDataBase:
                 """MATCH p=(l:LearningMaterial)-[r:LM_CONSISTS_OF]->(n:Concept) where l.mid =$mid RETURN n.name as name""",
                 mid=mid).data()
         return list(concept_list)
-    
+
     def update_concept(self, node):
         """
         Add rank to each node
@@ -2081,11 +2102,11 @@ class NeoDataBase:
                     userEmail=user["user_email"],
                     embedding=""
                 ).single()
-            
+
         return user_node
 
-    def create_or_update_video_resource(self, tx, node: dict, 
-                                        recommendation_type='', 
+    def create_or_update_video_resource(self, tx, node: dict,
+                                        recommendation_type='',
                                         update_embedding_values=False,
                                         update_detail_found=False
                                     ):
@@ -2104,8 +2125,8 @@ class NeoDataBase:
                         SET r.title = $title, r.description = $description, r.description_full = $description_full,
                             r.text = $text, r.duration = $duration, r.views = $views, like_count = $like_count,
                             r.channel_title = $channel_title, r.updated_at = $updated_at,
-                            r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, 
-                            r.document_embedding = $document_embedding 
+                            r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding,
+                            r.document_embedding = $document_embedding
                     ''',
                     rid=node["rid"],
                     title=node["title"],
@@ -2122,7 +2143,7 @@ class NeoDataBase:
                     document_embedding=""
                 )
             """
-            
+
             if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
                 tx.run(
                     '''
@@ -2130,7 +2151,7 @@ class NeoDataBase:
                         WHERE r.rid = $rid
                         SET   r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, r.document_embedding = $document_embedding,
                         r.keyphrases_infos = $keyphrases_infos
-                           
+
                     ''',
                     rid=node["rid"],
                     keyphrases=node["keyphrases"] if "keyphrases" in node else [],
@@ -2142,17 +2163,17 @@ class NeoDataBase:
                 tx.run(
                     '''
                         MERGE (r:Resource:Video {rid: $rid})
-                        ON CREATE SET 
-                        r.uri = $uri, r.title = $title, r.description = $description, r.description_full = $description_full, r.text = $text, 
-                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
-                        r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
+                        ON CREATE SET
+                        r.uri = $uri, r.title = $title, r.description = $description, r.description_full = $description_full, r.text = $text,
+                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding,
+                        r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views,
                         r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
-                        r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count, 
+                        r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count,
                         r.updated_at = $updated_at
-                        ON MATCH SET 
-                        r.title = $title, r.description = $description, r.description_full = $description_full, r.text = $text, 
-                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
-                        r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views, 
+                        ON MATCH SET
+                        r.title = $title, r.description = $description, r.description_full = $description_full, r.text = $text,
+                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding,
+                        r.thumbnail = $thumbnail, r.duration = $duration, r.views = $views,
                         r.publish_time = $pub_time, r.channel_title = $channel_title, r.like_count = $like_count,
                         r.updated_at = $updated_at
                     ''',
@@ -2182,7 +2203,7 @@ class NeoDataBase:
             print(e)
             pass
 
-    def create_or_update_wikipedia_resource(self, tx, node, recommendation_type='', 
+    def create_or_update_wikipedia_resource(self, tx, node, recommendation_type='',
                                             update_embedding_values=False,
                                             update_detail_found=False
                                         ):
@@ -2198,8 +2219,8 @@ class NeoDataBase:
                         MATCH (r:Resource: Article)
                         WHERE r.rid = $rid
                         SET r.title = $title, r.abstract = $abstract, r.text = $text, updated_at = $updated_at,
-                            r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding, 
-                            r.document_embedding = $document_embedding 
+                            r.keyphrases = $keyphrases, r.keyphrase_embedding = $keyphrase_embedding,
+                            r.document_embedding = $document_embedding
                     ''',
                     rid=node["rid"],
                     title=node["title"],
@@ -2211,7 +2232,7 @@ class NeoDataBase:
                     document_embedding=str(node["document_embedding"] if "document_embedding" in node else ""),
                 )
             """
-            
+
             if update_embedding_values == True: # node.get("keyphrases") != None or node.get("document_embedding") != None or node.get("keyphrase_embedding") != None:
                 tx.run(
                     '''
@@ -2230,14 +2251,14 @@ class NeoDataBase:
                 tx.run(
                     '''
                         MERGE (r:Resource:Article {rid: $rid})
-                        ON CREATE SET 
-                        r.uri = $uri, r.title = $title, r.abstract = $abstract, r.text = $text, 
-                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
+                        ON CREATE SET
+                        r.uri = $uri, r.title = $title, r.abstract = $abstract, r.text = $text,
+                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding,
                         r.helpful_count = $helpful_count, r.not_helpful_count = $not_helpful_count, r.saves_count = $saves_count,
                         r.updated_at = $updated_at
-                        ON MATCH SET 
-                        r.uri = $uri, r.title = $title, r.abstract = $abstract, r.text = $text, 
-                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding, 
+                        ON MATCH SET
+                        r.uri = $uri, r.title = $title, r.abstract = $abstract, r.text = $text,
+                        r.keyphrases = $keyphrases, r.document_embedding = $document_embedding, r.keyphrase_embedding = $keyphrase_embedding,
                         r.updated_at = $updated_at
                     ''',
                     rid=node["id"],
@@ -2293,7 +2314,7 @@ class NeoDataBase:
                 ).data()
 
         return concepts
-    
+
     def create_concept_modified(self, cid: str):
         '''
             Creating node 'Concept_modified'
@@ -2358,8 +2379,8 @@ class NeoDataBase:
                 status=status
             ).single()
 
-            r_detail = { "cm_id": r_detail["cm_id"], "cid": r_detail["cid"], 
-                        "weight": r_detail["weight"], "mid": r_detail["mid"], 
+            r_detail = { "cm_id": r_detail["cm_id"], "cid": r_detail["cid"],
+                        "weight": r_detail["weight"], "mid": r_detail["mid"],
                         "status": r_detail["status"]
                     }
             return r_detail
@@ -2393,7 +2414,7 @@ class NeoDataBase:
         embeddings = tx.run(
             '''
                 MATCH (a:User)-[r:HAS_MODIFIED]->(b:Concept_modified)
-                WHERE   a.uid = $user_id AND r.user_id = $user_id AND 
+                WHERE   a.uid = $user_id AND r.user_id = $user_id AND
                         r.mid = $mid AND r.status = $status
                 RETURN b.final_embedding as embedding, r.weight as weight
             ''',
@@ -2449,7 +2470,7 @@ class NeoDataBase:
         '''
         logger.info("Saving or Removing: User Resource")
         tx = self.driver.session()
-        
+
         reset_status = False
         if rating.get("reset") != None and rating["reset"] == True:
             tx.run(
@@ -2484,7 +2505,7 @@ class NeoDataBase:
                     value=rating["value"],
                     cids=[]
                 )
-            
+
         else:
             # apoc.coll.toSet(apoc.coll.union(r.cids, $cids))
             tx.run(
@@ -2572,7 +2593,7 @@ class NeoDataBase:
             print("update_rs_btw_resource_and_cm: Issue on this function either with rid or cid is None value")
             print(e)
             pass
-    
+
     def update_rs_btw_resources_and_cm(self, rids: str, cid: str, action=True):
         '''
             Update by: Create and Delete Relationship
@@ -2627,7 +2648,7 @@ class NeoDataBase:
                     rid=data["rid"]
                 )
             result["msg"] = "saved"
-            
+
         else:
             tx.run(
                     '''
@@ -2638,7 +2659,7 @@ class NeoDataBase:
                     rid=data["rid"]
                 )
             result["msg"] = "removed"
-        
+
         # Update Resources: saves_count
         tx.run(
             '''
@@ -2652,7 +2673,7 @@ class NeoDataBase:
         logger.info("Saving or Removing from Resource Saved List: Done")
         return result
 
-    def store_resources(self, cid: str, resources_dict: dict=None, recommendation_type="", 
+    def store_resources(self, cid: str, resources_dict: dict=None, recommendation_type="",
                         resources_list: list=None, resources_form="dict",
                         resources_updated: list=None, resources_updated_type=""
                     ):
@@ -2674,7 +2695,7 @@ class NeoDataBase:
 
         def get_resource_primary_key(resource: dict):
             return resource["rid"] if "rid" in resource else resource["id"]
-            
+
         logger.info("Store Resources: Videos | Articles")
         # result = []
 
@@ -2686,7 +2707,7 @@ class NeoDataBase:
                         logger.info(f"Creating Resources YouTube AND Updating Relationship between Resource and Concept_modified: {len(resources)} Resources")
                         for resource in resources:
                             self.create_or_update_video_resource(tx, resource, recommendation_type)
-                        
+
                         rids = [get_resource_primary_key(resource) for resource in resources]
                         self.update_rs_btw_resources_and_cm(rids=rids, cid=cid, action=True)
 
@@ -2698,7 +2719,7 @@ class NeoDataBase:
 
                         rids = [get_resource_primary_key(resource) for resource in resources]
                         self.update_rs_btw_resources_and_cm(rids=rids, cid=cid, action=True)
-        
+
         elif resources_form == "list":
             for resource in resources_list:
                 if "Video" in resource["labels"]:
@@ -2721,13 +2742,13 @@ class NeoDataBase:
         '''
             Getting List of Resources connected to Concept_modified
             algorithm_model: (str) which algorithm was used for the recommendation
-            query_form: 
+            query_form:
         '''
         def resource_replace_none_value(value):
             if value == None:
                 return 0
             return int(value)
-        
+
         # logger.info("Getting List of Resources Containing Concept_modified")
 
         if embedding_values == True:
@@ -2735,7 +2756,7 @@ class NeoDataBase:
                     MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
                     WHERE b.cid IN $cids
                     RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
-                            a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
+                            a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date,
                             a.author_image_url as author_image_url, a.author_name as author_name,
                             a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
                             a.publish_time as publish_time, a.uri as uri, a.duration as duration,
@@ -2758,7 +2779,7 @@ class NeoDataBase:
                     MATCH p=(a:Resource)-[r:BASED_ON]->(b:Concept_modified)
                     WHERE b.cid IN $cids
                     RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
-                            a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
+                            a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date,
                             a.author_image_url as author_image_url, a.author_name as author_name,
                             a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
                             a.publish_time as publish_time, a.uri as uri, a.duration as duration,
@@ -2790,10 +2811,10 @@ class NeoDataBase:
             content_type: Video | Article
             days: 30 (Video) | 365 (Article)
         '''
-        
+
         if content_type == "Article":
             days = 365
-        
+
         if only_exist == True:
             query = '''
                     MATCH (a:Resource)-[r:BASED_ON]->(b:Concept_modified)
@@ -2806,7 +2827,7 @@ class NeoDataBase:
                     WHERE $content_type IN LABELS(a) AND b.cid IN $cids AND ( datetime(a.updated_at) > (datetime() - duration({days: $days})) )
                     RETURN COUNT(DISTINCT a) as count
                 '''
-        
+
         count = 0
         with self.driver.session() as session:
             result = session.run(
@@ -2864,7 +2885,7 @@ class NeoDataBase:
         '''
             Save or Update Resource Node from Ne4j
             resource: resource detail
-            action: True (adding new resource) | 
+            action: True (adding new resource) |
                     False (update the resource by attributes such as: similarity_score, views, like_count, channel_title)
         '''
 
@@ -2877,7 +2898,7 @@ class NeoDataBase:
         else:
             # update
             pass
-    
+
     def filter_user_resources_saved_by(self, data: dict):
         '''
             Getting User Resources Saved
@@ -2896,20 +2917,20 @@ class NeoDataBase:
                         toLower(a.text) CONTAINS toLower($search_text) OR
                         ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower($search_text))
                     """
-        
+
         if len(data["cids"]) > 0:
             query_where = """
                             c.cid IN $cids AND ( toLower(a.text) CONTAINS toLower($search_text) OR
                             ANY(keyphrase IN a.keyphrases WHERE keyphrase CONTAINS toLower($search_text)) )
                         """
-            
+
         with self.driver.session() as session:
             nodes = session.run(
                 f"""
-                MATCH (c: Concept_modified)<-[m:HAS_MODIFIED]-(b: User)-[r:HAS_SAVED]->(a:Resource) 
+                MATCH (c: Concept_modified)<-[m:HAS_MODIFIED]-(b: User)-[r:HAS_SAVED]->(a:Resource)
                 WHERE  r.user_id = $user_id AND $content_type IN LABELS(a) AND ({query_where})
                 RETURN  DISTINCT LABELS(a) as labels, ID(a) as id, a.rid as rid, a.title as title, a.text as text,
-                        a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date, 
+                        a.thumbnail as thumbnail, a.abstract as abstract, a.post_date as post_date,
                         a.author_image_url as author_image_url, a.author_name as author_name,
                         a.keyphrases as keyphrases, a.description as description, a.description_full as description_full,
                         a.publish_time as publish_time, a.uri as uri, a.duration as duration,
@@ -2938,7 +2959,7 @@ class NeoDataBase:
                     result["articles"] = resources
                     # result["articles"] = [resource for resource in resources if "Article" in resource["labels"]]
                 else:
-                    result = {   
+                    result = {
                                 "articles": [resource for resource in resources if "Article" in resource["labels"]],
                                 "videos": [resource for resource in resources if "Video" in resource["labels"]]
                             }
@@ -2970,9 +2991,9 @@ class NeoDataBase:
         with self.driver.session() as session:
             nodes = session.run(
                 '''
-                    MATCH (c:Concept) 
-                    WHERE c.mid = $mid AND c.type = "main_concept" 
-                    RETURN  ID(c) AS id, c.cid AS cid, c.name AS name, 
+                    MATCH (c:Concept)
+                    WHERE c.mid = $mid AND c.type = "main_concept"
+                    RETURN  ID(c) AS id, c.cid AS cid, c.name AS name,
                             c.type AS type, c.weight AS weight, c.mid AS mid
                             ORDER BY c.name
                 ''',

@@ -25,7 +25,7 @@ class WikipediaPage:
 
 class WikipediaService:
     def __init__(self):
-        self._wiki = wikipediaapi.Wikipedia(Config.WIKIPEDIA_USER_AGENT, 'en')
+        self._wiki = wikipediaapi.Wikipedia(Config.WIKIPEDIA_USER_AGENT, 'en', timeout = 30)
         #self.cache = Cache('./cache')
         self._use_stored_embeddings = Config.WIKIPEDIA_USE_STORED_EMBEDDINGS
         self._conn = None
@@ -86,7 +86,7 @@ class WikipediaService:
         #         return page  # Return the cached page
 
         # # If not in cache, fetch from Wikipedia API
-       
+
         #     print(f"Fetching from Wikipedia API: {title}")
         #     page = self._wiki.page(title)
         #     if not page.exists():
@@ -97,7 +97,7 @@ class WikipediaService:
         #     return page
         # except Exception as e:
         #     print(f"Error fetching page: {e}")
-            
+
 
         page_categories = [(page.title, category.split(':', 1)[1]) for category in page.categories]
         page_links = [link.title for link in page.links.values() if link.namespace == wikipediaapi.Namespace.MAIN]
@@ -179,11 +179,11 @@ class WikipediaService:
             res.append([title, missing_page_embedding])
 
         return res
-    
+
     def get_full_article(self, title, concepts):
         conn = self.get_conn()
         try:
-           
+
             if conn is not None:
                 with conn.cursor() as cur:
                     # Query the local database to get the abstract or full content of the article
@@ -200,19 +200,19 @@ class WikipediaService:
                     paragraphs = article_content.split("\n")  # Split by new lines (assuming paragraphs are separated by line breaks)
                     for paragraph in paragraphs:
                         words = words + self.get_concepts_mentioned(paragraph, concepts)
-                
+
                     # Remove duplicates and return the result
                     words = list(dict.fromkeys(words))
                     return words
             else:
-                 
+
                 # Fetch the page content once
                 page = requests.get(title)
                 soup = BeautifulSoup(page.content, 'html.parser')
 
                 # Extract all paragraphs at once
                 paragraphs = soup.find_all('p')
-        
+
                 # Process paragraphs efficiently
                 words = set()  # Use a set to avoid duplicates
                 for p in paragraphs:
@@ -234,8 +234,8 @@ class WikipediaService:
             return list(dict.fromkeys(words))
         except:
             return []
-   
-        
+
+
     def count_backlinks_to_links_ratio(self, title):
         def fallback(wiki, concept):
             # Fallback method if article could not be found in dump
@@ -247,7 +247,7 @@ class WikipediaService:
         try:
             if conn is None:
                 return fallback(self._wiki, title)
-                
+
             with conn.cursor() as cur:
                 # Query the database for the number of links
                 links_rows = cur.execute('SELECT jsonb_array_length(links) AS links_count FROM pages WHERE title = %s', (title,)).fetchall()
@@ -260,7 +260,7 @@ class WikipediaService:
 
                 # Return the ratio
                 return backlinks_rows[0]['backlinks_count'] / links_rows[0]['links_count']
-                
+
 
         except Exception as e:
             print(f"Error: {e}")

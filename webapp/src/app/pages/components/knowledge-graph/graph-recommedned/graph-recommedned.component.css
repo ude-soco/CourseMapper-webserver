@@ -40,6 +40,8 @@ app-cytoscape {
   border:none;
   z-index: 11;
   padding: 0px;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 :host ::ng-deep .p-accordion.pAccRec {
   border-left: 1px solid #b3b3b3;

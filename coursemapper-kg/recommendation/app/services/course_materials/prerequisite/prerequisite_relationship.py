@@ -23,7 +23,7 @@ class PrerequisiteRelationship:
                     self.prerequisite_criteria(r["name"],r["related_to"],0.27)
                 except Exception as e:
                     print(e)
-            counter +=1
+            counter += 1
         # for i in range(len(main_concepts)):
         #     print(counter)
         #     if main_concepts[i] == None:
@@ -48,8 +48,8 @@ class PrerequisiteRelationship:
         #         except Exception as e:
         #             print(e)
         #     counter +=1
-                
-        
+
+
         self.prereq_weighted = pd.DataFrame(self.prereq_weighted)
         self.prereq_unweighted = pd.DataFrame(self.prereq_unweighted)
         if self.prereq_weighted.empty and self.prereq_unweighted.empty:
@@ -83,7 +83,7 @@ class PrerequisiteRelationship:
         if delta >= theta:
             preq_rel = {"prerequisite_concept":c1, "concept":c2, "weight": weighted, "score" : abs(delta),"temporal_1":c1_to_c2_real[0],"article_contents_1":c1_to_c2_real[1],"abstract_contents_1":c1_to_c2_real[2],"link_on_rel_abstract_1":c1_to_c2_real[3],"refD_1":c1_to_c2_real[4],"inlink_outlink_1":c1_to_c2_real[5],"category_1":c1_to_c2_real[6],"super_category_1":c1_to_c2_real[7],"berttopic_1":c1_to_c2_real[8],"coursemapper_channel_1":c1_to_c2_real[9],"temporal_2":c2_to_c1_real[0],"article_contents_2":c2_to_c1_real[1],"abstract_contents_2":c2_to_c1_real[2],"link_on_rel_abstract_2":c2_to_c1_real[3],"refD_2":c2_to_c1_real[4],"inlink_outlink_2":c2_to_c1_real[5],"category_2":c2_to_c1_real[6],"super_category_2":c2_to_c1_real[7],"berttopic_2":c2_to_c1_real[8],"coursemapper_channel_2":c2_to_c1_real[9]}
             if not weighted:
-                self.prereq_unweighted.append(preq_rel)     
+                self.prereq_unweighted.append(preq_rel)
             else:
                 self.prereq_weighted.append(preq_rel)
         if delta <= -theta:
@@ -98,7 +98,7 @@ class PrerequisiteRelationship:
         c1_to_c2_new = np.multiply(c1_to_c2,weights)
         c2_to_c1_new = np.multiply(c2_to_c1,weights)
         self.unweighted_voting(c1,c2,c1_to_c2_new,c2_to_c1_new,c1_to_c2,c2_to_c1,theta,weighted=True)
-                
+
 
     def prerequisite_criteria(self,c1,c2,theta):
         c1_to_c2 = np.zeros(10)
@@ -107,7 +107,7 @@ class PrerequisiteRelationship:
         c1_to_c2[1], c2_to_c1[1] = self.c1_on_c2_data(c1,c2,"article_contents") # link on articles
         c1_to_c2[2], c2_to_c1[2] = self.c1_on_c2_data(c1,c2,"abstract_contents") # link on abstract
         c1_to_c2[3], c2_to_c1[3] = self.link_on_rel_abstract(c1,c2) # link on RC abstracts
-        c1_to_c2[4], c2_to_c1[4] = self.refD(c1,c2,0.42) # RefD 
+        c1_to_c2[4], c2_to_c1[4] = self.refD(c1,c2,0.42) # RefD
         c1_to_c2[5], c2_to_c1[5] = self.inlink_outlink(c1,c2) # Inlink Outlink
         c1_to_c2[6], c2_to_c1[6] = self.c1_on_c2_data(c1,c2,"category") # category
         c1_to_c2[7], c2_to_c1[7] = self.c1_on_c2_data(c1,c2,"super_category") # supercateogry
@@ -115,7 +115,7 @@ class PrerequisiteRelationship:
         c1_to_c2[9], c2_to_c1[9] = self.coursemapper_channel(c1,c2) #coursemapper structure
         self.unweighted_voting(c1,c2,c1_to_c2,c2_to_c1,c1_to_c2,c2_to_c1,theta)
         self.weighted_voting(c1,c2,c1_to_c2,c2_to_c1,theta)
-        
+
     def temporal_order(self,c1,c2):
         #if c1 is mentioned before c2, c1 is a prerequisite of c2
         try:
@@ -143,7 +143,7 @@ class PrerequisiteRelationship:
         if c2 in c1_data:
             c2_preq = 1
         return c1_preq,c2_preq
-    
+
 
     def link_on_rel_abstract(self,c1,c2):
         # if c1 is mentioned in c2's related concepts' abstract, c1 is a prerequisite of c2
@@ -182,7 +182,7 @@ class PrerequisiteRelationship:
         else:
             eq2 = len([x for x in w_c_b if x in r_c_a])/len(w_c_b)
 
-        
+
         ref_d = eq1 - eq2
         if ref_d > theta:
             return 1,0
@@ -222,4 +222,4 @@ class PrerequisiteRelationship:
 
     def get_prerequisite_relationships(self):
         return self.prereq
-    
+

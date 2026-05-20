@@ -75,16 +75,16 @@ class ExpandMaterialPipeline:
         # Connect nodes to categories
         expanded_category_titles = set()
         concept_count = 0
-        
+
         for concept_node in graph.nodes:
-            
+
             if concept_node.type == 'main_concept':
                concept_node.isNew = False
                concept_node.isEditing = False
                concept_node.lastEdited = False
             if concept_node.type != 'main_concept':
                 continue
-            
+
 
             concept_count += 1
 
@@ -148,8 +148,8 @@ class ExpandMaterialPipeline:
 
         ## Step: Concept Expansion
         concepts = [node for node in graph.nodes if node.type == 'main_concept']
-        
-           
+
+
         push_log_message(f'Expanding {len(concepts)} concepts')
         for concept_node in concepts:
             concept_node.isNew = False
@@ -157,10 +157,10 @@ class ExpandMaterialPipeline:
             concept_node.lastEdited = False
             graph.add_node(concept_node)
             # Update concept node
-            graph_db.update_concept_node(concept_node) 
-    
-            
-        
+            graph_db.update_concept_node(concept_node)
+
+
+
             # Get expanded concepts
             concept_page = self._wikipedia_service.get_page(concept_node.name)
             if concept_page is None:
@@ -273,6 +273,10 @@ class ExpandMaterialPipeline:
         relations = list(concept_result) + list(slide_result)
         relationships = []
         for relation in relations:
+            weight = relation.get("weight")
+            if weight is None:
+                print(f"Warning: Missing weight for relation {relation}")
+                continue
             r = {
                 "source": hash(relation["source"] + relation["stype"]),
                 "target": hash(relation["target"] + relation["ttype"]),
@@ -284,7 +288,7 @@ class ExpandMaterialPipeline:
         for relationship in relationships:
             fp.write(str(relationship["source"]) + " " + str(relationship["weight"])
                     + " " + str(relationship["target"]) + "\n")
-            
+
     def prerequisiteTo(self, mid: str, graph_db: GraphDB, fp: tempfile._TemporaryFileWrapper):
         # Get relationships between nodes (concept-related concept, concept-category)
         with graph_db.driver.session() as session:
@@ -309,7 +313,7 @@ class ExpandMaterialPipeline:
         for prerequisite_relationship in prerequisite_relationships:
             fp.write(str(prerequisite_relationship["source"]) + " " + str(prerequisite_relationship["weight"])
                     + " " + str(prerequisite_relationship["target"]) + "\n")
-            
+
     def gcn(self, mid: str, graph_db: GraphDB):
         idfeature_fp = tempfile.NamedTemporaryFile(mode="w", delete=False)
         relation_fp = tempfile.NamedTemporaryFile(mode="w", delete=False)

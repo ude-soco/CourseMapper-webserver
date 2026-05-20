@@ -32,9 +32,9 @@ class ablation_study_rrgcn:
     def data_load(self):
         #  may choose a different SBERT model paraphrase-MiniLM-L12-v2 paraphrase-MiniLM-L6-v2 all-MiniLM-L6-v2 paraphrase-xlm-r-multilingual-v1
         # SBERT model, be used to generate the initial embedding for node and relation
-        model = SentenceTransformer('paraphrase-MiniLM-L12-v2') 
+        model = SentenceTransformer('paraphrase-MiniLM-L12-v2')
 
-        # load the eva data 
+        # load the eva data
         data_path = os.path.join(current_dir, '.\data\eva_data_version_1.txt')
         data = pd.read_csv(data_path, sep='\t', header=None, names=['node1', 'relation','node2'])
         self.data = data
@@ -43,7 +43,7 @@ class ablation_study_rrgcn:
         self.relations = data['relation'].unique()
         self.num_relationtypes = len(self.relations)
 
-     
+
         # generate the node to index mapping, the idx is begin from 0
         node_to_idx = {node: idx for idx, node in enumerate(all_nodes)}
         idx_to_node = {idx: node for node, idx in node_to_idx.items()}
@@ -64,7 +64,7 @@ class ablation_study_rrgcn:
             node_features[idx] = model.encode(node_text)
 
 
-        """ 
+        """
             Construct embedding matrix
         """
         num_nodes = len(all_nodes)
@@ -121,23 +121,23 @@ class ablation_study_rrgcn:
     def create_weight_matrices(self, relation_list, weight_size):
         """
         Create a weight matrix of size (x, y) from each element in relation_list and return a dictionary containing these matrices.
-        
+
         参数:
         relation_list (list): A list containing relationship names that will be used as dictionary keys.
         x (int): The number of rows in the weight matrix embedding_matrix.shape[1]。
         y (int): The number of columns in the weight matrix。embedding_matrix.shape[1]
-        
+
         return:
         dict: A dictionary containing the relationship name as key and the corresponding weight matrix as value。
         """
         weight_matrices = {}
-        
+
         for relation in relation_list:
             # Create a random weight matrix of size (x, y)
             weight_matrix = self.glorot_seed((weight_size,weight_size)).numpy()
             # Add the matrix to the dictionary with relation as key
             weight_matrices[relation] = weight_matrix
-        
+
         return weight_matrices
     """
         with self loop
@@ -146,24 +146,24 @@ class ablation_study_rrgcn:
     def rrgcn_1_1(self):
 
         #self.load_data()
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix
-        
-        """ 
+
+        """
             adj_matrix: dict key(relationtypes), value(adj_matrix)
         """
         adj_matrix = self.adj_matrix
 
-        """ 
+        """
             weight_matrix: dict key(relationtypes), value(weight_matrix)
         """
         weight_size = embedding_matrix.shape[1]
         weight_matrix = self.create_weight_matrices(self.relations,weight_size )
         weight_matrix_layer_2 = self.create_weight_matrices(self.relations,weight_size )
 
-        """  
+        """
             the first layer
         """
         embedding_first_layer = np.zeros((embedding_matrix.shape[0], embedding_matrix.shape[1]))
@@ -187,7 +187,7 @@ class ablation_study_rrgcn:
             embedding_first_layer=embedding_first_layer+relation_part
         embedding_first_layer = embedding_first_layer / np.linalg.norm(embedding_first_layer, axis=1, keepdims=True)
         # embedding_first_layer = embedding_first_layer / np.linalg.norm(embedding_matrix, axis=1, keepdims=True)
-        """  
+        """
             the second layer
         """
         final_embedding = np.zeros((embedding_matrix.shape[0], embedding_matrix.shape[1]))
@@ -215,21 +215,21 @@ class ablation_study_rrgcn:
     def rrgcn_1_2(self):
 
         #self.load_data()
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix
-        
-        """ 
+
+        """
             adj_matrix: dict key(relationtypes), value(adj_matrix)
         """
         adj_matrix = self.adj_matrix
 
-        """  
+        """
             the first layer
         """
         #self loop part
-    
+
         embedding_first_layer = np.zeros((embedding_matrix.shape[0], embedding_matrix.shape[1]))
         # relation part
         relation_part = None
@@ -248,7 +248,7 @@ class ablation_study_rrgcn:
             relation_part = np.dot(relation_adj_matrix,embedding_matrix)
             embedding_first_layer=embedding_first_layer+relation_part
         embedding_first_layer = embedding_first_layer / np.linalg.norm(embedding_matrix, axis=1, keepdims=True)
-        """  
+        """
             the second layer
         """
         final_embedding = np.zeros((embedding_matrix.shape[0], embedding_matrix.shape[1]))
@@ -268,12 +268,12 @@ class ablation_study_rrgcn:
     def rrgcn_1_3(self):
 
         #self.load_data()
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix
-        
-        """ 
+
+        """
             weight_matrix: dict key(relationtypes), value(weight_matrix)
         """
         weight_size = embedding_matrix.shape[1]
@@ -281,7 +281,7 @@ class ablation_study_rrgcn:
         weight_matrix_layer_2 = self.create_weight_matrices(self.relations,weight_size )
 
 
-        """  
+        """
             the first layer
         """
         #self loop part
@@ -302,7 +302,7 @@ class ablation_study_rrgcn:
             relation_part = np.dot(embedding_matrix, Wr_layer_1)
             embedding_first_layer=embedding_first_layer + relation_part
         embedding_first_layer = embedding_first_layer / np.linalg.norm(embedding_matrix, axis=1, keepdims=True)
-        """  
+        """
             the second layer
         """
 
@@ -321,25 +321,25 @@ class ablation_study_rrgcn:
             final_embedding=final_embedding+relation_part
         final_embedding = final_embedding / np.linalg.norm(final_embedding, axis=1, keepdims=True)
         return final_embedding
-    
+
     """
         without self loop
-    """    
+    """
     # A*H*W
     def rrgcn_2_1(self):
 
         #self.load_data()
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix
-        
-        """ 
+
+        """
             adj_matrix: dict key(relationtypes), value(adj_matrix)
         """
         adj_matrix = self.adj_matrix
 
-        """ 
+        """
             weight_matrix: dict key(relationtypes), value(weight_matrix)
         """
         weight_size = embedding_matrix.shape[1]
@@ -347,7 +347,7 @@ class ablation_study_rrgcn:
         weight_matrix_layer_2 = self.create_weight_matrices(self.relations,weight_size )
 
 
-        """  
+        """
             the first layer
         """
         embedding_first_layer = np.zeros((embedding_matrix.shape[0], embedding_matrix.shape[1]))
@@ -361,7 +361,7 @@ class ablation_study_rrgcn:
             relation_part = relatin_part_1 @ Wr_layer_1
             embedding_first_layer=embedding_first_layer+relation_part
         embedding_first_layer = embedding_first_layer
-        """  
+        """
             the second layer
         """
         final_embedding = np.zeros((embedding_matrix.shape[0], embedding_matrix.shape[1]))
@@ -391,8 +391,8 @@ class ablation_study_rrgcn:
             final_embedding=final_embedding+relation_part
         #final_embedding = final_embedding / np.linalg.norm(final_embedding, axis=1, keepdims=True)
         return final_embedding
-    
-    
+
+
     def normalize_adj_matrix(self, adj_matrix):
         row_sum = np.array(adj_matrix.sum(1))
         d_inv_sqrt = np.power(row_sum, -0.5).flatten()
@@ -406,7 +406,7 @@ class ablation_study_rrgcn:
         d_mat_inv = sp.diags(d_inv)
         norm_adj = d_mat_inv.dot(mx)
         norm_adj = norm_adj.dot(d_mat_inv)
-        return norm_adj 
+        return norm_adj
     def glorot_seed(
         self,
         shape: Tuple,
@@ -431,7 +431,7 @@ class ablation_study_rrgcn:
         Returns:
             torch.Tensor: The randomly generated tensor
         """
-        seed = random.randint(0, 100) 
+        seed = random.randint(0, 100)
         torch.manual_seed(seed)
         a = torch.zeros(shape, device=None, dtype=dtype)
         glorot(a)
@@ -460,7 +460,7 @@ class DistMultDecoder(torch.nn.Module):
         rel = self.rel_emb[edge_type]
         return torch.sum(z_src * rel * z_dst, dim=1)
 
-""" 
+"""
     scoring function
 """
 # TransE scoring function
@@ -470,18 +470,18 @@ def transE_score(h_embedding, r_embedding, t_embedding):
 def distmult_score(h_embedding, r_embedding, t_embedding):
     score =np.sum(np.abs(h_embedding) *np.abs( r_embedding) * np.abs(t_embedding))
     return score
-# ConvE 
+# ConvE
 def convE_score(h_embedding, r_embedding, t_embedding, convE_model):
     with torch.no_grad():
         return convE_model(h_embedding, r_embedding, t_embedding).item()
-# cosine score function    
+# cosine score function
 def cosine_score(h_embedding, r_embeding, t_embedding):
     combined_embedding = h_embedding+r_embeding
     score = cosine_similarity([combined_embedding], [t_embedding])[0][0]
     return score
 
-""" 
-   link prediction 
+"""
+   link prediction
 """
 def evaluate_link_prediction(entity_embeddings, relation_embeddings, test_triples, scoring_function, convE_model=None,n=10):
     ranks = []
@@ -489,7 +489,7 @@ def evaluate_link_prediction(entity_embeddings, relation_embeddings, test_triple
     num_entities = entity_embeddings.shape[0]
 
     for (h, t) in test_triples:
-        # get the score of the positive triple 
+        # get the score of the positive triple
         correct_score = scoring_function(entity_embeddings[h], relation_embeddings[(h,t)], entity_embeddings[t])
         # print(correct_score)
         # if correct_score<=0.4:
@@ -499,7 +499,7 @@ def evaluate_link_prediction(entity_embeddings, relation_embeddings, test_triple
         #     print("the embedding of r:")
         #     print((h,t))
         #     print("the embedding of t:")
-        #     print(t) 
+        #     print(t)
         #     print("the embedding of score:")
         #     print(correct_score)
         #     print("+++++++++++++++++++++++++end+++++++++++++++++++++++++")
@@ -516,7 +516,7 @@ def evaluate_link_prediction(entity_embeddings, relation_embeddings, test_triple
         correct_score_index = len(head_scores) - 1
         rank_head = head_ranks.index(correct_score_index)+1  # get then rank of positive sample
 
-        # replace tail 
+        # replace tail
         tail_scores = []
         for t_prime in range(num_entities):
             if t_prime != t and (h,t_prime) not in test_triples:
@@ -533,22 +533,22 @@ def evaluate_link_prediction(entity_embeddings, relation_embeddings, test_triple
         print(rank)
         ranks.append(rank)
         #ranks.append(rank_tail)
-        # 记录 Hit@n
+        # record Hit@n
         hits.append(1 if rank <= n else 0)
         #hits.append(1 if rank_tail <= n else 0)
-    # 计算 MR
+    # Compute MR
     mr = np.mean(ranks)
-    
-    # 计算 MRR
+
+    # Compute MRR
     mrr = np.mean([1.0 / rank for rank in ranks])
-    
-    # 计算 Hit@n
+
+    # Compute Hit@n
     hit_n = np.mean(hits)
 
     return mr, mrr, hit_n
 
 
-"""  
+"""
  Evaluation part begin here
 """
 # step 1: data prepartion
@@ -581,7 +581,7 @@ print(f"MR: {mr}, MRR: {mrr}, Hit@10: {hit_n}")
 def normalize_adjacency_matrix(adj_matrix):
     """
     Normalize the adjacency matrix to prevent division by zero errors and smooth node neighbor contributions
-    
+
     parameter:
     adj_matrix (numpy.ndarray): Sparse adjacency matrix
 
@@ -590,11 +590,11 @@ def normalize_adjacency_matrix(adj_matrix):
     """
     # Count the number of neighbors of each node (i.e. the number of non-zero elements in each row)
     neighbor_counts = np.sum(adj_matrix != 0, axis=1)
-    
+
     # Set the number of neighbors of isolated nodes to 1 to avoid division by zero
     neighbor_counts[neighbor_counts == 0] = 1
-    
+
     # Normalized adjacency matrix
     normalized_adj_matrix = adj_matrix / neighbor_counts[:, None]
-    
+
     return normalized_adj_matrix

@@ -1,0 +1,13 @@
+redis-cli -n 0 LREM queue:concept-recommendation:pending 0 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+redis-cli -n 0 LREM queue:concept-recommendation:processing 0 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+redis-cli -n 0 LREM queue:resource-recommendation:pending 0 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+redis-cli -n 0 LREM queue:resource-recommendation:processing 0 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+redis-cli -n 0 LREM queue:get_resources_by_main_concepts:pending 0 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+redis-cli -n 0 LREM queue:get_resources_by_main_concepts:processing 0 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+
+redis-cli -n 0 HDEL jobs 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+redis-cli -n 0 HDEL locks 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+redis-cli -n 0 HDEL last_updates 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+redis-cli -n 0 HDEL files 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665
+
+redis-cli -n 0 HGET jobs 4e41e1274b4300860f11ba7536538ceaf9738b8491dcc9be6b8f087a8e073665

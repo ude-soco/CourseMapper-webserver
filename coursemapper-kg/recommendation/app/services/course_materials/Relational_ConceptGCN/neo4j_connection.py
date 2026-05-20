@@ -12,10 +12,10 @@ class DBConnection:
                                     auth=(username, password),
                                     encrypted=False)
         # Define the connection URI, username, and password
-        # self.uri = uri 
+        # self.uri = uri
         # self.username = username
         # self.password = password
-        
+
         # self.concepts = []
 
     def prerequisite_relation(self,mid='66eee5b2d002dc3075b6c37d'):
@@ -29,7 +29,7 @@ class DBConnection:
             if float(relation["weight"])!=0.0 and relation["weight"]!=None:
                 r = {
                     "source": relation["source"],
-                    "target": relation["target"],             
+                    "target": relation["target"],
                     # "source": hash(relation["source"] + relation["stype"]),
                     # "target": hash(relation["target"] + relation["ttype"]),
                     "weight": round(float(relation["weight"]),2)
@@ -42,9 +42,9 @@ class DBConnection:
         #     # absolute_path = os.path.abspath(f.name)
         #     # print("absolute path of file:", absolute_path)
         #     for relationship in prerequisite_relationships:
-        #         f.write(str(relationship["source"]) + " " + str(relationship["weight"]) 
+        #         f.write(str(relationship["source"]) + " " + str(relationship["weight"])
         #                 + " " + str(relationship["target"])+ "\n")
-                
+
     def relation(self, mid='66e997b58ea301d5fbfbd91c'):
         # Get relationships between nodes (concept-related concept, concept-category)
         print("+++++++++++++++++++++++++++++++++++mid = "+str(mid))
@@ -204,7 +204,7 @@ class DBConnection:
                 get the position of each dnu concept
                 dnu_position(dict,key is id of concept, value is position) : give each dnu concepts a position value according to the timestamps
             """
-            # filter concept_timestamps, we only need timestamp of dnu concept which belongs to mid 
+            # filter concept_timestamps, we only need timestamp of dnu concept which belongs to mid
             filtered_timestamps = {
                 id_: concept_timestamps.get(id_, default_timestamp) for id_ in dnu_concept_ids_list
             }
@@ -231,9 +231,9 @@ class DBConnection:
                         dnu_weight_matrix[i][j] = 1.0  # The diagonal is 1
                     else:
                         # calculate cosine similarity weight
-                        dot_product = np.dot(embeddings[i], embeddings[j])  
-                        norm_i = np.linalg.norm(embeddings[i])  
-                        norm_j = np.linalg.norm(embeddings[j])  
+                        dot_product = np.dot(embeddings[i], embeddings[j])
+                        norm_i = np.linalg.norm(embeddings[i])
+                        norm_j = np.linalg.norm(embeddings[j])
                         dnu_weight_matrix[i][j] = dot_product / (norm_i * norm_j)
 
             #step 2: Calculate mask matrix
@@ -247,45 +247,45 @@ class DBConnection:
                         mask_matrix[i][j] = -10  # ti>tj , -10
 
             #step 3: Calculate sequential matrix
-            sequential_matrix = np.where(mask_matrix == -10, 0, dnu_weight_matrix + mask_matrix) # if the value of mask matrix is -10, then the value of sequential_matrix will be 0 
+            sequential_matrix = np.where(mask_matrix == -10, 0, dnu_weight_matrix + mask_matrix) # if the value of mask matrix is -10, then the value of sequential_matrix will be 0
 
             #step 4: update the dnu_embedding matrix
             embedding_matrix = np.vstack(embeddings) # construct dnu embedding matrix
             new_dnu_embeddings= np.dot(sequential_matrix,embedding_matrix) #update dnu embedding
-            
+
 
             for idx, concept_id in enumerate(dnu_concept_ids_list):
                 dnu_concept_mid[concept_id]["embedding"] = new_dnu_embeddings[idx]
-                
+
             """
-                construct the embedding of user 
+                construct the embedding of user
             """
             # Extract the list of all dnu concept IDs
             dnu_ids = list(dnu_concept_mid.keys())
 
             # Extract embedding and weight information according to dnu concept IDs
             dnu_embeddings = [dnu_concept_mid[id]["embedding"] for id in dnu_ids]
-            weights = [dnu_concept_mid[id]["weight"] for id in dnu_ids] 
-            
+            weights = [dnu_concept_mid[id]["weight"] for id in dnu_ids]
+
             # Extract positions
-            dnu_positions = [dnu_position[id] for id in dnu_ids] 
+            dnu_positions = [dnu_position[id] for id in dnu_ids]
 
             # Step 1: calculate w_c
             w_c_list = []
             for i in range(num_nodes):
                 W_cos = weights[i]  # calculate W_cos
                 # calculate W_pos
-                W_pos = dnu_positions[i] / (num_nodes - 1)  
+                W_pos = dnu_positions[i] / (num_nodes - 1)
                 # calculate W_c
                 w_c = 0.5 * (W_cos + W_pos)  # 权重公式
                 w_c_list.append(w_c)
             # Step 2: get W_sum
             W_sum = sum(w_c_list)
             # Step 3: get e_L
-            embeddings_sum = np.zeros_like(dnu_embeddings[0]) 
+            embeddings_sum = np.zeros_like(dnu_embeddings[0])
             for i in range(num_nodes):
-                embeddings_sum += w_c_list[i] * dnu_embeddings[i] 
-            e_L = embeddings_sum / W_sum  
+                embeddings_sum += w_c_list[i] * dnu_embeddings[i]
+            e_L = embeddings_sum / W_sum
 
             # write user embedding into neo4j
             tx.run("""MATCH (u:User) WHERE u.uid=$uid set u.embedding=$embedding""",
@@ -334,9 +334,9 @@ class DBConnection:
     """
         MATCH (n:Concept) 匹配节点
         WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid} 排除与该user有连接的节点
-        AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding} 
+        AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding}
         如果当前节点 n 的嵌入（initial_embedding）已经与某用户（uid）连接的其他 Concept 节点相同，则排除它
-        AND n.mid =$mid 
+        AND n.mid =$mid
         AND n.type <> $type
         return n
     """
@@ -347,7 +347,7 @@ class DBConnection:
                 """MATCH (n:Concept)
                     WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
                     AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding}
-                    AND n.mid =$mid 
+                    AND n.mid =$mid
                     AND n.type <> $type
                     AND NOT EXISTS {
                         MATCH (p1:Concept)-[:PREREQUISITE_TO]-(p2:Concept)
@@ -361,7 +361,7 @@ class DBConnection:
             ).data()
 
         return list(result)
-    
+
     def get_prerequisite_concept_has_not_read(self, user_id, mid):
         print("Get concept")
         with self.driver.session() as session:
@@ -369,7 +369,7 @@ class DBConnection:
                 """
                 MATCH (n:Concept)
                 WHERE NOT EXISTS {MATCH (u:User)-[r]->(n:Concept) where u.uid = $uid}
-                AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding} 
+                AND NOT EXISTS {MATCH (u:User)-[r]->(m:Concept) where u.uid =$uid and n.initial_embedding =m.initial_embedding}
                 AND n.type <> $type
                 AND n.mid = $mid
                 AND EXISTS {
@@ -393,21 +393,21 @@ class DBConnection:
                 uid=user_id).data()
 
         return list(result)
-    
+
     def compute_cos_sim_score(self, embedding1, embedding2):
-        """ 
+        """
         """
         # cos_sim = util.cos_sim(embedding1, embedding2)
         # score = round(cos_sim.item(), 2)
 
         return util.cos_sim(embedding1, embedding2).item()
-    
+
     def build_adjacency_matrix(self,list_of_cids):
         # 创建数据库连接
         driver = self.driver
-        
+
         query = """
-        MATCH p=(u:Concept)-[r:PREREQUISITE_TO]->(c:Concept) 
+        MATCH p=(u:Concept)-[r:PREREQUISITE_TO]->(c:Concept)
         WHERE u.cid IN $cids AND c.cid IN $cids
         RETURN u.cid AS source, c.cid AS target, r.weighted_weight AS weight
         """
@@ -429,7 +429,7 @@ class DBConnection:
         # 创建 cid 到索引的映射
         cid_to_index = {cid: idx for idx, cid in enumerate(list_of_cids)}
         n = len(list_of_cids)
-        
+
         # 初始化邻接矩阵
         adjacency_matrix = np.zeros((n, n))
 
@@ -444,9 +444,9 @@ class DBConnection:
             source_cid = list_of_cids[row]
             target_cid = list_of_cids[col]
             #print(f"{source_cid} 和 {target_cid} 之间有连接")
-        
+
         return adjacency_matrix, cid_to_index
-    
+
     def find_disjoint_paths(self, adj_matrix, cid_list, cid_to_index):
         # Generate `cid` from `cidtoindex` to ensure mapping from indices to IDs
         cid = list(cid_to_index.keys())
@@ -492,7 +492,7 @@ class DBConnection:
                 filtered_explanations.append(filtered_explanation)
 
         return filtered_components, filtered_explanations
-    
+
     def find_paths_from_node(self,adj_matrix, start_node):
         """
         Find all paths starting from a given node using DFS.
@@ -520,7 +520,7 @@ class DBConnection:
         # Transpose the adjacency matrix to reverse the direction of edges
         adj_matrix_transposed = adj_matrix.T
         return self.find_paths_from_node(adj_matrix_transposed, end_node)
-    
+
     def get_road(self,top_cid_info,cid_list):
         """
         """
@@ -563,7 +563,7 @@ class DBConnection:
             groupedPaths = result[0]['groupedPaths']
             isolatedNodes = result[0]['isolatedNodes']
 
-        isolated_sequence = []  
+        isolated_sequence = []
         for cid in isolatedNodes:
             if cid in top_cid_info:
                 isolated_sequence.append([{'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wiki"),"abstract": top_cid_info[cid].get("abstract")}])
@@ -575,7 +575,7 @@ class DBConnection:
                 transformed_path.append({'name': top_cid_info[cid].get("name"),'cid': cid,'score':top_cid_info[cid].get("score"),'type':top_cid_info[cid].get("type"),'uri':top_cid_info[cid].get("uri"),'wiki':top_cid_info[cid].get("wiki"),"abstract": top_cid_info[cid].get("abstract")})
             grouped_sequence.append(transformed_path)
         grouped_sequence = self.deduplicate_by_name(grouped_sequence)
-        
+
         final_sequence = grouped_sequence+isolated_sequence
         output = {"nodes": {}}
         for idx, group in enumerate(final_sequence):
@@ -586,14 +586,14 @@ class DBConnection:
     def deduplicate_by_name(self,data):
         seen = set()  # 用于存储已经出现过的名字组合
         result = []
-        
+
         for path in data:
             # 提取当前路径的名字组合，转为集合
             names = frozenset(node['name'] for node in path)
             if names not in seen:
                 seen.add(names)  # 标记为已处理
                 result.append(path)  # 保留原始子列表
-                
+
         return result
     def sequence_recommend(self,sequence_concept_list,user,top_n):
 
@@ -604,7 +604,7 @@ class DBConnection:
             list2.append(float(j))
         user_embedding = np.array(list2)
 
-        #get the sequence candidate concept list 
+        #get the sequence candidate concept list
         list_of_cids = []
         for concept in sequence_concept_list:
              concept_embedding_str = concept["n"]["final_embedding"].split(',')
@@ -614,7 +614,7 @@ class DBConnection:
                 list2.append(float(j))
              concept_embedding= np.array(list2)
              concept["n"]["score"] = self.compute_cos_sim_score(concept_embedding, user_embedding)
-        
+
         #get the top-n sequence recommended concept
         top_n_concepts = sorted(sequence_concept_list, key=lambda x: x["n"]["score"], reverse=True)[0:top_n]
         top_n_cid_list = []
@@ -636,10 +636,10 @@ class DBConnection:
                 "wiki":wiki,
                 "abstract":abstract
             }
-        # get path        
+        # get path
         sequence_recommended=self.get_road(top_cid_info,top_n_cid_list)
         return sequence_recommended
-    
+
     def _get_concept_recommendation(self, user_id='66e07565733de02be8699540', mid='673bca8b5d46a99d5bd5964c'):
         # Get concepts that doesn't interact with user
         # related to candidate concept

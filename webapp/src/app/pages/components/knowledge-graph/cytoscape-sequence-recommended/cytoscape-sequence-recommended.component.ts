@@ -53,7 +53,7 @@ cytoscape.use(popper);
   styleUrls: ['./cytoscape-sequence-recommended.component.css']
 })
 export class CytoscapeSequenceRecommendedComponent  {
-  @Input() elements_sequence: any; 
+  @Input() elements_sequence: any;
   @Input() selectedFilterValues: any;
   @Input() topNConcepts: any;
   @Input() filterUpdated: any;
@@ -79,7 +79,7 @@ export class CytoscapeSequenceRecommendedComponent  {
   didNotUnderstandConceptsSubscription: Subscription; // on did not understand concepts list updated
   understoodConceptsSubscription: Subscription; // on understood concepts list updated
   constructor(
-    
+
     private renderer: Renderer2,
     private el: ElementRef,
     private ConceptMapComponent: ConceptMapComponent,
@@ -91,11 +91,11 @@ export class CytoscapeSequenceRecommendedComponent  {
     this.layout = {
       name: 'grid',
       minDist: 40,
-    
+
       spacingFactor: 0.0, // Increase this value to make the grid bigger
       fit: true,          // Ensures the grid fits within the viewport
       rows: undefined,    // Adjust rows if needed (leave undefined for automatic calculation)
-      cols: undefined, 
+      cols: undefined,
 
     };
     this.zoom = this.zoom || {
@@ -185,12 +185,12 @@ this.didNotUnderstandConceptsSubscription =
         height: function (elm) {
           //console.log(elm);
           if (elm.data().type === 'user') return '100';
-          
+
           else return elm.data().score * 25 + 25;
         },
         width: function (elm) {
           if (elm.data().type === 'user') return '100';
-          
+
           else return elm.data().score * 25 + 25;
         },
         'text-valign': 'center',
@@ -225,7 +225,7 @@ this.didNotUnderstandConceptsSubscription =
         'curve-style': 'bezier',
         'content': 'Prerequisite_To',
         'font-size': 12,
- 
+
       },
     },
     {
@@ -245,7 +245,7 @@ this.didNotUnderstandConceptsSubscription =
   ];
 
   public default = {
-    
+
     menuRadius: function (ele) {
       return 100;
     }, // the outer radius (node center to the end of the menu) in pixels. It is added to the rendered size of the node. Can either be a number or function as in the example.
@@ -308,10 +308,10 @@ this.didNotUnderstandConceptsSubscription =
 
   init() {
     this._elements = [];
-    if (this._elements === undefined || this._elements === null || this._elements === ''){  
+    if (this._elements === undefined || this._elements === null || this._elements === ''){
     console.log("1111",this._elements)	}
     this._elements = this.elements_sequence;
-    console.log("111222",this.elements_sequence)	
+    console.log("111222",this.elements_sequence)
 
     let cy_container = this.renderer.selectRootElement('#cyRecommenderSequence');
     if (this.elements_sequence !== undefined) {
@@ -343,7 +343,7 @@ console.log('this._elements:', JSON.stringify(this._elements, null, 2));
 console.log('this.cyHeight:', JSON.stringify(this.cyHeight, null, 2));
 
       setTimeout(() => {
-       
+
         this.cy = cytoscape({
           container: cy_container,
           layout: this.layout,
@@ -353,7 +353,7 @@ console.log('this.cyHeight:', JSON.stringify(this.cyHeight, null, 2));
           elements: this.createGraphElements(this._elements),
           height: this.cyHeight,
           autounselectify: true,
-       
+
         });
          this.cy.cxtmenu(this.default);
 
@@ -380,18 +380,18 @@ console.log('this.cyHeight:111', JSON.stringify(document.getElementById('cyRecom
     // Create graph elements: nodes and edges
     createGraphElements(nestedArrays: any[]): any[] {
       const elements: any[] = [];
-    
+
       // Assuming there are multiple groups within nestedArrays[0]
       const groups = nestedArrays[0]; // Now groups is an array of groups in nestedArrays[0]
-    
+
       // Iterate over each group in nestedArrays[0]
       groups.forEach((group: any, index: number) => {
-    
+
         // Check if the group contains a 'data' array
         if (group.data && Array.isArray(group.data)) {
           // Create nodes from the 'data' array
           const nodes = group.data.map((item: any) => ({
-           
+
             data: {
               id: item.cid,      // Use `cid` as the node ID
               name: item.name,   // Use `name` as the node name
@@ -400,13 +400,14 @@ console.log('this.cyHeight:111', JSON.stringify(document.getElementById('cyRecom
               uri: item.uri,
               wikipedia: item.wikipedia,
               abstract: item.abstract,
-              
+              roads: item.roads,
+              Reason: item.Reason,
 
             },
           }));
           // Add nodes to elements
           elements.push(...nodes);
-    
+
           // Create edges between sequential nodes in the same group
           if (nodes.length > 1) {
             for (let i = 0; i < nodes.length - 1; i++) {
@@ -423,12 +424,12 @@ console.log('this.cyHeight:111', JSON.stringify(document.getElementById('cyRecom
           console.error(`Invalid structure in group ${index}. Expected "data" array.`);
         }
       });
-    
+
       return elements;
     }
-    
-    
-    
+
+
+
   render() {
     if (this._elements !== undefined) {
       let selectedNode: any = undefined;
@@ -441,18 +442,18 @@ console.log('this.cyHeight:111', JSON.stringify(document.getElementById('cyRecom
         if (node !== this.cy) {
           if (node.isNode()) {
             const elements = document.getElementsByClassName('popper-div');
-           
+
             while (elements.length > 0) {
               elements[0].parentNode.removeChild(elements[0]);
             }
           }
         }
         var eventTarget = event.target;
-     
+
         if (eventTarget !== this.cy) {
 
           if (eventTarget.isNode()) {
- 
+
             this.nodeClickservice.nodeClicked();
             const selectedId = eventTarget._private.data['id'];
             selectedNode = {
@@ -470,15 +471,13 @@ console.log('this.cyHeight:111', JSON.stringify(document.getElementById('cyRecom
             //   node.data.selected = 'u';
             // });
             this.elements_sequence.nodes.forEach((nestedObject) => {
-             
+
                 nestedObject.data.forEach((node) => {
                   node.selected = 'u'; // Add the 'selected' property to each node
                 });
-              
-            });
-            
 
-          
+            });
+
             this.elements_sequence.nodes.some((node) => {
               if (node.data['cid'] === selectedId) {
                 node.data.selected = 's';

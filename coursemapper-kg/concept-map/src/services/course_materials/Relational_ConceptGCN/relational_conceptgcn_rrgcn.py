@@ -14,7 +14,7 @@ class RRGCN:
     def __init__(self,idfeature_fp_name,relation_fp_name,prerequisite_fp_name):
         neo4j_uri = Config.NEO4J_URI
         neo4j_user = Config.NEO4J_USER
-        neo4j_pass = Config.NEO4J_PASSWORD    
+        neo4j_pass = Config.NEO4J_PASSWORD
         self.driver = GraphDatabase.driver(neo4j_uri,
                                            auth=(neo4j_user, neo4j_pass),
                                            encrypted=False)
@@ -27,7 +27,7 @@ class RRGCN:
         self.embedding_matrix = None
         self.adj_matrix = None
         self.prerequisite_matrix = None
-        
+
         self.weight_matrix_rc_1 = None
         self.weight_matrix_pr_1 = None
         self.weight_matrix_self_1 = None
@@ -35,7 +35,7 @@ class RRGCN:
         self.weight_matrix_pr_2 = None
         self.weight_matrix_self_2 = None
         self.idx_features=None
-        """ 
+        """
           loadding data
         """
 
@@ -49,19 +49,19 @@ class RRGCN:
         # row0: id1 initial_embedding1  -> 0 initial_embedding1
         # row1: id2 initial_embedding2  -> 1 initial_embedding2
         # row2: id3 initial_embedding3  -> 2 initial_embedding3
-        idx_map = {j: i for i, j in enumerate(idx)} 
+        idx_map = {j: i for i, j in enumerate(idx)}
 
         # Construct initial embedding matrix
         # Extract initial embedding starts from the third column
         self.embedding_matrix = sp.csr_matrix(idx_features[:, 2:], dtype=np.float32)
 
 
-        """ 
+        """
             Construct Adjacency matrix
         """
 
         # Read normal relationships of nodes from relation.text
-        relation1 = np.genfromtxt(self.relation_fp_name, dtype=np.float32)        
+        relation1 = np.genfromtxt(self.relation_fp_name, dtype=np.float32)
         adj_row = np.array(list(map(idx_map.get, relation1[:, 0].flatten())))
         adj_column = np.array(list(map(idx_map.get, relation1[:, 2].flatten())))
 
@@ -72,13 +72,13 @@ class RRGCN:
             shape=( self.embedding_matrix.shape[0],  self.embedding_matrix.shape[0]),
             dtype=np.float32,
         )
-        self.adj_matrix = np.around(self.adj_matrix, 2)        
+        self.adj_matrix = np.around(self.adj_matrix, 2)
         self.adj_matrix = self.adj_matrix + self.adj_matrix.T.multiply(self.adj_matrix.T > self.adj_matrix) - self.adj_matrix.multiply(self.adj_matrix.T > self.adj_matrix)
         self.adj_matrix= normalize(self.adj_matrix)
         self.adj_matrix = self.adj_matrix.toarray()
 
 
-        """ 
+        """
             Construct prerequisite matrix
         """
         relation2 = np.genfromtxt(self.prerequisite_fp_name, dtype=np.float32)
@@ -98,14 +98,15 @@ class RRGCN:
             )
         self.prerequisite_matrix =self.prerequisite_matrix.toarray()
         self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
-        neighbor_counts =np.sum(self.prerequisite_matrix != 0, axis=1) 
+        neighbor_counts =np.sum(self.prerequisite_matrix != 0, axis=1)
         # Avoid dividing by zero and deal with isolated nodes
         neighbor_counts[neighbor_counts == 0] = 1
         # Normalized adjacency matrix
         normalized_adj_matrix = self.prerequisite_matrix / neighbor_counts[:, None]
         self.prerequisite_matrix = normalized_adj_matrix
+        self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
 
-        """ 
+        """
             generate relationships weight for every type of relationships
         """
         #the size of weight_matrix is the size of embedding (768,768)
@@ -135,8 +136,8 @@ class RRGCN:
         # row0: id1 initial_embedding1  -> 0 initial_embedding1
         # row1: id2 initial_embedding2  -> 1 initial_embedding2
         # row2: id3 initial_embedding3  -> 2 initial_embedding3
-        idx_map = {j: i for i, j in enumerate(idx)}      
-        
+        idx_map = {j: i for i, j in enumerate(idx)}
+
         # Construct initial embedding matrix
         # Extract initial embedding starts from the third column
         self.embedding_matrix = sp.csr_matrix(idx_features[:, 2:], dtype=np.float32)
@@ -150,7 +151,7 @@ class RRGCN:
         # Read normal relationships of nodes from relation.text
         relation1 = np.genfromtxt("relation.txt", dtype=np.float32)
         #print("normal relationships")
-        #print(relation1)    
+        #print(relation1)
         adj_row = np.array(list(map(idx_map.get, relation1[:, 0].flatten())))
         adj_column = np.array(list(map(idx_map.get, relation1[:, 2].flatten())))
         #coo_matrix((data, (row, col)), shape=(m, n))
@@ -185,12 +186,12 @@ class RRGCN:
     def rrgcn_1_1(self):
 
         #self.load_data()
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix.toarray()
-        
-        """ 
+
+        """
             adj_matrix
         """
         adj_matrix = self.adj_matrix
@@ -200,12 +201,13 @@ class RRGCN:
         weight_matrix_pr_1 = self.weight_matrix_pr_1
         weight_matrix_self_1 = self.weight_matrix_self_1
 
-        """ 
+        """
             prerequsite_matrix
         """
-        prerequsite_matrix = self.prerequisite_matrix
+        # prerequsite_matrix = self.prerequisite_matrix
+        prerequsite_matrix_inverse = self.prerequisite_matrix_inverse
 
-        """  
+        """
             the first layer
         """
         #RC Part
@@ -213,7 +215,7 @@ class RRGCN:
         rc_part = np.dot(rc_part_1,weight_matrix_rc_1)
 
         #PR Part
-        pr_part_1 = np.dot(prerequsite_matrix,embedding_matrix)
+        pr_part_1 = np.dot(prerequsite_matrix_inverse,embedding_matrix)
         pr_part = np.dot(pr_part_1,weight_matrix_pr_1)
 
         #self loop
@@ -224,12 +226,12 @@ class RRGCN:
         #because the pre_self_loop is zero so that ignore it
         self_loop_part1 = np.dot(self_loop_adj,embedding_matrix)
         self_loop_part = np.dot(self_loop_part1,weight_matrix_self_1)
-    
+
 
         #new final embedding
         embedding_first_layer = self_loop_part + rc_part + pr_part
 
-        """ 
+        """
          the second layer
         """
 
@@ -242,8 +244,8 @@ class RRGCN:
         rc_part_second_layer=np.dot(rc_part_second_layer,weight_matrix_rc_second_layer)
 
         #PR Part
-        pr_part_second_layer = np.dot(prerequsite_matrix,embedding_first_layer)
-        pr_part_second_layer = np.dot(pr_part_second_layer,weight_matrix_pr_second_layer)     
+        pr_part_second_layer = np.dot(prerequsite_matrix_inverse,embedding_first_layer)
+        pr_part_second_layer = np.dot(pr_part_second_layer,weight_matrix_pr_second_layer)
 
         #because the pre_self_loop is zero so that ignore it
         self_loop_part_second_layer = np.dot(self_loop_adj,embedding_first_layer)
@@ -255,12 +257,12 @@ class RRGCN:
     #self_loop + adj or pre matrix
     def rrgcn_1_2(self):
         #logger.info("Hong_rrgcn_model START")
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix.toarray()
-        
-        """ 
+
+        """
             adj_matrix
         """
         adj_matrix = self.adj_matrix
@@ -269,12 +271,12 @@ class RRGCN:
         # adj_matrix= normalize(adj_matrix)+ sp.eye(adj_matrix.shape[0])
         # adj_matrix = adj_matrix.toarray()
 
-        """ 
+        """
             prerequsite_matrix
         """
         prerequsite_matrix = self.prerequisite_matrix
         # prerequsite_matrix = np.around(prerequsite_matrix,2)
-        """  
+        """
             the first layer
         """
         #RC Part
@@ -286,7 +288,7 @@ class RRGCN:
         #new final embedding
         embedding_of_firstLayer = rc_part_1 + pr_part_1
 
-        """  
+        """
             the second layer
         """
         #RC Part
@@ -308,13 +310,13 @@ class RRGCN:
                     id=id,
                     embedding=embedding)
         #logger.info("Hong_rrgcn_model END")
-    
+
     def rrgcn_1_3(self):
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix.toarray()
-        
+
 
         weight_matrix_rc_1 = self.weight_matrix_rc_1
         weight_matrix_pr_1 = self.weight_matrix_pr_1
@@ -324,7 +326,7 @@ class RRGCN:
         weight_matrix_pr_2 = self.weight_matrix_pr_2
         weight_matrix_self_2 = self.weight_matrix_self_2
 
-        """  
+        """
             the first layer
         """
         #RC Part
@@ -334,9 +336,9 @@ class RRGCN:
 
         embedding_of_firstLayer = self_loop_1 + rc_part_1 + pr_part_1
 
-        """  
+        """
             the second layer
-        """                     
+        """
         self_loop_2 = np.dot(embedding_of_firstLayer,weight_matrix_self_2)
         rc_part_2 = np.dot(embedding_of_firstLayer,weight_matrix_rc_2)
         pr_part_2 = np.dot(embedding_of_firstLayer,weight_matrix_pr_2)
@@ -346,16 +348,16 @@ class RRGCN:
 
         return final_embedding
     def rrgcn_2_1(self):
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix.toarray()
-        
-        """ 
+
+        """
             adj_matrix
         """
         adj_matrix = self.adj_matrix
-        adj_matrix = np.around(adj_matrix, 2)        
+        adj_matrix = np.around(adj_matrix, 2)
         adj_matrix = adj_matrix + adj_matrix.T.multiply(adj_matrix.T > adj_matrix) - adj_matrix.multiply(adj_matrix.T > adj_matrix)
         adj_matrix= normalize(adj_matrix)
         adj_matrix = adj_matrix.toarray()
@@ -363,14 +365,14 @@ class RRGCN:
         weight_matrix_rc_1 = self.weight_matrix_rc_1
         weight_matrix_pr_1 = self.weight_matrix_pr_1
 
-        """ 
+        """
             prerequsite_matrix
         """
         prerequsite_matrix = self.prerequisite_matrix
-        prerequsite_matrix = np.around(prerequsite_matrix,2)        
+        prerequsite_matrix = np.around(prerequsite_matrix,2)
 
-        
-        """  
+
+        """
             the first layer
         """
         #RC Part
@@ -381,11 +383,11 @@ class RRGCN:
         pr_part_1 = np.dot(prerequsite_matrix,embedding_matrix)
         pr_part = np.dot(pr_part_1,weight_matrix_pr_1)
 
-        embedding_of_firstLayer = rc_part + pr_part      
+        embedding_of_firstLayer = rc_part + pr_part
 
-        """  
+        """
             the second layer
-        """       
+        """
         #RC Part
         rc_part_2=np.dot(adj_matrix,embedding_of_firstLayer)
         rc_part_second = np.dot(rc_part_2,weight_matrix_rc_1)
@@ -397,21 +399,21 @@ class RRGCN:
         final_embedding = rc_part_second + pr_part_second
         return final_embedding
     def rrgcn_2_2(self):
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix.toarray()
-        
-        """ 
+
+        """
             adj_matrix
         """
         adj_matrix = self.adj_matrix
-        adj_matrix = np.around(adj_matrix, 2)        
+        adj_matrix = np.around(adj_matrix, 2)
         adj_matrix = adj_matrix + adj_matrix.T.multiply(adj_matrix.T > adj_matrix) - adj_matrix.multiply(adj_matrix.T > adj_matrix)
         adj_matrix= normalize(adj_matrix)
         adj_matrix = adj_matrix.toarray()
 
-        """ 
+        """
             prerequsite_matrix
         """
         prerequsite_matrix = self.prerequisite_matrix
@@ -426,7 +428,7 @@ class RRGCN:
         #new final embedding
         embedding_of_firstLayer = rc_part_1 + pr_part_1
 
-        """  
+        """
             the second layer
         """
         #RC Part
@@ -437,11 +439,11 @@ class RRGCN:
 
         return final_embedding
     def rrgcn_2_3(self):
-        """ 
+        """
             embedding_matrix
         """
         embedding_matrix = self.embedding_matrix.toarray()
-        
+
 
         weight_matrix_rc_1 = self.weight_matrix_rc_1
         weight_matrix_pr_1 = self.weight_matrix_pr_1
@@ -451,7 +453,7 @@ class RRGCN:
         weight_matrix_pr_2 = self.weight_matrix_pr_2
 
 
-        """  
+        """
             the first layer
         """
         #RC Part
@@ -460,9 +462,9 @@ class RRGCN:
 
         embedding_of_firstLayer =  rc_part_1 + pr_part_1
 
-        """  
+        """
             the second layer
-        """                     
+        """
         rc_part_2 = np.dot(embedding_of_firstLayer,weight_matrix_rc_2)
         pr_part_2 = np.dot(embedding_of_firstLayer,weight_matrix_pr_2)
 
@@ -470,6 +472,5 @@ class RRGCN:
         final_embedding =  rc_part_2 + pr_part_2
         #logger.info("end")
 
-        return final_embedding        
+        return final_embedding
 
- 

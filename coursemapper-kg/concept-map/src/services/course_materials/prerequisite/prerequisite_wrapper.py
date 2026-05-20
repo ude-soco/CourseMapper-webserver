@@ -1,6 +1,7 @@
 import pandas as pd
 import pymongo
 from bson.objectid import ObjectId
+import os
 
 from config import Config
 from .course_materials import CourseMaterials
@@ -15,6 +16,10 @@ class Prerequisite:
         self.db = DBConnection()
         self.concepts = pd.DataFrame()
 
+        # Get the project root directory (where the script is located)
+        self.output_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        print(f"Output directory set to: {self.output_dir}")
+
     def find_prerequisite_course(self):
         print("get list of courses")
         mongodb = CourseMaterials(course_id=self.course_id,course_name=self.course_name)
@@ -22,14 +27,14 @@ class Prerequisite:
 
 
         print("get concepts from neo4j")
-       
-        
+
+
         for _,lm in learning_materials.iterrows():
             self.find_prerequisite_one(lm)
-        
+
         self.find_prerequsite_all()
 
-    
+
     def find_prerequisite_lm(self,lm=None):
         self.find_prerequisite_one(lm)
         self.find_prerequsite_all()
@@ -40,7 +45,7 @@ class Prerequisite:
         self.concepts = pd.concat([self.concepts,concepts_one],ignore_index=True)
         print("concepts", self.concepts)
 
-    
+
     def find_prerequsite_all(self):
 
         print("clean data")
@@ -49,22 +54,23 @@ class Prerequisite:
         concept_dict = clean_data.get_clean_data()
         print("concept_dict", concept_dict)
 
-
-
         related_relationships = clean_data.get_related_relationships()
         print("related_relationships", related_relationships)
 
-        concept_dict.to_csv("clean_data_simple.csv")
-        concept_dict = pd.read_csv("clean_data_simple.csv", index_col=0)
 
+        # Use absolute paths for CSV files
+        clean_data_path = os.path.join(self.output_dir, "clean_data_simple.csv")
+        concept_dict.to_csv(clean_data_path)
+        concept_dict = pd.read_csv(clean_data_path, index_col=0)
 
 
         print("find prerequisite")
         prerequisite = PrerequisiteRelationship(concept_dict,related_relationships)
         print("prerequisite", prerequisite)
         prerequisite_relationships = prerequisite.get_prerequisite_relationships()
-        #results 
-        prerequisite_relationships.to_csv("prerequisite_relationships_datamining.csv")
+        #results
+        prerequisite_path = os.path.join(self.output_dir, "prerequisite_relationships_datamining.csv")
+        prerequisite_relationships.to_csv(prerequisite_path)
 
         print("Add relationships to graph")
 

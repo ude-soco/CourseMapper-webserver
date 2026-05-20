@@ -534,22 +534,32 @@ export const searchWikipedia = async (req, res) => {
   const query = req.query.query;
 
   try {
-    const conceptNameEncoded = encodeURIComponent(query);
-    const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
-    const response = await axios.get(url);
-    const searchResults = response.data.query.search;
-     // Add the Wikipedia URL to each search result
-     const resultsWithUrls = searchResults.map(result => {
-      const titleEncoded = encodeURIComponent(result.title);
-      return {
-        ...result,
-        url: `https://en.wikipedia.org/wiki/${titleEncoded}`
-      };
-    });
-    return res.status(200).send({ searchResults: resultsWithUrls });
-  } catch (err) {
-    return res.status(500).send({ error: err.message });
-  }
+      const conceptNameEncoded = encodeURIComponent(query);
+      console.log("Encoded concept name for Wikipedia API:", conceptNameEncoded);
+      const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
+      console.log("Constructed Wikipedia API URL:", url);
+      const response = await axios.get(url, {
+    timeout: 10000,
+    headers: {
+      "User-Agent": "CourseMapper/1.0 (https://github.com/ude-soco/CourseMapper; coursemapper@example.com)"
+    }
+  });
+      console.log("Wikipedia API response:", response.data);
+      const searchResults = response.data.query.search;
+      console.log("Extracted search results from Wikipedia API response:", searchResults);
+      // Add the Wikipedia URL to each search result
+      const resultsWithUrls = searchResults.map((result) => {
+        const titleEncoded = encodeURIComponent(result.title);
+        return {
+          ...result,
+          url: `https://en.wikipedia.org/wiki/${titleEncoded}`,
+        };
+      });
+      console.log("Wikipedia search results:", resultsWithUrls);
+      return res.status(200).send({ searchResults: resultsWithUrls });
+    } catch (err) {
+      return res.status(500).send({ error: err.message });
+    }
 };
 
 export const viewFullWikipediaArticle = async (req, res, next) => {

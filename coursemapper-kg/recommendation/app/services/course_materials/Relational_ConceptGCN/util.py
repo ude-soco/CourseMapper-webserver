@@ -28,7 +28,7 @@ def glorot_seed(
     Returns:
         torch.Tensor: The randomly generated tensor
     """
-    seed = random.randint(0, 100) 
+    seed = random.randint(0, 100)
     torch.manual_seed(seed)
     a = torch.zeros(shape, device=None, dtype=dtype)
     glorot(a)
@@ -36,8 +36,15 @@ def glorot_seed(
 
 def normalize(mx):
     rowsum = np.array(mx.sum(1))
-    d_inv = np.power(rowsum, -0.5).flatten()
-    d_inv[np.isinf(d_inv)] = 0.0
+    # d_inv = np.power(rowsum, -0.5).flatten()
+    # d_inv[np.isinf(d_inv)] = 0.0
+
+    # Handle division by zero: replace zero values with 1 before taking power
+    # This prevents the FloatingPointError
+    rowsum_safe = np.where(rowsum == 0, 1, rowsum)
+    d_inv = np.power(rowsum_safe, -0.5).flatten()
+    # Set values corresponding to zero-degree nodes to 0
+    d_inv[rowsum.flatten() == 0] = 0.0
     d_mat_inv = sp.diags(d_inv)
     norm_adj = d_mat_inv.dot(mx)
     norm_adj = norm_adj.dot(d_mat_inv)
