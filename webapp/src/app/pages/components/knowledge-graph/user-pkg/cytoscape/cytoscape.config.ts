@@ -47,7 +47,8 @@ export const CONTEXT_MENU_CONFIG = {
   outsideMenuCancel: false,
 };
 
-export function getCytoscapeStyles(): cytoscape.Stylesheet[] {
+// export function getCytoscapeStyles(): cytoscape.Stylesheet[] {
+export function getCytoscapeStyles(): any[] {
   return [
     {
       selector: 'node',

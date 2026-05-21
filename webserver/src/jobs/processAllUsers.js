@@ -83,8 +83,10 @@ async function processAllUsers() {
       // Calculate scores
       const usernameSafe = user.username.toLowerCase().replace(/\s+/g, '_');
       await runCommand(
-        'python',
-        ['../../coursemapper-kg/recommendation/level-of-interest/scripts/calculate_interest_scores.py', usernameSafe],
+      //  'python',
+      //  ['../../coursemapper-kg/recommendation/level-of-interest/scripts/calculate_interest_scores.py', usernameSafe],
+        'pipenv',
+        ['run', 'python', '../../coursemapper-kg/recommendation/level-of-interest/scripts/calculate_interest_scores.py', usernameSafe],
         webserverDir
       );
 
@@ -152,8 +154,10 @@ async function processAllUsers() {
 
   try {
     await runCommand(
-      'python',
-      ['../../coursemapper-kg/recommendation/level-of-interest/scripts/update_pkg_interest_scores.py'],
+      //'python',
+      //['../../coursemapper-kg/recommendation/level-of-interest/scripts/update_pkg_interest_scores.py'],
+      'pipenv',
+      ['run', 'python', '../../coursemapper-kg/recommendation/level-of-interest/scripts/update_pkg_interest_scores.py'],
       webserverDir
     );
     

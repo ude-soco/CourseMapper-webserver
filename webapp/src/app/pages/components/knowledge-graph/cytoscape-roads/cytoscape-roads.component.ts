@@ -48,7 +48,8 @@ export class CytoscapeRoadsComponent {
     };
   }
 
-  public showAllStyle: cytoscape.Stylesheet[] = [
+  // public showAllStyle: cytoscape.Stylesheet[] = [
+  public showAllStyle: any[] = [
     // the stylesheet for the graph
     {
       selector: 'node',

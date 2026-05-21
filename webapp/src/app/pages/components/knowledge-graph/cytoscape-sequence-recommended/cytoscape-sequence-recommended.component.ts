@@ -177,7 +177,8 @@ this.didNotUnderstandConceptsSubscription =
         this.cy.style(this.showAllStyle);
       });
   }
-  public showAllStyle: cytoscape.Stylesheet[] = [
+  // public showAllStyle: cytoscape.Stylesheet[] = [
+  public showAllStyle: any[] = [
     // the stylesheet for the graph
     {
       selector: 'node',
@@ -230,7 +231,8 @@ this.didNotUnderstandConceptsSubscription =
     },
     {
       selector: ':selected',
-      css: {
+      //css: {
+      style: {
         // 'border-color': 'gold',
         // 'border-width': 'mapData(weight, 0, 1, 1, 3)',
         // 'border-opacity': 0.5,
@@ -238,7 +240,8 @@ this.didNotUnderstandConceptsSubscription =
     },
     {
       selector: '.hidden',
-      css: {
+      //css: {
+      style: {
         display: 'none',
       },
     },
@@ -351,7 +354,7 @@ console.log('this.cyHeight:', JSON.stringify(this.cyHeight, null, 2));
           maxZoom: this.zoom.max,
           style: this.showAllStyle,
           elements: this.createGraphElements(this._elements),
-          height: this.cyHeight,
+          //height: this.cyHeight,
           autounselectify: true,
        
         });

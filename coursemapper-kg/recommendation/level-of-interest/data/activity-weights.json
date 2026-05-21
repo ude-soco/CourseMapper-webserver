@@ -1,0 +1,232 @@
+{
+  "metadata": {
+    "total_votes": 36,
+    "total_groups": 10,
+    "total_activities": 14,
+    "calculation_method": "Normalized_Weight = Votes / Total_Votes"
+  },
+  "group_weights": [
+    {
+      "group_id": "G1",
+      "group_name": "Recommended Material",
+      "votes": 7,
+      "normalized_weight": 0.19444444444444445,
+      "weight_percentage": "19.44%",
+      "activity_count": 3
+    },
+    {
+      "group_id": "G2",
+      "group_name": "Concepts & Article",
+      "votes": 7,
+      "normalized_weight": 0.19444444444444445,
+      "weight_percentage": "19.44%",
+      "activity_count": 3
+    },
+    {
+      "group_id": "G3",
+      "group_name": "Mark U/DNU",
+      "votes": 6,
+      "normalized_weight": 0.16666666666666666,
+      "weight_percentage": "16.67%",
+      "activity_count": 1
+    },
+    {
+      "group_id": "G4",
+      "group_name": "Full Article",
+      "votes": 5,
+      "normalized_weight": 0.1388888888888889,
+      "weight_percentage": "13.89%",
+      "activity_count": 1
+    },
+    {
+      "group_id": "G5",
+      "group_name": "Explanation",
+      "votes": 4,
+      "normalized_weight": 0.1111111111111111,
+      "weight_percentage": "11.11%",
+      "activity_count": 1
+    },
+    {
+      "group_id": "G6",
+      "group_name": "Follow Annotation",
+      "votes": 2,
+      "normalized_weight": 0.05555555555555555,
+      "weight_percentage": "5.56%",
+      "activity_count": 1
+    },
+    {
+      "group_id": "G7",
+      "group_name": "Recommended Concepts",
+      "votes": 2,
+      "normalized_weight": 0.05555555555555555,
+      "weight_percentage": "5.56%",
+      "activity_count": 1
+    },
+    {
+      "group_id": "G8",
+      "group_name": "View Slide/s related to Concept",
+      "votes": 1,
+      "normalized_weight": 0.027777777777777776,
+      "weight_percentage": "2.78%",
+      "activity_count": 1
+    },
+    {
+      "group_id": "G9",
+      "group_name": "Mark Recommended DNU",
+      "votes": 1,
+      "normalized_weight": 0.027777777777777776,
+      "weight_percentage": "2.78%",
+      "activity_count": 1
+    },
+    {
+      "group_id": "G10",
+      "group_name": "Course Access",
+      "votes": 1,
+      "normalized_weight": 0.027777777777777776,
+      "weight_percentage": "2.78%",
+      "activity_count": 1
+    }
+  ],
+  "activities": [
+    {
+      "activity_id": "G1_A1",
+      "activity_name": "mark-helpful-recommended-video",
+      "description": "User marks as helpful on recommended Video",
+      "group_id": "G1",
+      "group_name": "Recommended Material",
+      "group_votes": 7,
+      "normalized_weight": 0.19444444444444445,
+      "weight_percentage": "19.44%"
+    },
+    {
+      "activity_id": "G1_A2",
+      "activity_name": "view-recommended-material",
+      "description": "User views recommended material",
+      "group_id": "G1",
+      "group_name": "Recommended Material",
+      "group_votes": 7,
+      "normalized_weight": 0.19444444444444445,
+      "weight_percentage": "19.44%"
+    },
+    {
+      "activity_id": "G1_A3",
+      "activity_name": "view-recommended-videos",
+      "description": "User views recommended videos",
+      "group_id": "G1",
+      "group_name": "Recommended Material",
+      "group_votes": 7,
+      "normalized_weight": 0.19444444444444445,
+      "weight_percentage": "19.44%"
+    },
+    {
+      "activity_id": "G2_A1",
+      "activity_name": "view-related-concepts-material-kg",
+      "description": "User views related Concepts in Material KG",
+      "group_id": "G2",
+      "group_name": "Concepts & Article",
+      "group_votes": 7,
+      "normalized_weight": 0.19444444444444445,
+      "weight_percentage": "19.44%"
+    },
+    {
+      "activity_id": "G2_A2",
+      "activity_name": "view-full-article-main-concept-material-kg",
+      "description": "User views full article of main concept in Material KG",
+      "group_id": "G2",
+      "group_name": "Concepts & Article",
+      "group_votes": 7,
+      "normalized_weight": 0.19444444444444445,
+      "weight_percentage": "19.44%"
+    },
+    {
+      "activity_id": "G2_A3",
+      "activity_name": "view-full-article-related-concept-material-kg",
+      "description": "User views the full article of related Concept in Material KG",
+      "group_id": "G2",
+      "group_name": "Concepts & Article",
+      "group_votes": 7,
+      "normalized_weight": 0.19444444444444445,
+      "weight_percentage": "19.44%"
+    },
+    {
+      "activity_id": "G3_A1",
+      "activity_name": "mark-did-not-understand-main-concept",
+      "description": "User marks Did not Understand main Concept",
+      "group_id": "G3",
+      "group_name": "Mark U/DNU",
+      "group_votes": 6,
+      "normalized_weight": 0.16666666666666666,
+      "weight_percentage": "16.67%"
+    },
+    {
+      "activity_id": "G4_A1",
+      "activity_name": "view-full-article-main-concept-slide-kg",
+      "description": "View the full article of the main concept in slide KG",
+      "group_id": "G4",
+      "group_name": "Full Article",
+      "group_votes": 5,
+      "normalized_weight": 0.1388888888888889,
+      "weight_percentage": "13.89%"
+    },
+    {
+      "activity_id": "G5_A1",
+      "activity_name": "view-explanation-recommended-concept",
+      "description": "View Explanation of why a concept is recommended",
+      "group_id": "G5",
+      "group_name": "Explanation",
+      "group_votes": 4,
+      "normalized_weight": 0.1111111111111111,
+      "weight_percentage": "11.11%"
+    },
+    {
+      "activity_id": "G6_A1",
+      "activity_name": "follow-annotation",
+      "description": "User follows annotation",
+      "group_id": "G6",
+      "group_name": "Follow Annotation",
+      "group_votes": 2,
+      "normalized_weight": 0.05555555555555555,
+      "weight_percentage": "5.56%"
+    },
+    {
+      "activity_id": "G7_A1",
+      "activity_name": "view-recommended-concepts",
+      "description": "View Recommended Concepts",
+      "group_id": "G7",
+      "group_name": "Recommended Concepts",
+      "group_votes": 2,
+      "normalized_weight": 0.05555555555555555,
+      "weight_percentage": "5.56%"
+    },
+    {
+      "activity_id": "G8_A1",
+      "activity_name": "view-slide-in-learning-material",
+      "description": "User views a slide in Learning Material",
+      "group_id": "G8",
+      "group_name": "View Slide/s related to Concept",
+      "group_votes": 1,
+      "normalized_weight": 0.027777777777777776,
+      "weight_percentage": "2.78%"
+    },
+    {
+      "activity_id": "G9_A1",
+      "activity_name": "mark-recommended-concept-dnu",
+      "description": "User marks a recommended Concept as DNU",
+      "group_id": "G9",
+      "group_name": "Mark Recommended DNU",
+      "group_votes": 1,
+      "normalized_weight": 0.027777777777777776,
+      "weight_percentage": "2.78%"
+    },
+    {
+      "activity_id": "G10_A1",
+      "activity_name": "enroll-in-course",
+      "description": "User enrolls in a course",
+      "group_id": "G10",
+      "group_name": "Course Access",
+      "group_votes": 1,
+      "normalized_weight": 0.027777777777777776,
+      "weight_percentage": "2.78%"
+    }
+  ]
+}

@@ -2,11 +2,11 @@
   {
     "stdProfile": {
       "stdId": 1,
-      "stdUsername": "69334fe370d0bb27267dafde",
-      "course_id": "69334f0b70d0bb27267da84c"
+      "stdUsername": "69acbbe70e3a21f27e8714ed",
+      "course_id": "69aa1723766e66faf4fa2de9"
     },
     "activitiesProfile": {
-      "totalActivities": 23,
+      "totalActivities": 409,
       "annotations": {
         "totalAddedAnnotations": 0,
         "totalAnnotationsFollowed": 0,
@@ -46,12 +46,12 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 44,
-        "courseAccesses": 44,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
+        "totalAccesses": 78,
+        "courseAccesses": 17,
+        "topicAccesses": 19,
+        "channelAccesses": 22,
         "materialAccesses": {
-          "pdfAccess": 0,
+          "pdfAccess": 20,
           "videoAccess": 0
         }
       },
@@ -73,13 +73,13 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
-          "pdfStarted": 0,
-          "pdfCompleted": 0,
-          "slidesViewed": 0,
-          "slidesNotUnderstood": 0
+          "pdfStarted": 19,
+          "pdfCompleted": 2,
+          "slidesViewed": 108,
+          "slidesNotUnderstood": 62
         }
       },
       "tag": {
@@ -94,48 +94,48 @@
       },
       "knowledgeGraph": {
         "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
+          "totalKnowledgeGraphAccesses": 67,
           "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
+          "materialKnowledgeGraphAccesses": 5,
+          "slideKnowledgeGraphAccesses": 62
         },
         "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
-          "totalKnowledgeGraphWikiArticleViewed": 0,
+          "totalKnowledgeGraphConcept/WikiViewed": 62,
+          "totalKnowledgeGraphConceptViewed": 60,
+          "totalKnowledgeGraphWikiArticleViewed": 2,
           "courseKnowledgeGraph": {
             "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
             "totalCourseKnowledgeGraphConceptViewed": 0,
             "totalCourseKnowledgeGraphWikiArticleViewed": 0
           },
           "materialKnowledgeGraphConceptViewed": {
-            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
-            "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
-            "totalMaterialKnowledgeGraphConceptViewed": 0,
-            "mainConceptViewed": 0,
+            "totalMaterialKnowledgeGraphConcept/WikiViewed": 4,
+            "totalMaterialKnowledgeGraphWikiArticleViewed": 1,
+            "totalMaterialKnowledgeGraphConceptViewed": 3,
+            "mainConceptViewed": 3,
             "relatedConceptViewed": 0,
             "categoryViewed": 0
           },
           "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
-            "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
-            "totalRecommendedConcept/WikiViewed": 0,
-            "totalRecommendedConceptViewed": 0,
+            "totalSlideKnowledgeGraphConcept/WikiViewed": 58,
+            "totalSlideKnowledgeGraphWikiArticleViewed": 1,
+            "totalSlideKnowledgeGraphConceptViewed": 57,
+            "totalRecommendedConcept/WikiViewed": 13,
+            "totalRecommendedConceptViewed": 13,
             "totalRecommendedWikiArticleViewed": 0,
             "totalRecommendedConceptViewedVisualExplanation": 0,
             "totalRecommendedConceptViewedTextualExplanation": 0,
             "recommendedMaterial": {
-              "totalRecommendedMaterialViewed": 0,
+              "totalRecommendedMaterialViewed": 10,
               "recommendedArticleViewed": 0,
-              "recommendedVideoViewed": 0
+              "recommendedVideoViewed": 10
             }
           }
         },
         "slideKnowledgeGraphMarked": {
-          "totalSlideKnowledgeGraphMarked": 0,
-          "totalSlideKnowledgeGraphMarkedUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
+          "totalSlideKnowledgeGraphMarked": 4,
+          "totalSlideKnowledgeGraphMarkedUnderstood": 1,
+          "totalSlideKnowledgeGraphMarkedNotUnderstood": 3,
           "totalSlideKnowledgeGraphMarkedAsNew": 0,
           "totalRecommendedConceptsMarked": 0,
           "recommendedConceptsMarkedUnderstood": 0,
@@ -160,11 +160,11 @@
   {
     "stdProfile": {
       "stdId": 2,
-      "stdUsername": "69334fe370d0bb27267dafde",
-      "course_id": "692e1e0360484ffc22837654"
+      "stdUsername": "69acbbe70e3a21f27e8714ed",
+      "course_id": "69aadaec8fce8e37dc838463"
     },
     "activitiesProfile": {
-      "totalActivities": 106,
+      "totalActivities": 64,
       "annotations": {
         "totalAddedAnnotations": 0,
         "totalAnnotationsFollowed": 0,
@@ -204,12 +204,12 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 174,
-        "courseAccesses": 96,
-        "topicAccesses": 34,
-        "channelAccesses": 22,
+        "totalAccesses": 25,
+        "courseAccesses": 6,
+        "topicAccesses": 7,
+        "channelAccesses": 6,
         "materialAccesses": {
-          "pdfAccess": 22,
+          "pdfAccess": 6,
           "videoAccess": 0
         }
       },
@@ -231,13 +231,13 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
-          "pdfStarted": 12,
-          "pdfCompleted": 4,
-          "slidesViewed": 32,
-          "slidesNotUnderstood": 0
+          "pdfStarted": 4,
+          "pdfCompleted": 0,
+          "slidesViewed": 17,
+          "slidesNotUnderstood": 6
         }
       },
       "tag": {
@@ -252,14 +252,14 @@
       },
       "knowledgeGraph": {
         "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
+          "totalKnowledgeGraphAccesses": 8,
           "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
+          "materialKnowledgeGraphAccesses": 2,
+          "slideKnowledgeGraphAccesses": 6
         },
         "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
+          "totalKnowledgeGraphConcept/WikiViewed": 6,
+          "totalKnowledgeGraphConceptViewed": 6,
           "totalKnowledgeGraphWikiArticleViewed": 0,
           "courseKnowledgeGraph": {
             "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
@@ -275,9 +275,9 @@
             "categoryViewed": 0
           },
           "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
+            "totalSlideKnowledgeGraphConcept/WikiViewed": 6,
             "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
+            "totalSlideKnowledgeGraphConceptViewed": 6,
             "totalRecommendedConcept/WikiViewed": 0,
             "totalRecommendedConceptViewed": 0,
             "totalRecommendedWikiArticleViewed": 0,
@@ -318,11 +318,11 @@
   {
     "stdProfile": {
       "stdId": 3,
-      "stdUsername": "692ce7d5a48ffa5334c0d51f",
-      "course_id": "69233d168fbf44912c2a91ca"
+      "stdUsername": "69acbbe70e3a21f27e8714ed",
+      "course_id": "69aae4948fce8e37dc838fad"
     },
     "activitiesProfile": {
-      "totalActivities": 40,
+      "totalActivities": 70,
       "annotations": {
         "totalAddedAnnotations": 0,
         "totalAnnotationsFollowed": 0,
@@ -362,21 +362,21 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 56,
-        "courseAccesses": 28,
-        "topicAccesses": 13,
-        "channelAccesses": 10,
+        "totalAccesses": 44,
+        "courseAccesses": 5,
+        "topicAccesses": 6,
+        "channelAccesses": 13,
         "materialAccesses": {
-          "pdfAccess": 5,
+          "pdfAccess": 20,
           "videoAccess": 0
         }
       },
       "dashboardAccess": {
-        "totalDashboardAccesses": 2,
+        "totalDashboardAccesses": 0,
         "courseAccesses": 0,
         "topicAccesses": 0,
         "channelAccesses": 0,
-        "materialAccesses": 2
+        "materialAccesses": 0
       },
       "user": {
         "totalUserMentionedRepliedActivities": 0,
@@ -389,12 +389,12 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
-          "pdfStarted": 1,
+          "pdfStarted": 19,
           "pdfCompleted": 0,
-          "slidesViewed": 1,
+          "slidesViewed": 19,
           "slidesNotUnderstood": 0
         }
       },
@@ -410,9 +410,9 @@
       },
       "knowledgeGraph": {
         "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
+          "totalKnowledgeGraphAccesses": 6,
           "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
+          "materialKnowledgeGraphAccesses": 6,
           "slideKnowledgeGraphAccesses": 0
         },
         "knowledgeGraphViewed": {
@@ -476,35 +476,35 @@
   {
     "stdProfile": {
       "stdId": 4,
-      "stdUsername": "6930846a601a053a681cf7d2",
-      "course_id": "69233d168fbf44912c2a91ca"
+      "stdUsername": "69acbbe70e3a21f27e8714ed",
+      "course_id": "69aeae059c650bf67d7360b4"
     },
     "activitiesProfile": {
-      "totalActivities": 21,
+      "totalActivities": 189,
       "annotations": {
-        "totalAddedAnnotations": 3,
+        "totalAddedAnnotations": 2,
         "totalAnnotationsFollowed": 0,
         "totalAnnotationsReplied": 0,
-        "totalNoteTypeAnnotations": 1,
+        "totalNoteTypeAnnotations": 0,
         "totalQuestionTypeAnnotations": 2,
         "totalExternalResourceTypeAnnotations": 0,
-        "totalPdfAnnotations": 0,
+        "totalPdfAnnotations": 2,
         "totalVideoAnnotations": 0,
         "annotationTools": {
-          "highlightToolOnMaterial": 0,
+          "highlightToolOnMaterial": 2,
           "pinpointToolOnMaterial": 0,
           "drawToolOnMaterial": 0
         },
         "comment": {
-          "noteTypeCommentsOnMaterial": 1,
-          "questionTypeCommentsOnMaterial": 2,
+          "noteTypeCommentsOnMaterial": 0,
+          "questionTypeCommentsOnMaterial": 0,
           "externalResourceTypeCommentsOnMaterial": 0
         }
       },
       "likes": {
         "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 1,
-          "likesOnNoteTypeAnnotations": 1,
+          "totalLikesOnAnnotations": 0,
+          "likesOnNoteTypeAnnotations": 0,
           "likesOnQuestionTypeAnnotations": 0,
           "likesOnExternalResourceTypeAnnotations": 0
         },
@@ -520,21 +520,21 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 91,
-        "courseAccesses": 43,
-        "topicAccesses": 24,
-        "channelAccesses": 14,
+        "totalAccesses": 59,
+        "courseAccesses": 10,
+        "topicAccesses": 18,
+        "channelAccesses": 18,
         "materialAccesses": {
-          "pdfAccess": 10,
+          "pdfAccess": 13,
           "videoAccess": 0
         }
       },
       "dashboardAccess": {
-        "totalDashboardAccesses": 1,
+        "totalDashboardAccesses": 0,
         "courseAccesses": 0,
         "topicAccesses": 0,
         "channelAccesses": 0,
-        "materialAccesses": 1
+        "materialAccesses": 0
       },
       "user": {
         "totalUserMentionedRepliedActivities": 0,
@@ -547,13 +547,13 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
-          "pdfStarted": 8,
-          "pdfCompleted": 2,
-          "slidesViewed": 65,
-          "slidesNotUnderstood": 0
+          "pdfStarted": 12,
+          "pdfCompleted": 9,
+          "slidesViewed": 58,
+          "slidesNotUnderstood": 17
         }
       },
       "tag": {
@@ -568,14 +568,14 @@
       },
       "knowledgeGraph": {
         "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
+          "totalKnowledgeGraphAccesses": 23,
           "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
+          "materialKnowledgeGraphAccesses": 6,
+          "slideKnowledgeGraphAccesses": 17
         },
         "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
+          "totalKnowledgeGraphConcept/WikiViewed": 17,
+          "totalKnowledgeGraphConceptViewed": 17,
           "totalKnowledgeGraphWikiArticleViewed": 0,
           "courseKnowledgeGraph": {
             "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
@@ -583,17 +583,17 @@
             "totalCourseKnowledgeGraphWikiArticleViewed": 0
           },
           "materialKnowledgeGraphConceptViewed": {
-            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
+            "totalMaterialKnowledgeGraphConcept/WikiViewed": 2,
             "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
-            "totalMaterialKnowledgeGraphConceptViewed": 0,
-            "mainConceptViewed": 0,
+            "totalMaterialKnowledgeGraphConceptViewed": 2,
+            "mainConceptViewed": 2,
             "relatedConceptViewed": 0,
             "categoryViewed": 0
           },
           "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
+            "totalSlideKnowledgeGraphConcept/WikiViewed": 15,
             "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
+            "totalSlideKnowledgeGraphConceptViewed": 15,
             "totalRecommendedConcept/WikiViewed": 0,
             "totalRecommendedConceptViewed": 0,
             "totalRecommendedWikiArticleViewed": 0,
@@ -634,17 +634,17 @@
   {
     "stdProfile": {
       "stdId": 5,
-      "stdUsername": "6930846a601a053a681cf7d2",
-      "course_id": "692e1e0360484ffc22837654"
+      "stdUsername": "69acbbe70e3a21f27e8714ed",
+      "course_id": "69ace154981688967a3fa6b7"
     },
     "activitiesProfile": {
-      "totalActivities": 155,
+      "totalActivities": 7,
       "annotations": {
-        "totalAddedAnnotations": 3,
+        "totalAddedAnnotations": 0,
         "totalAnnotationsFollowed": 0,
         "totalAnnotationsReplied": 0,
-        "totalNoteTypeAnnotations": 1,
-        "totalQuestionTypeAnnotations": 2,
+        "totalNoteTypeAnnotations": 0,
+        "totalQuestionTypeAnnotations": 0,
         "totalExternalResourceTypeAnnotations": 0,
         "totalPdfAnnotations": 0,
         "totalVideoAnnotations": 0,
@@ -654,15 +654,15 @@
           "drawToolOnMaterial": 0
         },
         "comment": {
-          "noteTypeCommentsOnMaterial": 1,
-          "questionTypeCommentsOnMaterial": 2,
+          "noteTypeCommentsOnMaterial": 0,
+          "questionTypeCommentsOnMaterial": 0,
           "externalResourceTypeCommentsOnMaterial": 0
         }
       },
       "likes": {
         "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 1,
-          "likesOnNoteTypeAnnotations": 1,
+          "totalLikesOnAnnotations": 0,
+          "likesOnNoteTypeAnnotations": 0,
           "likesOnQuestionTypeAnnotations": 0,
           "likesOnExternalResourceTypeAnnotations": 0
         },
@@ -678,21 +678,21 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 109,
-        "courseAccesses": 49,
-        "topicAccesses": 31,
-        "channelAccesses": 18,
+        "totalAccesses": 4,
+        "courseAccesses": 1,
+        "topicAccesses": 1,
+        "channelAccesses": 1,
         "materialAccesses": {
-          "pdfAccess": 11,
+          "pdfAccess": 1,
           "videoAccess": 0
         }
       },
       "dashboardAccess": {
-        "totalDashboardAccesses": 1,
+        "totalDashboardAccesses": 0,
         "courseAccesses": 0,
         "topicAccesses": 0,
         "channelAccesses": 0,
-        "materialAccesses": 1
+        "materialAccesses": 0
       },
       "user": {
         "totalUserMentionedRepliedActivities": 0,
@@ -705,12 +705,12 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
-          "pdfStarted": 9,
-          "pdfCompleted": 2,
-          "slidesViewed": 66,
+          "pdfStarted": 1,
+          "pdfCompleted": 0,
+          "slidesViewed": 2,
           "slidesNotUnderstood": 0
         }
       },
@@ -792,39 +792,39 @@
   {
     "stdProfile": {
       "stdId": 6,
-      "stdUsername": "69341e455df31a19a4fe1628",
-      "course_id": "692e1e0360484ffc22837654"
+      "stdUsername": "69acb9460e3a21f27e87122f",
+      "course_id": "69aa1723766e66faf4fa2de9"
     },
     "activitiesProfile": {
-      "totalActivities": 1,
+      "totalActivities": 625,
       "annotations": {
-        "totalAddedAnnotations": 0,
+        "totalAddedAnnotations": 30,
         "totalAnnotationsFollowed": 0,
-        "totalAnnotationsReplied": 0,
-        "totalNoteTypeAnnotations": 0,
-        "totalQuestionTypeAnnotations": 0,
-        "totalExternalResourceTypeAnnotations": 0,
-        "totalPdfAnnotations": 0,
+        "totalAnnotationsReplied": 6,
+        "totalNoteTypeAnnotations": 24,
+        "totalQuestionTypeAnnotations": 5,
+        "totalExternalResourceTypeAnnotations": 1,
+        "totalPdfAnnotations": 11,
         "totalVideoAnnotations": 0,
         "annotationTools": {
-          "highlightToolOnMaterial": 0,
+          "highlightToolOnMaterial": 1,
           "pinpointToolOnMaterial": 0,
-          "drawToolOnMaterial": 0
+          "drawToolOnMaterial": 6
         },
         "comment": {
-          "noteTypeCommentsOnMaterial": 0,
-          "questionTypeCommentsOnMaterial": 0,
-          "externalResourceTypeCommentsOnMaterial": 0
+          "noteTypeCommentsOnMaterial": 13,
+          "questionTypeCommentsOnMaterial": 5,
+          "externalResourceTypeCommentsOnMaterial": 1
         }
       },
       "likes": {
         "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 0,
-          "likesOnNoteTypeAnnotations": 0,
-          "likesOnQuestionTypeAnnotations": 0,
+          "totalLikesOnAnnotations": 4,
+          "likesOnNoteTypeAnnotations": 3,
+          "likesOnQuestionTypeAnnotations": 1,
           "likesOnExternalResourceTypeAnnotations": 0
         },
-        "likesOnRepliesOfAnnotations": 0
+        "likesOnRepliesOfAnnotations": 2
       },
       "dislikes": {
         "dislikesOnAnnotations": {
@@ -836,12 +836,12 @@
         "dislikesOnRepliesOfAnnotations": 0
       },
       "access": {
-        "totalAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
+        "totalAccesses": 133,
+        "courseAccesses": 28,
+        "topicAccesses": 32,
+        "channelAccesses": 37,
         "materialAccesses": {
-          "pdfAccess": 0,
+          "pdfAccess": 36,
           "videoAccess": 0
         }
       },
@@ -853,9 +853,9 @@
         "materialAccesses": 0
       },
       "user": {
-        "totalUserMentionedRepliedActivities": 0,
+        "totalUserMentionedRepliedActivities": 6,
         "mentioned": 0,
-        "replied": 0
+        "replied": 6
       },
       "materialProfile": {
         "video": {
@@ -863,13 +863,13 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
+          "timeSpentOnVideos": 0.0
         },
         "pdf": {
-          "pdfStarted": 0,
-          "pdfCompleted": 0,
-          "slidesViewed": 0,
-          "slidesNotUnderstood": 0
+          "pdfStarted": 32,
+          "pdfCompleted": 5,
+          "slidesViewed": 207,
+          "slidesNotUnderstood": 62
         }
       },
       "tag": {
@@ -884,14 +884,14 @@
       },
       "knowledgeGraph": {
         "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
+          "totalKnowledgeGraphAccesses": 66,
           "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
+          "materialKnowledgeGraphAccesses": 4,
+          "slideKnowledgeGraphAccesses": 62
         },
         "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
+          "totalKnowledgeGraphConcept/WikiViewed": 68,
+          "totalKnowledgeGraphConceptViewed": 68,
           "totalKnowledgeGraphWikiArticleViewed": 0,
           "courseKnowledgeGraph": {
             "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
@@ -899,33 +899,33 @@
             "totalCourseKnowledgeGraphWikiArticleViewed": 0
           },
           "materialKnowledgeGraphConceptViewed": {
-            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
+            "totalMaterialKnowledgeGraphConcept/WikiViewed": 10,
             "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
-            "totalMaterialKnowledgeGraphConceptViewed": 0,
-            "mainConceptViewed": 0,
+            "totalMaterialKnowledgeGraphConceptViewed": 10,
+            "mainConceptViewed": 9,
             "relatedConceptViewed": 0,
-            "categoryViewed": 0
+            "categoryViewed": 1
           },
           "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
+            "totalSlideKnowledgeGraphConcept/WikiViewed": 58,
             "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
-            "totalRecommendedConcept/WikiViewed": 0,
-            "totalRecommendedConceptViewed": 0,
+            "totalSlideKnowledgeGraphConceptViewed": 58,
+            "totalRecommendedConcept/WikiViewed": 4,
+            "totalRecommendedConceptViewed": 4,
             "totalRecommendedWikiArticleViewed": 0,
             "totalRecommendedConceptViewedVisualExplanation": 0,
             "totalRecommendedConceptViewedTextualExplanation": 0,
             "recommendedMaterial": {
-              "totalRecommendedMaterialViewed": 0,
+              "totalRecommendedMaterialViewed": 6,
               "recommendedArticleViewed": 0,
-              "recommendedVideoViewed": 0
+              "recommendedVideoViewed": 6
             }
           }
         },
         "slideKnowledgeGraphMarked": {
-          "totalSlideKnowledgeGraphMarked": 0,
+          "totalSlideKnowledgeGraphMarked": 5,
           "totalSlideKnowledgeGraphMarkedUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
+          "totalSlideKnowledgeGraphMarkedNotUnderstood": 5,
           "totalSlideKnowledgeGraphMarkedAsNew": 0,
           "totalRecommendedConceptsMarked": 0,
           "recommendedConceptsMarkedUnderstood": 0,
@@ -950,8 +950,324 @@
   {
     "stdProfile": {
       "stdId": 7,
-      "stdUsername": "69341e455df31a19a4fe1628",
-      "course_id": "69334f0b70d0bb27267da84c"
+      "stdUsername": "69acb9460e3a21f27e87122f",
+      "course_id": "69aadaec8fce8e37dc838463"
+    },
+    "activitiesProfile": {
+      "totalActivities": 33,
+      "annotations": {
+        "totalAddedAnnotations": 1,
+        "totalAnnotationsFollowed": 0,
+        "totalAnnotationsReplied": 0,
+        "totalNoteTypeAnnotations": 0,
+        "totalQuestionTypeAnnotations": 1,
+        "totalExternalResourceTypeAnnotations": 0,
+        "totalPdfAnnotations": 0,
+        "totalVideoAnnotations": 0,
+        "annotationTools": {
+          "highlightToolOnMaterial": 0,
+          "pinpointToolOnMaterial": 0,
+          "drawToolOnMaterial": 0
+        },
+        "comment": {
+          "noteTypeCommentsOnMaterial": 0,
+          "questionTypeCommentsOnMaterial": 1,
+          "externalResourceTypeCommentsOnMaterial": 0
+        }
+      },
+      "likes": {
+        "likesOnAnnotations": {
+          "totalLikesOnAnnotations": 0,
+          "likesOnNoteTypeAnnotations": 0,
+          "likesOnQuestionTypeAnnotations": 0,
+          "likesOnExternalResourceTypeAnnotations": 0
+        },
+        "likesOnRepliesOfAnnotations": 0
+      },
+      "dislikes": {
+        "dislikesOnAnnotations": {
+          "totalDislikesOnAnnotations": 0,
+          "dislikesOnNoteTypeAnnotations": 0,
+          "dislikesOnQuestionTypeAnnotations": 0,
+          "dislikesOnExternalResourceTypeAnnotations": 0
+        },
+        "dislikesOnRepliesOfAnnotations": 0
+      },
+      "access": {
+        "totalAccesses": 9,
+        "courseAccesses": 2,
+        "topicAccesses": 3,
+        "channelAccesses": 2,
+        "materialAccesses": {
+          "pdfAccess": 2,
+          "videoAccess": 0
+        }
+      },
+      "dashboardAccess": {
+        "totalDashboardAccesses": 0,
+        "courseAccesses": 0,
+        "topicAccesses": 0,
+        "channelAccesses": 0,
+        "materialAccesses": 0
+      },
+      "user": {
+        "totalUserMentionedRepliedActivities": 0,
+        "mentioned": 0,
+        "replied": 0
+      },
+      "materialProfile": {
+        "video": {
+          "videosStarted": 0,
+          "videosCompleted": 0,
+          "videosPlayed": 0,
+          "videosPauses": 0,
+          "timeSpentOnVideos": 0.0
+        },
+        "pdf": {
+          "pdfStarted": 2,
+          "pdfCompleted": 1,
+          "slidesViewed": 21,
+          "slidesNotUnderstood": 0
+        }
+      },
+      "tag": {
+        "totalAddedTags": 0,
+        "tagsViewed": {
+          "totalTagViewed": 0,
+          "courseTagviewed": 0,
+          "topicTagviewed": 0,
+          "channelTagviewed": 0,
+          "materialTagviewed": 0
+        }
+      },
+      "knowledgeGraph": {
+        "knowledgeGraphAccesses": {
+          "totalKnowledgeGraphAccesses": 0,
+          "courseKnowledgeGraphAccesses": 0,
+          "materialKnowledgeGraphAccesses": 0,
+          "slideKnowledgeGraphAccesses": 0
+        },
+        "knowledgeGraphViewed": {
+          "totalKnowledgeGraphConcept/WikiViewed": 0,
+          "totalKnowledgeGraphConceptViewed": 0,
+          "totalKnowledgeGraphWikiArticleViewed": 0,
+          "courseKnowledgeGraph": {
+            "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
+            "totalCourseKnowledgeGraphConceptViewed": 0,
+            "totalCourseKnowledgeGraphWikiArticleViewed": 0
+          },
+          "materialKnowledgeGraphConceptViewed": {
+            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
+            "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
+            "totalMaterialKnowledgeGraphConceptViewed": 0,
+            "mainConceptViewed": 0,
+            "relatedConceptViewed": 0,
+            "categoryViewed": 0
+          },
+          "slideKnowledgeGraphViewed": {
+            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
+            "totalSlideKnowledgeGraphWikiArticleViewed": 0,
+            "totalSlideKnowledgeGraphConceptViewed": 0,
+            "totalRecommendedConcept/WikiViewed": 0,
+            "totalRecommendedConceptViewed": 0,
+            "totalRecommendedWikiArticleViewed": 0,
+            "totalRecommendedConceptViewedVisualExplanation": 0,
+            "totalRecommendedConceptViewedTextualExplanation": 0,
+            "recommendedMaterial": {
+              "totalRecommendedMaterialViewed": 0,
+              "recommendedArticleViewed": 0,
+              "recommendedVideoViewed": 0
+            }
+          }
+        },
+        "slideKnowledgeGraphMarked": {
+          "totalSlideKnowledgeGraphMarked": 0,
+          "totalSlideKnowledgeGraphMarkedUnderstood": 0,
+          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
+          "totalSlideKnowledgeGraphMarkedAsNew": 0,
+          "totalRecommendedConceptsMarked": 0,
+          "recommendedConceptsMarkedUnderstood": 0,
+          "recommendedConceptsMarkedNotUnderstood": 0,
+          "recommendedConceptsMarkedMarkedAsNew": 0,
+          "recommendedMaterial": {
+            "totalRecommendedMaterialMarkedHelpful": 0,
+            "totalRecommendedMaterialMarkedNotHelpful": 0,
+            "recommendedArticleMarked": {
+              "recommendedArticleMarkedHelpful": 0,
+              "recommendedArticleMarkedNotHelpful": 0
+            },
+            "recommendedVideoMarked": {
+              "recommendedVideoMarkedHelpful": 0,
+              "recommendedVideoMarkedNotHelpful": 0
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "stdProfile": {
+      "stdId": 8,
+      "stdUsername": "69acb9460e3a21f27e87122f",
+      "course_id": "69aeae059c650bf67d7360b4"
+    },
+    "activitiesProfile": {
+      "totalActivities": 3,
+      "annotations": {
+        "totalAddedAnnotations": 0,
+        "totalAnnotationsFollowed": 0,
+        "totalAnnotationsReplied": 0,
+        "totalNoteTypeAnnotations": 0,
+        "totalQuestionTypeAnnotations": 0,
+        "totalExternalResourceTypeAnnotations": 0,
+        "totalPdfAnnotations": 0,
+        "totalVideoAnnotations": 0,
+        "annotationTools": {
+          "highlightToolOnMaterial": 0,
+          "pinpointToolOnMaterial": 0,
+          "drawToolOnMaterial": 0
+        },
+        "comment": {
+          "noteTypeCommentsOnMaterial": 0,
+          "questionTypeCommentsOnMaterial": 0,
+          "externalResourceTypeCommentsOnMaterial": 0
+        }
+      },
+      "likes": {
+        "likesOnAnnotations": {
+          "totalLikesOnAnnotations": 0,
+          "likesOnNoteTypeAnnotations": 0,
+          "likesOnQuestionTypeAnnotations": 0,
+          "likesOnExternalResourceTypeAnnotations": 0
+        },
+        "likesOnRepliesOfAnnotations": 0
+      },
+      "dislikes": {
+        "dislikesOnAnnotations": {
+          "totalDislikesOnAnnotations": 0,
+          "dislikesOnNoteTypeAnnotations": 0,
+          "dislikesOnQuestionTypeAnnotations": 0,
+          "dislikesOnExternalResourceTypeAnnotations": 0
+        },
+        "dislikesOnRepliesOfAnnotations": 0
+      },
+      "access": {
+        "totalAccesses": 1,
+        "courseAccesses": 0,
+        "topicAccesses": 1,
+        "channelAccesses": 0,
+        "materialAccesses": {
+          "pdfAccess": 0,
+          "videoAccess": 0
+        }
+      },
+      "dashboardAccess": {
+        "totalDashboardAccesses": 0,
+        "courseAccesses": 0,
+        "topicAccesses": 0,
+        "channelAccesses": 0,
+        "materialAccesses": 0
+      },
+      "user": {
+        "totalUserMentionedRepliedActivities": 0,
+        "mentioned": 0,
+        "replied": 0
+      },
+      "materialProfile": {
+        "video": {
+          "videosStarted": 0,
+          "videosCompleted": 0,
+          "videosPlayed": 0,
+          "videosPauses": 0,
+          "timeSpentOnVideos": 0.0
+        },
+        "pdf": {
+          "pdfStarted": 0,
+          "pdfCompleted": 0,
+          "slidesViewed": 0,
+          "slidesNotUnderstood": 0
+        }
+      },
+      "tag": {
+        "totalAddedTags": 0,
+        "tagsViewed": {
+          "totalTagViewed": 0,
+          "courseTagviewed": 0,
+          "topicTagviewed": 0,
+          "channelTagviewed": 0,
+          "materialTagviewed": 0
+        }
+      },
+      "knowledgeGraph": {
+        "knowledgeGraphAccesses": {
+          "totalKnowledgeGraphAccesses": 1,
+          "courseKnowledgeGraphAccesses": 0,
+          "materialKnowledgeGraphAccesses": 1,
+          "slideKnowledgeGraphAccesses": 0
+        },
+        "knowledgeGraphViewed": {
+          "totalKnowledgeGraphConcept/WikiViewed": 0,
+          "totalKnowledgeGraphConceptViewed": 0,
+          "totalKnowledgeGraphWikiArticleViewed": 0,
+          "courseKnowledgeGraph": {
+            "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
+            "totalCourseKnowledgeGraphConceptViewed": 0,
+            "totalCourseKnowledgeGraphWikiArticleViewed": 0
+          },
+          "materialKnowledgeGraphConceptViewed": {
+            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
+            "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
+            "totalMaterialKnowledgeGraphConceptViewed": 0,
+            "mainConceptViewed": 0,
+            "relatedConceptViewed": 0,
+            "categoryViewed": 0
+          },
+          "slideKnowledgeGraphViewed": {
+            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
+            "totalSlideKnowledgeGraphWikiArticleViewed": 0,
+            "totalSlideKnowledgeGraphConceptViewed": 0,
+            "totalRecommendedConcept/WikiViewed": 0,
+            "totalRecommendedConceptViewed": 0,
+            "totalRecommendedWikiArticleViewed": 0,
+            "totalRecommendedConceptViewedVisualExplanation": 0,
+            "totalRecommendedConceptViewedTextualExplanation": 0,
+            "recommendedMaterial": {
+              "totalRecommendedMaterialViewed": 0,
+              "recommendedArticleViewed": 0,
+              "recommendedVideoViewed": 0
+            }
+          }
+        },
+        "slideKnowledgeGraphMarked": {
+          "totalSlideKnowledgeGraphMarked": 0,
+          "totalSlideKnowledgeGraphMarkedUnderstood": 0,
+          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
+          "totalSlideKnowledgeGraphMarkedAsNew": 0,
+          "totalRecommendedConceptsMarked": 0,
+          "recommendedConceptsMarkedUnderstood": 0,
+          "recommendedConceptsMarkedNotUnderstood": 0,
+          "recommendedConceptsMarkedMarkedAsNew": 0,
+          "recommendedMaterial": {
+            "totalRecommendedMaterialMarkedHelpful": 0,
+            "totalRecommendedMaterialMarkedNotHelpful": 0,
+            "recommendedArticleMarked": {
+              "recommendedArticleMarkedHelpful": 0,
+              "recommendedArticleMarkedNotHelpful": 0
+            },
+            "recommendedVideoMarked": {
+              "recommendedVideoMarkedHelpful": 0,
+              "recommendedVideoMarkedNotHelpful": 0
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "stdProfile": {
+      "stdId": 9,
+      "stdUsername": "69b827a9764485f5025bb819",
+      "course_id": "69aa1723766e66faf4fa2de9"
     },
     "activitiesProfile": {
       "totalActivities": 1,
@@ -1021,164 +1337,6 @@
           "videosCompleted": 0,
           "videosPlayed": 0,
           "videosPauses": 0,
-          "timeSpentOnVideos": 0
-        },
-        "pdf": {
-          "pdfStarted": 0,
-          "pdfCompleted": 0,
-          "slidesViewed": 0,
-          "slidesNotUnderstood": 0
-        }
-      },
-      "tag": {
-        "totalAddedTags": 0,
-        "tagsViewed": {
-          "totalTagViewed": 0,
-          "courseTagviewed": 0,
-          "topicTagviewed": 0,
-          "channelTagviewed": 0,
-          "materialTagviewed": 0
-        }
-      },
-      "knowledgeGraph": {
-        "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
-          "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
-        },
-        "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
-          "totalKnowledgeGraphWikiArticleViewed": 0,
-          "courseKnowledgeGraph": {
-            "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
-            "totalCourseKnowledgeGraphConceptViewed": 0,
-            "totalCourseKnowledgeGraphWikiArticleViewed": 0
-          },
-          "materialKnowledgeGraphConceptViewed": {
-            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
-            "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
-            "totalMaterialKnowledgeGraphConceptViewed": 0,
-            "mainConceptViewed": 0,
-            "relatedConceptViewed": 0,
-            "categoryViewed": 0
-          },
-          "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
-            "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
-            "totalRecommendedConcept/WikiViewed": 0,
-            "totalRecommendedConceptViewed": 0,
-            "totalRecommendedWikiArticleViewed": 0,
-            "totalRecommendedConceptViewedVisualExplanation": 0,
-            "totalRecommendedConceptViewedTextualExplanation": 0,
-            "recommendedMaterial": {
-              "totalRecommendedMaterialViewed": 0,
-              "recommendedArticleViewed": 0,
-              "recommendedVideoViewed": 0
-            }
-          }
-        },
-        "slideKnowledgeGraphMarked": {
-          "totalSlideKnowledgeGraphMarked": 0,
-          "totalSlideKnowledgeGraphMarkedUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedAsNew": 0,
-          "totalRecommendedConceptsMarked": 0,
-          "recommendedConceptsMarkedUnderstood": 0,
-          "recommendedConceptsMarkedNotUnderstood": 0,
-          "recommendedConceptsMarkedMarkedAsNew": 0,
-          "recommendedMaterial": {
-            "totalRecommendedMaterialMarkedHelpful": 0,
-            "totalRecommendedMaterialMarkedNotHelpful": 0,
-            "recommendedArticleMarked": {
-              "recommendedArticleMarkedHelpful": 0,
-              "recommendedArticleMarkedNotHelpful": 0
-            },
-            "recommendedVideoMarked": {
-              "recommendedVideoMarkedHelpful": 0,
-              "recommendedVideoMarkedNotHelpful": 0
-            }
-          }
-        }
-      }
-    }
-  },
-  {
-    "stdProfile": {
-      "stdId": 0,
-      "stdUsername": "",
-      "course_id": ""
-    },
-    "activitiesProfile": {
-      "totalActivities": 0,
-      "annotations": {
-        "totalAddedAnnotations": 0,
-        "totalAnnotationsFollowed": 0,
-        "totalAnnotationsReplied": 0,
-        "totalNoteTypeAnnotations": 0,
-        "totalQuestionTypeAnnotations": 0,
-        "totalExternalResourceTypeAnnotations": 0,
-        "totalPdfAnnotations": 0,
-        "totalVideoAnnotations": 0,
-        "annotationTools": {
-          "highlightToolOnMaterial": 0,
-          "pinpointToolOnMaterial": 0,
-          "drawToolOnMaterial": 0
-        },
-        "comment": {
-          "noteTypeCommentsOnMaterial": 0,
-          "questionTypeCommentsOnMaterial": 0,
-          "externalResourceTypeCommentsOnMaterial": 0
-        }
-      },
-      "likes": {
-        "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 0,
-          "likesOnNoteTypeAnnotations": 0,
-          "likesOnQuestionTypeAnnotations": 0,
-          "likesOnExternalResourceTypeAnnotations": 0
-        },
-        "likesOnRepliesOfAnnotations": 0
-      },
-      "dislikes": {
-        "dislikesOnAnnotations": {
-          "totalDislikesOnAnnotations": 0,
-          "dislikesOnNoteTypeAnnotations": 0,
-          "dislikesOnQuestionTypeAnnotations": 0,
-          "dislikesOnExternalResourceTypeAnnotations": 0
-        },
-        "dislikesOnRepliesOfAnnotations": 0
-      },
-      "access": {
-        "totalAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": {
-          "pdfAccess": 0,
-          "videoAccess": 0
-        }
-      },
-      "dashboardAccess": {
-        "totalDashboardAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": 0
-      },
-      "user": {
-        "totalUserMentionedRepliedActivities": 0,
-        "mentioned": 0,
-        "replied": 0
-      },
-      "materialProfile": {
-        "video": {
-          "videosStarted": 0,
-          "videosCompleted": 0,
-          "videosPlayed": 0,
-          "videosPauses": 0,
           "timeSpentOnVideos": 0.0
         },
         "pdf": {
@@ -1265,802 +1423,12 @@
   },
   {
     "stdProfile": {
-      "stdId": 0,
-      "stdUsername": "",
-      "course_id": ""
+      "stdId": 10,
+      "stdUsername": "69b827a9764485f5025bb819",
+      "course_id": "69aadaec8fce8e37dc838463"
     },
     "activitiesProfile": {
-      "totalActivities": 0,
-      "annotations": {
-        "totalAddedAnnotations": 0,
-        "totalAnnotationsFollowed": 0,
-        "totalAnnotationsReplied": 0,
-        "totalNoteTypeAnnotations": 0,
-        "totalQuestionTypeAnnotations": 0,
-        "totalExternalResourceTypeAnnotations": 0,
-        "totalPdfAnnotations": 0,
-        "totalVideoAnnotations": 0,
-        "annotationTools": {
-          "highlightToolOnMaterial": 0,
-          "pinpointToolOnMaterial": 0,
-          "drawToolOnMaterial": 0
-        },
-        "comment": {
-          "noteTypeCommentsOnMaterial": 0,
-          "questionTypeCommentsOnMaterial": 0,
-          "externalResourceTypeCommentsOnMaterial": 0
-        }
-      },
-      "likes": {
-        "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 0,
-          "likesOnNoteTypeAnnotations": 0,
-          "likesOnQuestionTypeAnnotations": 0,
-          "likesOnExternalResourceTypeAnnotations": 0
-        },
-        "likesOnRepliesOfAnnotations": 0
-      },
-      "dislikes": {
-        "dislikesOnAnnotations": {
-          "totalDislikesOnAnnotations": 0,
-          "dislikesOnNoteTypeAnnotations": 0,
-          "dislikesOnQuestionTypeAnnotations": 0,
-          "dislikesOnExternalResourceTypeAnnotations": 0
-        },
-        "dislikesOnRepliesOfAnnotations": 0
-      },
-      "access": {
-        "totalAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": {
-          "pdfAccess": 0,
-          "videoAccess": 0
-        }
-      },
-      "dashboardAccess": {
-        "totalDashboardAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": 0
-      },
-      "user": {
-        "totalUserMentionedRepliedActivities": 0,
-        "mentioned": 0,
-        "replied": 0
-      },
-      "materialProfile": {
-        "video": {
-          "videosStarted": 0,
-          "videosCompleted": 0,
-          "videosPlayed": 0,
-          "videosPauses": 0,
-          "timeSpentOnVideos": 0.0
-        },
-        "pdf": {
-          "pdfStarted": 0,
-          "pdfCompleted": 0,
-          "slidesViewed": 0,
-          "slidesNotUnderstood": 0
-        }
-      },
-      "tag": {
-        "totalAddedTags": 0,
-        "tagsViewed": {
-          "totalTagViewed": 0,
-          "courseTagviewed": 0,
-          "topicTagviewed": 0,
-          "channelTagviewed": 0,
-          "materialTagviewed": 0
-        }
-      },
-      "knowledgeGraph": {
-        "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
-          "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
-        },
-        "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
-          "totalKnowledgeGraphWikiArticleViewed": 0,
-          "courseKnowledgeGraph": {
-            "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
-            "totalCourseKnowledgeGraphConceptViewed": 0,
-            "totalCourseKnowledgeGraphWikiArticleViewed": 0
-          },
-          "materialKnowledgeGraphConceptViewed": {
-            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
-            "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
-            "totalMaterialKnowledgeGraphConceptViewed": 0,
-            "mainConceptViewed": 0,
-            "relatedConceptViewed": 0,
-            "categoryViewed": 0
-          },
-          "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
-            "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
-            "totalRecommendedConcept/WikiViewed": 0,
-            "totalRecommendedConceptViewed": 0,
-            "totalRecommendedWikiArticleViewed": 0,
-            "totalRecommendedConceptViewedVisualExplanation": 0,
-            "totalRecommendedConceptViewedTextualExplanation": 0,
-            "recommendedMaterial": {
-              "totalRecommendedMaterialViewed": 0,
-              "recommendedArticleViewed": 0,
-              "recommendedVideoViewed": 0
-            }
-          }
-        },
-        "slideKnowledgeGraphMarked": {
-          "totalSlideKnowledgeGraphMarked": 0,
-          "totalSlideKnowledgeGraphMarkedUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedAsNew": 0,
-          "totalRecommendedConceptsMarked": 0,
-          "recommendedConceptsMarkedUnderstood": 0,
-          "recommendedConceptsMarkedNotUnderstood": 0,
-          "recommendedConceptsMarkedMarkedAsNew": 0,
-          "recommendedMaterial": {
-            "totalRecommendedMaterialMarkedHelpful": 0,
-            "totalRecommendedMaterialMarkedNotHelpful": 0,
-            "recommendedArticleMarked": {
-              "recommendedArticleMarkedHelpful": 0,
-              "recommendedArticleMarkedNotHelpful": 0
-            },
-            "recommendedVideoMarked": {
-              "recommendedVideoMarkedHelpful": 0,
-              "recommendedVideoMarkedNotHelpful": 0
-            }
-          }
-        }
-      }
-    }
-  },
-  {
-    "stdProfile": {
-      "stdId": 0,
-      "stdUsername": "",
-      "course_id": ""
-    },
-    "activitiesProfile": {
-      "totalActivities": 0,
-      "annotations": {
-        "totalAddedAnnotations": 0,
-        "totalAnnotationsFollowed": 0,
-        "totalAnnotationsReplied": 0,
-        "totalNoteTypeAnnotations": 0,
-        "totalQuestionTypeAnnotations": 0,
-        "totalExternalResourceTypeAnnotations": 0,
-        "totalPdfAnnotations": 0,
-        "totalVideoAnnotations": 0,
-        "annotationTools": {
-          "highlightToolOnMaterial": 0,
-          "pinpointToolOnMaterial": 0,
-          "drawToolOnMaterial": 0
-        },
-        "comment": {
-          "noteTypeCommentsOnMaterial": 0,
-          "questionTypeCommentsOnMaterial": 0,
-          "externalResourceTypeCommentsOnMaterial": 0
-        }
-      },
-      "likes": {
-        "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 0,
-          "likesOnNoteTypeAnnotations": 0,
-          "likesOnQuestionTypeAnnotations": 0,
-          "likesOnExternalResourceTypeAnnotations": 0
-        },
-        "likesOnRepliesOfAnnotations": 0
-      },
-      "dislikes": {
-        "dislikesOnAnnotations": {
-          "totalDislikesOnAnnotations": 0,
-          "dislikesOnNoteTypeAnnotations": 0,
-          "dislikesOnQuestionTypeAnnotations": 0,
-          "dislikesOnExternalResourceTypeAnnotations": 0
-        },
-        "dislikesOnRepliesOfAnnotations": 0
-      },
-      "access": {
-        "totalAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": {
-          "pdfAccess": 0,
-          "videoAccess": 0
-        }
-      },
-      "dashboardAccess": {
-        "totalDashboardAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": 0
-      },
-      "user": {
-        "totalUserMentionedRepliedActivities": 0,
-        "mentioned": 0,
-        "replied": 0
-      },
-      "materialProfile": {
-        "video": {
-          "videosStarted": 0,
-          "videosCompleted": 0,
-          "videosPlayed": 0,
-          "videosPauses": 0,
-          "timeSpentOnVideos": 0.0
-        },
-        "pdf": {
-          "pdfStarted": 0,
-          "pdfCompleted": 0,
-          "slidesViewed": 0,
-          "slidesNotUnderstood": 0
-        }
-      },
-      "tag": {
-        "totalAddedTags": 0,
-        "tagsViewed": {
-          "totalTagViewed": 0,
-          "courseTagviewed": 0,
-          "topicTagviewed": 0,
-          "channelTagviewed": 0,
-          "materialTagviewed": 0
-        }
-      },
-      "knowledgeGraph": {
-        "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
-          "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
-        },
-        "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
-          "totalKnowledgeGraphWikiArticleViewed": 0,
-          "courseKnowledgeGraph": {
-            "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
-            "totalCourseKnowledgeGraphConceptViewed": 0,
-            "totalCourseKnowledgeGraphWikiArticleViewed": 0
-          },
-          "materialKnowledgeGraphConceptViewed": {
-            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
-            "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
-            "totalMaterialKnowledgeGraphConceptViewed": 0,
-            "mainConceptViewed": 0,
-            "relatedConceptViewed": 0,
-            "categoryViewed": 0
-          },
-          "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
-            "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
-            "totalRecommendedConcept/WikiViewed": 0,
-            "totalRecommendedConceptViewed": 0,
-            "totalRecommendedWikiArticleViewed": 0,
-            "totalRecommendedConceptViewedVisualExplanation": 0,
-            "totalRecommendedConceptViewedTextualExplanation": 0,
-            "recommendedMaterial": {
-              "totalRecommendedMaterialViewed": 0,
-              "recommendedArticleViewed": 0,
-              "recommendedVideoViewed": 0
-            }
-          }
-        },
-        "slideKnowledgeGraphMarked": {
-          "totalSlideKnowledgeGraphMarked": 0,
-          "totalSlideKnowledgeGraphMarkedUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedAsNew": 0,
-          "totalRecommendedConceptsMarked": 0,
-          "recommendedConceptsMarkedUnderstood": 0,
-          "recommendedConceptsMarkedNotUnderstood": 0,
-          "recommendedConceptsMarkedMarkedAsNew": 0,
-          "recommendedMaterial": {
-            "totalRecommendedMaterialMarkedHelpful": 0,
-            "totalRecommendedMaterialMarkedNotHelpful": 0,
-            "recommendedArticleMarked": {
-              "recommendedArticleMarkedHelpful": 0,
-              "recommendedArticleMarkedNotHelpful": 0
-            },
-            "recommendedVideoMarked": {
-              "recommendedVideoMarkedHelpful": 0,
-              "recommendedVideoMarkedNotHelpful": 0
-            }
-          }
-        }
-      }
-    }
-  },
-  {
-    "stdProfile": {
-      "stdId": 0,
-      "stdUsername": "",
-      "course_id": ""
-    },
-    "activitiesProfile": {
-      "totalActivities": 0,
-      "annotations": {
-        "totalAddedAnnotations": 0,
-        "totalAnnotationsFollowed": 0,
-        "totalAnnotationsReplied": 0,
-        "totalNoteTypeAnnotations": 0,
-        "totalQuestionTypeAnnotations": 0,
-        "totalExternalResourceTypeAnnotations": 0,
-        "totalPdfAnnotations": 0,
-        "totalVideoAnnotations": 0,
-        "annotationTools": {
-          "highlightToolOnMaterial": 0,
-          "pinpointToolOnMaterial": 0,
-          "drawToolOnMaterial": 0
-        },
-        "comment": {
-          "noteTypeCommentsOnMaterial": 0,
-          "questionTypeCommentsOnMaterial": 0,
-          "externalResourceTypeCommentsOnMaterial": 0
-        }
-      },
-      "likes": {
-        "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 0,
-          "likesOnNoteTypeAnnotations": 0,
-          "likesOnQuestionTypeAnnotations": 0,
-          "likesOnExternalResourceTypeAnnotations": 0
-        },
-        "likesOnRepliesOfAnnotations": 0
-      },
-      "dislikes": {
-        "dislikesOnAnnotations": {
-          "totalDislikesOnAnnotations": 0,
-          "dislikesOnNoteTypeAnnotations": 0,
-          "dislikesOnQuestionTypeAnnotations": 0,
-          "dislikesOnExternalResourceTypeAnnotations": 0
-        },
-        "dislikesOnRepliesOfAnnotations": 0
-      },
-      "access": {
-        "totalAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": {
-          "pdfAccess": 0,
-          "videoAccess": 0
-        }
-      },
-      "dashboardAccess": {
-        "totalDashboardAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": 0
-      },
-      "user": {
-        "totalUserMentionedRepliedActivities": 0,
-        "mentioned": 0,
-        "replied": 0
-      },
-      "materialProfile": {
-        "video": {
-          "videosStarted": 0,
-          "videosCompleted": 0,
-          "videosPlayed": 0,
-          "videosPauses": 0,
-          "timeSpentOnVideos": 0.0
-        },
-        "pdf": {
-          "pdfStarted": 0,
-          "pdfCompleted": 0,
-          "slidesViewed": 0,
-          "slidesNotUnderstood": 0
-        }
-      },
-      "tag": {
-        "totalAddedTags": 0,
-        "tagsViewed": {
-          "totalTagViewed": 0,
-          "courseTagviewed": 0,
-          "topicTagviewed": 0,
-          "channelTagviewed": 0,
-          "materialTagviewed": 0
-        }
-      },
-      "knowledgeGraph": {
-        "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
-          "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
-        },
-        "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
-          "totalKnowledgeGraphWikiArticleViewed": 0,
-          "courseKnowledgeGraph": {
-            "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
-            "totalCourseKnowledgeGraphConceptViewed": 0,
-            "totalCourseKnowledgeGraphWikiArticleViewed": 0
-          },
-          "materialKnowledgeGraphConceptViewed": {
-            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
-            "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
-            "totalMaterialKnowledgeGraphConceptViewed": 0,
-            "mainConceptViewed": 0,
-            "relatedConceptViewed": 0,
-            "categoryViewed": 0
-          },
-          "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
-            "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
-            "totalRecommendedConcept/WikiViewed": 0,
-            "totalRecommendedConceptViewed": 0,
-            "totalRecommendedWikiArticleViewed": 0,
-            "totalRecommendedConceptViewedVisualExplanation": 0,
-            "totalRecommendedConceptViewedTextualExplanation": 0,
-            "recommendedMaterial": {
-              "totalRecommendedMaterialViewed": 0,
-              "recommendedArticleViewed": 0,
-              "recommendedVideoViewed": 0
-            }
-          }
-        },
-        "slideKnowledgeGraphMarked": {
-          "totalSlideKnowledgeGraphMarked": 0,
-          "totalSlideKnowledgeGraphMarkedUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedAsNew": 0,
-          "totalRecommendedConceptsMarked": 0,
-          "recommendedConceptsMarkedUnderstood": 0,
-          "recommendedConceptsMarkedNotUnderstood": 0,
-          "recommendedConceptsMarkedMarkedAsNew": 0,
-          "recommendedMaterial": {
-            "totalRecommendedMaterialMarkedHelpful": 0,
-            "totalRecommendedMaterialMarkedNotHelpful": 0,
-            "recommendedArticleMarked": {
-              "recommendedArticleMarkedHelpful": 0,
-              "recommendedArticleMarkedNotHelpful": 0
-            },
-            "recommendedVideoMarked": {
-              "recommendedVideoMarkedHelpful": 0,
-              "recommendedVideoMarkedNotHelpful": 0
-            }
-          }
-        }
-      }
-    }
-  },
-  {
-    "stdProfile": {
-      "stdId": 0,
-      "stdUsername": "",
-      "course_id": ""
-    },
-    "activitiesProfile": {
-      "totalActivities": 0,
-      "annotations": {
-        "totalAddedAnnotations": 0,
-        "totalAnnotationsFollowed": 0,
-        "totalAnnotationsReplied": 0,
-        "totalNoteTypeAnnotations": 0,
-        "totalQuestionTypeAnnotations": 0,
-        "totalExternalResourceTypeAnnotations": 0,
-        "totalPdfAnnotations": 0,
-        "totalVideoAnnotations": 0,
-        "annotationTools": {
-          "highlightToolOnMaterial": 0,
-          "pinpointToolOnMaterial": 0,
-          "drawToolOnMaterial": 0
-        },
-        "comment": {
-          "noteTypeCommentsOnMaterial": 0,
-          "questionTypeCommentsOnMaterial": 0,
-          "externalResourceTypeCommentsOnMaterial": 0
-        }
-      },
-      "likes": {
-        "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 0,
-          "likesOnNoteTypeAnnotations": 0,
-          "likesOnQuestionTypeAnnotations": 0,
-          "likesOnExternalResourceTypeAnnotations": 0
-        },
-        "likesOnRepliesOfAnnotations": 0
-      },
-      "dislikes": {
-        "dislikesOnAnnotations": {
-          "totalDislikesOnAnnotations": 0,
-          "dislikesOnNoteTypeAnnotations": 0,
-          "dislikesOnQuestionTypeAnnotations": 0,
-          "dislikesOnExternalResourceTypeAnnotations": 0
-        },
-        "dislikesOnRepliesOfAnnotations": 0
-      },
-      "access": {
-        "totalAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": {
-          "pdfAccess": 0,
-          "videoAccess": 0
-        }
-      },
-      "dashboardAccess": {
-        "totalDashboardAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": 0
-      },
-      "user": {
-        "totalUserMentionedRepliedActivities": 0,
-        "mentioned": 0,
-        "replied": 0
-      },
-      "materialProfile": {
-        "video": {
-          "videosStarted": 0,
-          "videosCompleted": 0,
-          "videosPlayed": 0,
-          "videosPauses": 0,
-          "timeSpentOnVideos": 0.0
-        },
-        "pdf": {
-          "pdfStarted": 0,
-          "pdfCompleted": 0,
-          "slidesViewed": 0,
-          "slidesNotUnderstood": 0
-        }
-      },
-      "tag": {
-        "totalAddedTags": 0,
-        "tagsViewed": {
-          "totalTagViewed": 0,
-          "courseTagviewed": 0,
-          "topicTagviewed": 0,
-          "channelTagviewed": 0,
-          "materialTagviewed": 0
-        }
-      },
-      "knowledgeGraph": {
-        "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
-          "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
-        },
-        "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
-          "totalKnowledgeGraphWikiArticleViewed": 0,
-          "courseKnowledgeGraph": {
-            "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
-            "totalCourseKnowledgeGraphConceptViewed": 0,
-            "totalCourseKnowledgeGraphWikiArticleViewed": 0
-          },
-          "materialKnowledgeGraphConceptViewed": {
-            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
-            "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
-            "totalMaterialKnowledgeGraphConceptViewed": 0,
-            "mainConceptViewed": 0,
-            "relatedConceptViewed": 0,
-            "categoryViewed": 0
-          },
-          "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
-            "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
-            "totalRecommendedConcept/WikiViewed": 0,
-            "totalRecommendedConceptViewed": 0,
-            "totalRecommendedWikiArticleViewed": 0,
-            "totalRecommendedConceptViewedVisualExplanation": 0,
-            "totalRecommendedConceptViewedTextualExplanation": 0,
-            "recommendedMaterial": {
-              "totalRecommendedMaterialViewed": 0,
-              "recommendedArticleViewed": 0,
-              "recommendedVideoViewed": 0
-            }
-          }
-        },
-        "slideKnowledgeGraphMarked": {
-          "totalSlideKnowledgeGraphMarked": 0,
-          "totalSlideKnowledgeGraphMarkedUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedAsNew": 0,
-          "totalRecommendedConceptsMarked": 0,
-          "recommendedConceptsMarkedUnderstood": 0,
-          "recommendedConceptsMarkedNotUnderstood": 0,
-          "recommendedConceptsMarkedMarkedAsNew": 0,
-          "recommendedMaterial": {
-            "totalRecommendedMaterialMarkedHelpful": 0,
-            "totalRecommendedMaterialMarkedNotHelpful": 0,
-            "recommendedArticleMarked": {
-              "recommendedArticleMarkedHelpful": 0,
-              "recommendedArticleMarkedNotHelpful": 0
-            },
-            "recommendedVideoMarked": {
-              "recommendedVideoMarkedHelpful": 0,
-              "recommendedVideoMarkedNotHelpful": 0
-            }
-          }
-        }
-      }
-    }
-  },
-  {
-    "stdProfile": {
-      "stdId": 0,
-      "stdUsername": "",
-      "course_id": ""
-    },
-    "activitiesProfile": {
-      "totalActivities": 0,
-      "annotations": {
-        "totalAddedAnnotations": 0,
-        "totalAnnotationsFollowed": 0,
-        "totalAnnotationsReplied": 0,
-        "totalNoteTypeAnnotations": 0,
-        "totalQuestionTypeAnnotations": 0,
-        "totalExternalResourceTypeAnnotations": 0,
-        "totalPdfAnnotations": 0,
-        "totalVideoAnnotations": 0,
-        "annotationTools": {
-          "highlightToolOnMaterial": 0,
-          "pinpointToolOnMaterial": 0,
-          "drawToolOnMaterial": 0
-        },
-        "comment": {
-          "noteTypeCommentsOnMaterial": 0,
-          "questionTypeCommentsOnMaterial": 0,
-          "externalResourceTypeCommentsOnMaterial": 0
-        }
-      },
-      "likes": {
-        "likesOnAnnotations": {
-          "totalLikesOnAnnotations": 0,
-          "likesOnNoteTypeAnnotations": 0,
-          "likesOnQuestionTypeAnnotations": 0,
-          "likesOnExternalResourceTypeAnnotations": 0
-        },
-        "likesOnRepliesOfAnnotations": 0
-      },
-      "dislikes": {
-        "dislikesOnAnnotations": {
-          "totalDislikesOnAnnotations": 0,
-          "dislikesOnNoteTypeAnnotations": 0,
-          "dislikesOnQuestionTypeAnnotations": 0,
-          "dislikesOnExternalResourceTypeAnnotations": 0
-        },
-        "dislikesOnRepliesOfAnnotations": 0
-      },
-      "access": {
-        "totalAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": {
-          "pdfAccess": 0,
-          "videoAccess": 0
-        }
-      },
-      "dashboardAccess": {
-        "totalDashboardAccesses": 0,
-        "courseAccesses": 0,
-        "topicAccesses": 0,
-        "channelAccesses": 0,
-        "materialAccesses": 0
-      },
-      "user": {
-        "totalUserMentionedRepliedActivities": 0,
-        "mentioned": 0,
-        "replied": 0
-      },
-      "materialProfile": {
-        "video": {
-          "videosStarted": 0,
-          "videosCompleted": 0,
-          "videosPlayed": 0,
-          "videosPauses": 0,
-          "timeSpentOnVideos": 0.0
-        },
-        "pdf": {
-          "pdfStarted": 0,
-          "pdfCompleted": 0,
-          "slidesViewed": 0,
-          "slidesNotUnderstood": 0
-        }
-      },
-      "tag": {
-        "totalAddedTags": 0,
-        "tagsViewed": {
-          "totalTagViewed": 0,
-          "courseTagviewed": 0,
-          "topicTagviewed": 0,
-          "channelTagviewed": 0,
-          "materialTagviewed": 0
-        }
-      },
-      "knowledgeGraph": {
-        "knowledgeGraphAccesses": {
-          "totalKnowledgeGraphAccesses": 0,
-          "courseKnowledgeGraphAccesses": 0,
-          "materialKnowledgeGraphAccesses": 0,
-          "slideKnowledgeGraphAccesses": 0
-        },
-        "knowledgeGraphViewed": {
-          "totalKnowledgeGraphConcept/WikiViewed": 0,
-          "totalKnowledgeGraphConceptViewed": 0,
-          "totalKnowledgeGraphWikiArticleViewed": 0,
-          "courseKnowledgeGraph": {
-            "totalCourseKnowledgeGraphConcept/WikiViewed": 0,
-            "totalCourseKnowledgeGraphConceptViewed": 0,
-            "totalCourseKnowledgeGraphWikiArticleViewed": 0
-          },
-          "materialKnowledgeGraphConceptViewed": {
-            "totalMaterialKnowledgeGraphConcept/WikiViewed": 0,
-            "totalMaterialKnowledgeGraphWikiArticleViewed": 0,
-            "totalMaterialKnowledgeGraphConceptViewed": 0,
-            "mainConceptViewed": 0,
-            "relatedConceptViewed": 0,
-            "categoryViewed": 0
-          },
-          "slideKnowledgeGraphViewed": {
-            "totalSlideKnowledgeGraphConcept/WikiViewed": 0,
-            "totalSlideKnowledgeGraphWikiArticleViewed": 0,
-            "totalSlideKnowledgeGraphConceptViewed": 0,
-            "totalRecommendedConcept/WikiViewed": 0,
-            "totalRecommendedConceptViewed": 0,
-            "totalRecommendedWikiArticleViewed": 0,
-            "totalRecommendedConceptViewedVisualExplanation": 0,
-            "totalRecommendedConceptViewedTextualExplanation": 0,
-            "recommendedMaterial": {
-              "totalRecommendedMaterialViewed": 0,
-              "recommendedArticleViewed": 0,
-              "recommendedVideoViewed": 0
-            }
-          }
-        },
-        "slideKnowledgeGraphMarked": {
-          "totalSlideKnowledgeGraphMarked": 0,
-          "totalSlideKnowledgeGraphMarkedUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedNotUnderstood": 0,
-          "totalSlideKnowledgeGraphMarkedAsNew": 0,
-          "totalRecommendedConceptsMarked": 0,
-          "recommendedConceptsMarkedUnderstood": 0,
-          "recommendedConceptsMarkedNotUnderstood": 0,
-          "recommendedConceptsMarkedMarkedAsNew": 0,
-          "recommendedMaterial": {
-            "totalRecommendedMaterialMarkedHelpful": 0,
-            "totalRecommendedMaterialMarkedNotHelpful": 0,
-            "recommendedArticleMarked": {
-              "recommendedArticleMarkedHelpful": 0,
-              "recommendedArticleMarkedNotHelpful": 0
-            },
-            "recommendedVideoMarked": {
-              "recommendedVideoMarkedHelpful": 0,
-              "recommendedVideoMarkedNotHelpful": 0
-            }
-          }
-        }
-      }
-    }
-  },
-  {
-    "stdProfile": {
-      "stdId": 0,
-      "stdUsername": "",
-      "course_id": ""
-    },
-    "activitiesProfile": {
-      "totalActivities": 0,
+      "totalActivities": 1,
       "annotations": {
         "totalAddedAnnotations": 0,
         "totalAnnotationsFollowed": 0,

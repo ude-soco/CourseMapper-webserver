@@ -70,6 +70,7 @@ class ExpandMaterialPipeline:
             raise ValueError('Material node not found')
 
         material_id = material_node.id
+        push_log_message(f'Processing material: {material_node.name} (id={material_id})')
         file_embedding = self._embedding_service.encode(material_node.text)
 
         # Connect nodes to categories

@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 
 import cytoscape from 'cytoscape';
+
 import dagre from 'cytoscape-dagre';
 import cola from 'cytoscape-cola';
 import coseBilkent from 'cytoscape-cose-bilkent';
@@ -112,7 +113,9 @@ export class CytoscapeComponent {
   }
   public irrelevantConcepts = []; // Define this property in your class
   showBulkDeletion: boolean = true; // Define this property in your class
-  public showAllStyle: cytoscape.Stylesheet[] = [
+  // public showAllStyle: cytoscape.Stylesheet[] = [
+  public showAllStyle: any[] = [
+  
     {
       selector: 'node',
       style: {
@@ -237,7 +240,8 @@ export class CytoscapeComponent {
     },
     {
       selector: '.hidden',
-      css: {
+      //css: {
+      style: {
         display: 'none',
       },
     },

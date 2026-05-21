@@ -223,7 +223,8 @@ export class CytoscapeUserKgComponent {
   public irrelevantConcepts: string[] = []; // Define this property in your class
   showBulkDeletion: boolean = true; // Define this property in your class
 
-  public showAllStyle: cytoscape.Stylesheet[] = [
+  // public showAllStyle: cytoscape.Stylesheet[] = [
+  public showAllStyle: any[] = [
     {
       selector: 'node',
       style: {
@@ -319,7 +320,8 @@ export class CytoscapeUserKgComponent {
     },
     {
       selector: '.hidden',
-      css: {
+      //css: {
+      style: {
         display: 'none',
       },
     },

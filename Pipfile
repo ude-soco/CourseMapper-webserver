@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 apscheduler = "*"
+numpy = "*"
+neo4j = "*"
 
 [dev-packages]
 

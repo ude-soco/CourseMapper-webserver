@@ -1,0 +1,68 @@
+{
+  "root": "D:\\GitHub\\CourseMapper-webserver\\coursemapper-kg\\recommendation\\app\\services\\course_materials\\Mooc_Recommendation\\MoocCube_Evaluation",
+  "total": 5,
+  "bad": 0,
+  "ok": 5,
+  "results": [
+    {
+      "file": "D:\\GitHub\\CourseMapper-webserver\\coursemapper-kg\\recommendation\\app\\services\\course_materials\\Mooc_Recommendation\\MoocCube_Evaluation\\outputs\\embeddings\\concept_name_embeddings.npy",
+      "ok": true,
+      "shape": [
+        25200,
+        768
+      ],
+      "dtype": "float32",
+      "size": 19353600,
+      "note": "",
+      "error": ""
+    },
+    {
+      "file": "D:\\GitHub\\CourseMapper-webserver\\coursemapper-kg\\recommendation\\app\\services\\course_materials\\Mooc_Recommendation\\MoocCube_Evaluation\\outputs\\embeddings\\course_initial_embeddings.npy",
+      "ok": true,
+      "shape": [
+        706,
+        768
+      ],
+      "dtype": "float32",
+      "size": 542208,
+      "note": "",
+      "error": ""
+    },
+    {
+      "file": "D:\\GitHub\\CourseMapper-webserver\\coursemapper-kg\\recommendation\\app\\services\\course_materials\\Mooc_Recommendation\\MoocCube_Evaluation\\outputs\\embeddings\\course_name_embeddings.npy",
+      "ok": true,
+      "shape": [
+        706,
+        768
+      ],
+      "dtype": "float32",
+      "size": 542208,
+      "note": "",
+      "error": ""
+    },
+    {
+      "file": "D:\\GitHub\\CourseMapper-webserver\\coursemapper-kg\\recommendation\\app\\services\\course_materials\\Mooc_Recommendation\\MoocCube_Evaluation\\outputs\\train\\user_concept_final_embeddings.npy",
+      "ok": true,
+      "shape": [
+        614031,
+        768
+      ],
+      "dtype": "float32",
+      "size": 471575808,
+      "note": "",
+      "error": ""
+    },
+    {
+      "file": "D:\\GitHub\\CourseMapper-webserver\\coursemapper-kg\\recommendation\\app\\services\\course_materials\\Mooc_Recommendation\\MoocCube_Evaluation\\outputs\\train\\user_course_final_embeddings.npy",
+      "ok": true,
+      "shape": [
+        34655,
+        768
+      ],
+      "dtype": "float32",
+      "size": 26615040,
+      "note": "",
+      "error": ""
+    }
+  ]
+}

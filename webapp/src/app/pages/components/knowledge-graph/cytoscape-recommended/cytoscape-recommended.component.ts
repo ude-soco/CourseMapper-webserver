@@ -149,7 +149,8 @@ export class CytoscapeRecommendedComponent {
       })
     );
   }
-  public showAllStyle: cytoscape.Stylesheet[] = [
+  // public showAllStyle: cytoscape.Stylesheet[] = [
+  public showAllStyle: any[] = [
     // the stylesheet for the graph
     {
       selector: 'node',
@@ -187,7 +188,8 @@ export class CytoscapeRecommendedComponent {
 
     {
       selector: ':selected',
-      css: {
+      //css: {
+      style: {
         // 'border-color': 'gold',
         // 'border-width': 'mapData(weight, 0, 1, 1, 3)',
         // 'border-opacity': 0.5,
@@ -195,7 +197,8 @@ export class CytoscapeRecommendedComponent {
     },
     {
       selector: '.hidden',
-      css: {
+      //css: {
+      style: {
         display: 'none',
       },
     },

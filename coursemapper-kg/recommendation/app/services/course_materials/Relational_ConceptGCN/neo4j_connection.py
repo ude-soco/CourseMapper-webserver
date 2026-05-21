@@ -6,18 +6,30 @@ from bson import ObjectId
 from pymongo import MongoClient
 from sentence_transformers import util
 from collections import defaultdict, deque
+from dotenv import load_dotenv
+load_dotenv()
 class DBConnection:
+    
     def __init__(self, uri='bolt://localhost:7687', username='neo4j', password='1234qwer!'):
-        self.driver = GraphDatabase.driver(uri,
-                                    auth=(username, password),
-                                    encrypted=False)
-        # Define the connection URI, username, and password
+        self.driver = GraphDatabase.driver(uri,auth=(username, password),encrypted=False)
+    
+    # Define the connection URI, username, and password
         # self.uri = uri 
         # self.username = username
         # self.password = password
         
         # self.concepts = []
 
+    """
+    def __init__(self):
+        uri = os.getenv("NEO4J_URI")
+        username = os.getenv("NEO4J_USER")
+        password = os.getenv("NEO4J_PASSWORD")
+        self.driver = GraphDatabase.driver(uri,auth=(username, password),encrypted=False)
+        
+    """
+
+        
     def prerequisite_relation(self,mid='66eee5b2d002dc3075b6c37d'):
         session = self.driver.session()
         tx = session.begin_transaction()
@@ -222,6 +234,8 @@ class DBConnection:
             # step 1: Calculate sequential weight matrix
 
             embeddings = [np.array(dnu_concept_mid[node]["embedding"]) for node in dnu_concept_ids_list]
+            print("First two embeddings:", embeddings[:2])
+            
             num_nodes = len(dnu_concept_ids_list)
             dnu_weight_matrix = np.zeros((num_nodes, num_nodes))
             # get the weight among the dnu concept

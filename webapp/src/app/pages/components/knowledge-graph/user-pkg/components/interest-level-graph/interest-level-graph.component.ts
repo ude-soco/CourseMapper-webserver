@@ -177,7 +177,7 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         initialTemp: 300,
         coolingFactor: 0.99,
         minTemp: 1.0
-      },
+      }as any,
       wheelSensitivity: 0.2,
     });
 

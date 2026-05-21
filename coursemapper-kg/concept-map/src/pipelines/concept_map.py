@@ -29,6 +29,7 @@ class ConceptMapPipeline:
             self.graph_db = GraphDB(Config.NEO4J_URI, Config.NEO4J_USER, Config.NEO4J_PASSWORD)
 
     def run(self, push_log_message: Callable, material_id: str, material_name: str, infile: List[str] | BytesIO) -> Graph:
+        push_log_message(f"Processing material: {material_name} (id={material_id})")
         # Create new graph
         graph = Graph()
 
