@@ -170,6 +170,7 @@ async function createLRSStore(courseName) {
     const response = await openlapClient.post('/api/v1/lrs/create', {
       title: courseName.trim(),
       uniqueIdentifierType: UNIQUE_IDENTIFIER_TYPE
+      //
     });
     
     const lrsData = response.data.data;

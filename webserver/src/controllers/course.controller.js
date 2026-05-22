@@ -530,17 +530,15 @@ export const newCourse = async (req, res, next) => {
     updatedAt: Date.now(),
     users: userList,
     url: imageUrl,
-    lrsStore: req.lrsStore || { status: 'none' }  // Add LRS store data from middleware
+    lrsStore: req.lrsStore
   });
   let courseSaved;
   try {
     courseSaved = await course.save();
     
     // Log LRS store creation status
-    if (req.lrsStore && req.lrsStore.status === 'active') {
+    if (req.lrsStore && req.lrsStore.storeId) {
       console.log(`Course "${courseName}" saved with LRS store: ${req.lrsStore.storeId}`);
-    } else if (req.lrsStore && req.lrsStore.status === 'failed') {
-      console.warn(`Course "${courseName}" saved but LRS store creation failed: ${req.lrsStore.error}`);
     } else {
       console.log(`📝 Course "${courseName}" saved without LRS store`);
     }

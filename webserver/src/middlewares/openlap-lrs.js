@@ -8,17 +8,12 @@ const createLRSStore = async (req, res, next) => {
     const courseName = req.body.name;
     
     if (!courseName) {
-      console.warn('No course name provided, skipping LRS creation');
-      req.lrsStore = {
-        storeId: null,
-        basicAuth: null,
-        title: null,
-        statementCount: 0,
-        uniqueIdentifierType: null,
-        createdAt: null,
-        status: 'none'
-      };
-      return next();
+      console.warn('No course name provided, aborting LRS creation');
+      return res.status(400).json({
+        success: false,
+        message: "Course name is required.",
+        error: "MISSING_COURSE_NAME"
+      });
     }
     
     const lrsStore = await openlapService.createLRSStore(courseName);
@@ -26,20 +21,12 @@ const createLRSStore = async (req, res, next) => {
     next();
   } catch (error) {
     console.error('LRS store creation failed:', error.message);
-    console.warn('Continuing with course creation without LRS store');
     
-    req.lrsStore = {
-      storeId: null,
-      basicAuth: null,
-      title: req.body.name || null,
-      statementCount: 0,
-      uniqueIdentifierType: process.env.OPENLAP_UNIQUE_IDENTIFIER_TYPE || 'ACCOUNT_NAME',
-      createdAt: null,
-      status: 'failed',
-      error: error.message
-    };
-    
-    next();
+    return res.status(503).json({
+      success: false,
+      message: "Course creation failed: Unable to connect to the learning record service (LRS). Please try again later or contact support.",
+      error: "LRS_CREATION_FAILED"
+    });
   }
 };
 

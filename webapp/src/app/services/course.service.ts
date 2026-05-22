@@ -123,8 +123,9 @@ export class CourseService {
           if (err.status === 403) {
             return of({ errorMsg: err.error.error });
           } else {
+            const apiMessage = err.error?.message;
             return of({
-              errorMsg: 'Error in connection: Please reload the application',
+              errorMsg: apiMessage || 'Course creation failed. Please try again or contact support.',
             });
           }
         }),
