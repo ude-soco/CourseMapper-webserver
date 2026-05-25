@@ -1,5 +1,5 @@
 """
-Usage:
+Run:
     # Single user recommendation
     pipenv run python -m app.services.course_materials.Mooc_Recommendation.mooc_recommendation --uid <USER_UID>
 
