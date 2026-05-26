@@ -239,7 +239,18 @@ class RecService:
         # creat related concepts, categories and relationships in neo4j
         self.db.create_related_concepts_and_relationships(data=nodes)
 
-
+        # 
+    def _construct_user_MOOC(self, user_id):
+        step1
+        creae an instance of the class n use the function in the class
+        step2
+        step3
+    # get top-20 recommended courses for user_id
+    def _get_MOOC_recommendation(self, user_id):
+        # Get concepts that doesn't interact with user
+        step4
+        return resp
+    
 def get_serialized_concepts_data(concepts):
     """ """
     data = {}
@@ -323,3 +334,5 @@ def get_serialized_concepts_data(concepts):
     data["nodes"] = ser_concepts
 
     return data
+
+    

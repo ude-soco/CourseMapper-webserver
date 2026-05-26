@@ -126,6 +126,8 @@ def start_worker(pipelines):
                 result = recs.get_sequence_concepts(job)
             elif pipeline == 'resource-recommendation':
                 result = recs.get_resources(job)
+            elif pipeline == 'MOOC-recommendation':
+                result = recs.get_MOOC_recommendations(job)    
             # elif pipeline == 'get_resources_by_main_concepts':
             #     result = recs.get_resources_by_main_concepts(job)
             #     result = get_concepts(job)

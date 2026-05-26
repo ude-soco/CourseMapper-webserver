@@ -128,7 +128,7 @@ def get_concepts(job):
     # gcn = GCN()
     # gcn.load_data()
     gcn = RRGCN()
-    gcn.rrgcn_1_2()
+    gcn.rrgcn_1_1()
     # gcn = relational_conceptgcn_compgcn()
     # gcn.compgcn_without_direction_weight('mult')
     ### ========
@@ -206,7 +206,7 @@ def get_sequence_concepts(job):
     data_service._extract_vector_relation(mid=material_id)
 
     gcn = RRGCN()
-    gcn.rrgcn_1_2()
+    gcn.rrgcn_1_1()
     
     # gcn = relational_conceptgcn_compgcn()
     # gcn.compgcn_without_direction_weight('mult')
@@ -241,6 +241,60 @@ def get_sequence_concepts(job):
     #make_response.headers.add('Access-Control-Allow-Origin', '*')
 
     return sequence_path
+
+def get_MOOC_recommendations(job):
+    data = job["data"]
+    material_id = data["materialId"]
+    user_id = data["userId"]
+    understood = data["understoodConcepts"]
+    non_understood = data["nonUnderstoodConcepts"]
+    new_concepts = data["newConcepts"]
+    understood = [cid for cid in understood.split(",") if understood]
+    non_understood = [cid for cid in non_understood.split(",") if non_understood]
+    new_concepts = [cid for cid in new_concepts.split(",") if new_concepts]
+    material_id = material_id.split("-")[0]
+
+    print(
+        "material_id:",
+        material_id,
+        "user_id: ",
+        user_id,
+        "understood: ",
+        understood,
+        "nonUnderstood: ",
+        non_understood,
+        "new_concepts: ",
+        new_concepts,
+        flush=True,
+    )
+    
+
+    start_time = time.time()
+    data_service = RecService()
+   
+    # user = {"name": username, "id": user_id, "user_email": user_email}
+    data_service._construct_user_MOOC(
+        user_id=user_id
+    )
+    end_time = time.time()
+    print("Get User model Execution time: ", end_time - start_time, flush=True)
+
+    
+
+    start_time1 = time.time()
+    # Get top-20 recommended courses 
+    MOOC_recommendations = data_service._get_MOOC_recommendation(user_id=user_id)
+    end_time1 = time.time()
+    print(
+        "Get top-20 recommended courses Execution time: ",
+        end_time1 - start_time1,
+        flush=True,
+    )
+    end_time1 = time.time()
+    print("Execution time: ", end_time1 - start_time1, flush=True)
+    
+    
+    return MOOC_recommendations
 
 def get_resources_by_main_concepts(job):
     data = job["data"]
