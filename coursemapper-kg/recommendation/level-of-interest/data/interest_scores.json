@@ -5456,12 +5456,12 @@
         ],
         "total_activity_count": 208,
         "course_ids": [
-          "69aeae059c650bf67d7360b4",
-          "69aa1723766e66faf4fa2de9"
+          "69aa1723766e66faf4fa2de9",
+          "69aeae059c650bf67d7360b4"
         ],
         "course_names": [
-          "Interactive System",
-          "Graph Neural Network"
+          "Graph Neural Network",
+          "Interactive System"
         ]
       },
       "Natural language understanding": {
@@ -7742,11 +7742,11 @@
           "69963a387b3a16aaf63e4475_concept_7998139353912458915",
           "69963c347b3a16aaf63e4664_concept_7998139353912458915"
         ],
-        "raw_score": 15.25,
+        "raw_score": 15.361111111111112,
         "normalized_scores": {
-          "min_max_interpolation": 0.3153070577451879,
-          "z_score_k2": 0.9117405648896928,
-          "z_score_k3": 0.7744937099264618
+          "min_max_interpolation": 0.3142597638510446,
+          "z_score_k2": 0.910873015471985,
+          "z_score_k3": 0.7739153436479901
         },
         "activities_breakdown": [
           {
@@ -7766,9 +7766,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -7778,7 +7778,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 439,
+        "total_activity_count": 443,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -7788,9 +7788,9 @@
           "69aa1770766e66faf4fa2eff_concept_6001062631819359662",
           "69963c347b3a16aaf63e4664_concept_6001062631819359662"
         ],
-        "raw_score": 28.694444444444443,
+        "raw_score": 28.861111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.7589367552703941,
+          "min_max_interpolation": 0.7556766575840145,
           "z_score_k2": 1,
           "z_score_k3": 1
         },
@@ -7819,9 +7819,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 612,
+            "count": 618,
             "weight": 0.027777777777777776,
-            "contribution": 17
+            "contribution": 17.166666666666664
           },
           {
             "activity_id": "G10_A1",
@@ -7831,7 +7831,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 688,
+        "total_activity_count": 694,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -7842,9 +7842,9 @@
           "69963c347b3a16aaf63e4664_concept_3259617282586130909",
           "69aad9ee8fce8e37dc8383e5_concept_1816293576334014758"
         ],
-        "raw_score": 30.47222222222222,
+        "raw_score": 30.694444444444446,
         "normalized_scores": {
-          "min_max_interpolation": 0.8175985334555453,
+          "min_max_interpolation": 0.8156221616712082,
           "z_score_k2": 1,
           "z_score_k3": 1
         },
@@ -7866,9 +7866,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 816,
+            "count": 824,
             "weight": 0.027777777777777776,
-            "contribution": 22.666666666666664
+            "contribution": 22.88888888888889
           },
           {
             "activity_id": "G10_A1",
@@ -7878,7 +7878,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 877,
+        "total_activity_count": 885,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -7886,11 +7886,11 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_2549277153771377052"
         ],
-        "raw_score": 7.638888888888888,
+        "raw_score": 7.694444444444445,
         "normalized_scores": {
-          "min_max_interpolation": 0.06416131989000917,
-          "z_score_k2": 0.5021612928252968,
-          "z_score_k3": 0.5014408618835312
+          "min_max_interpolation": 0.06357856494096278,
+          "z_score_k2": 0.501389138049964,
+          "z_score_k3": 0.5009260920333093
         },
         "activities_breakdown": [
           {
@@ -7910,9 +7910,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -7922,7 +7922,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 220,
+        "total_activity_count": 222,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -7930,11 +7930,11 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_6935406402634327588"
         ],
-        "raw_score": 7.638888888888888,
+        "raw_score": 7.694444444444445,
         "normalized_scores": {
-          "min_max_interpolation": 0.06416131989000917,
-          "z_score_k2": 0.5021612928252968,
-          "z_score_k3": 0.5014408618835312
+          "min_max_interpolation": 0.06357856494096278,
+          "z_score_k2": 0.501389138049964,
+          "z_score_k3": 0.5009260920333093
         },
         "activities_breakdown": [
           {
@@ -7954,9 +7954,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -7966,7 +7966,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 220,
+        "total_activity_count": 222,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -7974,11 +7974,11 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_2399976255873941666"
         ],
-        "raw_score": 9.583333333333334,
+        "raw_score": 9.63888888888889,
         "normalized_scores": {
-          "min_max_interpolation": 0.12832263978001837,
-          "z_score_k2": 0.6067983331337191,
-          "z_score_k3": 0.5711988887558127
+          "min_max_interpolation": 0.12715712988192557,
+          "z_score_k2": 0.6052437446425055,
+          "z_score_k3": 0.570162496428337
         },
         "activities_breakdown": [
           {
@@ -8005,9 +8005,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8017,7 +8017,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 230,
+        "total_activity_count": 232,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8026,11 +8026,11 @@
           "69aa237e766e66faf4fa4231_concept_3869106855502095815",
           "69ace180981688967a3fa822_concept_5421181419617438278"
         ],
-        "raw_score": 15.25,
+        "raw_score": 15.361111111111112,
         "normalized_scores": {
-          "min_max_interpolation": 0.3153070577451879,
-          "z_score_k2": 0.9117405648896928,
-          "z_score_k3": 0.7744937099264618
+          "min_max_interpolation": 0.3142597638510446,
+          "z_score_k2": 0.910873015471985,
+          "z_score_k3": 0.7739153436479901
         },
         "activities_breakdown": [
           {
@@ -8050,9 +8050,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -8062,7 +8062,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 439,
+        "total_activity_count": 443,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8071,11 +8071,11 @@
           "69aad9ee8fce8e37dc8383e5_concept_4172086938663929947",
           "69aa1770766e66faf4fa2eff_concept_1947653654261075613"
         ],
-        "raw_score": 17.194444444444443,
+        "raw_score": 17.305555555555557,
         "normalized_scores": {
-          "min_max_interpolation": 0.37946837763519703,
+          "min_max_interpolation": 0.37783832879200735,
           "z_score_k2": 1,
-          "z_score_k3": 0.8442517367987433
+          "z_score_k3": 0.8431517480430176
         },
         "activities_breakdown": [
           {
@@ -8102,9 +8102,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -8114,7 +8114,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 444,
+        "total_activity_count": 448,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8124,9 +8124,9 @@
           "69963a387b3a16aaf63e4475_concept_6893332609744079377",
           "69963c347b3a16aaf63e4664_concept_6893332609744079377"
         ],
-        "raw_score": 24.805555555555557,
+        "raw_score": 24.97222222222222,
         "normalized_scores": {
-          "min_max_interpolation": 0.6306141154903758,
+          "min_max_interpolation": 0.6285195277020891,
           "z_score_k2": 1,
           "z_score_k3": 1
         },
@@ -8155,9 +8155,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 612,
+            "count": 618,
             "weight": 0.027777777777777776,
-            "contribution": 17
+            "contribution": 17.166666666666664
           },
           {
             "activity_id": "G10_A1",
@@ -8167,7 +8167,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 658,
+        "total_activity_count": 664,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8175,11 +8175,11 @@
         "concept_ids": [
           "69aad9ee8fce8e37dc8383e5_concept_2516640975239164908"
         ],
-        "raw_score": 7.638888888888888,
+        "raw_score": 7.694444444444445,
         "normalized_scores": {
-          "min_max_interpolation": 0.06416131989000917,
-          "z_score_k2": 0.5021612928252968,
-          "z_score_k3": 0.5014408618835312
+          "min_max_interpolation": 0.06357856494096278,
+          "z_score_k2": 0.501389138049964,
+          "z_score_k3": 0.5009260920333093
         },
         "activities_breakdown": [
           {
@@ -8199,9 +8199,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8211,7 +8211,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 220,
+        "total_activity_count": 222,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8219,11 +8219,11 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_2403190738275099120"
         ],
-        "raw_score": 7.638888888888888,
+        "raw_score": 7.694444444444445,
         "normalized_scores": {
-          "min_max_interpolation": 0.06416131989000917,
-          "z_score_k2": 0.5021612928252968,
-          "z_score_k3": 0.5014408618835312
+          "min_max_interpolation": 0.06357856494096278,
+          "z_score_k2": 0.501389138049964,
+          "z_score_k3": 0.5009260920333093
         },
         "activities_breakdown": [
           {
@@ -8243,9 +8243,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8255,7 +8255,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 220,
+        "total_activity_count": 222,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8264,11 +8264,11 @@
           "69aae3f08fce8e37dc838bb7_concept_1144906520004291474",
           "69aae4c88fce8e37dc83926c_concept_6608475015659479155"
         ],
-        "raw_score": 15.25,
+        "raw_score": 15.361111111111112,
         "normalized_scores": {
-          "min_max_interpolation": 0.3153070577451879,
-          "z_score_k2": 0.9117405648896928,
-          "z_score_k3": 0.7744937099264618
+          "min_max_interpolation": 0.3142597638510446,
+          "z_score_k2": 0.910873015471985,
+          "z_score_k3": 0.7739153436479901
         },
         "activities_breakdown": [
           {
@@ -8288,9 +8288,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -8300,7 +8300,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 439,
+        "total_activity_count": 443,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8308,11 +8308,11 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_7086349325357018196"
         ],
-        "raw_score": 7.638888888888888,
+        "raw_score": 7.694444444444445,
         "normalized_scores": {
-          "min_max_interpolation": 0.06416131989000917,
-          "z_score_k2": 0.5021612928252968,
-          "z_score_k3": 0.5014408618835312
+          "min_max_interpolation": 0.06357856494096278,
+          "z_score_k2": 0.501389138049964,
+          "z_score_k3": 0.5009260920333093
         },
         "activities_breakdown": [
           {
@@ -8332,9 +8332,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8344,7 +8344,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 220,
+        "total_activity_count": 222,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8353,11 +8353,11 @@
           "69aae5128fce8e37dc8394d5_concept_5230882056016089141",
           "69aae4c88fce8e37dc83926c_concept_5230882056016089141"
         ],
-        "raw_score": 13.333333333333332,
+        "raw_score": 13.444444444444445,
         "normalized_scores": {
-          "min_max_interpolation": 0.25206232813932167,
-          "z_score_k2": 0.8085983394428192,
-          "z_score_k3": 0.7057322262952127
+          "min_max_interpolation": 0.2515894641235241,
+          "z_score_k2": 0.8085020461164797,
+          "z_score_k3": 0.7056680307443198
         },
         "activities_breakdown": [
           {
@@ -8377,9 +8377,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -8389,7 +8389,7 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 425,
+        "total_activity_count": 429,
         "course_ids": [
           "69aadaec8fce8e37dc838463",
           "69aa1723766e66faf4fa2de9"
@@ -8404,11 +8404,11 @@
           "69aae4c88fce8e37dc83926c_concept_5805115002561159561",
           "69aa1770766e66faf4fa2eff_concept_470720873962569475"
         ],
-        "raw_score": 13.305555555555555,
+        "raw_score": 13.416666666666668,
         "normalized_scores": {
-          "min_max_interpolation": 0.25114573785517874,
-          "z_score_k2": 0.8071035245812704,
-          "z_score_k3": 0.7047356830541803
+          "min_max_interpolation": 0.25068119891008184,
+          "z_score_k2": 0.8070184088794434,
+          "z_score_k3": 0.7046789392529623
         },
         "activities_breakdown": [
           {
@@ -8428,9 +8428,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -8440,7 +8440,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 424,
+        "total_activity_count": 428,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8448,11 +8448,11 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_6493641934840560881"
         ],
-        "raw_score": 7.638888888888888,
+        "raw_score": 7.694444444444445,
         "normalized_scores": {
-          "min_max_interpolation": 0.06416131989000917,
-          "z_score_k2": 0.5021612928252968,
-          "z_score_k3": 0.5014408618835312
+          "min_max_interpolation": 0.06357856494096278,
+          "z_score_k2": 0.501389138049964,
+          "z_score_k3": 0.5009260920333093
         },
         "activities_breakdown": [
           {
@@ -8472,9 +8472,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8484,7 +8484,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 220,
+        "total_activity_count": 222,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8497,7 +8497,7 @@
           "69aae3f08fce8e37dc838bb7_concept_8729870221325066156",
           "69aae4c88fce8e37dc83926c_concept_1385769245161404324"
         ],
-        "raw_score": 36,
+        "raw_score": 36.33333333333333,
         "normalized_scores": {
           "min_max_interpolation": 1,
           "z_score_k2": 1,
@@ -8521,9 +8521,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 1224,
+            "count": 1236,
             "weight": 0.027777777777777776,
-            "contribution": 34
+            "contribution": 34.33333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -8533,7 +8533,7 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 1241,
+        "total_activity_count": 1253,
         "course_ids": [
           "69aadaec8fce8e37dc838463",
           "69aa1723766e66faf4fa2de9"
@@ -8547,11 +8547,11 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_69092418172175914"
         ],
-        "raw_score": 7.638888888888888,
+        "raw_score": 7.694444444444445,
         "normalized_scores": {
-          "min_max_interpolation": 0.06416131989000917,
-          "z_score_k2": 0.5021612928252968,
-          "z_score_k3": 0.5014408618835312
+          "min_max_interpolation": 0.06357856494096278,
+          "z_score_k2": 0.501389138049964,
+          "z_score_k3": 0.5009260920333093
         },
         "activities_breakdown": [
           {
@@ -8564,9 +8564,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8576,7 +8576,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 215,
+        "total_activity_count": 217,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8584,11 +8584,11 @@
         "concept_ids": [
           "69aad9ee8fce8e37dc8383e5_concept_4785232675969848473"
         ],
-        "raw_score": 6.527777777777777,
+        "raw_score": 6.583333333333333,
         "normalized_scores": {
-          "min_max_interpolation": 0.02749770852428963,
-          "z_score_k2": 0.44236869836334114,
-          "z_score_k3": 0.4615791322422274
+          "min_max_interpolation": 0.027247956403269748,
+          "z_score_k2": 0.44204364856851164,
+          "z_score_k3": 0.46136243237900776
         },
         "activities_breakdown": [
           {
@@ -8601,9 +8601,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8613,7 +8613,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 210,
+        "total_activity_count": 212,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8621,11 +8621,11 @@
         "concept_ids": [
           "69aad9ee8fce8e37dc8383e5_concept_8958012929648760809"
         ],
-        "raw_score": 6.527777777777777,
+        "raw_score": 6.583333333333333,
         "normalized_scores": {
-          "min_max_interpolation": 0.02749770852428963,
-          "z_score_k2": 0.44236869836334114,
-          "z_score_k3": 0.4615791322422274
+          "min_max_interpolation": 0.027247956403269748,
+          "z_score_k2": 0.44204364856851164,
+          "z_score_k3": 0.46136243237900776
         },
         "activities_breakdown": [
           {
@@ -8638,9 +8638,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8650,7 +8650,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 210,
+        "total_activity_count": 212,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8658,11 +8658,11 @@
         "concept_ids": [
           "69aad9ee8fce8e37dc8383e5_concept_2232255475981099434"
         ],
-        "raw_score": 6.527777777777777,
+        "raw_score": 6.583333333333333,
         "normalized_scores": {
-          "min_max_interpolation": 0.02749770852428963,
-          "z_score_k2": 0.44236869836334114,
-          "z_score_k3": 0.4615791322422274
+          "min_max_interpolation": 0.027247956403269748,
+          "z_score_k2": 0.44204364856851164,
+          "z_score_k3": 0.46136243237900776
         },
         "activities_breakdown": [
           {
@@ -8675,9 +8675,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8687,7 +8687,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 210,
+        "total_activity_count": 212,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8695,11 +8695,11 @@
         "concept_ids": [
           "69aad9ee8fce8e37dc8383e5_concept_2060193919600172293"
         ],
-        "raw_score": 6.527777777777777,
+        "raw_score": 6.583333333333333,
         "normalized_scores": {
-          "min_max_interpolation": 0.02749770852428963,
-          "z_score_k2": 0.44236869836334114,
-          "z_score_k3": 0.4615791322422274
+          "min_max_interpolation": 0.027247956403269748,
+          "z_score_k2": 0.44204364856851164,
+          "z_score_k3": 0.46136243237900776
         },
         "activities_breakdown": [
           {
@@ -8712,9 +8712,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8724,7 +8724,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 210,
+        "total_activity_count": 212,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8732,11 +8732,11 @@
         "concept_ids": [
           "69aad9ee8fce8e37dc8383e5_concept_6170978157445027317"
         ],
-        "raw_score": 6.527777777777777,
+        "raw_score": 6.583333333333333,
         "normalized_scores": {
-          "min_max_interpolation": 0.02749770852428963,
-          "z_score_k2": 0.44236869836334114,
-          "z_score_k3": 0.4615791322422274
+          "min_max_interpolation": 0.027247956403269748,
+          "z_score_k2": 0.44204364856851164,
+          "z_score_k3": 0.46136243237900776
         },
         "activities_breakdown": [
           {
@@ -8749,9 +8749,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8761,7 +8761,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 210,
+        "total_activity_count": 212,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8770,19 +8770,19 @@
           "69963a387b3a16aaf63e4475_concept_8642624590191032236",
           "69963c347b3a16aaf63e4664_concept_8642624590191032236"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -8792,7 +8792,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8800,19 +8800,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_3889251296628150485"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8822,7 +8822,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8831,19 +8831,19 @@
           "69aa237e766e66faf4fa4231_concept_2658369236864941717",
           "69ace180981688967a3fa822_concept_4770548712194623991"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -8853,7 +8853,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8861,19 +8861,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_1691892475794933145"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8883,7 +8883,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8891,19 +8891,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_1338539743388928533"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8913,7 +8913,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8921,19 +8921,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_8074248568903103101"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -8943,7 +8943,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8953,19 +8953,19 @@
           "69aeb5139c650bf67d7369d3_concept_4894886722546424274",
           "69aae4c88fce8e37dc83926c_concept_8648030462445419923"
         ],
-        "raw_score": 17.02777777777778,
+        "raw_score": 17.194444444444443,
         "normalized_scores": {
-          "min_max_interpolation": 0.3739688359303392,
+          "min_max_interpolation": 0.374205267938238,
           "z_score_k2": 1,
-          "z_score_k3": 0.838272477352548
+          "z_score_k3": 0.8391953820775875
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 612,
+            "count": 618,
             "weight": 0.027777777777777776,
-            "contribution": 17
+            "contribution": 17.166666666666664
           },
           {
             "activity_id": "G10_A1",
@@ -8975,7 +8975,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 613,
+        "total_activity_count": 619,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -8984,19 +8984,19 @@
           "69aae4fc8fce8e37dc8393fe_concept_217149424393903189",
           "69aae4c88fce8e37dc83926c_concept_181954124050428112"
         ],
-        "raw_score": 11.388888888888888,
+        "raw_score": 11.5,
         "normalized_scores": {
-          "min_max_interpolation": 0.18790100824931252,
-          "z_score_k2": 0.7039612991343969,
-          "z_score_k3": 0.6359741994229312
+          "min_max_interpolation": 0.18801089918256134,
+          "z_score_k2": 0.7046474395239382,
+          "z_score_k3": 0.6364316263492921
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -9006,7 +9006,7 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 410,
+        "total_activity_count": 414,
         "course_ids": [
           "69aadaec8fce8e37dc838463",
           "69aa1723766e66faf4fa2de9"
@@ -9021,19 +9021,19 @@
           "69aae5128fce8e37dc8394d5_concept_6553492896122620778",
           "69aae4c88fce8e37dc83926c_concept_6553492896122620778"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -9043,7 +9043,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9052,19 +9052,19 @@
           "69aae5128fce8e37dc8394d5_concept_5395387432238411930",
           "69aae4c88fce8e37dc83926c_concept_5395387432238411930"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -9074,7 +9074,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9082,19 +9082,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_3958306795388818466"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9104,7 +9104,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9112,19 +9112,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_8778244245114134612"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9134,7 +9134,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9142,19 +9142,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_6476148468750716101"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9164,7 +9164,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9172,19 +9172,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_919301557057298903"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9194,7 +9194,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9202,19 +9202,19 @@
         "concept_ids": [
           "69aeae7c9c650bf67d736330_concept_6838658312172077978"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9224,7 +9224,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9232,19 +9232,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_4878063053978487884"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9254,7 +9254,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9262,19 +9262,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_633194761346645762"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9284,7 +9284,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9292,19 +9292,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_792143917130862488"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9314,7 +9314,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9322,19 +9322,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_8827475026372453861"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9344,7 +9344,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9352,19 +9352,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_8351870526114882792"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9374,7 +9374,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9382,19 +9382,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_4797007476314354564"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9404,7 +9404,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9412,19 +9412,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_8685178659016931845"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9434,7 +9434,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9442,19 +9442,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_7802300169224699722"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9464,7 +9464,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9472,19 +9472,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_6855341641664543148"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9494,7 +9494,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9502,19 +9502,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_2980903521802353101"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9524,7 +9524,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9533,19 +9533,19 @@
           "69aa237e766e66faf4fa4231_concept_4214911020721515633",
           "69ace180981688967a3fa822_concept_4361509312770035415"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -9555,7 +9555,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9563,19 +9563,19 @@
         "concept_ids": [
           "69aae4fc8fce8e37dc8393fe_concept_2603527189380134646"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9585,7 +9585,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9593,19 +9593,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_1316019095679559489"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9615,7 +9615,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9623,19 +9623,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_884923943719988817"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9645,7 +9645,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9654,19 +9654,19 @@
           "69aae5128fce8e37dc8394d5_concept_6966574332522611292",
           "69aae4c88fce8e37dc83926c_concept_6966574332522611292"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -9676,7 +9676,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9687,9 +9687,9 @@
           "69aa237e766e66faf4fa4231_concept_2202296436995599753",
           "69ace180981688967a3fa822_concept_3344581468664571210"
         ],
-        "raw_score": 22.694444444444443,
+        "raw_score": 22.916666666666668,
         "normalized_scores": {
-          "min_max_interpolation": 0.5609532538955087,
+          "min_max_interpolation": 0.561307901907357,
           "z_score_k2": 1,
           "z_score_k3": 1
         },
@@ -9697,9 +9697,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 816,
+            "count": 824,
             "weight": 0.027777777777777776,
-            "contribution": 22.666666666666664
+            "contribution": 22.88888888888889
           },
           {
             "activity_id": "G10_A1",
@@ -9709,7 +9709,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 817,
+        "total_activity_count": 825,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9717,19 +9717,19 @@
         "concept_ids": [
           "69aeae7c9c650bf67d736330_concept_6491222511140237291"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9739,7 +9739,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9747,19 +9747,19 @@
         "concept_ids": [
           "69aeae7c9c650bf67d736330_concept_6811204748895348170"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9769,7 +9769,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9777,19 +9777,19 @@
         "concept_ids": [
           "69aeae7c9c650bf67d736330_concept_8383826076588063756"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9799,7 +9799,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9808,19 +9808,19 @@
           "69aeae7c9c650bf67d736330_concept_1200589244941826953",
           "69aae3f08fce8e37dc838bb7_concept_5117837791080122137"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -9830,7 +9830,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9838,19 +9838,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_3005206981222748181"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9860,7 +9860,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9868,19 +9868,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_6495580288163644274"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9890,7 +9890,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9898,19 +9898,19 @@
         "concept_ids": [
           "69aeb5139c650bf67d7369d3_concept_4687242933456188663"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -9920,7 +9920,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9929,19 +9929,19 @@
           "69aeb5139c650bf67d7369d3_concept_4915703376616438612",
           "69aae4fc8fce8e37dc8393fe_concept_8074902498434048384"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -9951,7 +9951,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9960,19 +9960,19 @@
           "69aeb5139c650bf67d7369d3_concept_39777082947636005",
           "69aae4c88fce8e37dc83926c_concept_3569350137651300095"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -9982,7 +9982,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -9991,19 +9991,19 @@
           "69aeb5139c650bf67d7369d3_concept_920223080537837375",
           "69aa1770766e66faf4fa2eff_concept_3121889916032869932"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -10013,7 +10013,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10021,19 +10021,19 @@
         "concept_ids": [
           "69aae4fc8fce8e37dc8393fe_concept_111022382047967860"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10043,7 +10043,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10051,19 +10051,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_4926395342210263607"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10073,7 +10073,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10081,19 +10081,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_6881290623387014907"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10103,7 +10103,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10111,19 +10111,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_517678419737630862"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10133,7 +10133,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10142,19 +10142,19 @@
           "69aeae7c9c650bf67d736330_concept_1263369392945865494",
           "69aae4c88fce8e37dc83926c_concept_8808040733832283336"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -10164,7 +10164,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10173,19 +10173,19 @@
           "69aeae7c9c650bf67d736330_concept_3855300966783488644",
           "69aa1770766e66faf4fa2eff_concept_2622644634059195670"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -10195,7 +10195,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10203,19 +10203,19 @@
         "concept_ids": [
           "69aeae7c9c650bf67d736330_concept_6016737921526412670"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10225,7 +10225,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10233,19 +10233,19 @@
         "concept_ids": [
           "69aeae7c9c650bf67d736330_concept_5194534445985724578"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10255,7 +10255,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10263,19 +10263,19 @@
         "concept_ids": [
           "69aeae7c9c650bf67d736330_concept_993264836918610303"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10285,7 +10285,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10293,19 +10293,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_4169302570560775888"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10315,7 +10315,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10323,19 +10323,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_3821130121543483286"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10345,7 +10345,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10353,19 +10353,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_7341839177602767522"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10375,7 +10375,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10383,19 +10383,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_8998182154730214901"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10405,7 +10405,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10413,19 +10413,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_4688964285175516681"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10435,7 +10435,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10443,19 +10443,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_8871243700189283282"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10465,7 +10465,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10473,19 +10473,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_2654210200354621861"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10495,7 +10495,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10503,19 +10503,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_812981949626034810"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10525,7 +10525,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10534,19 +10534,19 @@
           "69aae4c88fce8e37dc83926c_concept_6404524712692121065",
           "69aa1770766e66faf4fa2eff_concept_8826682650163936071"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -10556,7 +10556,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10564,19 +10564,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_5518721979368552361"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10586,7 +10586,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10594,19 +10594,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_8885889079825049056"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10616,7 +10616,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10624,19 +10624,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_719248564992018846"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10646,7 +10646,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10654,19 +10654,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_7161657194825758975"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10676,7 +10676,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10684,19 +10684,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_3461211191887718298"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10706,7 +10706,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10714,19 +10714,19 @@
         "concept_ids": [
           "69aad9ee8fce8e37dc8383e5_concept_8907657453744834784"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10736,7 +10736,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10744,19 +10744,19 @@
         "concept_ids": [
           "69aad9ee8fce8e37dc8383e5_concept_8410845188098798536"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10766,7 +10766,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10774,19 +10774,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_1834781190121311661"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10796,7 +10796,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10804,19 +10804,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_3785156674172040365"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10826,7 +10826,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10835,19 +10835,19 @@
           "69aae5128fce8e37dc8394d5_concept_6427630818954803124",
           "69aae4c88fce8e37dc83926c_concept_6427630818954803124"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -10857,7 +10857,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10865,19 +10865,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_2035285579445299861"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10887,7 +10887,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10895,19 +10895,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_9007679302654638703"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10917,7 +10917,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10925,19 +10925,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_5999492011310194749"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10947,7 +10947,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10955,19 +10955,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_4983863464086969065"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -10977,7 +10977,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -10985,19 +10985,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_6395969906358279836"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11007,7 +11007,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11015,19 +11015,19 @@
         "concept_ids": [
           "69aae4fc8fce8e37dc8393fe_concept_2102755482600572879"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11037,7 +11037,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11045,19 +11045,19 @@
         "concept_ids": [
           "69aae4fc8fce8e37dc8393fe_concept_1377789080105669281"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11067,7 +11067,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11075,19 +11075,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_1678945031307576832"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11097,7 +11097,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11105,19 +11105,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_4351430752295497257"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11127,7 +11127,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11135,19 +11135,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_4081723511278182150"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11157,7 +11157,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11165,19 +11165,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_6783480325943279800"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11187,7 +11187,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11195,19 +11195,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_8975382174712933753"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11217,7 +11217,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11225,19 +11225,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_7212576590623553572"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11247,7 +11247,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11256,19 +11256,19 @@
           "69aa237e766e66faf4fa4231_concept_6612217669853341447",
           "69ace180981688967a3fa822_concept_612742844765138368"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -11278,7 +11278,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11286,19 +11286,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_1259436660495385845"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11308,7 +11308,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11316,19 +11316,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_2926063443413691753"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11338,7 +11338,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11346,19 +11346,19 @@
         "concept_ids": [
           "69aae5128fce8e37dc8394d5_concept_933461662294840875"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11368,7 +11368,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11376,19 +11376,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_8091036038508334118"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11398,7 +11398,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11406,19 +11406,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_5546471205391676826"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11428,7 +11428,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11436,19 +11436,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_8130976669029685607"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11458,7 +11458,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11466,19 +11466,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_3779275549268576655"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11488,7 +11488,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11496,19 +11496,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_8421675097811456535"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11518,7 +11518,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11526,19 +11526,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_8544803109919709187"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11548,7 +11548,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11556,19 +11556,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_2121765058007134180"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11578,7 +11578,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11586,19 +11586,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_4479741449220748198"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11608,7 +11608,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11616,19 +11616,19 @@
         "concept_ids": [
           "69aad9ee8fce8e37dc8383e5_concept_3108475721646605852"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11638,7 +11638,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11646,19 +11646,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_4077897110319099887"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11668,7 +11668,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11676,19 +11676,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_3056564319104897180"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11698,7 +11698,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -11707,19 +11707,19 @@
           "69aa237e766e66faf4fa4231_concept_7160777104925659003",
           "69ace180981688967a3fa822_concept_2704436893080598034"
         ],
-        "raw_score": 11.36111111111111,
+        "raw_score": 11.472222222222223,
         "normalized_scores": {
-          "min_max_interpolation": 0.18698441796516957,
-          "z_score_k2": 0.7024664842728481,
-          "z_score_k3": 0.6349776561818987
+          "min_max_interpolation": 0.18710263396911905,
+          "z_score_k2": 0.7031638022869019,
+          "z_score_k3": 0.6354425348579346
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 408,
+            "count": 412,
             "weight": 0.027777777777777776,
-            "contribution": 11.333333333333332
+            "contribution": 11.444444444444445
           },
           {
             "activity_id": "G10_A1",
@@ -11729,7 +11729,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 409,
+        "total_activity_count": 413,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -11737,19 +11737,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_5901687486069930347"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11759,7 +11759,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -11767,19 +11767,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_6978070150082223411"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11789,7 +11789,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -11797,19 +11797,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_1538056600355563930"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11819,7 +11819,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -11827,19 +11827,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_6344621788262968021"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11849,7 +11849,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -11857,19 +11857,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_7685826875683726490"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11879,7 +11879,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -11887,19 +11887,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_3488013393142569724"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11909,7 +11909,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -11917,19 +11917,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_7161188360779605548"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11939,7 +11939,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -11947,19 +11947,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_5624059671952118921"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11969,7 +11969,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -11977,19 +11977,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_2011370628178061201"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -11999,7 +11999,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12007,19 +12007,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_6654462982297617216"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12029,7 +12029,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12037,19 +12037,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_3908589372321413518"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12059,7 +12059,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12067,19 +12067,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_8704309098781830212"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12089,7 +12089,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12097,19 +12097,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_5403422793644287275"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12119,7 +12119,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12127,19 +12127,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_2487488442856732170"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12149,7 +12149,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12157,19 +12157,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_3214437629587907720"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12179,7 +12179,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12187,19 +12187,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_2345631291247217302"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12209,7 +12209,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12217,19 +12217,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_4319568118479246347"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12239,7 +12239,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12247,19 +12247,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_132142111407973943"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12269,7 +12269,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12277,19 +12277,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_2878347622365072378"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12299,7 +12299,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12307,19 +12307,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_5308331589007223982"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12329,7 +12329,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12337,19 +12337,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_1033709568995598079"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12359,7 +12359,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12367,19 +12367,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_256458512712655895"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12389,7 +12389,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12397,19 +12397,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_8300437322728921629"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12419,7 +12419,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12427,19 +12427,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_6464506601444870548"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12449,7 +12449,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12457,19 +12457,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_6260831818568576992"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12479,7 +12479,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12487,19 +12487,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_2145198650245953822"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12509,7 +12509,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12517,19 +12517,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_4822988922226860967"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12539,7 +12539,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12547,19 +12547,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_2434145248674121302"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12569,7 +12569,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12577,19 +12577,19 @@
         "concept_ids": [
           "69aae3f08fce8e37dc838bb7_concept_4810384629113505321"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12599,7 +12599,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aadaec8fce8e37dc838463",
         "course_name": "Big Data"
       },
@@ -12607,19 +12607,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_2141826237376038763"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12629,7 +12629,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -12637,19 +12637,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_5190649660917696638"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12659,7 +12659,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -12667,19 +12667,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_1185768644447521611"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12689,7 +12689,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -12697,19 +12697,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_1169628325708199505"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12719,7 +12719,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -12727,19 +12727,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_8639374715885793316"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12749,7 +12749,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -12757,19 +12757,19 @@
         "concept_ids": [
           "69aa1770766e66faf4fa2eff_concept_1607831877936888921"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12779,7 +12779,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       },
@@ -12787,19 +12787,19 @@
         "concept_ids": [
           "69aae4c88fce8e37dc83926c_concept_2399436466201826130"
         ],
-        "raw_score": 5.694444444444444,
+        "raw_score": 5.75,
         "normalized_scores": {
-          "min_max_interpolation": 0.023987362755231383,
-          "z_score_k2": 0.3975242525168744,
-          "z_score_k3": 0.4316828350112496
+          "min_max_interpolation": 0.023798847997792565,
+          "z_score_k2": 0.39753453145742246,
+          "z_score_k3": 0.43168968763828164
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 204,
+            "count": 206,
             "weight": 0.027777777777777776,
-            "contribution": 5.666666666666666
+            "contribution": 5.722222222222222
           },
           {
             "activity_id": "G10_A1",
@@ -12809,7 +12809,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 205,
+        "total_activity_count": 207,
         "course_id": "69aa1723766e66faf4fa2de9",
         "course_name": "Graph Neural Network"
       }
@@ -16262,12 +16262,12 @@
         ],
         "total_activity_count": 375,
         "course_ids": [
-          "69aa1723766e66faf4fa2de9",
-          "69aadaec8fce8e37dc838463"
+          "69aadaec8fce8e37dc838463",
+          "69aa1723766e66faf4fa2de9"
         ],
         "course_names": [
-          "Graph Neural Network",
-          "Big Data"
+          "Big Data",
+          "Graph Neural Network"
         ]
       },
       "Semantic Web": {
@@ -16305,12 +16305,12 @@
         ],
         "total_activity_count": 375,
         "course_ids": [
-          "69aa1723766e66faf4fa2de9",
-          "69aadaec8fce8e37dc838463"
+          "69aadaec8fce8e37dc838463",
+          "69aa1723766e66faf4fa2de9"
         ],
         "course_names": [
-          "Graph Neural Network",
-          "Big Data"
+          "Big Data",
+          "Graph Neural Network"
         ]
       },
       "Social media": {
@@ -16348,12 +16348,12 @@
         ],
         "total_activity_count": 375,
         "course_ids": [
-          "69aa1723766e66faf4fa2de9",
-          "69aadaec8fce8e37dc838463"
+          "69aadaec8fce8e37dc838463",
+          "69aa1723766e66faf4fa2de9"
         ],
         "course_names": [
-          "Graph Neural Network",
-          "Big Data"
+          "Big Data",
+          "Graph Neural Network"
         ]
       },
       "Education": {

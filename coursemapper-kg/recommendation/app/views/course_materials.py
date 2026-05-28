@@ -243,57 +243,77 @@ def get_sequence_concepts(job):
     return sequence_path
 
 def get_MOOC_recommendations(job):
+    print("===== MOOC Recommendation Job Started =====", flush=True)
     data = job["data"]
-    material_id = data["materialId"]
+    # material_id = data["materialId"]
     user_id = data["userId"]
-    understood = data["understoodConcepts"]
-    non_understood = data["nonUnderstoodConcepts"]
-    new_concepts = data["newConcepts"]
-    understood = [cid for cid in understood.split(",") if understood]
-    non_understood = [cid for cid in non_understood.split(",") if non_understood]
-    new_concepts = [cid for cid in new_concepts.split(",") if new_concepts]
-    material_id = material_id.split("-")[0]
+    # understood = data["understoodConcepts"]
+    # non_understood = data["nonUnderstoodConcepts"]
+    # new_concepts = data["newConcepts"]
+    # understood = [cid for cid in understood.split(",") if understood]
+    # non_understood = [cid for cid in non_understood.split(",") if non_understood]
+    # new_concepts = [cid for cid in new_concepts.split(",") if new_concepts]
+    # material_id = material_id.split("-")[0]
 
-    print(
-        "material_id:",
-        material_id,
-        "user_id: ",
-        user_id,
-        "understood: ",
-        understood,
-        "nonUnderstood: ",
-        non_understood,
-        "new_concepts: ",
-        new_concepts,
-        flush=True,
-    )
+    # print(
+    #     "material_id:",
+    #     material_id,
+    #     "user_id: ",
+    #     user_id,
+    #     "understood: ",
+    #     understood,
+    #     "nonUnderstood: ",
+    #     non_understood,
+    #     "new_concepts: ",
+    #     new_concepts,
+    #     flush=True,
+    # )
+    print("MOOC recommendation user_id:", user_id, flush=True)
     
 
+    total_start_time = time.time()
+
+    # Create RecService
     start_time = time.time()
     data_service = RecService()
-   
-    # user = {"name": username, "id": user_id, "user_email": user_email}
-    data_service._construct_user_MOOC(
-        user_id=user_id
-    )
     end_time = time.time()
-    print("Get User model Execution time: ", end_time - start_time, flush=True)
+    print("Get RecService time: ", end_time - start_time, flush=True)
 
-    
+    # Construct user learner model (MOOC, LM-GNN)
+        # Step 1, Step 2, Step 3:
+        # Step 1: Construct CourseMapper course embeddings,
+        # Step 2: Construct MoocCentral course embeddings,
+        # Step 3: Construct current user's learner model embedding.
+    start_time = time.time()
+    data_service._construct_user_MOOC(user_id=user_id)
+    end_time = time.time()
+    print("Get User_MOOC model Execution time: ", end_time - start_time, flush=True)
 
-    start_time1 = time.time()
-    # Get top-20 recommended courses 
+    # Step 4:
+    # Get top-20 recommended MOOCcourses 
+    start_time = time.time()
     MOOC_recommendations = data_service._get_MOOC_recommendation(user_id=user_id)
-    end_time1 = time.time()
-    print(
-        "Get top-20 recommended courses Execution time: ",
-        end_time1 - start_time1,
-        flush=True,
-    )
-    end_time1 = time.time()
-    print("Execution time: ", end_time1 - start_time1, flush=True)
+    end_time = time.time()
+    print("Get top-20 recommended MOOC courses recommendation Execution time: ", end_time - start_time, flush=True,)
     
-    
+
+    # Print simple recommendation list.
+    print("\n===== Simple Top-20 MOOC Recommendations =====", flush=True)
+
+    for idx, rec in enumerate(MOOC_recommendations, start=1):
+        print(f"\n{idx}.", flush=True)
+        print(f"   Source    : {rec['source']}", flush=True)
+        print(f"   Course ID : {rec['course_id']}", flush=True)
+        print(f"   Name      : {rec['name']}", flush=True)
+        print(f"   Score     : {rec['score']:.6f}", flush=True)
+
+
+    total_end_time = time.time()
+    print("\nTotal MOOC recommendation execution time: ", total_end_time - total_start_time, flush=True)
+    print("===== MOOC Recommendation Job Finished =====", flush=True)
+
+    # return a python list
+    # each element in the list is a dictionary containing course information
     return MOOC_recommendations
 
 def get_resources_by_main_concepts(job):

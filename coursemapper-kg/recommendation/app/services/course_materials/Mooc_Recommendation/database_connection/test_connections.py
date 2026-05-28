@@ -1,6 +1,6 @@
-from .CourseMapper_connection import CourseMapperConnection
-from .MoocCentral_connection import MoocCentralConnection
-from .MongoDB_connection import MongoDBConnection
+from .coursemapper_connection import CourseMapperConnection
+from .mooccentral_connection import MoocCentralConnection
+from .mongodb_connection import MongoDBConnection
 
 
 def test_course_mapper():

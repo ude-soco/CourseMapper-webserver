@@ -106,8 +106,8 @@ import numpy as np
 from datetime import datetime
 from bson import ObjectId
 
-from ..database_connection.MongoDB_connection import MongoDBConnection
-from ..database_connection.CourseMapper_connection import CourseMapperConnection
+from ..database_connection.mongodb_connection import MongoDBConnection
+from ..database_connection.coursemapper_connection import CourseMapperConnection
 
 
 class RelationshipBase:

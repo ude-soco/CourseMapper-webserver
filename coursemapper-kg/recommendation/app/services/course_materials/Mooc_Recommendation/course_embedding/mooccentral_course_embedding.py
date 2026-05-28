@@ -3,12 +3,15 @@ Goal:
 -----
 Generate and store embeddings for courses and concepts in MoocCentral Neo4j.
 
-This script generates three types of embeddings:
+This module generates:
 1. Course.name_embedding
-2. Concept.name_embedding
+2. concept.name_embedding
 3. Course.course_embedding
 
-
+Main entry:
+    MoocCentralCourseEmbedding.generate_and_store_course_embeddings()
+"""
+"""
 Pipeline:
 ---------
 Step 1: Find Course nodes without name_embedding.
@@ -49,24 +52,29 @@ After running this script, Neo4j will contain:
 """
 
 # type this command to run this file:
-# pipenv run python -m app.services.course_materials.Mooc_Recommendation.course_embedding.MoocCentral_final
+# pipenv run python -m app.services.course_materials.Mooc_Recommendation.course_embedding.mooccentral_course_embedding
 
 
 
-from ..database_connection.MoocCentral_connection import MoocCentralConnection
+from ..database_connection.mooccentral_connection import MoocCentralConnection
 from sentence_transformers import SentenceTransformer
 
 import numpy as np
 
 
-class MoocFinalEmbedding:
+class MoocCentralCourseEmbedding:
 
-    def __init__(self, mooccentral_db):
 
-        self.driver = mooccentral_db.driver
+    def __init__(self):
+        self.mooccentral_db = MoocCentralConnection()
+        self.mooccentral_driver = self.mooccentral_db.driver
         self.model = SentenceTransformer("all-mpnet-base-v2")
 
-
+    # ---------------------------------------------------
+    # close database connection
+    # -
+    def close(self):
+        self.mooccentral_db.close()
     
     """
     np.array([0.1, 0.2, 0.3])
@@ -98,7 +106,7 @@ class MoocFinalEmbedding:
 
     def get_new_courses(self):
 
-        with self.driver.session() as session:
+        with self.mooccentral_driver.session() as session:
 
             result = session.run("""
             MATCH (c:Course)
@@ -121,7 +129,7 @@ class MoocFinalEmbedding:
 
     def get_new_concepts(self):
 
-        with self.driver.session() as session:
+        with self.mooccentral_driver.session() as session:
 
             result = session.run("""
             MATCH (c:concept)
@@ -171,7 +179,7 @@ class MoocFinalEmbedding:
 
     def get_course_name_embeddings(self):
 
-        with self.driver.session() as session:
+        with self.mooccentral_driver.session() as session:
 
             result = session.run("""
             MATCH (c:Course)
@@ -193,7 +201,7 @@ class MoocFinalEmbedding:
 
     def get_concept_name_embeddings(self):
 
-        with self.driver.session() as session:
+        with self.mooccentral_driver.session() as session:
 
             result = session.run("""
             MATCH (c:concept)
@@ -215,7 +223,7 @@ class MoocFinalEmbedding:
 
     def get_course_concepts_mapping(self):
 
-        with self.driver.session() as session:
+        with self.mooccentral_driver.session() as session:
 
             result = session.run("""
             MATCH (course:Course)-[:CONTAINS_CONCEPT]->(concept:concept)
@@ -248,7 +256,7 @@ class MoocFinalEmbedding:
                 "emb": self.array_to_string(vec)
             })
 
-        with self.driver.session() as session:
+        with self.mooccentral_driver.session() as session:
             total = len(rows)
 
             for start in range(0, total, batch_size):
@@ -275,7 +283,7 @@ class MoocFinalEmbedding:
                 "emb": self.array_to_string(vec)
             })
 
-        with self.driver.session() as session:
+        with self.mooccentral_driver.session() as session:
             total = len(rows)
 
             for start in range(0, total, batch_size):
@@ -303,7 +311,7 @@ class MoocFinalEmbedding:
                 "emb": self.array_to_string(vec)
             })
 
-        with self.driver.session() as session:
+        with self.mooccentral_driver.session() as session:
             total = len(rows)
 
             for start in range(0, total, batch_size):
@@ -422,21 +430,23 @@ class MoocFinalEmbedding:
 
     
     # ---------------------------------------------------
-    # run
+    # generate_and_store_course_embeddings
     # ---------------------------------------------------
 
-    def run(self):
+    def generate_and_store_course_embeddings(self):
         print("\n==========================================================================================\n")
-        print("Checking how many MoocCentral courses which have no name embeddings...")
+        print("Checking how many MOOCCentral courses which have no name embeddings...")
         courses = self.get_new_courses()
         print(f"Found {len(courses)} new courses")
 
         if len(courses) >0:
             print(f"Generating course name embedding for these {len(courses)} new courses")
             course_name_embeddings = self.generate_sbert_embeddings(courses)
-            print("Writing generated course name embeddings into MoocCentral database...")
+
+            print("Writing generated course name embeddings into MOOCCentral database...")
             self.store_course_name_embeddings(course_name_embeddings)
-            print("MoocCentral: Course name embedding generation finished and stored in database.")
+
+            print("MOOCCentral: Course name embedding generation finished and stored in database.")
         else:
             print("No new courses found, skip generating course name embeddings.")
 
@@ -448,26 +458,31 @@ class MoocFinalEmbedding:
         if len(concepts) > 0:
             print(f"Generating concept name embedding for these {len(concepts)} new concepts")
             concept_name_embeddings = self.generate_sbert_embeddings(concepts)
-            print("Writing generated concept name embeddings into MoocCentral database...")
+
+            print("Writing generated concept name embeddings into MOOCCentral database...")
             self.store_concept_name_embeddings(concept_name_embeddings)
-            print("MoocCentral: Concept name embedding generation finished and stored in database.")
+
+            print("MOOCCentral: Concept name embedding generation finished and stored in database.")
         else:
             print("No new concepts found, skip generating concept name embeddings.")
 
 
-        print("Star calculating course embedding.")
+        print("Start calculating MOOCCentral course embedding.")
         course_embeddings = self.compute_course_embedding()
-        print("Writing generated course embeddings into MoocCentral database...") 
+
+        print("Writing generated course embeddings into MOOCCentral database...") 
         self.store_course_embeddings(course_embeddings)
-        print("MoocCentral: Course embedding generation finished and stored in database.")    
+
+        print("MOOCCentral: Course embedding generation finished and stored in database.")    
         print("\n==========================================================================================\n")
 
+
+
+
 if __name__ == "__main__":
+    mooccentral_course_emb_generator = MoocCentralCourseEmbedding()
 
-    mooccentral_db = MoocCentralConnection()
-
-    embedding = MoocFinalEmbedding(mooccentral_db)
-
-    embedding.run()
-
-    mooccentral_db.close()
+    try:
+        mooccentral_course_emb_generator.generate_and_store_course_embeddings()
+    finally:
+        mooccentral_course_emb_generator.close()

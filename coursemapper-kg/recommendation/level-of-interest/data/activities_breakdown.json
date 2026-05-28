@@ -5143,10 +5143,24 @@
                 "material_page": 8,
                 "course_id": "69aa1723766e66faf4fa2de9",
                 "course_name": "Graph Neural Network"
+              },
+              {
+                "activity_id": "6a15a4a70fc60b81a181716e",
+                "material_id": "69aae3f08fce8e37dc838bb7",
+                "material_page": 14,
+                "course_id": "69aadaec8fce8e37dc838463",
+                "course_name": "Big Data"
+              },
+              {
+                "activity_id": "6a15a6710fc60b81a1817439",
+                "material_id": "69aeb5139c650bf67d7369d3",
+                "material_page": 1,
+                "course_id": "69aeae059c650bf67d7360b4",
+                "course_name": "Interactive System"
               }
             ],
             "activity_name": "User views a slide in LM",
-            "count": 204
+            "count": 206
           }
         }
       },

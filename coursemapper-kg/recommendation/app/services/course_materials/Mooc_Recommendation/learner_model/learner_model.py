@@ -19,20 +19,24 @@ For each relationship (dnu / interested_in / engaged_in):
 """
 
 import numpy as np
-from ..database_connection.MongoDB_connection import MongoDBConnection
-from ..database_connection.CourseMapper_connection import CourseMapperConnection
+from ..database_connection.mongodb_connection import MongoDBConnection
+from ..database_connection.coursemapper_connection import CourseMapperConnection
 from .relationship_info import DNUInfo, InterestInfo, EngagementInfo
 from .updated_embeddings import ConceptEmbeddingUpdater
-from .relation_component import RelationComponent
+from .relation_components import RelationComponent
 
 from .utils import glorot_seed, EMBEDDING_DIM
 
-class LearnerModel:
+class LearnerModelEmbedding:
 
-    def __init__(self, uid, coursemapper_db, mongodb_db):
-        self.uid = uid      
-        self.coursemapper_connection = coursemapper_db
-        self.mongodb_connection = mongodb_db
+    def __init__(self):
+        self.coursemapper_connection = CourseMapperConnection()
+        self.mongodb_connection = MongoDBConnection()
+
+    def close(self):
+        self.coursemapper_connection.close()
+        self.mongodb_connection.close()
+
     def string_to_array(self, emb_str):
         return np.array([float(x) for x in emb_str.split(",")]) 
         
@@ -40,7 +44,7 @@ class LearnerModel:
         return ",".join(map(str, emb_array.tolist()))
 
 
-    def learner_model_pipeline(self):
+    def compute_learner_model_embedding(self, user_id):
         """
         1. Get relationship info dict for dnu, interested_in, engaged_in
         2. Update node embeddings for each relationship
@@ -66,13 +70,13 @@ class LearnerModel:
         # ------------------------------------------------
         # 1. Get relationship info for dnu, interested_in, engaged_in
         # ------------------------------------------------
-        dnu_info_instance = DNUInfo(self.uid, self.coursemapper_connection, self.mongodb_connection)
+        dnu_info_instance = DNUInfo(user_id, self.coursemapper_connection, self.mongodb_connection)
         dnu_dict = dnu_info_instance.get_dnu_info()
 
-        interest_info_instance = InterestInfo(self.uid, self.coursemapper_connection, self.mongodb_connection)
+        interest_info_instance = InterestInfo(user_id, self.coursemapper_connection, self.mongodb_connection)
         interest_dict = interest_info_instance.get_interest_info()
 
-        engagement_info_instance = EngagementInfo(self.uid, self.coursemapper_connection, self.mongodb_connection)
+        engagement_info_instance = EngagementInfo(user_id, self.coursemapper_connection, self.mongodb_connection)
         engagement_dict = engagement_info_instance.get_engagement_info()
 
         # ------------------------------------------------
@@ -107,8 +111,6 @@ class LearnerModel:
         # 4. Generate random weight matrices for each relationship
         # ------------------------------------------------
 
-
-
         W_rel_dnu = glorot_seed((EMBEDDING_DIM, EMBEDDING_DIM)).numpy()
         W_rel_interest = glorot_seed((EMBEDDING_DIM, EMBEDDING_DIM)).numpy()
         W_rel_engagement = glorot_seed((EMBEDDING_DIM, EMBEDDING_DIM)).numpy()
@@ -135,7 +137,10 @@ class LearnerModel:
         has_dnu_relationship = bool(dnu_relation_component and "dnu" in dnu_relation_component)
         has_interest_relationship = bool(interest_relation_component and "INTERESTED_IN" in interest_relation_component)
         has_engagement_relationship = bool(engagement_relation_component and "ENGAGED_IN" in engagement_relation_component)
-        dnu_weight_sum = (dnu_relation_component["dnu"]["relationship_weight_sum"] if has_dnu_relationship else None)
+        
+        dnu_weight_sum = (
+            dnu_relation_component["dnu"]["relationship_weight_sum"] 
+            if has_dnu_relationship else None)
         
         interest_weight_sum = (
             interest_relation_component["INTERESTED_IN"]["relationship_weight_sum"]
@@ -181,48 +186,34 @@ class LearnerModel:
         return learner_model_embedding
 
 
-
-    def store_learner_model_embedding(self, learner_model_embedding):
+    def store_learner_model_embedding(self, user_id, learner_model_embedding):
         """
         Store the learner model embedding back to Neo4j
         """
         with self.coursemapper_connection.get_session() as session:
             session.run("""
             MATCH (u:User {uid:$uid})
-            SET u.learner_model_embedding = $embedding
-            """, uid=self.uid, embedding=",".join(map(str, learner_model_embedding)))
+            SET u.learner_model_embedding_MOOC = $embedding
+            """, uid=user_id, embedding=",".join(map(str, learner_model_embedding)))
 
-    def run(self):
-        learner_model_embedding = self.learner_model_pipeline()
+
+    def generate_and_store_learner_model_embedding(self, user_id):
+        learner_model_embedding = self.compute_learner_model_embedding(user_id)
+
         if learner_model_embedding is not None:
-            self.store_learner_model_embedding(learner_model_embedding)
+            self.store_learner_model_embedding(user_id, learner_model_embedding)
 
-# if __name__ == "__main__":
-#     # Example usage(
-#     coursemapper_db = CourseMapperConnection()
-#     mongodb_db = MongoDBConnection()
-#     learner_model = LearnerModel(uid="user123", coursemapper_db=coursemapper_db, mongodb_db=mongodb_db)
-#     learner_model.run() 
-def generate_all_users_learner_model_embeddings(coursemapper_db, mongodb_db):
-    with coursemapper_db.get_session() as session:
-        result = session.run("""
-        MATCH (u:User)
-        RETURN u.uid AS uid
-        """)
-        user_ids = [record["uid"] for record in result if record["uid"]]
+        return learner_model_embedding
 
-    print(f"Total users: {len(user_ids)}")
-
-    for idx, uid in enumerate(user_ids, start=1):
-        try:
-            print(f"[{idx}/{len(user_ids)}] Processing user: {uid}")
-            learner_model = LearnerModel(uid, coursemapper_db, mongodb_db)
-            learner_model.run()
-            print(f"[{idx}/{len(user_ids)}] Done: {uid}")
-        except Exception as e:
-            print(f"[{idx}/{len(user_ids)}] Failed: {uid}, error: {e}")
 
 if __name__ == "__main__":
-    coursemapper_db = CourseMapperConnection()
-    mongodb_db = MongoDBConnection()
-    generate_all_users_learner_model_embeddings(coursemapper_db, mongodb_db)
+    test_user_id = "69acb9460e3a21f27e87122f"
+
+    learner_model_emb = LearnerModelEmbedding()
+
+    try:
+        embedding = learner_model_emb.generate_and_store_learner_model_embedding(user_id=test_user_id)
+        print("Learner model embedding generated.")
+        print("Embedding shape:", embedding.shape if embedding is not None else None)
+    finally:
+        learner_model_emb.close()

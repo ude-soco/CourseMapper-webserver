@@ -48,11 +48,12 @@ Each Course node in CourseMapper Neo4j will finally contain two embeddings:
 
 
 # type this command to run this file:
-# pipenv run python -m app.services.course_materials.Mooc_Recommendation.course_embedding.CourseMapper_final
+# pipenv run python -m app.services.course_materials.Mooc_Recommendation.course_embedding.coursemapper_course_embedding
 
 
-from ..database_connection.CourseMapper_connection import CourseMapperConnection
-from ..database_connection.MongoDB_connection import MongoDBConnection
+
+from ..database_connection.coursemapper_connection import CourseMapperConnection
+from ..database_connection.mongodb_connection import MongoDBConnection
 
 from bson import ObjectId
 from sentence_transformers import SentenceTransformer
@@ -60,16 +61,23 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 
 
-class CourseFinalEmbedding:
 
-    def __init__(self, coursemapper_db, mongodb_db):
+class CourseMapperCourseEmbedding:
 
-        self.coursemapper_driver = coursemapper_db.driver
+    def __init__(self):
 
-         # MongoDB
-        self.materials = mongodb_db.get_collection("materials")
+        self.coursemapper_db = CourseMapperConnection()
+        self.mongodb_db = MongoDBConnection()
+
+        self.coursemapper_driver = self.coursemapper_db.driver
+        # MongoDB
+        self.materials = self.mongodb_db.get_collection("materials")
        
         self.model = SentenceTransformer("all-mpnet-base-v2")
+
+    def close(self):
+        self.coursemapper_db.close()
+        self.mongodb_db.close()
         
 
     """
@@ -431,14 +439,34 @@ class CourseFinalEmbedding:
 
         return course_emb_dict  # Return all computed course embeddings.
  
+
+
+
+    # def generate_and_store_course_embeddings(self):
+    #     self.sync_course_id()
+
+    #     courses = self.get_new_courses()
+
+    #     if len(courses) > 0:
+    #         course_name_embeddings = self.generate_sbert_embeddings(courses)
+    #         self.store_course_name_embeddings(course_name_embeddings)
+
+    #     course_embeddings = self.compute_course_embedding()
+    #     self.store_course_embeddings(course_embeddings)
+
+
+
+
     # ---------------------------------------------------
-    # run
+    # generate_and_store_course_embeddings
     # ---------------------------------------------------
 
-    def run(self):
+    def generate_and_store_course_embeddings(self):
         print("\n==========================================================================================\n")
         print("Sync MongoDB → Neo4j course_id")
+
         self.sync_course_id()
+        
         print("Checking how many CourseMapper courses which have no name embeddings...")
         courses = self.get_new_courses()
         print(f"Found {len(courses)} new courses")
@@ -446,8 +474,10 @@ class CourseFinalEmbedding:
         if len(courses) >0:
             print(f"Generating course name embedding for these {len(courses)} new courses")
             course_name_embeddings = self.generate_sbert_embeddings(courses)
+
             print("Writing generated course name embeddings into CourseMapper database...")
             self.store_course_name_embeddings(course_name_embeddings)
+
             print("CourseMapper: Course name embedding generation finished and stored in database.")
         else:
             print("No new courses found, skip generating course name embeddings.")
@@ -455,23 +485,23 @@ class CourseFinalEmbedding:
 
         print("Star calculating course embedding.")
         course_embeddings = self.compute_course_embedding()
+
         print("Writing generated course embeddings into CourseMapper database...") 
         self.store_course_embeddings(course_embeddings)
+
         print("CourseMapper: Course embedding generation finished and stored in database.")    
         print("\n==========================================================================================\n")
 
 
+
+
 if __name__ == "__main__":
+    coursemapper_course_emb_generator = CourseMapperCourseEmbedding()
 
-    coursemapper_db = CourseMapperConnection()
-    mongodb_db = MongoDBConnection()
-
-    embedding = CourseFinalEmbedding(coursemapper_db, mongodb_db)
-
-    embedding.run()
-
-    coursemapper_db.close()
-
+    try:
+        coursemapper_course_emb_generator.generate_and_store_course_embeddings()
+    finally:
+        coursemapper_course_emb_generator.close()
 
 
 

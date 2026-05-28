@@ -2,6 +2,15 @@ from ...conceptrecommentation.recommendation import Recommendation
 from ...conceptrecommentation.sequence_recommendation import Sequence_recommendation
 from ..dbpedia.concept_tagging import DBpediaSpotlight
 from ...db.neo4_db import NeoDataBase
+
+
+from ...Mooc_Recommendation.course_embedding.coursemapper_course_embedding import CourseMapperCourseEmbedding
+from ...Mooc_Recommendation.course_embedding.mooccentral_course_embedding import MoocCentralCourseEmbedding
+from ...Mooc_Recommendation.learner_model.learner_model import LearnerModelEmbedding
+from ...Mooc_Recommendation.recommendation_list.mooc_recommendation_list import MOOCRecommendationList
+
+
+
 import time
 import os
 
@@ -240,16 +249,57 @@ class RecService:
         self.db.create_related_concepts_and_relationships(data=nodes)
 
         # 
+    
+    
     def _construct_user_MOOC(self, user_id):
-        step1
-        creae an instance of the class n use the function in the class
-        step2
-        step3
+
+        # Step 1: CourseMapper course embedding construction and storage
+        coursemapper_course_emb = CourseMapperCourseEmbedding()
+        try:
+            coursemapper_course_emb.generate_and_store_course_embeddings()
+        finally:
+            coursemapper_course_emb.close()
+
+        # Step 2: MOOCCentral course embedding construction and storage, and concept embedding construction and storage
+        mooccentral_course_emb = MoocCentralCourseEmbedding()
+        try:
+            mooccentral_course_emb.generate_and_store_course_embeddings()
+        finally:
+            mooccentral_course_emb.close()
+
+
+        # Step 3: learner model embedding construction and storage
+        learner_model_emb = LearnerModelEmbedding()
+        try:
+            learner_model_emb.generate_and_store_learner_model_embedding(user_id=user_id)
+        finally:
+            learner_model_emb.close()
+
+
+
     # get top-20 recommended courses for user_id
     def _get_MOOC_recommendation(self, user_id):
-        # Get concepts that doesn't interact with user
-        step4
-        return resp
+
+        recommendation_list = MOOCRecommendationList()
+
+        try:
+            # Generate a Python list.
+            # Each element in the list is a dictionary representing one recommended course.
+
+
+            # mooc_recommendations = recommendation_list.generate_simple_recommendations(user_id=user_id)
+            mooc_recommendations = recommendation_list.generate_detailed_recommendations(user_id=user_id)
+
+            # Print the detailed recommendation list in terminal.
+            # This does not change the returned data.
+            recommendation_list.print_detailed_recommendations(mooc_recommendations)
+
+        finally:
+            recommendation_list.close()
+
+        return mooc_recommendations
+
+
     
 def get_serialized_concepts_data(concepts):
     """ """
