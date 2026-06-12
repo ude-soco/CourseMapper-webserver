@@ -1,0 +1,13 @@
+{
+  "enrolled_first_weight_min": 0.5189993381500244,
+  "enrolled_first_weight_max": 1.0000001192092896,
+  "enrolled_first_weight_negative_count": 0,
+  "interested_first_weight_min": 0.5605729222297668,
+  "interested_first_weight_max": 0.9815311431884766,
+  "interested_first_weight_negative_count": 0,
+  "full_node_weight_min": 0.2615448534488678,
+  "full_node_weight_max": 1.0000001192092896,
+  "full_node_weight_negative_count": 0,
+  "inner_weight_sum_min": 0.9999998807907104,
+  "inner_weight_sum_zero_or_near_zero_count": 0
+}

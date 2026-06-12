@@ -1,8 +1,7 @@
 """
 Run:
     pipenv run python -m app.services.course_materials.Mooc_Recommendation.learner_model.learner_model
-"""
-"""
+
 Pipline:
 
 For each relationship (dnu / interested_in / engaged_in):
@@ -19,31 +18,38 @@ For each relationship (dnu / interested_in / engaged_in):
 """
 
 import numpy as np
+
 from ..database_connection.mongodb_connection import MongoDBConnection
 from ..database_connection.coursemapper_connection import CourseMapperConnection
+
 from .relationship_info import DNUInfo, InterestInfo, EngagementInfo
-from .updated_embeddings import ConceptEmbeddingUpdater
+from .updated_embeddings import NodeEmbeddingUpdater
 from .relation_components import RelationComponent
 
 from .utils import glorot_seed, EMBEDDING_DIM
 
+
 class LearnerModelEmbedding:
 
+    # Initialize CourseMapper Neo4j connection and MongoDB connection.
     def __init__(self):
         self.coursemapper_connection = CourseMapperConnection()
         self.mongodb_connection = MongoDBConnection()
 
+    # Close database connections.
     def close(self):
         self.coursemapper_connection.close()
         self.mongodb_connection.close()
 
+    # Convert embedding string to numpy array.
     def string_to_array(self, emb_str):
         return np.array([float(x) for x in emb_str.split(",")]) 
-        
+    
+    # Convert numpy array to embedding string.
     def array_to_string(self, emb_array):
         return ",".join(map(str, emb_array.tolist()))
 
-
+    # Compute learner model embedding with random relation-specific matrices.
     def compute_learner_model_embedding(self, user_id):
         """
         1. Get relationship info dict for dnu, interested_in, engaged_in
@@ -51,8 +57,7 @@ class LearnerModelEmbedding:
         3. Compute relation component for each relationship
         4. Generate random weight matrices for each relationship
         5. Compute final learner model embedding
-        """
-        """
+        
             relationship_dict structure:
             {
                 cid: {
@@ -67,6 +72,9 @@ class LearnerModelEmbedding:
             }
 
         """
+
+
+
         # ------------------------------------------------
         # 1. Get relationship info for dnu, interested_in, engaged_in
         # ------------------------------------------------
@@ -82,7 +90,7 @@ class LearnerModelEmbedding:
         # ------------------------------------------------
         # 2. Update embeddings for each relationship
         # ------------------------------------------------
-        embedding_updater = ConceptEmbeddingUpdater()
+        embedding_updater = NodeEmbeddingUpdater()
 
         updated_dnu_dict = embedding_updater.update_embeddings(dnu_dict)
         updated_interest_dict = embedding_updater.update_embeddings(interest_dict)
@@ -106,7 +114,6 @@ class LearnerModelEmbedding:
         engagement_relation_component = relation_component_calculator.compute_relation_component(updated_engagement_dict)
         
  
-
         # ------------------------------------------------
         # 4. Generate random weight matrices for each relationship
         # ------------------------------------------------
@@ -140,52 +147,66 @@ class LearnerModelEmbedding:
         
         dnu_weight_sum = (
             dnu_relation_component["dnu"]["relationship_weight_sum"] 
-            if has_dnu_relationship else None)
+            if has_dnu_relationship else 0.0)
         
         interest_weight_sum = (
             interest_relation_component["INTERESTED_IN"]["relationship_weight_sum"]
-            if has_interest_relationship else None
+            if has_interest_relationship else 0.0
         )
         engagement_weight_sum = (
             engagement_relation_component["ENGAGED_IN"]["relationship_weight_sum"]
-            if has_engagement_relationship else None
+            if has_engagement_relationship else 0.0
         )
 
-        w_sum = 0
-        
-        if has_dnu_relationship:
-            w_sum += dnu_weight_sum
-        if has_interest_relationship:
-            w_sum += interest_weight_sum
-        if has_engagement_relationship:
-            w_sum += engagement_weight_sum
+        w_sum = dnu_weight_sum + interest_weight_sum + engagement_weight_sum
 
-        # means user has no interactions at all, has no relationships, return zero vector
-        if w_sum == 0:
+       
+        valid_relation_names = []    # Record which valid relationship types the user has.
+
+        if has_dnu_relationship and dnu_weight_sum != 0:
+            valid_relation_names.append("dnu")
+
+        if has_interest_relationship and interest_weight_sum != 0:
+            valid_relation_names.append("INTERESTED_IN")
+
+        if has_engagement_relationship and engagement_weight_sum != 0:
+            valid_relation_names.append("ENGAGED_IN")
+        
+        # If the user has no valid relationship, return zero vector. Has no interactions.
+        if len(valid_relation_names) == 0 or w_sum == 0:
             return np.zeros(EMBEDDING_DIM)
+
 
         dnu_term = (
             (1 / dnu_weight_sum) * W_rel_dnu.dot(dnu_relation_component["dnu"]["weighted_embedding_sum"])
-            if (has_dnu_relationship and dnu_weight_sum != 0) else np.zeros(EMBEDDING_DIM)
+            if ("dnu" in valid_relation_names) else np.zeros(EMBEDDING_DIM)
         )
 
         interest_term = (
             (1 / interest_weight_sum)
             * W_rel_interest.dot(interest_relation_component["INTERESTED_IN"]["weighted_embedding_sum"])
-            if (has_interest_relationship and interest_weight_sum != 0) else np.zeros(EMBEDDING_DIM)
+            if ("INTERESTED_IN" in valid_relation_names) else np.zeros(EMBEDDING_DIM)
         )
 
         engagement_term = (
             (1 / engagement_weight_sum)
             * W_rel_engagement.dot(engagement_relation_component["ENGAGED_IN"]["weighted_embedding_sum"])
-            if (has_engagement_relationship and engagement_weight_sum != 0) else np.zeros(EMBEDDING_DIM)
+            if ("ENGAGED_IN" in valid_relation_names) else np.zeros(EMBEDDING_DIM)
         )
 
-        learner_model_embedding = (dnu_term + interest_term + engagement_term) / w_sum
+        term_sum = dnu_term + interest_term + engagement_term
+
+        # If the user only has one relationship,
+        # do not divide by the outer w_sum again.
+        if len(valid_relation_names) == 1:
+            learner_model_embedding = term_sum
+        else:
+            learner_model_embedding = term_sum / w_sum
 
         return learner_model_embedding
 
 
+    # Store the learner model embedding into CourseMapper Neo4j.
     def store_learner_model_embedding(self, user_id, learner_model_embedding):
         """
         Store the learner model embedding back to Neo4j
@@ -194,9 +215,9 @@ class LearnerModelEmbedding:
             session.run("""
             MATCH (u:User {uid:$uid})
             SET u.learner_model_embedding_MOOC = $embedding
-            """, uid=user_id, embedding=",".join(map(str, learner_model_embedding)))
+            """, uid=user_id, embedding=self.array_to_string(learner_model_embedding))
 
-
+    # Main entry: compute and store the test learner model embedding.
     def generate_and_store_learner_model_embedding(self, user_id):
         learner_model_embedding = self.compute_learner_model_embedding(user_id)
 
@@ -208,6 +229,7 @@ class LearnerModelEmbedding:
 
 if __name__ == "__main__":
     test_user_id = "69acb9460e3a21f27e87122f"
+    #test_user_id = "69c94b4b5de97d0a38cdf3d8"
 
     learner_model_emb = LearnerModelEmbedding()
 

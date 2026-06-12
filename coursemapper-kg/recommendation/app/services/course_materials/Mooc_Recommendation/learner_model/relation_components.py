@@ -9,10 +9,10 @@ Goal: Compute the relation component for each relationship type (dnu / intereste
 
 
 import numpy as np
-from ..database_connection.mongodb_connection import MongoDBConnection
-from ..database_connection.coursemapper_connection import CourseMapperConnection
-from .relationship_info import DNUInfo, InterestInfo, EngagementInfo
-from .updated_embeddings import ConceptEmbeddingUpdater
+# from ..database_connection.mongodb_connection import MongoDBConnection
+# from ..database_connection.coursemapper_connection import CourseMapperConnection
+# from .relationship_info import DNUInfo, InterestInfo, EngagementInfo
+# from .updated_embeddings import NodeEmbeddingUpdater
 
 
 

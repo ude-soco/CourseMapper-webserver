@@ -22,7 +22,7 @@ Update formula: updated_embedding matrix = sequential matrix * unupdated_embeddi
 import numpy as np
 
 
-class ConceptEmbeddingUpdater:
+class NodeEmbeddingUpdater:
 
     def update_embeddings(self, relation_info, debug=False):
 

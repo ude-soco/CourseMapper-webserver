@@ -1,0 +1,420 @@
+MOOCube Processed Dataset Statistics
+============================================================
+
+[Basic Statistics]
+------------------------------------------------------------
+There are 9617 users in the processed dataset.
+There are 706 courses in the processed dataset.
+There are 25200 concepts in the processed dataset.
+There are 167749 course-concept pairs in the processed dataset.
+
+[Train Course Distribution per User]
+============================================================
+There are 2202 users who have exactly 1 training course.
+There are 2141 users who have exactly 2 training courses.
+There are 1890 users who have exactly 3 training courses.
+There are 1135 users who have exactly 4 training courses.
+There are 709 users who have exactly 5 training courses.
+There are 469 users who have exactly 6 training courses.
+There are 293 users who have exactly 7 training courses.
+There are 184 users who have exactly 8 training courses.
+There are 116 users who have exactly 9 training courses.
+There are 99 users who have exactly 10 training courses.
+There are 87 users who have exactly 11 training courses.
+There are 69 users who have exactly 12 training courses.
+There are 36 users who have exactly 13 training courses.
+There are 35 users who have exactly 14 training courses.
+There are 23 users who have exactly 15 training courses.
+There are 16 users who have exactly 16 training courses.
+There are 19 users who have exactly 17 training courses.
+There are 11 users who have exactly 18 training courses.
+There are 15 users who have exactly 19 training courses.
+There are 10 users who have exactly 20 training courses.
+There are 6 users who have exactly 21 training courses.
+There are 2 users who have exactly 22 training courses.
+There are 9 users who have exactly 23 training courses.
+There are 6 users who have exactly 24 training courses.
+There are 3 users who have exactly 25 training courses.
+There are 3 users who have exactly 26 training courses.
+There are 2 users who have exactly 27 training courses.
+There are 5 users who have exactly 28 training courses.
+There are 2 users who have exactly 29 training courses.
+There are 3 users who have exactly 30 training courses.
+There are 3 users who have exactly 31 training courses.
+There are 2 users who have exactly 32 training courses.
+There are 3 users who have exactly 34 training courses.
+There are 1 users who have exactly 35 training courses.
+There are 1 users who have exactly 37 training courses.
+There are 1 users who have exactly 41 training courses.
+There are 1 users who have exactly 42 training courses.
+There are 1 users who have exactly 43 training courses.
+There are 2 users who have exactly 53 training courses.
+There are 1 users who have exactly 55 training courses.
+There are 1 users who have exactly 61 training courses.
+
+[Test Course Distribution per User]
+============================================================
+There are 5504 users who have exactly 1 test course.
+There are 2223 users who have exactly 2 test courses.
+There are 1032 users who have exactly 3 test courses.
+There are 447 users who have exactly 4 test courses.
+There are 167 users who have exactly 5 test courses.
+There are 91 users who have exactly 6 test courses.
+There are 57 users who have exactly 7 test courses.
+There are 36 users who have exactly 8 test courses.
+There are 19 users who have exactly 9 test courses.
+There are 13 users who have exactly 10 test courses.
+There are 6 users who have exactly 11 test courses.
+There are 5 users who have exactly 12 test courses.
+There are 6 users who have exactly 13 test courses.
+There are 5 users who have exactly 14 test courses.
+There are 1 users who have exactly 15 test courses.
+There are 1 users who have exactly 16 test courses.
+There are 2 users who have exactly 17 test courses.
+There are 2 users who have exactly 18 test courses.
+
+[Concept Count per Course Distribution]
+============================================================
+There are 23 courses that contain no concepts.
+There are 1 courses where each course contains exactly 6 concepts.
+There are 5 courses where each course contains exactly 10 concepts.
+There are 1 courses where each course contains exactly 18 concepts.
+There are 3 courses where each course contains exactly 19 concepts.
+There are 2 courses where each course contains exactly 29 concepts.
+There are 1 courses where each course contains exactly 30 concepts.
+There are 1 courses where each course contains exactly 34 concepts.
+There are 1 courses where each course contains exactly 38 concepts.
+There are 1 courses where each course contains exactly 39 concepts.
+There are 1 courses where each course contains exactly 40 concepts.
+There are 1 courses where each course contains exactly 47 concepts.
+There are 2 courses where each course contains exactly 49 concepts.
+There are 2 courses where each course contains exactly 51 concepts.
+There are 1 courses where each course contains exactly 52 concepts.
+There are 1 courses where each course contains exactly 55 concepts.
+There are 3 courses where each course contains exactly 57 concepts.
+There are 1 courses where each course contains exactly 59 concepts.
+There are 2 courses where each course contains exactly 60 concepts.
+There are 1 courses where each course contains exactly 61 concepts.
+There are 1 courses where each course contains exactly 62 concepts.
+There are 2 courses where each course contains exactly 70 concepts.
+There are 1 courses where each course contains exactly 77 concepts.
+There are 1 courses where each course contains exactly 79 concepts.
+There are 2 courses where each course contains exactly 81 concepts.
+There are 3 courses where each course contains exactly 83 concepts.
+There are 1 courses where each course contains exactly 87 concepts.
+There are 2 courses where each course contains exactly 88 concepts.
+There are 2 courses where each course contains exactly 91 concepts.
+There are 2 courses where each course contains exactly 93 concepts.
+There are 2 courses where each course contains exactly 94 concepts.
+There are 3 courses where each course contains exactly 96 concepts.
+There are 2 courses where each course contains exactly 98 concepts.
+There are 3 courses where each course contains exactly 100 concepts.
+There are 3 courses where each course contains exactly 101 concepts.
+There are 3 courses where each course contains exactly 105 concepts.
+There are 1 courses where each course contains exactly 106 concepts.
+There are 2 courses where each course contains exactly 107 concepts.
+There are 1 courses where each course contains exactly 108 concepts.
+There are 1 courses where each course contains exactly 109 concepts.
+There are 2 courses where each course contains exactly 110 concepts.
+There are 2 courses where each course contains exactly 111 concepts.
+There are 1 courses where each course contains exactly 112 concepts.
+There are 5 courses where each course contains exactly 113 concepts.
+There are 2 courses where each course contains exactly 114 concepts.
+There are 8 courses where each course contains exactly 115 concepts.
+There are 2 courses where each course contains exactly 116 concepts.
+There are 5 courses where each course contains exactly 117 concepts.
+There are 2 courses where each course contains exactly 118 concepts.
+There are 1 courses where each course contains exactly 119 concepts.
+There are 1 courses where each course contains exactly 123 concepts.
+There are 1 courses where each course contains exactly 126 concepts.
+There are 1 courses where each course contains exactly 127 concepts.
+There are 3 courses where each course contains exactly 128 concepts.
+There are 4 courses where each course contains exactly 129 concepts.
+There are 1 courses where each course contains exactly 130 concepts.
+There are 1 courses where each course contains exactly 131 concepts.
+There are 2 courses where each course contains exactly 132 concepts.
+There are 3 courses where each course contains exactly 133 concepts.
+There are 5 courses where each course contains exactly 134 concepts.
+There are 1 courses where each course contains exactly 135 concepts.
+There are 3 courses where each course contains exactly 136 concepts.
+There are 1 courses where each course contains exactly 137 concepts.
+There are 1 courses where each course contains exactly 138 concepts.
+There are 1 courses where each course contains exactly 139 concepts.
+There are 3 courses where each course contains exactly 140 concepts.
+There are 1 courses where each course contains exactly 142 concepts.
+There are 1 courses where each course contains exactly 143 concepts.
+There are 2 courses where each course contains exactly 144 concepts.
+There are 3 courses where each course contains exactly 146 concepts.
+There are 4 courses where each course contains exactly 147 concepts.
+There are 3 courses where each course contains exactly 148 concepts.
+There are 1 courses where each course contains exactly 149 concepts.
+There are 2 courses where each course contains exactly 150 concepts.
+There are 1 courses where each course contains exactly 152 concepts.
+There are 1 courses where each course contains exactly 153 concepts.
+There are 1 courses where each course contains exactly 154 concepts.
+There are 4 courses where each course contains exactly 155 concepts.
+There are 1 courses where each course contains exactly 156 concepts.
+There are 1 courses where each course contains exactly 157 concepts.
+There are 2 courses where each course contains exactly 158 concepts.
+There are 2 courses where each course contains exactly 159 concepts.
+There are 1 courses where each course contains exactly 160 concepts.
+There are 3 courses where each course contains exactly 161 concepts.
+There are 1 courses where each course contains exactly 162 concepts.
+There are 1 courses where each course contains exactly 163 concepts.
+There are 3 courses where each course contains exactly 164 concepts.
+There are 4 courses where each course contains exactly 165 concepts.
+There are 1 courses where each course contains exactly 166 concepts.
+There are 6 courses where each course contains exactly 167 concepts.
+There are 7 courses where each course contains exactly 168 concepts.
+There are 4 courses where each course contains exactly 169 concepts.
+There are 3 courses where each course contains exactly 170 concepts.
+There are 4 courses where each course contains exactly 171 concepts.
+There are 1 courses where each course contains exactly 173 concepts.
+There are 3 courses where each course contains exactly 174 concepts.
+There are 2 courses where each course contains exactly 175 concepts.
+There are 1 courses where each course contains exactly 176 concepts.
+There are 2 courses where each course contains exactly 177 concepts.
+There are 3 courses where each course contains exactly 178 concepts.
+There are 2 courses where each course contains exactly 180 concepts.
+There are 1 courses where each course contains exactly 181 concepts.
+There are 3 courses where each course contains exactly 182 concepts.
+There are 7 courses where each course contains exactly 184 concepts.
+There are 3 courses where each course contains exactly 185 concepts.
+There are 3 courses where each course contains exactly 186 concepts.
+There are 2 courses where each course contains exactly 187 concepts.
+There are 2 courses where each course contains exactly 188 concepts.
+There are 1 courses where each course contains exactly 189 concepts.
+There are 4 courses where each course contains exactly 190 concepts.
+There are 3 courses where each course contains exactly 191 concepts.
+There are 2 courses where each course contains exactly 192 concepts.
+There are 4 courses where each course contains exactly 193 concepts.
+There are 2 courses where each course contains exactly 195 concepts.
+There are 5 courses where each course contains exactly 196 concepts.
+There are 3 courses where each course contains exactly 197 concepts.
+There are 1 courses where each course contains exactly 199 concepts.
+There are 4 courses where each course contains exactly 200 concepts.
+There are 1 courses where each course contains exactly 201 concepts.
+There are 3 courses where each course contains exactly 202 concepts.
+There are 3 courses where each course contains exactly 203 concepts.
+There are 3 courses where each course contains exactly 204 concepts.
+There are 2 courses where each course contains exactly 205 concepts.
+There are 6 courses where each course contains exactly 206 concepts.
+There are 2 courses where each course contains exactly 207 concepts.
+There are 4 courses where each course contains exactly 208 concepts.
+There are 1 courses where each course contains exactly 209 concepts.
+There are 2 courses where each course contains exactly 210 concepts.
+There are 4 courses where each course contains exactly 211 concepts.
+There are 2 courses where each course contains exactly 213 concepts.
+There are 3 courses where each course contains exactly 214 concepts.
+There are 3 courses where each course contains exactly 217 concepts.
+There are 3 courses where each course contains exactly 218 concepts.
+There are 4 courses where each course contains exactly 219 concepts.
+There are 4 courses where each course contains exactly 220 concepts.
+There are 1 courses where each course contains exactly 221 concepts.
+There are 2 courses where each course contains exactly 222 concepts.
+There are 1 courses where each course contains exactly 223 concepts.
+There are 6 courses where each course contains exactly 224 concepts.
+There are 2 courses where each course contains exactly 225 concepts.
+There are 1 courses where each course contains exactly 226 concepts.
+There are 3 courses where each course contains exactly 227 concepts.
+There are 3 courses where each course contains exactly 228 concepts.
+There are 2 courses where each course contains exactly 229 concepts.
+There are 1 courses where each course contains exactly 230 concepts.
+There are 2 courses where each course contains exactly 231 concepts.
+There are 3 courses where each course contains exactly 232 concepts.
+There are 1 courses where each course contains exactly 233 concepts.
+There are 3 courses where each course contains exactly 234 concepts.
+There are 3 courses where each course contains exactly 235 concepts.
+There are 3 courses where each course contains exactly 236 concepts.
+There are 5 courses where each course contains exactly 237 concepts.
+There are 1 courses where each course contains exactly 238 concepts.
+There are 3 courses where each course contains exactly 239 concepts.
+There are 3 courses where each course contains exactly 240 concepts.
+There are 7 courses where each course contains exactly 241 concepts.
+There are 4 courses where each course contains exactly 243 concepts.
+There are 1 courses where each course contains exactly 244 concepts.
+There are 2 courses where each course contains exactly 245 concepts.
+There are 1 courses where each course contains exactly 246 concepts.
+There are 3 courses where each course contains exactly 247 concepts.
+There are 5 courses where each course contains exactly 248 concepts.
+There are 1 courses where each course contains exactly 249 concepts.
+There are 1 courses where each course contains exactly 250 concepts.
+There are 4 courses where each course contains exactly 252 concepts.
+There are 3 courses where each course contains exactly 254 concepts.
+There are 4 courses where each course contains exactly 255 concepts.
+There are 4 courses where each course contains exactly 256 concepts.
+There are 4 courses where each course contains exactly 257 concepts.
+There are 3 courses where each course contains exactly 258 concepts.
+There are 3 courses where each course contains exactly 259 concepts.
+There are 3 courses where each course contains exactly 263 concepts.
+There are 3 courses where each course contains exactly 264 concepts.
+There are 1 courses where each course contains exactly 265 concepts.
+There are 3 courses where each course contains exactly 266 concepts.
+There are 1 courses where each course contains exactly 267 concepts.
+There are 2 courses where each course contains exactly 268 concepts.
+There are 6 courses where each course contains exactly 269 concepts.
+There are 1 courses where each course contains exactly 270 concepts.
+There are 8 courses where each course contains exactly 271 concepts.
+There are 6 courses where each course contains exactly 272 concepts.
+There are 4 courses where each course contains exactly 273 concepts.
+There are 4 courses where each course contains exactly 274 concepts.
+There are 1 courses where each course contains exactly 275 concepts.
+There are 2 courses where each course contains exactly 276 concepts.
+There are 1 courses where each course contains exactly 279 concepts.
+There are 1 courses where each course contains exactly 280 concepts.
+There are 1 courses where each course contains exactly 282 concepts.
+There are 9 courses where each course contains exactly 284 concepts.
+There are 3 courses where each course contains exactly 285 concepts.
+There are 2 courses where each course contains exactly 286 concepts.
+There are 3 courses where each course contains exactly 287 concepts.
+There are 5 courses where each course contains exactly 288 concepts.
+There are 3 courses where each course contains exactly 289 concepts.
+There are 3 courses where each course contains exactly 291 concepts.
+There are 1 courses where each course contains exactly 292 concepts.
+There are 4 courses where each course contains exactly 293 concepts.
+There are 3 courses where each course contains exactly 296 concepts.
+There are 1 courses where each course contains exactly 297 concepts.
+There are 1 courses where each course contains exactly 298 concepts.
+There are 1 courses where each course contains exactly 299 concepts.
+There are 4 courses where each course contains exactly 302 concepts.
+There are 1 courses where each course contains exactly 304 concepts.
+There are 2 courses where each course contains exactly 306 concepts.
+There are 2 courses where each course contains exactly 308 concepts.
+There are 2 courses where each course contains exactly 310 concepts.
+There are 1 courses where each course contains exactly 313 concepts.
+There are 1 courses where each course contains exactly 314 concepts.
+There are 2 courses where each course contains exactly 315 concepts.
+There are 2 courses where each course contains exactly 318 concepts.
+There are 2 courses where each course contains exactly 319 concepts.
+There are 4 courses where each course contains exactly 320 concepts.
+There are 2 courses where each course contains exactly 321 concepts.
+There are 1 courses where each course contains exactly 324 concepts.
+There are 6 courses where each course contains exactly 328 concepts.
+There are 3 courses where each course contains exactly 331 concepts.
+There are 2 courses where each course contains exactly 332 concepts.
+There are 1 courses where each course contains exactly 334 concepts.
+There are 3 courses where each course contains exactly 335 concepts.
+There are 1 courses where each course contains exactly 336 concepts.
+There are 3 courses where each course contains exactly 337 concepts.
+There are 2 courses where each course contains exactly 338 concepts.
+There are 2 courses where each course contains exactly 339 concepts.
+There are 1 courses where each course contains exactly 340 concepts.
+There are 2 courses where each course contains exactly 343 concepts.
+There are 3 courses where each course contains exactly 344 concepts.
+There are 1 courses where each course contains exactly 345 concepts.
+There are 1 courses where each course contains exactly 346 concepts.
+There are 2 courses where each course contains exactly 347 concepts.
+There are 3 courses where each course contains exactly 348 concepts.
+There are 1 courses where each course contains exactly 349 concepts.
+There are 2 courses where each course contains exactly 350 concepts.
+There are 1 courses where each course contains exactly 351 concepts.
+There are 1 courses where each course contains exactly 352 concepts.
+There are 2 courses where each course contains exactly 354 concepts.
+There are 3 courses where each course contains exactly 355 concepts.
+There are 2 courses where each course contains exactly 357 concepts.
+There are 2 courses where each course contains exactly 358 concepts.
+There are 2 courses where each course contains exactly 359 concepts.
+There are 2 courses where each course contains exactly 362 concepts.
+There are 1 courses where each course contains exactly 363 concepts.
+There are 1 courses where each course contains exactly 364 concepts.
+There are 2 courses where each course contains exactly 366 concepts.
+There are 1 courses where each course contains exactly 368 concepts.
+There are 2 courses where each course contains exactly 369 concepts.
+There are 2 courses where each course contains exactly 371 concepts.
+There are 1 courses where each course contains exactly 372 concepts.
+There are 1 courses where each course contains exactly 377 concepts.
+There are 1 courses where each course contains exactly 378 concepts.
+There are 3 courses where each course contains exactly 380 concepts.
+There are 2 courses where each course contains exactly 382 concepts.
+There are 4 courses where each course contains exactly 384 concepts.
+There are 2 courses where each course contains exactly 387 concepts.
+There are 2 courses where each course contains exactly 388 concepts.
+There are 1 courses where each course contains exactly 389 concepts.
+There are 1 courses where each course contains exactly 393 concepts.
+There are 1 courses where each course contains exactly 394 concepts.
+There are 1 courses where each course contains exactly 396 concepts.
+There are 1 courses where each course contains exactly 397 concepts.
+There are 2 courses where each course contains exactly 400 concepts.
+There are 1 courses where each course contains exactly 404 concepts.
+There are 2 courses where each course contains exactly 405 concepts.
+There are 3 courses where each course contains exactly 406 concepts.
+There are 1 courses where each course contains exactly 407 concepts.
+There are 1 courses where each course contains exactly 408 concepts.
+There are 3 courses where each course contains exactly 413 concepts.
+There are 1 courses where each course contains exactly 415 concepts.
+There are 1 courses where each course contains exactly 419 concepts.
+There are 1 courses where each course contains exactly 421 concepts.
+There are 1 courses where each course contains exactly 423 concepts.
+There are 1 courses where each course contains exactly 424 concepts.
+There are 1 courses where each course contains exactly 427 concepts.
+There are 1 courses where each course contains exactly 431 concepts.
+There are 1 courses where each course contains exactly 432 concepts.
+There are 2 courses where each course contains exactly 433 concepts.
+There are 2 courses where each course contains exactly 434 concepts.
+There are 1 courses where each course contains exactly 435 concepts.
+There are 2 courses where each course contains exactly 437 concepts.
+There are 1 courses where each course contains exactly 440 concepts.
+There are 1 courses where each course contains exactly 441 concepts.
+There are 1 courses where each course contains exactly 443 concepts.
+There are 1 courses where each course contains exactly 444 concepts.
+There are 3 courses where each course contains exactly 445 concepts.
+There are 2 courses where each course contains exactly 447 concepts.
+There are 2 courses where each course contains exactly 450 concepts.
+There are 1 courses where each course contains exactly 455 concepts.
+There are 1 courses where each course contains exactly 456 concepts.
+There are 2 courses where each course contains exactly 464 concepts.
+There are 1 courses where each course contains exactly 471 concepts.
+There are 1 courses where each course contains exactly 475 concepts.
+There are 1 courses where each course contains exactly 477 concepts.
+There are 1 courses where each course contains exactly 479 concepts.
+There are 1 courses where each course contains exactly 494 concepts.
+There are 1 courses where each course contains exactly 498 concepts.
+There are 2 courses where each course contains exactly 503 concepts.
+There are 1 courses where each course contains exactly 504 concepts.
+There are 1 courses where each course contains exactly 505 concepts.
+There are 1 courses where each course contains exactly 507 concepts.
+There are 2 courses where each course contains exactly 510 concepts.
+There are 1 courses where each course contains exactly 521 concepts.
+There are 2 courses where each course contains exactly 553 concepts.
+There are 1 courses where each course contains exactly 556 concepts.
+There are 1 courses where each course contains exactly 574 concepts.
+There are 1 courses where each course contains exactly 583 concepts.
+There are 2 courses where each course contains exactly 590 concepts.
+There are 1 courses where each course contains exactly 593 concepts.
+There are 1 courses where each course contains exactly 600 concepts.
+There are 1 courses where each course contains exactly 604 concepts.
+There are 1 courses where each course contains exactly 611 concepts.
+There are 3 courses where each course contains exactly 617 concepts.
+There are 1 courses where each course contains exactly 632 concepts.
+There are 1 courses where each course contains exactly 664 concepts.
+There are 1 courses where each course contains exactly 899 concepts.
+
+WARNING:
+23 courses do not have any associated concepts.
+This may indicate missing mappings in course-concept.json or filtering issues.
+
+[List of Courses with No Concepts]
+------------------------------------------------------------
+course_id: C_course-v1:SDUx+00931800X+sp | course_name: 线性代数（自主模式）
+course_id: C_course-v1:TsinghuaX+TsinghuaMandarin01+sp | course_name: 对外汉语（自主模式）
+course_id: C_course-v1:HUBU+2017022703X+sp | course_name: 英语语音（自主模式）
+course_id: C_course-v1:SXPI+20171101002+sp | course_name: 高等数学（自主模式）
+course_id: C_course-v1:TsinghuaX+Thesis2018+sp | course_name: 2017年清华大学研究生学位论文答辩（二）
+course_id: C_course-v1:RiceX+Phys102x+sp | course_name: Electricity & Magnetism
+course_id: C_course-v1:UC_BerkeleyX+CS169_2x+sp | course_name: 软件即服务 (SaaS) - 第 2 部分
+course_id: C_course-v1:NUDT+05028103+2018_T2 | course_name: 大学英文写作（上）（2018秋）
+course_id: C_course-v1:NEU+2018051501+sp | course_name: 软件工程（自主模式）
+course_id: C_course-v1:SDSNAssociation+ASD+sp | course_name: Age of Sustainable Development
+course_id: C_course-v1:SDSNAssociation+PB+sp | course_name: Planetary Boundaries
+course_id: C_course-v1:qhnu+20181212x+2018_T2 | course_name: 藏语言文字学概论
+course_id: C_course-v1:SDSNAssociation+CSN+sp | course_name: Climate Change Science and Negotiations
+course_id: C_course-v1:SDSNAssociation+ECD001+sp | course_name: The Best Start in Life: Early Childhood Development for Sustainable Development
+course_id: C_course-v1:SDSNAssociation+C21001+sp | course_name: Cities and the Challenge of Sustainable Development
+course_id: C_course-v1:SDSNAssociation+TOW001+sp | course_name: Transforming Our World
+course_id: C_course-v1:SDSNAssociation+SC001+sp | course_name: Sustainable Cities
+course_id: C_course-v1:ZAFU+20171218+2019_T1 | course_name: 管理学原理（2019春）
+course_id: C_course-v1:XJTU+20171025001+2019_T1 | course_name: 大学化学(2019春)
+course_id: C_course-v1:XYSFXY+20181024X+2019_T1 | course_name: 教育环境中跨文化交流的秘密（2019春）
+course_id: C_course-v1:UC_BerkeleyX+ColWri2_1x_2015_T1+2019_T1 | course_name: 英文写作指导——写作入门（2019春）
+course_id: C_course-v1:SCUT+20180427001+2019_T1 | course_name: 微积分1（Calculus I）（2019春）
+course_id: C_course-v1:qhnu+20181212x+2019_T1 | course_name: 藏语言文字学概论（2019春）

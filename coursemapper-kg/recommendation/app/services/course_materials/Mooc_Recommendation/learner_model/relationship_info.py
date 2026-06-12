@@ -103,11 +103,11 @@ ENGAGED_IN Relation Information Pipeline
 
 
 import numpy as np
-from datetime import datetime
+# from datetime import datetime
 from bson import ObjectId
 
-from ..database_connection.mongodb_connection import MongoDBConnection
-from ..database_connection.coursemapper_connection import CourseMapperConnection
+# from ..database_connection.mongodb_connection import MongoDBConnection
+# from ..database_connection.coursemapper_connection import CourseMapperConnection
 
 
 class RelationshipBase:
@@ -158,45 +158,54 @@ class RelationshipBase:
     # Compute position_weight and position_time based on timestamps
     # --------------------------------------------- 
 
-    def compute_time_features(self, node_timestamps, info_dict):
-        # concept_timestamps is a dictionary, key is cid, value is timestamp, used for later position_weight calculation
+    def compute_time_features(self, info_dict):
+        #  Add position_weight and position_time into info_dict based on timestamp.
         
-        if any(ts is None for ts in node_timestamps.values()):
-            raise ValueError("Found None timestamp in node_timestamps")
+        if not info_dict:
+            return {}
         
-        concept_numbers = len(node_timestamps)
+        # Extract timestamps for all nodes in this relationship.
+        node_timestamps = {node_id: info["timestamp"] for node_id, info in info_dict.items()}
 
-        if concept_numbers == 1:
-            for cid in info_dict:
-                info_dict[cid]["position_weight"] = 0
-                info_dict[cid]["position_time"] = 0
-            return info_dict
+        # Check missing timestamp
+        if any(ts is None for ts in node_timestamps.values()):
+            raise ValueError("Found None timestamp in info_dict")
+
         """
         Compute position_weight and position_time
         """
         # -----------------------------
         # `set()` removes duplicates, and `sorted()` sorts them.
         # the same timestamp will be grouped together, group_id starts from 0, sorted by time from past to recent
-        unique_timestamps = sorted(set(node_timestamps.values()))
+        unique_timestamps = sorted(set(node_timestamps.values()))       #unique_timestamps is a sorted list of unique timestamps, from past to recent
+
+
+        # If all nodes have the same timestamp, position_weight and position_time are all 0.
+        # This also includes the case where there is only one node.
+        if len(unique_timestamps) == 1:
+            for node_id in info_dict:
+                info_dict[node_id]["position_weight"] = 0.0
+                info_dict[node_id]["position_time"] = 0
+            return info_dict
+
+        # Map timestamp to group id. gtoup id starts from 0, sorted by time from past to recent.
         timestamp_group = {ts: i for i, ts in enumerate(unique_timestamps)}
 
-        #total_groups = len(unique_timestamps)
+        node_numbers = len(info_dict)
 
         # -----------------------------
         # Compute position_weight
         # -----------------------------
-        for cid, ts in node_timestamps.items():
+        for node_id, ts in node_timestamps.items():
 
             group_id = timestamp_group[ts]
 
-            position_weight = (
-                group_id / (concept_numbers - 1)
-                if concept_numbers > 1
-                else 0.0
-            )
+            position_weight = group_id / (node_numbers - 1)
 
-            info_dict[cid]["position_weight"] = position_weight
-            info_dict[cid]["position_time"] = group_id
+            info_dict[node_id]["position_weight"] = position_weight
+            info_dict[node_id]["position_time"] = group_id
+
+         # Sort by position_time
         info_dict = dict(sorted(info_dict.items(),key=lambda x: x[1]["position_time"]))
         return info_dict
     
@@ -210,9 +219,7 @@ class DNUInfo(RelationshipBase):
     def get_dnu_info(self):
 
         dnu_info = {}
-        concept_timestamps = {}
         
-       
         # -----------------------------
         # 1 Query Neo4j
         # -----------------------------
@@ -268,15 +275,6 @@ class DNUInfo(RelationshipBase):
             ...
             }
         """
-        # choose a default timestamp
-        # if len(timestamps_obj) > 0:
-        #     default_timestamp = next(iter(timestamps_obj.values()))
-        # else:
-        #     # datetime.min = 0001-01-01
-        #     default_timestamp = datetime.min
-
-        #concept_timestamps = {}
-
 
         # Match each DNU concept with its timestamp from MongoDB.
         for cid in dnu_info.keys():
@@ -285,15 +283,16 @@ class DNUInfo(RelationshipBase):
             if matched is None:
                 raise ValueError(f"Missing timestamp for DNU concept: {cid}")
             
-            concept_timestamps[cid] = matched       # Store timestamp separately for position feature computation.
             dnu_info[cid]["timestamp"] = matched    # Also store timestamp inside the DNU information dictionary.
 
-        dnu_info = self.compute_time_features(concept_timestamps, dnu_info)
+        dnu_info = self.compute_time_features(dnu_info)
 
         return dnu_info
 
 
-
+# =========================================================
+# INTERESTED_IN
+# =========================================================
 
 class InterestInfo(RelationshipBase):
 
@@ -301,8 +300,6 @@ class InterestInfo(RelationshipBase):
     def get_interest_info(self):
 
         interest_info = {}
-        concept_timestamps = {}
-   
 
         with self.coursemapper_connection.get_session() as session:
 
@@ -343,11 +340,17 @@ class InterestInfo(RelationshipBase):
                     "first_weight_component": float(record["first_weight_component"]),
                     "timestamp": timestamp
                 }
-                concept_timestamps[cid] = timestamp
+                
+
+        #if no data, return directly
+        if not interest_info:
+            return {}
+
         # add position_weight and position_time
-        interest_info = self.compute_time_features(concept_timestamps, interest_info)
+        interest_info = self.compute_time_features(interest_info)
 
         return interest_info
+
 
 # =========================================================
 # ENGAGEMENT
@@ -364,8 +367,6 @@ class EngagementInfo(RelationshipBase):
     def get_engagement_info(self):
 
         engagement_info = {}
-        course_timestamps = {}
-       
 
         with self.coursemapper_connection.get_session() as session:
 
@@ -407,12 +408,10 @@ class EngagementInfo(RelationshipBase):
                     "first_weight_component": first_weight_component,
                     "timestamp": timestamp
                 }
-                # a dictionary, key is cid, value is timestamp, used for later position_weight calculation
-                course_timestamps[cid] = timestamp
 
         # if no data, return directly 
         if not engagement_info:
             return {}
-        engagement_info = self.compute_time_features(course_timestamps, engagement_info)
+        engagement_info = self.compute_time_features(engagement_info)
 
         return engagement_info
