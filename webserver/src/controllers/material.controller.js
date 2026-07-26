@@ -124,10 +124,6 @@ export const accessMaterialDashboard = async (req, res, next) => {
 export const newMaterial = async (req, res, next) => {
   const courseId = req.params.courseId;
   const channelId = req.params.channelId;
-  // const materialType = req.body.type;
-  // const materialName = req.body.name;
-  // const materialUrl = req.body.url;
-  // const materialDesc = req.body.description;
   const userId = req.userId;
   const {
     type: materialType,
@@ -385,10 +381,6 @@ export const editMaterial = async (req, res, next) => {
   
   foundMaterial.updatedAt = Date.now();
   foundMaterial = await foundMaterial.save();
-  /*  try {
-  } catch (err) {
-    return res.status(500).send({ error: `Error saving material!`, err });
-  } */
   req.locals.response = {
     id: foundMaterial._id,
     courseId: courseId,
@@ -458,10 +450,6 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator added successfully!`,
-  //   indicator: indicator,
-  // });
 };
 
 /**
@@ -529,9 +517,6 @@ export const deleteIndicator = async (req, res, next) => {
     success: `Indicator deleted successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator deleted successfully!`,
-  // });
 };
 
 /**
@@ -635,7 +620,6 @@ export const resizeIndicator = async (req, res, next) => {
     success: `Indicator resized successfully!`,
   };
   next();
-  // return res.status(200).send();
 };
 
 /**
@@ -696,10 +680,6 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicators updated successfully!`,
-  //   indicators: foundMaterial.indicators,
-  // });
 };
 
 export const zoomPDF = async (req, res, next) => {

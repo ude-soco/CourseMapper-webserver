@@ -1,6 +1,5 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
-
 const UserNotification = db.userNotifications;
 const User = db.user;
 const Course = db.course;
@@ -10,7 +9,6 @@ const BlockingNotifications = db.blockingNotifications;
 const Material = db.material;
 const Channel = db.channel;
 const Topic = db.topic;
-
 const {
   getNotificationSettingsWithFollowingAnnotations,
 } = require("../middlewares/Notifications/notifications");
@@ -68,7 +66,7 @@ export const getAllNotifications = async (req, res, next) => {
       .send({ error: "Error finding notifications", error });
   }
 
-  //get blocked users:
+  // Get blocked users
   let blockingUsers;
   try {
     blockingUsers = await User.findById(userId).populate("blockingUsers", [
@@ -82,7 +80,6 @@ export const getAllNotifications = async (req, res, next) => {
       .status(500)
       .send({ error: "Error finding blocking users", error });
   }
-  //console.log("Sending notifications to frontend:", notifications);
   return res
     .status(200)
     .send({ notifications, blockingUsers: blockingUsers.blockingUsers });
@@ -195,7 +192,6 @@ export const markNotificationsAsRead = async (req, res, next) => {
     response: response,
   };
   next();
-  //return res.status(200).send({ message: "Notifications marked as read!" });
 };
 
 export const markNotificationsAsUnread = async (req, res, next) => {
@@ -210,7 +206,8 @@ export const markNotificationsAsUnread = async (req, res, next) => {
   }
 
   try {
-    //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
+    // User notifications with the id's in the variable notificationIds are updated
+    // to have the isRead field set to true
     await UserNotification.updateMany(
       { _id: { $in: notificationIds } },
       { isRead: false }
@@ -237,11 +234,10 @@ export const markNotificationsAsUnread = async (req, res, next) => {
     response: response,
   };
   next();
-  //return res.status(200).send({ message: "Notification/s marked as unread!" });
 };
 
 export const starNotification = async (req, res, next) => {
-  //request body contains an array of strings of the notification ids
+  // Request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
   const userId = req.userId;
   let foundUser;
@@ -252,7 +248,8 @@ export const starNotification = async (req, res, next) => {
   }
 
   try {
-    //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
+    // User notifications with the id's in the variable notificationIds are updated
+    // to have the isRead field set to true
     await UserNotification.updateMany(
       { _id: { $in: notificationIds } },
       { $set: { isStar: true }, $unset: { createdAt: 1 } }
@@ -278,11 +275,10 @@ export const starNotification = async (req, res, next) => {
     response: response,
   };
   next();
-  //return res.status(200).send({ message: "Notification/s starred!" });
 };
 
 export const unstarNotification = async (req, res, next) => {
-  //request body contains an array of strings of the notification ids
+  // Request body contains an array of strings of the notification ids
   const notificationIds = req.body.notificationIds;
   const userId = req.userId;
   let foundUser;
@@ -293,7 +289,7 @@ export const unstarNotification = async (req, res, next) => {
   }
 
   try {
-    //User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
+    // User notifications with the id's in the variable notificationIds are updated to have the isRead field set to true
     await UserNotification.updateMany(
       { _id: { $in: notificationIds } },
       { $set: { isStar: false, createdAt: new Date() } }
@@ -321,10 +317,9 @@ export const unstarNotification = async (req, res, next) => {
     response: response,
   };
   next();
-  //return res.status(200).send({ message: "Notification/s unstarred!" });
 };
 
-//the below function deletes the rows from the userNotifications table
+// Delete the rows from the userNotifications table
 export const removeNotification = async (req, res, next) => {
   const notificationIds = req.body.notificationIds;
   const userId = req.userId;
@@ -399,7 +394,7 @@ export const followAnnotation = async (req, res, next) => {
     return handleError(res, err, "Error finding user");
   }
 
-  //find the annotation with the ID first
+  // Find the annotation with the ID first
   let annotation;
   try {
     annotation = await Annotation.findById(annotationId);
@@ -412,7 +407,7 @@ export const followAnnotation = async (req, res, next) => {
   const materialId = annotation.materialId;
   const topicId = annotation.topicId;
 
-  //check if the user is already following the annotation
+  // Check if the user is already following the annotation
   let followAnnotation;
   try {
     followAnnotation = await FollowAnnotation.findOne({
@@ -472,57 +467,7 @@ export const followAnnotation = async (req, res, next) => {
       response: notificationSettings[0],
     };
   }
-  // if (req.locals) {
-  //   (req.locals.user = foundUser),
-  //     (req.locals.response = notificationSettings[0]);
-  // } else {
-  //   req.locals = {
-  //     user: foundUser,
-  //     response: notificationSettings[0],
-  //   };
-  // }
   next();
-
-  //update the followingAnnotations array in the BlockingNotifications collection for the respective channel
-  //fetch the BlockingNotification for the respective User and CourseId
-
-  //fetch the material to which this annotation belongs to to get the material Type.
-  /*   let material;
-  try {
-    material = await Material.findById(materialId);
-  } catch (error) {
-    return res.status(500).json({ error: "Material not found" });
-  } */
-
-  /*   const newFollowingAnnotation = {
-    annotationId: annotationId,
-    channelId: channelId,
-    materialId: materialId,
-    annotationContent: annotation.content,
-    materialType: material.type,
-  };
- */
-  /*   try {
-    const updatedDocument = await BlockingNotifications.findOneAndUpdate(
-      {
-        userId: userId,
-        courseId: courseId,
-        "channels.channelId": channelId,
-        "channels.followingAnnotations.annotationId": { $ne: annotationId },
-      },
-      { $push: { "channels.$.followingAnnotations": newFollowingAnnotation } },
-      { new: true }
-    );
-
-    if (updatedDocument) {
-      res.status(200).json({ message: "Followed the Annotation!" });
-      next();
-    } else {
-      res.status(500).json({ error: "Already following the annotation!" });
-    }
-  } catch (error) {
-    res.status(500).json({ error: "Could not Follow the Annotation!" });
-  } */
 };
 
 export const unfollowAnnotation = async (req, res, next) => {
@@ -544,7 +489,8 @@ export const unfollowAnnotation = async (req, res, next) => {
   }
   const channelId = annotation.channelId;
   const courseId = annotation.courseId;
-  //check if the user is already not following the annotation
+
+  // Check if the user is already not following the annotation
   let followAnnotation;
   try {
     followAnnotation = await FollowAnnotation.findOne({
@@ -586,7 +532,6 @@ export const unfollowAnnotation = async (req, res, next) => {
     response: notificationSettings[0],
   };
   next();
-  //res.status(200).send(notificationSettings[0]);
 };
 
 export const setMaterialNotificationSettings = async (req, res, next) => {
@@ -619,7 +564,7 @@ export const setMaterialNotificationSettings = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding material" });
   }
 
-  //update the material in the Blocking Notification collection
+  // Update the material in the Blocking Notification collection
   try {
     updatedDocument = await BlockingNotifications.findOneAndUpdate(
       {
@@ -668,7 +613,6 @@ export const setMaterialNotificationSettings = async (req, res, next) => {
     key: req.body.key,
   };
   next();
-  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetMaterialNotificationSettings = async (req, res, next) => {
@@ -717,7 +661,7 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
 
   let updatedDoc;
 
-  //update the material in the Blocking Notification collection
+  // Update the material in the Blocking Notification collection
   try {
     updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
@@ -765,7 +709,6 @@ export const unsetMaterialNotificationSettings = async (req, res, next) => {
     response: notificationSettings[0],
   };
   next();
-  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const setChannelNotificationSettings = async (req, res, next) => {
@@ -799,7 +742,7 @@ export const setChannelNotificationSettings = async (req, res, next) => {
     return res.status(500).send({ error: err });
   }
 
-  //update the channel in the Blocking Notification collection
+  // Update the channel in the Blocking Notification collection
   try {
     updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
@@ -861,7 +804,6 @@ export const setChannelNotificationSettings = async (req, res, next) => {
     key: req.body.key,
   };
   next();
-  //return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetChannelNotificationSettings = async (req, res, next) => {
@@ -908,7 +850,8 @@ export const unsetChannelNotificationSettings = async (req, res, next) => {
   );
 
   let updatedDoc;
-  //update the channel in the Blocking Notification collection
+
+  // Update the channel in the Blocking Notification collection
   try {
     updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
@@ -975,7 +918,6 @@ export const unsetChannelNotificationSettings = async (req, res, next) => {
     response: notificationSettings[0],
   };
   next();
-  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const setTopicNotificationSettings = async (req, res, next) => {
@@ -1087,7 +1029,6 @@ export const setTopicNotificationSettings = async (req, res, next) => {
     key: req.body.key,
   };
   next();
-  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetTopicNotificationSettings = async (req, res, next) => {
@@ -1126,7 +1067,7 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
   }
 
   let updatedDoc;
-  //update the channel in the Blocking Notification collection
+  // Update the channel in the Blocking Notification collection
   try {
     updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
@@ -1208,7 +1149,6 @@ export const unsetTopicNotificationSettings = async (req, res, next) => {
     response: notificationSettings[0],
   };
   next();
-  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const setCourseNotificationSettings = async (req, res, next) => {
@@ -1241,7 +1181,6 @@ export const setCourseNotificationSettings = async (req, res, next) => {
     return res.status(500).send({ error: "Error finding course" });
   }
 
-  /*   try { */
   updatedDoc = await BlockingNotifications.findOneAndUpdate(
     {
       courseId: courseId,
@@ -1293,9 +1232,6 @@ export const setCourseNotificationSettings = async (req, res, next) => {
       new: true,
     }
   );
-  /*   } catch (error) {
-    return res.status(500).json({ error });
-  } */
 
   let notificationSettings;
   try {
@@ -1315,14 +1251,13 @@ export const setCourseNotificationSettings = async (req, res, next) => {
     key: req.body.key,
   };
   next();
-  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const unsetCourseNotificationSettings = async (req, res, next) => {
   const userId = req.userId;
   const courseId = req.body.courseId;
 
-  //fetch the User
+  // Fetch the User
   let user;
   try {
     user = await User.findOne({
@@ -1345,7 +1280,7 @@ export const unsetCourseNotificationSettings = async (req, res, next) => {
   }
 
   let updatedDoc;
-  //update the channel in the Blocking Notification collection
+  // Update the channel in the Blocking Notification collection
   try {
     updatedDoc = await BlockingNotifications.findOneAndUpdate(
       {
@@ -1431,7 +1366,6 @@ export const unsetCourseNotificationSettings = async (req, res, next) => {
     response: notificationSettings[0],
   };
   next();
-  // return res.status(200).json(notificationSettings[0]);
 };
 
 export const setGlobalNotificationSettings = async (req, res, next) => {
@@ -1448,9 +1382,15 @@ export const setGlobalNotificationSettings = async (req, res, next) => {
   } catch (err) {
     return handleError(res, err, "Error finding user");
   }
-  //First the user document will get updated, after that, all the Blocking Notification documents that have the userId = userId will get updated with the new values for the user's notification settings, and all the channels, topics, and materials that have not been overridden will also get the new values
 
-  //update the user document
+  // First the user document will get updated, after that,
+  // all the Blocking Notification documents that have the
+  // userId = userId will get updated with the new values
+  // for the user's notification settings, and all the channels,
+  // topics, and materials that have not been overridden will
+  // also get the new values
+
+  // Update the user document
   let updatedUser;
   try {
     updatedUser = await User.findOneAndUpdate(
@@ -1474,7 +1414,7 @@ export const setGlobalNotificationSettings = async (req, res, next) => {
     return res.status(500).json({ error });
   }
 
-  //update the Blocking Notification documents
+  // Update the Blocking Notification documents
   let updatedBlockingNotifications;
   try {
     updatedBlockingNotifications = await BlockingNotifications.updateMany(
@@ -1541,7 +1481,6 @@ export const setGlobalNotificationSettings = async (req, res, next) => {
     labelClicked: req.body.labelClicked,
   };
   next();
-  // return res.status(200).json(updatedUser);
 };
 
 export const getAllCourseNotificationSettings = async (req, res, next) => {
@@ -1623,7 +1562,7 @@ export const blockUser = async (req, res, next) => {
     return handleError(res, err, "Error finding user");
   }
 
-  //Add the user to be blocked to the blocking list
+  // Add the user to be blocked to the blocking list
   try {
     await User.findOneAndUpdate(
       {
@@ -1690,7 +1629,6 @@ export const blockUser = async (req, res, next) => {
     response: blockingUsers.blockingUsers,
   };
   next();
-  //return res.status(200).json(blockingUsers.blockingUsers);
 };
 
 export const unblockUser = async (req, res, next) => {
@@ -1771,8 +1709,6 @@ export const unblockUser = async (req, res, next) => {
     response: blockingUsers.blockingUsers,
   };
   next();
-
-  //return res.status(200).json(blockingUsers.blockingUsers);
 };
 
 export const followAnnotationSuccess = async (req, res, next) => {
