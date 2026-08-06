@@ -44,7 +44,7 @@ async function checkIsModerator(req) {
     courseId = material["courseId"].toString();
   }
   const course = user.courses.find(
-    (item) => item.courseId.valueOf() === courseId
+    (item) => item.courseId.valueOf() === courseId,
   );
   const courseRole = await Role.findOne({ _id: course.role });
   if (courseRole.name === "moderator") {
@@ -301,15 +301,15 @@ export const setRating = async (req, res) => {
 };
 
 export const createCourseNeo4j = async (req, res) => {
-  const { userId, courseId } = req.params;              // Still extracting from the URL path
-  const { courseName } = req.query;                     // Extract from query parameters
+  const { userId, courseId } = req.params; // Still extracting from the URL path
+  const { courseName } = req.query; // Extract from query parameters
 
   try {
     const result = await neo4j.createUserCourseRelationship(
       userId,
       courseId,
       courseName,
-      "low"
+      "low",
     );
     return res.status(200).send({ success: true, data: result });
   } catch (err) {
@@ -378,7 +378,7 @@ export const conceptMap = async (req, res) => {
         return res.status(500).send({ error: result });
       }
       return res.status(200).send(result.result);
-    }
+    },
   );
   socketio
     .getIO()
@@ -406,7 +406,7 @@ export const deleteConcept = async (req, res) => {
         return res.status(500).send(result);
       }
       return res.status(200).send(result.result);
-    }
+    },
   );
 };
 
@@ -420,23 +420,27 @@ export const addConcept = async (req, res) => {
   console.log("isNew", isNew);
   console.log("slides", slides);
 
-  await redis.addJob('modify-graph', {
-    action: 'add-concept',
-    materialId,
-    conceptName,
-    slides,
-    isNew,
-    isEditing,
-    lastEdited,
-  }, undefined, (result) => {
-    if (res.headersSent) {
-      return;
-    }
-    if (result.error) {
-      return res.status(500).send(result);
-    }
-    return res.status(200).send(result.result);
-    }
+  await redis.addJob(
+    "modify-graph",
+    {
+      action: "add-concept",
+      materialId,
+      conceptName,
+      slides,
+      isNew,
+      isEditing,
+      lastEdited,
+    },
+    undefined,
+    (result) => {
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send(result);
+      }
+      return res.status(200).send(result.result);
+    },
   );
 };
 
@@ -457,7 +461,7 @@ export const publishConceptMap = async (req, res) => {
         return res.status(500).send({ error: result });
       }
       return res.status(200).send(result.result);
-    }
+    },
   );
 };
 
@@ -494,37 +498,53 @@ export const getConcepts = async (req, res) => {
         return res.status(500).send({ error: result.error });
       }
       return res.status(200).send(result.result);
-    }
-);
-  socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'concept-recommendation'});
-}
+    },
+  );
+  socketio
+    .getIO()
+    .to("material:" + materialId)
+    .emit("log", { addJob: result, pipeline: "concept-recommendation" });
+};
 export const getSequence = async (req, res) => {
   const materialId = req.params.materialId;
   const userId = req.userId;
   const understood = req.body.understoodConcepts;
   const nonUnderstood = req.body.nonUnderstoodConcepts;
   const newConcepts = req.body.newConcepts;
-  socketio.getIO().to("material:"+materialId).emit("log", { called:"sequence recommendation started" } );
+  socketio
+    .getIO()
+    .to("material:" + materialId)
+    .emit("log", { called: "sequence recommendation started" });
 
-  const result = await redis.addJob('sequence-recommendation', {
-    materialId,
-    userId,
-    understood,
-    nonUnderstood,
-    newConcepts
-  }, undefined, (result) => {
-    socketio.getIO().to("material:"+materialId).emit("log", { result:result } );
-    if (res.headersSent) {
-      return;
-    }
-    if (result.error) {
-      return res.status(500).send({ error: result.error });
-    }
-    return res.status(200).send(result.result);
-  });
-  socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'sequence-recommendation'});
-}
-
+  const result = await redis.addJob(
+    "sequence-recommendation",
+    {
+      materialId,
+      userId,
+      understood,
+      nonUnderstood,
+      newConcepts,
+    },
+    undefined,
+    (result) => {
+      socketio
+        .getIO()
+        .to("material:" + materialId)
+        .emit("log", { result: result });
+      if (res.headersSent) {
+        return;
+      }
+      if (result.error) {
+        return res.status(500).send({ error: result.error });
+      }
+      return res.status(200).send(result.result);
+    },
+  );
+  socketio
+    .getIO()
+    .to("material:" + materialId)
+    .emit("log", { addJob: result, pipeline: "sequence-recommendation" });
+};
 
 export const getResources = async (req, res) => {
   const materialId = req.params.materialId;
@@ -561,7 +581,7 @@ export const getResources = async (req, res) => {
         return res.status(500).send({ error: result.error });
       }
       return res.status(200).send(result.result);
-    }
+    },
   );
   socketio
     .getIO()
@@ -587,7 +607,10 @@ export const searchWikipedia = async (req, res) => {
   try {
     const conceptNameEncoded = encodeURIComponent(query);
     const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
-    const response = await axios.get(url);
+    const response = await axios.get(url, {
+      headers: { "User-Agent": "CourseMapper (coursemapper@example.com)" },
+      timeout: 10000,
+    });
     const searchResults = response.data.query.search;
     // Add the Wikipedia URL to each search result
     const resultsWithUrls = searchResults.map((result) => {
@@ -612,7 +635,7 @@ export const getUser = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ error: err.message });
   }
-}
+};
 export const viewFullWikipediaArticle = async (req, res, next) => {
   const userId = req.userId;
   const materialId = req.body.materialId;
@@ -738,7 +761,6 @@ export const rateArticle = async (req, res, next) => {
   };
 
   next();
-
 };
 
 export const getSingleUser = async (req, res) => {
@@ -780,7 +802,7 @@ export const updateConceptUDNU = async (req, res) => {
     const records = await neo4j.changeRelationshipTypeUDNU(
       source,
       target,
-      type
+      type,
     );
     return res.status(200).send({ records });
   } catch (err) {
@@ -1580,13 +1602,10 @@ export const unhidConceptsMaterialKG = async (req, res, next) => {
   next();
 };
 
-
-
-
 export const getUserPKG = async (req, res) => {
   const userId = req.params.userId;
   const topN = req.query.topN || null; // Optional: limit number of concepts
-  
+
   // Advanced filters - parse from query string (JSON encoded)
   let slideFilter = null;
   if (req.query.slideIds) {
@@ -1594,17 +1613,17 @@ export const getUserPKG = async (req, res) => {
       slideFilter = JSON.parse(req.query.slideIds);
       if (!Array.isArray(slideFilter)) slideFilter = null;
     } catch (e) {
-      console.warn('[Personal KG] Invalid slideIds filter:', e.message);
+      console.warn("[Personal KG] Invalid slideIds filter:", e.message);
     }
   }
 
   try {
     // Get user from MongoDB with understood/not understood concepts and enrolled courses
     const foundUser = await User.findById(userId).populate({
-      path: 'courses.courseId',
-      select: 'name shortName _id'
+      path: "courses.courseId",
+      select: "name shortName _id",
     });
-    
+
     if (!foundUser) {
       return res.status(404).send({
         error: `User with id ${userId} doesn't exist!`,
@@ -1614,42 +1633,48 @@ export const getUserPKG = async (req, res) => {
     // Get concept IDs from MongoDB and build status lookup map
     const understoodConcepts = foundUser.understoodConcepts || [];
     const didNotUnderstandConcepts = foundUser.didNotUnderstandConcepts || [];
-    
+
     // Build a map for O(1) lookup of concept status
     const conceptStatusMap = new Map();
-    understoodConcepts.forEach(cid => conceptStatusMap.set(cid, 'u'));
-    didNotUnderstandConcepts.forEach(cid => conceptStatusMap.set(cid, 'dnu'));
-    
+    understoodConcepts.forEach((cid) => conceptStatusMap.set(cid, "u"));
+    didNotUnderstandConcepts.forEach((cid) => conceptStatusMap.set(cid, "dnu"));
+
     const allConceptIds = [...conceptStatusMap.keys()];
 
-    console.log(`[Personal KG] Loading graph: ${allConceptIds.length} concepts (${understoodConcepts.length} understood, ${didNotUnderstandConcepts.length} not understood)${slideFilter ? `, filtering by ${slideFilter.length} slides` : ''}`);
+    console.log(
+      `[Personal KG] Loading graph: ${allConceptIds.length} concepts (${understoodConcepts.length} understood, ${didNotUnderstandConcepts.length} not understood)${slideFilter ? `, filtering by ${slideFilter.length} slides` : ""}`,
+    );
 
     if (allConceptIds.length === 0) {
-      return res.status(200).send({ 
+      return res.status(200).send({
         records: [],
-        courses: foundUser.courses.map(c => ({
+        courses: foundUser.courses.map((c) => ({
           courseId: c.courseId._id,
           courseName: c.courseId.name,
-          courseShortName: c.courseId.shortName
+          courseShortName: c.courseId.shortName,
         })),
-        materials: []
+        materials: [],
       });
     }
 
     // Get concept details with relationships from Neo4j (with optional limit and slide filter)
-    const records = await neo4j.getUserConceptsWithRelationships(allConceptIds, topN, slideFilter);
+    const records = await neo4j.getUserConceptsWithRelationships(
+      allConceptIds,
+      topN,
+      slideFilter,
+    );
 
     // Get unique material IDs from concepts
-    const materialIds = [...new Set(records.map(r => r.mid).filter(Boolean))];
+    const materialIds = [...new Set(records.map((r) => r.mid).filter(Boolean))];
 
     // Fetch material details from MongoDB
     const materials = await Material.find({ _id: { $in: materialIds } })
-      .select('_id name type courseId channelId')
-      .populate('courseId', 'name shortName');
+      .select("_id name type courseId channelId")
+      .populate("courseId", "name shortName");
 
     // Create material lookup map
     const materialMap = {};
-    materials.forEach(m => {
+    materials.forEach((m) => {
       materialMap[m._id.toString()] = {
         materialId: m._id,
         materialName: m.name,
@@ -1657,32 +1682,35 @@ export const getUserPKG = async (req, res) => {
         courseId: m.courseId._id,
         courseName: m.courseId.name,
         courseShortName: m.courseId.shortName,
-        channelId: m.channelId
+        channelId: m.channelId,
       };
     });
 
     // Enrich records with material/course info and understanding status
-    const enrichedRecords = records.map(record => {
+    const enrichedRecords = records.map((record) => {
       const materialInfo = materialMap[record.mid] || {};
-      
+
       return {
         ...record,
         ...materialInfo,
-        relationshipType: conceptStatusMap.get(record.cid) || 'unknown'
+        relationshipType: conceptStatusMap.get(record.cid) || "unknown",
       };
     });
-    
-    return res.status(200).send({ 
+
+    return res.status(200).send({
       records: enrichedRecords,
-      courses: foundUser.courses.map(c => ({
+      courses: foundUser.courses.map((c) => ({
         courseId: c.courseId._id,
         courseName: c.courseId.name,
-        courseShortName: c.courseId.shortName
+        courseShortName: c.courseId.shortName,
       })),
-      materials: Object.values(materialMap)
+      materials: Object.values(materialMap),
     });
   } catch (err) {
-    console.error('[Personal KG] Error loading user knowledge graph:', err.message);
+    console.error(
+      "[Personal KG] Error loading user knowledge graph:",
+      err.message,
+    );
     return res.status(500).send({ error: err.message });
   }
 };
@@ -1699,28 +1727,38 @@ export const getRelatedConcepts = async (req, res) => {
     // Get user's concept status from MongoDB
     const foundUser = await User.findById(userId);
     if (!foundUser) {
-      return res.status(404).send({ error: 'User not found' });
+      return res.status(404).send({ error: "User not found" });
     }
 
     // Build concept status map
     const conceptStatusMap = new Map();
-    (foundUser.understoodConcepts || []).forEach(cid => conceptStatusMap.set(cid, 'u'));
-    (foundUser.didNotUnderstandConcepts || []).forEach(cid => conceptStatusMap.set(cid, 'dnu'));
+    (foundUser.understoodConcepts || []).forEach((cid) =>
+      conceptStatusMap.set(cid, "u"),
+    );
+    (foundUser.didNotUnderstandConcepts || []).forEach((cid) =>
+      conceptStatusMap.set(cid, "dnu"),
+    );
 
     // Get related concepts from Neo4j
-    const relatedConcepts = await neo4j.getRelatedConceptsForConcept(conceptCid);
+    const relatedConcepts =
+      await neo4j.getRelatedConceptsForConcept(conceptCid);
 
     // Enrich with relationship type from MongoDB
-    const enrichedConcepts = relatedConcepts.map(rc => ({
+    const enrichedConcepts = relatedConcepts.map((rc) => ({
       ...rc,
-      relationshipType: conceptStatusMap.get(rc.cid) || 'unknown'
+      relationshipType: conceptStatusMap.get(rc.cid) || "unknown",
     }));
 
-    console.log(`[Personal KG] Fetched ${enrichedConcepts.length} related concepts for ${conceptCid}`);
-    
+    console.log(
+      `[Personal KG] Fetched ${enrichedConcepts.length} related concepts for ${conceptCid}`,
+    );
+
     return res.status(200).send({ relatedConcepts: enrichedConcepts });
   } catch (err) {
-    console.error('[Personal KG] Error fetching related concepts:', err.message);
+    console.error(
+      "[Personal KG] Error fetching related concepts:",
+      err.message,
+    );
     return res.status(500).send({ error: err.message });
   }
 };
@@ -1728,7 +1766,7 @@ export const getRelatedConcepts = async (req, res) => {
 /**
  * Get user interest scores from PKG
  * Returns map of concept_id -> {score, updatedAt} for all concepts user is interested in
- * 
+ *
  * GET /api/knowledge-graph/user/:userId/interest-scores
  */
 export const getUserInterestScores = async (req, res) => {
@@ -1738,14 +1776,17 @@ export const getUserInterestScores = async (req, res) => {
   try {
     // Get interest scores from Neo4j
     const scoresMap = await neo4j.getUserInterestScores(userId, minScore);
-    
+
     return res.status(200).send({
       userId,
       scores: scoresMap,
-      totalConcepts: Object.keys(scoresMap).length
+      totalConcepts: Object.keys(scoresMap).length,
     });
   } catch (err) {
-    console.error('[Interest Scores] Error fetching interest scores:', err.message);
+    console.error(
+      "[Interest Scores] Error fetching interest scores:",
+      err.message,
+    );
     return res.status(500).send({ error: err.message });
   }
 };
@@ -1753,7 +1794,7 @@ export const getUserInterestScores = async (req, res) => {
 /**
  * Get interest concepts for Interest Level graph
  * Returns only INTERESTED_IN relationships with concept details
- * 
+ *
  * GET /api/pkg/:userId/interests
  */
 export const getInterestConcepts = async (req, res) => {
@@ -1763,30 +1804,41 @@ export const getInterestConcepts = async (req, res) => {
   try {
     // Get concepts with INTERESTED_IN relationships from Neo4j
     const concepts = await neo4j.getInterestConcepts(userId, topN);
-    
-    console.log(`[Interest Concepts] Found ${concepts.length} interest concepts for user ${userId}`);
-    
+
+    console.log(
+      `[Interest Concepts] Found ${concepts.length} interest concepts for user ${userId}`,
+    );
+
     // Check for duplicates
-    const conceptIds = concepts.map(c => c.conceptId);
+    const conceptIds = concepts.map((c) => c.conceptId);
     const uniqueIds = new Set(conceptIds);
     if (conceptIds.length !== uniqueIds.size) {
-      console.warn('[Interest Concepts] WARNING: Duplicates detected in response!');
-      const duplicates = conceptIds.filter((id, index) => conceptIds.indexOf(id) !== index);
-      console.warn('[Interest Concepts] Duplicate IDs:', [...new Set(duplicates)]);
-      
+      console.warn(
+        "[Interest Concepts] WARNING: Duplicates detected in response!",
+      );
+      const duplicates = conceptIds.filter(
+        (id, index) => conceptIds.indexOf(id) !== index,
+      );
+      console.warn("[Interest Concepts] Duplicate IDs:", [
+        ...new Set(duplicates),
+      ]);
+
       // Log duplicate concepts
-      duplicates.forEach(dupId => {
-        const dups = concepts.filter(c => c.conceptId === dupId);
+      duplicates.forEach((dupId) => {
+        const dups = concepts.filter((c) => c.conceptId === dupId);
         console.warn(`[Interest Concepts] Concept ${dupId}:`, dups);
       });
     }
-    
+
     return res.status(200).send({
       userId,
-      concepts
+      concepts,
     });
   } catch (err) {
-    console.error('[Interest Concepts] Error fetching interest concepts:', err.message);
+    console.error(
+      "[Interest Concepts] Error fetching interest concepts:",
+      err.message,
+    );
     return res.status(500).send({ error: err.message });
   }
 };
@@ -1794,7 +1846,7 @@ export const getInterestConcepts = async (req, res) => {
 /**
  * Update (manually adjust) interest score for a user-concept pair
  * Allows users to override calculated scores for better personalization
- * 
+ *
  * PUT /api/pkg/:userId/interests/:conceptId
  */
 export const updateInterestScore = async (req, res) => {
@@ -1802,28 +1854,33 @@ export const updateInterestScore = async (req, res) => {
   const { score } = req.body;
 
   // Validate score
-  if (typeof score !== 'number' || score < 0 || score > 1) {
-    return res.status(400).send({ 
-      error: 'Invalid score. Score must be a number between 0 and 1.' 
+  if (typeof score !== "number" || score < 0 || score > 1) {
+    return res.status(400).send({
+      error: "Invalid score. Score must be a number between 0 and 1.",
     });
   }
 
   try {
     // Update the interest score in Neo4j
     const result = await neo4j.updateInterestScore(userId, conceptId, score);
-    
-    console.log(`[Interest Score Update] User ${userId} adjusted score for concept ${conceptId} to ${score}`);
-    
+
+    console.log(
+      `[Interest Score Update] User ${userId} adjusted score for concept ${conceptId} to ${score}`,
+    );
+
     return res.status(200).send({
       success: true,
       userId,
       conceptId,
       score,
-      message: 'Interest score updated successfully',
-      updatedAt: new Date().toISOString()
+      message: "Interest score updated successfully",
+      updatedAt: new Date().toISOString(),
     });
   } catch (err) {
-    console.error('[Interest Score Update] Error updating interest score:', err.message);
+    console.error(
+      "[Interest Score Update] Error updating interest score:",
+      err.message,
+    );
     return res.status(500).send({ error: err.message });
   }
 };
@@ -1832,7 +1889,7 @@ export const updateInterestScore = async (req, res) => {
  * Batch update interest scores for multiple concept IDs (handles duplicates)
  * Updates all concept IDs that share the same concept name
  * Also updates the interest_scores.json file to keep dashboard in sync
- * 
+ *
  * PUT /api/pkg/:userId/interests/batch
  */
 export const updateInterestScoreBatch = async (req, res) => {
@@ -1841,34 +1898,45 @@ export const updateInterestScoreBatch = async (req, res) => {
 
   // Validate input
   if (!Array.isArray(conceptIds) || conceptIds.length === 0) {
-    return res.status(400).send({ 
-      error: 'Invalid conceptIds. Must be a non-empty array.' 
+    return res.status(400).send({
+      error: "Invalid conceptIds. Must be a non-empty array.",
     });
   }
 
-  if (typeof score !== 'number' || score < 0 || score > 1) {
-    return res.status(400).send({ 
-      error: 'Invalid score. Score must be a number between 0 and 1.' 
+  if (typeof score !== "number" || score < 0 || score > 1) {
+    return res.status(400).send({
+      error: "Invalid score. Score must be a number between 0 and 1.",
     });
   }
 
   try {
     // Update all concept IDs in Neo4j
-    const results = await neo4j.updateInterestScoreBatch(userId, conceptIds, score);
-    
+    const results = await neo4j.updateInterestScoreBatch(
+      userId,
+      conceptIds,
+      score,
+    );
+
     // Also update the JSON file if conceptName is provided
     if (conceptName) {
       try {
         await updateInterestScoreInJsonFile(userId, conceptName, score);
-        console.log(`[Interest Score Batch Update] Also updated JSON file for concept "${conceptName}"`);
+        console.log(
+          `[Interest Score Batch Update] Also updated JSON file for concept "${conceptName}"`,
+        );
       } catch (jsonError) {
-        console.warn('[Interest Score Batch Update] Could not update JSON file:', jsonError.message);
+        console.warn(
+          "[Interest Score Batch Update] Could not update JSON file:",
+          jsonError.message,
+        );
         // Don't fail the request, Neo4j was already updated
       }
     }
-    
-    console.log(`[Interest Score Batch Update] User ${userId} adjusted score for ${conceptIds.length} concepts to ${score}`);
-    
+
+    console.log(
+      `[Interest Score Batch Update] User ${userId} adjusted score for ${conceptIds.length} concepts to ${score}`,
+    );
+
     return res.status(200).send({
       success: true,
       userId,
@@ -1876,10 +1944,13 @@ export const updateInterestScoreBatch = async (req, res) => {
       updatedCount: results.updatedCount,
       score,
       message: `Interest score updated successfully for ${results.updatedCount} concept instances`,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
   } catch (err) {
-    console.error('[Interest Score Batch Update] Error updating interest scores:', err.message);
+    console.error(
+      "[Interest Score Batch Update] Error updating interest scores:",
+      err.message,
+    );
     return res.status(500).send({ error: err.message });
   }
 };
@@ -1891,42 +1962,54 @@ export const updateInterestScoreBatch = async (req, res) => {
  * @param {number} score - New score
  */
 async function updateInterestScoreInJsonFile(userId, conceptName, score) {
-  const fs = await import('fs');
-  const path = await import('path');
-  
+  const fs = await import("fs");
+  const path = await import("path");
+
   const interestScoresPath = path.join(
     process.cwd(),
-    '../coursemapper-kg/recommendation/level-of-interest/data/interest_scores.json'
+    "../coursemapper-kg/recommendation/level-of-interest/data/interest_scores.json",
   );
-  
+
   // Read current file
-  const fileContent = fs.readFileSync(interestScoresPath, 'utf8');
+  const fileContent = fs.readFileSync(interestScoresPath, "utf8");
   const interestScoresData = JSON.parse(fileContent);
-  
+
   // Check if user and concept exist
-  if (interestScoresData[userId] && interestScoresData[userId].concepts[conceptName]) {
+  if (
+    interestScoresData[userId] &&
+    interestScoresData[userId].concepts[conceptName]
+  ) {
     // Update all normalized scores with the manually adjusted value
     interestScoresData[userId].concepts[conceptName].normalized_scores = {
       min_max_interpolation: score,
       z_score_k2: score,
-      z_score_k3: score
+      z_score_k3: score,
     };
     interestScoresData[userId].concepts[conceptName].manually_adjusted = true;
-    interestScoresData[userId].concepts[conceptName].adjusted_at = new Date().toISOString();
-    
+    interestScoresData[userId].concepts[conceptName].adjusted_at =
+      new Date().toISOString();
+
     // Write back to file
-    fs.writeFileSync(interestScoresPath, JSON.stringify(interestScoresData, null, 2), 'utf8');
-    
-    console.log(`[Interest Score] Updated JSON file for user ${userId}, concept "${conceptName}" to score ${score}`);
+    fs.writeFileSync(
+      interestScoresPath,
+      JSON.stringify(interestScoresData, null, 2),
+      "utf8",
+    );
+
+    console.log(
+      `[Interest Score] Updated JSON file for user ${userId}, concept "${conceptName}" to score ${score}`,
+    );
   } else {
-    console.warn(`[Interest Score] User ${userId} or concept "${conceptName}" not found in JSON file`);
+    console.warn(
+      `[Interest Score] User ${userId} or concept "${conceptName}" not found in JSON file`,
+    );
   }
 }
 
 /**
  * Get course hierarchy for advanced filters
  * Returns user's enrolled courses with their materials and slides
- * 
+ *
  * GET /api/knowledge-graph/course-hierarchy
  */
 export const getCourseHierarchy = async (req, res) => {
@@ -1934,26 +2017,25 @@ export const getCourseHierarchy = async (req, res) => {
 
   try {
     // Get user with enrolled courses
-    const foundUser = await User.findById(userId)
-      .populate({
-        path: 'courses.courseId',
-        select: '_id name shortName'
-      });
+    const foundUser = await User.findById(userId).populate({
+      path: "courses.courseId",
+      select: "_id name shortName",
+    });
 
     if (!foundUser) {
-      return res.status(404).send({ error: 'User not found' });
+      return res.status(404).send({ error: "User not found" });
     }
 
     // Get all enrolled course IDs
     const enrolledCourseIds = foundUser.courses
-      .filter(c => c.courseId)
-      .map(c => c.courseId._id);
+      .filter((c) => c.courseId)
+      .map((c) => c.courseId._id);
 
     // Get all materials for enrolled courses (only PDFs, no videos)
     const materials = await Material.find({
       courseId: { $in: enrolledCourseIds },
-      type: 'pdf'
-    }).select('_id name type courseId');
+      type: "pdf",
+    }).select("_id name type courseId");
 
     // Get slides from Neo4j for each material
     const materialsWithSlides = await Promise.all(
@@ -1965,39 +2047,46 @@ export const getCourseHierarchy = async (req, res) => {
             name: material.name,
             type: material.type,
             courseId: material.courseId.toString(),
-            slides: slides.map(s => ({
+            slides: slides.map((s) => ({
               sid: s.sid,
-              cid: s.cid
-            }))
+              cid: s.cid,
+            })),
           };
         } catch (err) {
-          console.warn(`[Course Hierarchy] Failed to get slides for material ${material._id}:`, err.message);
+          console.warn(
+            `[Course Hierarchy] Failed to get slides for material ${material._id}:`,
+            err.message,
+          );
           return {
             _id: material._id.toString(),
             name: material.name,
             type: material.type,
             courseId: material.courseId.toString(),
-            slides: []
+            slides: [],
           };
         }
-      })
+      }),
     );
 
     // Build hierarchy
     const courses = foundUser.courses
-      .filter(c => c.courseId)
-      .map(c => ({
+      .filter((c) => c.courseId)
+      .map((c) => ({
         _id: c.courseId._id.toString(),
         name: c.courseId.name,
         shortName: c.courseId.shortName,
-        materials: materialsWithSlides.filter(m => m.courseId === c.courseId._id.toString())
+        materials: materialsWithSlides.filter(
+          (m) => m.courseId === c.courseId._id.toString(),
+        ),
       }));
 
-    console.log(`[Course Hierarchy] Fetched ${courses.length} courses for user ${userId}`);
-    
+    console.log(
+      `[Course Hierarchy] Fetched ${courses.length} courses for user ${userId}`,
+    );
+
     return res.status(200).send({ courses });
   } catch (err) {
-    console.error('[Course Hierarchy] Error:', err.message);
+    console.error("[Course Hierarchy] Error:", err.message);
     return res.status(500).send({ error: err.message });
   }
 };
@@ -2008,18 +2097,22 @@ export const getCourseHierarchy = async (req, res) => {
 export const getPkgFilterProfiles = async (req, res) => {
   try {
     const { userId } = req.params;
-    
-    const user = await User.findById(userId).select('pkgAdvancedFilterProfiles');
-    
+
+    const user = await User.findById(userId).select(
+      "pkgAdvancedFilterProfiles",
+    );
+
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
-    
-    console.log(`[PKG Filter Profiles] Fetched ${user.pkgAdvancedFilterProfiles?.length || 0} profiles for user ${userId}`);
+
+    console.log(
+      `[PKG Filter Profiles] Fetched ${user.pkgAdvancedFilterProfiles?.length || 0} profiles for user ${userId}`,
+    );
     res.json({ profiles: user.pkgAdvancedFilterProfiles || [] });
   } catch (error) {
-    console.error('[PKG Filter Profiles] Error getting profiles:', error);
-    res.status(500).json({ error: 'Failed to get filter profiles' });
+    console.error("[PKG Filter Profiles] Error getting profiles:", error);
+    res.status(500).json({ error: "Failed to get filter profiles" });
   }
 };
 
@@ -2030,40 +2123,47 @@ export const createPkgFilterProfile = async (req, res) => {
   try {
     const { userId } = req.params;
     const { name, slideIds } = req.body;
-    
+
     if (!name || !slideIds || !Array.isArray(slideIds)) {
-      return res.status(400).json({ error: 'Name and slideIds array are required' });
+      return res
+        .status(400)
+        .json({ error: "Name and slideIds array are required" });
     }
-    
+
     const user = await User.findById(userId);
-    
+
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
-    
+
     // Check if profile name already exists
-    const existingProfile = user.pkgAdvancedFilterProfiles.find(p => p.name === name);
+    const existingProfile = user.pkgAdvancedFilterProfiles.find(
+      (p) => p.name === name,
+    );
     if (existingProfile) {
-      return res.status(400).json({ error: 'Profile name already exists' });
+      return res.status(400).json({ error: "Profile name already exists" });
     }
-    
+
     // Add new profile
     const newProfile = {
       name,
-      slideIds
+      slideIds,
     };
-    
+
     user.pkgAdvancedFilterProfiles.push(newProfile);
     await user.save();
-    
+
     // Get the created profile with its _id
-    const createdProfile = user.pkgAdvancedFilterProfiles[user.pkgAdvancedFilterProfiles.length - 1];
-    
-    console.log(`[PKG Filter Profiles] Created profile "${name}" for user ${userId}`);
+    const createdProfile =
+      user.pkgAdvancedFilterProfiles[user.pkgAdvancedFilterProfiles.length - 1];
+
+    console.log(
+      `[PKG Filter Profiles] Created profile "${name}" for user ${userId}`,
+    );
     res.status(201).json({ profile: createdProfile });
   } catch (error) {
-    console.error('[PKG Filter Profiles] Error creating profile:', error);
-    res.status(500).json({ error: 'Failed to create filter profile' });
+    console.error("[PKG Filter Profiles] Error creating profile:", error);
+    res.status(500).json({ error: "Failed to create filter profile" });
   }
 };
 
@@ -2074,44 +2174,48 @@ export const updatePkgFilterProfile = async (req, res) => {
   try {
     const { userId, profileId } = req.params;
     const { name, slideIds } = req.body;
-    
+
     if (!name || !slideIds || !Array.isArray(slideIds)) {
-      return res.status(400).json({ error: 'Name and slideIds array are required' });
+      return res
+        .status(400)
+        .json({ error: "Name and slideIds array are required" });
     }
-    
+
     const user = await User.findById(userId);
-    
+
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
-    
+
     const profile = user.pkgAdvancedFilterProfiles.id(profileId);
-    
+
     if (!profile) {
-      return res.status(404).json({ error: 'Profile not found' });
+      return res.status(404).json({ error: "Profile not found" });
     }
-    
+
     // Check if new name conflicts with another profile
     if (name !== profile.name) {
       const existingProfile = user.pkgAdvancedFilterProfiles.find(
-        p => p.name === name && p._id.toString() !== profileId
+        (p) => p.name === name && p._id.toString() !== profileId,
       );
       if (existingProfile) {
-        return res.status(400).json({ error: 'Profile name already exists' });
+        return res.status(400).json({ error: "Profile name already exists" });
       }
     }
-    
+
     // Update profile
     profile.name = name;
     profile.slideIds = slideIds;
-    
+
     await user.save();
-    
-    console.log(`[PKG Filter Profiles] Updated profile "${name}" for user ${userId}`);
+
+    console.log(
+      `[PKG Filter Profiles] Updated profile "${name}" for user ${userId}`,
+    );
     res.json({ profile });
   } catch (error) {
-    console.error('[PKG Filter Profiles] Error updating profile:', error);
-    res.status(500).json({ error: 'Failed to update filter profile' });
+    console.error("[PKG Filter Profiles] Error updating profile:", error);
+    res.status(500).json({ error: "Failed to update filter profile" });
   }
 };
 
@@ -2121,29 +2225,31 @@ export const updatePkgFilterProfile = async (req, res) => {
 export const deletePkgFilterProfile = async (req, res) => {
   try {
     const { userId, profileId } = req.params;
-    
+
     const user = await User.findById(userId);
-    
+
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
-    
+
     const profile = user.pkgAdvancedFilterProfiles.id(profileId);
-    
+
     if (!profile) {
-      return res.status(404).json({ error: 'Profile not found' });
+      return res.status(404).json({ error: "Profile not found" });
     }
-    
+
     const profileName = profile.name;
-    
+
     // Remove profile
     user.pkgAdvancedFilterProfiles.pull(profileId);
     await user.save();
-    
-    console.log(`[PKG Filter Profiles] Deleted profile "${profileName}" for user ${userId}`);
-    res.json({ message: 'Profile deleted successfully' });
+
+    console.log(
+      `[PKG Filter Profiles] Deleted profile "${profileName}" for user ${userId}`,
+    );
+    res.json({ message: "Profile deleted successfully" });
   } catch (error) {
-    console.error('[PKG Filter Profiles] Error deleting profile:', error);
-    res.status(500).json({ error: 'Failed to delete filter profile' });
+    console.error("[PKG Filter Profiles] Error deleting profile:", error);
+    res.status(500).json({ error: "Failed to delete filter profile" });
   }
 };

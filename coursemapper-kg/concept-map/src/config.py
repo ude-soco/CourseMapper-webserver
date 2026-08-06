@@ -23,11 +23,11 @@ class Config:
     NEO4J_SAVE_TO_DB = os.getenv('NEO4J_SAVE_TO_DB', 'true').lower() == 'true'
 
 
-    DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://api.dbpedia-spotlight.org/en/annotate')
+    #DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://api.dbpedia-spotlight.org/en/annotate')
     MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
     MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME")
 
-    #DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://dbpedia-spotlight-en.soco.inko.cloud/rest/annotate')
+    DBPEDIA_SPOTLIGHT_URL = os.getenv('DBPEDIA_SPOTLIGHT_URL', 'https://dbpedia-spotlight-en.soco.ude.systems/rest/annotate')
     # Using the official DBpedia Spotlight API as default
 
     DBPEDIA_SPOTLIGHT_CONFIDENCE = float(os.getenv('DBPEDIA_SPOTLIGHT_CONFIDENCE', '0.35'))

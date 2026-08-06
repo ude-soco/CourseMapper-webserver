@@ -30,4 +30,4 @@ html2text = "*"
 
 [requires]
 python_version = "3.11"
-python_full_version = "3.11.9"
+python_full_version = "3.11.5"
