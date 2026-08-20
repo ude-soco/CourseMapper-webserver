@@ -27,7 +27,7 @@ class RRGCN:
         self.embedding_matrix = None
         self.adj_matrix = None
         self.prerequisite_matrix = None
-        
+        self.prerequisite_matrix_inverse = None
         self.weight_matrix_rc_1 = None
         self.weight_matrix_pr_1 = None
         self.weight_matrix_self_1 = None
@@ -104,6 +104,8 @@ class RRGCN:
         # Normalized adjacency matrix
         normalized_adj_matrix = self.prerequisite_matrix / neighbor_counts[:, None]
         self.prerequisite_matrix = normalized_adj_matrix
+        #sum features of nodes that are prerequisites to MC1 not where MC1 is  prerequisites to
+        self.prerequisite_matrix_inverse = self.prerequisite_matrix.T
 
         """ 
             generate relationships weight for every type of relationships
@@ -203,7 +205,8 @@ class RRGCN:
         """ 
             prerequsite_matrix
         """
-        prerequsite_matrix = self.prerequisite_matrix
+        #prerequsite_matrix = self.prerequisite_matrix
+        prerequsite_matrix_inverse = self.prerequisite_matrix_inverse
 
         """  
             the first layer
@@ -213,7 +216,7 @@ class RRGCN:
         rc_part = np.dot(rc_part_1,weight_matrix_rc_1)
 
         #PR Part
-        pr_part_1 = np.dot(prerequsite_matrix,embedding_matrix)
+        pr_part_1 = np.dot(prerequsite_matrix_inverse,embedding_matrix)
         pr_part = np.dot(pr_part_1,weight_matrix_pr_1)
 
         #self loop
@@ -242,7 +245,8 @@ class RRGCN:
         rc_part_second_layer=np.dot(rc_part_second_layer,weight_matrix_rc_second_layer)
 
         #PR Part
-        pr_part_second_layer = np.dot(prerequsite_matrix,embedding_first_layer)
+        #pr_part_second_layer = np.dot(prerequsite_matrix,embedding_first_layer)
+        pr_part_second_layer = np.dot(prerequsite_matrix_inverse,embedding_first_layer)
         pr_part_second_layer = np.dot(pr_part_second_layer,weight_matrix_pr_second_layer)     
 
         #because the pre_self_loop is zero so that ignore it
@@ -273,6 +277,7 @@ class RRGCN:
             prerequsite_matrix
         """
         prerequsite_matrix = self.prerequisite_matrix
+        np.savetxt("PRE_rrgcn.txt", prerequsite_matrix, fmt="%.2f")
         # prerequsite_matrix = np.around(prerequsite_matrix,2)
         """  
             the first layer

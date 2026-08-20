@@ -89,6 +89,7 @@ class relational_conceptgcn_compgcn:
             )
         self.prerequisite_matrix =self.prerequisite_matrix.toarray()
         self.prerequisite_matrix = np.around(self.prerequisite_matrix, 2)
+        np.savetxt("matrix.txt", self.prerequisite_matrix, fmt="%.2f")
         neighbor_counts =np.sum(self.prerequisite_matrix != 0, axis=1) 
         # Avoid division by zero and handle isolated nodes
         neighbor_counts[neighbor_counts == 0] = 1
@@ -121,6 +122,7 @@ class relational_conceptgcn_compgcn:
 
         adj_matrix = self.adj_matrix
         prerequisite_matrix = self.prerequisite_matrix
+        np.savetxt("PRE_compgcn.txt", self.prerequisite_matrix, fmt="%.2f")
         weight_relation_initialize = self.weight_relation_initialize
         weight_relation_layer_1 = self.weight_relation_layer_1
         prerequisite_matrix_inverse = self.prerequisite_matrix_inverse
@@ -154,7 +156,12 @@ class relational_conceptgcn_compgcn:
             for j in range(prerequisite_matrix.shape[1]):
                 weight = prerequisite_matrix[i,j]
                 if weight != 0:
-                    relation_embedding_matrix_prerequisite[(i,j)] = np.dot(weight,weight_relation_initialize)        
+                    relation_embedding_matrix_prerequisite[(i,j)] = np.dot(weight,weight_relation_initialize)
+        # for i in range(prerequisite_matrix_inverse.shape[0]):
+        #     for j in range(prerequisite_matrix_inverse.shape[1]):
+        #         weight = prerequisite_matrix_inverse[i,j]
+        #         if weight != 0:
+        #             relation_embedding_matrix_prerequisite[(i,j)] = np.dot(weight,weight_relation_initialize)         
         
         """ 
             Step 2: update the embedding of all nodes at the 1st. layer

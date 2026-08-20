@@ -1991,6 +1991,7 @@ class NeoDataBase:
                 mid=mid).data()
         relations = list(concept_result) + list(slide_result)
         prerequisites = list(concept_prerequisite_result) + list(slide_prerequisite_result)
+        #np.savetxt("prerequisites_before_hash neo4j_db.txt", prerequisites, fmt="%.2f")
         relationships = []
         prerequisite_relationships = []
         for relation in relations:

@@ -136,7 +136,13 @@ export async function getMaterialSlides(materialId) {
 
 export async function deleteMaterial(materialId) {
   const { records, summary, keys } = await graphDb.driver.executeQuery(
-    "MATCH (m:LearningMaterial) WHERE m.mid = $mid DETACH DELETE m",
+    ` MATCH (m:LearningMaterial {mid: $mid})
+WITH m
+DETACH DELETE m
+WITH $mid AS mid
+MATCH (n)
+WHERE n.mid = mid
+DETACH DELETE n;`,
     { mid: materialId }
   );
   return recordsToObjects(records);
