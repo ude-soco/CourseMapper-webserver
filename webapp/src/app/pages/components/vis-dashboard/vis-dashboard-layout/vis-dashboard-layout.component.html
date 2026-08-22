@@ -1,0 +1,16 @@
+<header>
+  <app-vis-header>
+  </app-vis-header>
+</header>
+<main>
+  <div class="sidebar" *ngIf="loggedInUser">
+    <app-sidebar></app-sidebar>
+  </div>
+  <div class="content">
+    <router-outlet>
+
+    </router-outlet>
+
+  </div>
+</main>
+<footer class="footer"></footer>

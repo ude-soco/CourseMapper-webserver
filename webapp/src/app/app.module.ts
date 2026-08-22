@@ -5,7 +5,7 @@ import en from '@angular/common/locales/en';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { registerLocaleData, DatePipe } from '@angular/common';
+import {registerLocaleData, DatePipe, NgOptimizedImage} from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -91,7 +91,7 @@ import { ResetPasswordComponent } from './pages/components/forget-password/reset
 import { ResetPasswordRequestComponent } from './pages/components/forget-password/reset-password-request/reset-password-request.component';
 
 import { PersonalDashboardComponent } from './pages/components/Dashboards/personal-dashboard/personal-dashboard.component';
-// import { PopulateDashboardComponent } from './pages/components/populate-dashboard/populate-dashboard.component';
+import { PopulateDashboardComponent } from './pages/components/populate-dashboard/populate-dashboard.component';
 import { TopicDashboardComponent } from './pages/components/Dashboards/topic-dashboard/topic-dashboard.component';
 import { CourseDashboardComponent } from './pages/components/Dashboards/course-dashboard/course-dashboard.component';
 import { ChannelDashboardComponent } from './pages/components/Dashboards/channel-dashboard/channel-dashboard.component';
@@ -103,6 +103,49 @@ import { InterestDashboardEffects } from './pages/components/Dashboards/interest
 // import { BackButtonComponent } from './pages/components/back-button/back-button.component';
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
+import { BackButtonComponent } from './pages/components/back-button/back-button.component';
+import { VisLandingPageComponent } from './pages/vis-dashboard/vis-landing-page/vis-landing-page.component';
+import { VisDashboardLayoutComponent } from './pages/components/vis-dashboard/vis-dashboard-layout/vis-dashboard-layout.component';
+import { VisHeaderComponent } from './pages/components/vis-dashboard/vis-header/vis-header.component';
+import { CourseCategoryComponent } from './pages/components/vis-dashboard/cards/course-category/course-category.component';
+import { CourseCarouselComponent } from './pages/components/vis-dashboard/carousel/course-carousel/course-carousel.component';
+import { CourseComponent } from './pages/components/vis-dashboard/cards/course/course.component';
+import { VisOptionsComponent } from './pages/components/vis-dashboard/cards/vis-options/vis-options.component';
+import { VisExplorePageComponent } from './pages/vis-dashboard/vis-explore-page/vis-explore-page.component';
+import { VisComparePageComponent } from './pages/vis-dashboard/vis-compare-page/vis-compare-page.component';
+import { FindTopicPageComponent } from './pages/vis-dashboard/find-topic-page/find-topic-page.component';
+import { CourseDetailsPageComponent } from './pages/vis-dashboard/course-details-page/course-details-page.component';
+import { PlatformTabsComponent } from './pages/components/vis-dashboard/platform-tabs/platform-tabs.component';
+import { VisBackButtonComponent } from './pages/components/vis-dashboard/vis-back-button/vis-back-button.component';
+import { ToWebsiteButtonComponent } from './pages/components/vis-dashboard/to-website-button/to-website-button.component';
+import { CourseCategoryPageComponent } from './pages/vis-dashboard/course-category-page/course-category-page.component';
+import { CourseByCategoryComponent } from './pages/components/vis-dashboard/cards/course-by-category/course-by-category.component';
+import { CoursePaginationComponent } from './pages/components/vis-dashboard/course-pagination/course-pagination.component';
+import { FiltersForCoursesComponent } from './pages/components/vis-dashboard/filters-for-courses/filters-for-courses.component';
+import { PopularTeachersComponent } from './pages/components/vis-dashboard/cards/popular-teachers/popular-teachers.component';
+import { TeacherPageComponent } from './pages/vis-dashboard/teacher-page/teacher-page.component';
+import {AngularD3CloudModule} from "angular-d3-cloud";
+import { ExploreChartsPageComponent } from './pages/vis-dashboard/vis-explore-page/explore-charts-page/explore-charts-page.component';
+import { ConceptsWordCloudComponent } from './pages/components/vis-dashboard/vis-charts-explore/concepts-word-cloud/concepts-word-cloud.component';
+import { CourseCategoryChartsComponent } from './pages/components/vis-dashboard/vis-charts-explore/course-category-charts/course-category-charts.component';
+import {NgApexchartsModule} from "ng-apexcharts";
+import { MostActiveTeachersComponent } from './pages/components/vis-dashboard/vis-charts-explore/most-active-teachers/most-active-teachers.component';
+import {
+  MostActiveInstitutionsComponent
+} from "./pages/components/vis-dashboard/vis-charts-explore/most-active-institutions/most-active-institutions.component";
+import { CompareChartsPageComponent } from './pages/vis-dashboard/vis-compare-page/compare-charts-page/compare-charts-page.component';
+import { ComparePlatformsTeachersComponent } from './pages/components/vis-dashboard/vis-charts-compare/compare-platforms-teachers/compare-platforms-teachers.component';
+import { ComparePlatformsInstitutionsComponent } from './pages/components/vis-dashboard/vis-charts-compare/compare-platforms-institutions/compare-platforms-institutions.component';
+import { ComparePlatformsPlatformsComponent } from './pages/components/vis-dashboard/vis-charts-compare/compare-platforms-platforms/compare-platforms-platforms.component';
+import { ComparePlatformsConceptComponent } from './pages/components/vis-dashboard/vis-charts-compare/compare-platforms-concept/compare-platforms-concept.component';
+import { FindByTopicMainComponent } from './pages/vis-dashboard/find-topic-page/find-by-topic-main/find-by-topic-main.component';
+import { VisFilterSliderComponent } from './pages/components/vis-dashboard/vis-filter-slider/vis-filter-slider.component';
+import { BreadcrumbComponent } from './pages/components/vis-dashboard/breadcrumb/breadcrumb.component';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { CarouselForwardButtonComponent } from './pages/components/vis-dashboard/carousel/chevron-buttons/carousel-forward-button/carousel-forward-button.component';
+import { CarouselBackwardButtonComponent } from './pages/components/vis-dashboard/carousel/chevron-buttons/carousel-backward-button/carousel-backward-button.component';
+import { SvgIconVisComponent } from './pages/components/vis-dashboard/svg-icon-vis/svg-icon-vis.component';
+import { PopularTopicsComponent } from './pages/components/vis-dashboard/cards/popular-topics/popular-topics.component';
 
 @NgModule({
   declarations: [
@@ -136,12 +179,11 @@ import { RequestEmailValidationComponent } from './pages/components/email-valida
     ForgetPasswordComponent,
     ResetPasswordComponent,
     ResetPasswordRequestComponent,
-
     PersonalDashboardComponent,
     TopicDashboardComponent,
     CourseDashboardComponent,
     ChannelDashboardComponent,
-    // PopulateDashboardComponent,
+    PopulateDashboardComponent,
     MaterialDashboardComponent,
     EngagementDashboardComponent,
     InterestLevelDashboardComponent,
@@ -186,7 +228,86 @@ import { RequestEmailValidationComponent } from './pages/components/email-valida
     KnowledgeGraphModule,
     TabMenuModule,
     DividerModule,
-  ],
+    PopulateDashboardComponent,
+    MaterialDashboardComponent,
+    BackButtonComponent,
+    VisLandingPageComponent,
+    VisDashboardLayoutComponent,
+    VisHeaderComponent,
+    CourseCategoryComponent,
+    CourseCarouselComponent,
+    CourseComponent,
+    VisOptionsComponent,
+    VisExplorePageComponent,
+    VisComparePageComponent,
+    FindTopicPageComponent,
+    CourseDetailsPageComponent,
+    PlatformTabsComponent,
+    VisBackButtonComponent,
+    ToWebsiteButtonComponent,
+    CourseCategoryPageComponent,
+    CourseByCategoryComponent,
+    CoursePaginationComponent,
+    FiltersForCoursesComponent,
+    PopularTeachersComponent,
+    TeacherPageComponent,
+    ExploreChartsPageComponent,
+    ConceptsWordCloudComponent,
+    CourseCategoryChartsComponent,
+    MostActiveTeachersComponent,
+    MostActiveInstitutionsComponent,
+    MostActiveInstitutionsComponent,
+    CompareChartsPageComponent,
+    ComparePlatformsTeachersComponent,
+    ComparePlatformsInstitutionsComponent,
+    ComparePlatformsPlatformsComponent,
+    ComparePlatformsConceptComponent,
+    FindByTopicMainComponent,
+    VisFilterSliderComponent,
+    BreadcrumbComponent,
+    CarouselForwardButtonComponent,
+    CarouselBackwardButtonComponent,
+    SvgIconVisComponent,
+    PopularTopicsComponent,
+
+        MentionModule,
+        DynamicDialogModule,
+        MenuModule,
+        BrowserModule,
+        AppRoutingModule,
+        PrimengModule,
+        HttpClientModule,
+        DialogModule,
+        ButtonModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        InputTextModule,
+        ReactiveFormsModule,
+        ToastModule,
+        RippleModule,
+        ConfirmDialogModule,
+        AngularD3CloudModule,
+        NgApexchartsModule,
+        NotificationModule,
+        MultiSelectModule,
+        StoreModule.forRoot({}, {}),
+        EffectsModule.forRoot([]),
+        StoreDevtoolsModule.instrument({
+            maxAge: 25,
+            logOnly: environment.production,
+        }),
+        SharedComponentsModule,
+        StoreModule.forFeature('general', appReducer),
+        EffectsModule.forFeature([AppEffects]),
+        InputTextareaModule,
+        DragulaModule.forRoot(),
+        SocketIoModule.forRoot(environment.socketConfig),
+        CourseModule,
+        KnowledgeGraphModule,
+        TabMenuModule,
+        DividerModule,
+        NgOptimizedImage,
+    ],
   exports: [],
   providers: [httpInterceptorProviders, DatePipe],
   bootstrap: [AppComponent],

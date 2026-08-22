@@ -1,0 +1,52 @@
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #3B82F6 0%, #3B82F6 100%);
+
+}
+
+
+.filter-button{
+ text-align: right;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  cursor: pointer;
+}
+
+.sort, .filter-button{
+  padding: 3px;
+  color: #0277BD;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.show-slider{
+  color: #0277BD;
+  border: 1px solid  #0277BD;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+
+}
+
+.slider-filter{
+  display: flex;
+}
+
+.slider{
+  border: 2px solid whitesmoke;
+  border-radius: 11px;
+  padding: 15px;
+  width: 50%;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.slider-text{
+  font-size: 11px;
+  color: grey;
+  white-space: nowrap;
+
+}

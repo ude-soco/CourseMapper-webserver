@@ -1,0 +1,42 @@
+<app-vis-back-button></app-vis-back-button>
+
+<div>
+  <div class="nameDisplay">
+    <p  class="platformName">   {{ this.selectedPlatforms2.join(' - ') }}
+    </p>
+  </div>
+
+  <div class="language-filter">
+    <label>
+      <input type="checkbox" [(ngModel)]="showEnglishPlatforms"
+             [disabled]="!hasSelectedEnglishPlatform()"
+             (change)="onCheckboxChange()"> English Platforms
+    </label>
+    <label>
+      <input type="checkbox" [(ngModel)]="showGermanPlatforms"
+             [disabled]="!hasSelectedGermanPlatform()"
+             (change)="onCheckboxChange()"> German Platforms
+    </label>
+  </div>
+
+  <div>
+    <div class="category">By Topics</div>
+    <app-compare-platforms-concept></app-compare-platforms-concept>
+  </div>
+
+  <div>
+    <div class="category">By Platform</div>
+    <app-compare-platforms-platforms></app-compare-platforms-platforms>
+  </div>
+
+  <div>
+    <div class="category">By Teacher</div>
+<app-compare-platforms-teachers></app-compare-platforms-teachers>
+  </div>
+
+
+  <div>
+    <div class="category">By Institution</div>
+<app-compare-platforms-institutions></app-compare-platforms-institutions>
+  </div>
+</div>

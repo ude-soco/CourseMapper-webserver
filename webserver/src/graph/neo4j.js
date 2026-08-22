@@ -12,7 +12,7 @@ export async function connect(url, user, password) {
       disableLosslessIntegers: true,
     });
     await graphDb.driver.verifyConnectivity();
-    console.log(`Connected to Neo4j`);
+    console.log(`Connected to Neo4j CM`);
   } catch (error) {
     console.error("Failed to connect to Neo4j", error);
   }

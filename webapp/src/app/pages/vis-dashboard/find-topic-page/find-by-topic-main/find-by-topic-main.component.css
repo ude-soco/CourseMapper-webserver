@@ -1,0 +1,54 @@
+.title{
+  font-family: Roboto;
+  font-size: 34px;
+  font-weight: bold;
+}
+
+.sub-title{
+  font-family: Roboto;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 1em;
+  margin-Top: 1em;
+
+}
+
+.all-courses{
+  margin-top: 3em;
+}
+.toggle-sort{
+  display: flex;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.left {
+  flex: 1.3;
+}
+
+.right {
+  flex: 2.9;
+}
+
+.vertical-line {
+  border-left: 2px solid #CDCDCD;
+  height: 100%;
+  margin: 0 10px;
+}
+
+.filter-button{
+
+  margin-right:10px ;
+}
+
+.sort, .filter-button{
+  border:1px solid #0277BD;
+  border-radius: 5px;
+  padding: 5px;
+  color: #0277BD;
+  margin-bottom: 10px;
+  font-size: 13px;
+}

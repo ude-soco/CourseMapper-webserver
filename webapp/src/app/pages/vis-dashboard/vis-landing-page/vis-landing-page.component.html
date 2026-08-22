@@ -1,0 +1,33 @@
+
+<h1 class="title">MOOCentral</h1>
+<div class="by-options">
+  <h3 class="sub-title">Search courses by exploring platforms</h3>
+
+  <div class="options">
+    <a *ngFor="let option of optionsData" [routerLink]="option.link" class="card-link">
+      <app-vis-options [vis_option]="option.text"></app-vis-options>
+
+    </a>
+  </div>
+</div>
+
+<div class="categories">
+  <h3 class="sub-title">Search courses by categories</h3>
+  <div class="category-container">
+    <app-course-category *ngFor="let category of courseCategoryData" [category]="category"></app-course-category>
+  </div>
+</div>
+
+<div class="most-popular">
+  <h3 class="sub-title">Most popular courses</h3>
+  <app-course-carousel [type]="CourseCarouselType.MOST_POPULAR_COURSES"></app-course-carousel>
+</div>
+
+
+<div class="highest-rated">
+  <h3 class="sub-title">Highest rated courses</h3>
+  <app-course-carousel [type]="CourseCarouselType.HIGHEST_RATED_COURSES"></app-course-carousel>
+</div>
+
+
+

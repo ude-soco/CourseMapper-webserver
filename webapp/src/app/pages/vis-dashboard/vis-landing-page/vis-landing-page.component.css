@@ -1,0 +1,53 @@
+.title{
+  font-family: Roboto;
+  font-size: 34px;
+  font-weight: bold;
+  color: #222222;
+}
+
+.sub-title{
+  font-family: Roboto;
+  font-size: 24px;
+  font-weight: bold;
+  color: #222222;
+  margin-bottom: 1em;
+
+}
+
+.category-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+app-course-category {
+  flex: 0 0 calc(20% - 20px);
+  margin: 10px;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.most-popular{
+  margin-top: 3em;
+}
+
+
+.highest-rated{
+  margin-top: 3em;
+  margin-bottom: 20em;
+}
+
+.categories{
+  margin-top: 3em;
+}
+
+.by-options{
+  margin-top: 1em;
+}
+
+.card-link{
+  color: #0277BD;
+}

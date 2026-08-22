@@ -1,0 +1,22 @@
+.category{
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.platformName{
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Roboto;
+
+}
+
+.nameDisplay{
+  margin-bottom: 30px;
+
+}
+
+.language-filter{
+  text-align: right;
+}

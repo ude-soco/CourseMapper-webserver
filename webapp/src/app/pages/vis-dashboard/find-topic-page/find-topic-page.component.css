@@ -1,0 +1,28 @@
+.find-by-topic{
+  font-size: 34px;
+  font-weight: bold;
+  font-family: Roboto;
+  color: #222222;
+  margin-bottom: 1em;
+
+}
+
+.button{
+  border: none;
+  padding: 10px 50px;
+  border-radius: 5px;
+  color: white;
+  background-color: #CDCDCD;
+  margin-top: 1em
+}
+
+.button.active {
+  background-color: #0277BD;
+}
+
+.button:disabled {
+  background-color: #CDCDCD;
+  cursor: not-allowed;
+}
+
+

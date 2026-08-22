@@ -30,8 +30,9 @@
 
             ],
             "scripts": [
-              "node_modules/quill/dist/quill.js"
-          ]
+              "node_modules/quill/dist/quill.js",
+              "node_modules/apexcharts/dist/apexcharts.min.js"
+            ]
           },
           "configurations": {
             "production": {

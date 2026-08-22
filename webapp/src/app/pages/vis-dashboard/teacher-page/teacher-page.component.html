@@ -1,0 +1,29 @@
+<div>
+  <div>
+    <app-vis-back-button></app-vis-back-button>
+  </div>
+
+  <div >
+    <div>
+      <p class="teacher-name">{{teacherName.TeacherName}}</p>
+    </div>
+
+
+
+  </div>
+
+  <div>
+    <p class="about">Courses offered</p>
+  </div>
+
+  <div class="container">
+  <div *ngFor="let course of loadedData">
+ <app-course class="course-card"
+   (click)="onCourseClick(course.CourseId)"
+   [courseName]="course.CourseName" [teacherName]="course.TeacherName"></app-course>
+  </div>
+  </div>
+
+
+
+</div>

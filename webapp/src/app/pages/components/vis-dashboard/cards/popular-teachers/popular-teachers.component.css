@@ -1,0 +1,39 @@
+.card {
+  width: 200px;
+  height: 134px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  cursor: pointer;
+
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23);
+
+
+}
+
+.card:hover {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+
+.details{
+  text-align: center;
+}
+
+.course-name{
+  font-size: 10px;
+  font-family: Roboto;
+  color:#0277BD
+
+}
+
+.teacher-name{
+  font-size: 14px;
+  color:#0277BD
+
+}

@@ -1,3 +1,4 @@
+@import '../node_modules/primeflex/primeflex.min.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

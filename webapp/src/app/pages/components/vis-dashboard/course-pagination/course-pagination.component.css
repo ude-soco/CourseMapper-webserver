@@ -1,0 +1,37 @@
+.pagination{
+  margin-top: 3em;
+  font-size: 14px;
+  font-family: Roboto;
+  display: block;
+  text-align: center;
+}
+
+
+.pagination-items{
+  display: inline-flex;
+}
+
+.pagination span {
+  cursor: pointer;
+}
+
+.active-page {
+  background-color: #D9D9D9;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+
+.page-number{
+  margin-right: 10px;
+}
+
+.pagination button[disabled] {
+  cursor: not-allowed;
+}
+
+.chevron-icon{
+  font-size: 25px;
+}
+
+

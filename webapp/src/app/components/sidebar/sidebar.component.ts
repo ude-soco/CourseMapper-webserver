@@ -34,6 +34,7 @@ export class SidebarComponent implements OnInit {
   public LandingPage = '/landingPage';
   public HomePage = '/home';
   public PersonalKnowledgeGraphPage = '/user/pkg';
+  public VisDashLandingPage = '/vis-dashboard-landing-page'
   selectedCourse: Course = new CourseImp('', '');
   displayAddCourseDialogue: boolean = false;
   showModeratorPrivileges: boolean;

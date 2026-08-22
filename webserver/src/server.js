@@ -98,6 +98,14 @@ recs.connect(
 );
 
 
+// Create connection to Neo4j VisDashboard
+const neo4jVisDash = require("./vis-dashboard/services/vis-dashboard.service");
+neo4jVisDash.connect(
+    process.env.NEO4J_URI_MOOC,
+    process.env.NEO4J_USER_MOOC,
+    process.env.NEO4J_PASSWORD_MOOC
+);
+
 // Create connection to Redis
 const redis = require("./graph/redis");
 redis.connect(
@@ -145,6 +153,7 @@ require("./routes/notifications.routes")(app);
 require("./routes/knowledgeGraph.routes")(app);
 require("./routes/engagement.routes")(app);
 require("./routes/interest-level.routes")(app);
+require("./routes/visdashboard.routes")(app);
 
 // Listen on provided port, on all network interfaces
 server.listen(port);

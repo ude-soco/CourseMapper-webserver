@@ -1,0 +1,18 @@
+
+
+<div class="slider-filter">
+
+
+  <div class="slider"  *ngIf="showSlider">
+    <p class="slider-text" >Adjust number of Displayed Datapoints:  {{datapointCount}}</p>
+    <span class="filter-button"  (click)="toggleFilter()">hide</span>
+  <input type="range" [min]="minValue" [max]="maxValue" [step]="step" [(ngModel)]="sliderValue" (input)="onSliderChange($event)">
+  </div>
+
+</div>
+
+<div *ngIf="!showSlider">
+
+  <span class="show-slider" (click)="toggleFilter()">Show Slider</span>
+
+</div>

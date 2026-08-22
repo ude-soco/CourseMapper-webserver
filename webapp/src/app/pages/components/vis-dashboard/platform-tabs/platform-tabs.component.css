@@ -1,0 +1,21 @@
+.platform-tabs{
+display: flex;
+  color: #0277BD;
+}
+
+.platform-tab{
+  cursor: pointer;
+  margin-bottom: 1px;
+}
+
+.platform-tabs div{
+margin-right: 10px;
+}
+
+.platform-tab.selected {
+  border-bottom: 3px solid #0277BD;
+}
+
+.hr{
+  background-color: #3a95cc;
+}

@@ -1,0 +1,15 @@
+
+<div class="card"  (click)="navigateToCourseDetails(course.CourseId)">
+  <div class="image-card">
+    <img src="https://picsum.photos/250/200">
+  </div>
+
+  <div class="details-card bordered">
+    <h3>{{course.Name.slice(0,40)}}</h3>
+    <div *ngIf="course.Description !== 'this information is not avaliable for this course'"><p class="course-description">{{course.Description}}</p></div>
+    <p class="teacher-name">{{ course.TeacherName ?  course.TeacherName.slice(0,20) : '' }}</p>
+    <div *ngIf="course.Rating !== 'this information is not avaliable for this course'"><p class="course-rating">rating: {{ course.Rating}}</p></div>
+    <div *ngIf="course.Price !== 'this information is not avaliable for this course'"><p class="course-price">{{course.Price}}</p></div>
+    <p class="course-platform">{{ course.PlatformName }}</p>
+  </div>
+</div>
