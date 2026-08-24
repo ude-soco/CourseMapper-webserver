@@ -1,4 +1,4 @@
-import { Component,EventEmitter, Input, Output } from '@angular/core';
+/*import { Component,EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-vis-filter-slider',
@@ -27,4 +27,38 @@ export class VisFilterSliderComponent {
   toggleFilter() {
     this.showSlider = !this.showSlider
   }
+}*/
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-vis-filter-slider',
+  templateUrl: './vis-filter-slider.component.html',
+  styleUrls: ['./vis-filter-slider.component.css']
+})
+export class VisFilterSliderComponent {
+  @Input() minValue = 5;
+  @Input() maxValue = 20;
+  @Input() step = 1;
+
+  @Input() unitLabel: string = 'datapoints';
+
+  @Input() datapointCount = 5;
+
+  @Output() valueChange = new EventEmitter<number>();
+
+  showSlider = true;
+  sliderValue = this.minValue;
+
+  onSliderChange(event: Event) {
+    const value = Number((event.target as HTMLInputElement).value);
+    this.sliderValue = value;
+    this.datapointCount = value;
+    this.valueChange.emit(value);
+  }
+
+  toggleFilter() {
+    this.showSlider = !this.showSlider;
+  }
 }
+
+

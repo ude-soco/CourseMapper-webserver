@@ -1,4 +1,4 @@
-.by-concepts{
+/*.by-concepts{
   border: 2px solid lightgrey;
   padding: 10px;
   border-radius: 10px;
@@ -15,7 +15,7 @@
 .concepts-and-courses{
   display: flex;
   /***flex-wrap: wrap;*/
-  /*Todo make responsive */
+  /*Todo make responsive 
 
 }
 
@@ -65,4 +65,157 @@
   height: 18em;
   width: 100%;
   cursor: default;
+}*/
+
+.by-concepts{
+  border: 2px solid lightgrey;
+  padding: 12px;
+  border-radius: 10px;
+  height: 100%;
+
+  /* stack cloud on top of the nested list */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
+
+.title{
+  font-family: Roboto, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  margin: 0 0 2px;
+}
+
+/* centered cloud */
+.concepts{
+  border-radius: 10px;
+  min-height: 280px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+/* nested list under the cloud */
+.course-list.nested{
+  border: 2px solid lightgrey;
+  border-radius: 10px;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;        /* header stays, rows scroll */
+  max-height: 18em;
+}
+
+/* grid: rating | name | view */
+.rating-layout{
+  display: grid;
+  grid-template-columns: 95px 1fr 90px;
+  align-items: center;
+  gap: 14px;               
+}
+
+/* header row */
+.course-list-header{ font-weight: 600; }
+
+.rating-header{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.course-name-header{ white-space: nowrap; }
+.course-view-header{ text-align: right; }
+
+/* arrows */
+.sort-btn{
+  border: 1px solid #ccc;
+  background: #fff;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.sort-btn.active{
+  border-color: #0277bd;
+  box-shadow: 0 0 0 2px rgba(2,119,189,.15);
+  font-weight: 700;
+}
+
+/* divider */
+.divider{
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px solid #eee;
+}
+
+/* hint */
+.hint{ color: #666; font-size: 13px; }
+
+/* scrollable rows */
+.course-rows{
+  overflow: auto;
+  flex: 1 1 auto;
+}
+
+/* each row uses same grid as header */
+.course-row{
+  padding: 6px 0;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+/* rating number */
+.rating-cell{
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: #333;
+  opacity: .9;
+}
+
+/* name with ellipsis */
+.course-name{
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  color: #222;
+}
+
+/* magnifier */
+.view-btn{
+  justify-self: end;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+.view-btn i{
+  color: #0277bd;
+  font-size: 18px;
+}
+
+@media (max-width: 1024px){
+  .rating-layout{
+    grid-template-columns: 80px 1fr 70px;
+  }
+}
+
+/* make words in the cloud look clickable */
+:host ::ng-deep angular-d3-cloud svg text {
+  cursor: pointer;
+  transition: fill .15s ease;
+}
+
+
+:host ::ng-deep angular-d3-cloud svg text:hover {
+  fill: #0277bd;           
+  text-decoration: underline;
+}
+
+
+
+

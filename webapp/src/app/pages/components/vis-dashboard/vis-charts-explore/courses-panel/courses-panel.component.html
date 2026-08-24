@@ -1,0 +1,64 @@
+<div class="panel">
+  <div class="panel-header">
+    <div class="panel-header-title">Courses</div>
+    <button *ngIf="selectedEntity" (click)="onBackClick()">← Back</button>
+  </div>
+
+  <div *ngIf="!selectedEntity && !loading" class="panel-info">
+    Select a {{ entityLabel }} bar to see their courses.
+  </div>
+  <div *ngIf="loading" class="panel-info">Loading…</div>
+  <div *ngIf="selectedEntity && !loading && (courses?.length ?? 0) === 0" class="panel-info">
+    No courses found for {{ selectedEntity?.name }}.
+  </div>
+
+  <div *ngIf="selectedEntity && (courses?.length ?? 0) > 0" class="panel-search">
+    <input
+      type="text"
+      [value]="filterText"
+      (input)="onFilterInput(($any($event.target)).value)"
+      placeholder="Search in these courses..." />
+  </div>
+
+  <div *ngIf="selectedEntity && totalFiltered > 0" class="panel-list-header">
+    <div>Rating</div>
+    <div>Course name</div>
+    <div style="text-align:right;">Students</div>
+    <div style="text-align:right;">View</div>
+  </div>
+  <hr *ngIf="selectedEntity && totalFiltered > 0" class="panel-hr" />
+
+  <ul *ngIf="selectedEntity && !loading && displayedCourses?.length > 0" style="list-style:none;margin:0;padding:0;">
+    <li *ngFor="let c of displayedCourses; trackBy: trackByCourse" class="panel-course">
+      <span class="panel-course-rating" title="Rating">
+        {{ (c.Rating ?? 0) | number:'1.1-1' }}
+      </span>
+      <span class="panel-course-name">{{ c.CourseName || c.name }}</span>
+      <span class="panel-course-students" title="Enrolled students">
+        {{ (c.NumberOfParticipants ?? 0) | number }}
+      </span>
+      <a class="panel-course-view"
+         [routerLink]="['/course-detail', (c.CourseId || c.Id || c.id)]"
+         target="_blank" rel="noopener" title="Open course in a new tab">
+        <i class="bx bx-search bx-flip-horizontal"></i>
+      </a>
+    </li>
+  </ul>
+
+  <!-- banded pagination: 20 pages visible at a time -->
+  <div *ngIf="selectedEntity && !loading && totalFiltered > 0" class="panel-pagination">
+    <button (click)="prevPage()" [disabled]="pageIndex <= 1">‹</button>
+
+    <button class="dots" *ngIf="hasPrevBand" (click)="prevBand()" title="Previous 20">…</button>
+
+    <ng-container *ngFor="let p of visiblePages">
+      <button (click)="setPage(p)" [disabled]="p === pageIndex" [class.active]="p === pageIndex">
+        {{ p }}
+      </button>
+    </ng-container>
+
+    <button class="dots" *ngIf="hasNextBand" (click)="nextBand()" title="Next 20">…</button>
+
+    <button (click)="nextPage()" [disabled]="pageIndex >= totalPages">›</button>
+  </div>
+</div>

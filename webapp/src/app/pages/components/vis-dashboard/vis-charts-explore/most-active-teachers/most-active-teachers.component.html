@@ -1,4 +1,5 @@
 
+<!--
 <div class="grid-container">
   <div class="grid-item">
     <div>
@@ -27,4 +28,43 @@
   </div>
 
 
+</div>-->
+<div class="grid-container">
+  <div class="grid-item">
+    <div>
+      <div class="title">Distribution of the most active teachers based on courses offered</div>
+      <app-vis-filter-slider
+        [minValue]="5"
+        [maxValue]="20"
+        [step]="1"
+        [unitLabel]="'teachers'"
+        [datapointCount]="dataPointCount2"
+        (valueChange)="onDataChange2($event)">
+      </app-vis-filter-slider>
+
+    <div class="chart">
+      <apx-chart
+        #chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [xaxis]="chartOptions.xaxis"
+        [yaxis]="chartOptions.yaxis"
+        [title]="chartOptions.title"
+        [tooltip]="chartOptions.tooltip"
+        [plotOptions]="chartOptions.plotOptions">
+      </apx-chart>
+    </div>
+
+    <!-- shared panel -->
+    <app-courses-panel
+      [selectedEntity]="selectedTeacher"
+      [courses]="courses"
+      [loading]="loading"
+      [pageSize]="pageSize"
+      entityLabel="teacher"
+      (back)="onPanelBack()">
+    </app-courses-panel>
+  </div>
 </div>
+
+

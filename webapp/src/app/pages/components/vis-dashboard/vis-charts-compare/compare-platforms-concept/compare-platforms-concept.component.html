@@ -1,4 +1,4 @@
-<div class="by-concepts">
+<!--<div class="by-concepts">
   <div><p class="title">Distribution of most important topics based on course description</p></div>
   <div class="concepts-and-courses">
     <div class="concepts">
@@ -35,6 +35,139 @@
           </div>
         </div>
         <hr>
+      </div>
+    </div>
+  </div>
+</div>-->
+
+<div class="by-concepts">
+  <p class="title">Distribution of most important topics based on course description</p>
+
+  <!-- Cloud -->
+  <div #cloudHost class="concepts">
+    <div *ngIf="isCloudLoading">…loading</div>
+    <div *ngIf="!isCloudLoading && !data?.length" class="no-data">
+      No topics found for the selected platforms.
+    </div>
+
+    <angular-d3-cloud
+      *ngIf="!isCloudLoading && data?.length"
+      [data]="data"
+      [autoFill]="true"
+      [width]="cloudWidth"
+      [height]="300"
+      [padding]="4"
+      [rotate]="0"
+      font="serif"
+      (wordClick)="onWordClick($event)">
+    </angular-d3-cloud>
+  </div>
+
+  <!-- Legend (keep visible and consistent with pie) -->
+  <div class="legend">
+    <div class="legend-item" *ngFor="let e of legendEntries">
+      <span class="legend-color" [style.background]="e.color"></span>
+      <span class="legend-label">{{ e.name }}</span>
+    </div>
+  </div>
+
+  <!-- Courses box (NO Platform column; stripe shows platform color) -->
+  <div class="courses-box">
+    <div class="courses-box__header">
+      <div class="courses-box__title">
+        Related Courses for <b>{{ selectedTopic || '…select a topic' }}</b>
+      </div>
+      <div class="courses-box__controls" *ngIf="selectedTopic">
+        <span class="hint">Click a word in the cloud to change the topic</span>
+      </div>
+    </div>
+
+    <div class="courses-list">
+      <!-- header -->
+      <div class="course-row course-row--head">
+        <div></div>
+        <div>
+          Rating
+          <span class="sort-btn"
+                [class.sort-btn--active]="sort==='rating'"
+                (click)="toggleSort('rating')"
+                title="Toggle sort by rating">
+            <span [style.opacity]="order==='asc'  && sort==='rating' ? 1 : 0.3">▲</span>
+            <span [style.opacity]="order==='desc' && sort==='rating' ? 1 : 0.3">▼</span>
+          </span>
+        </div>
+        <div>Course Name</div>
+        <div class="right">
+          Students
+          <span class="sort-btn"
+                [class.sort-btn--active]="sort==='students'"
+                (click)="toggleSort('students')"
+                title="Toggle sort by students">
+            <span [style.opacity]="order==='asc'  && sort==='students' ? 1 : 0.3">▲</span>
+            <span [style.opacity]="order==='desc' && sort==='students' ? 1 : 0.3">▼</span>
+          </span>
+        </div>
+        <div class="right">View</div>
+      </div>
+
+      <!-- rows -->
+      <div class="course-row" *ngFor="let c of pagedCourses; trackBy: trackCourse">
+        <div class="course-row__stripe" [style.background]="getStripeColor(c.Platform)"></div>
+
+        <div class="course-row__rating" [title]="displayRating(c)">
+          {{ displayRating(c) || '—' }}
+        </div>
+
+        <div class="course-row__title" [title]="c.CourseName">
+          {{ truncate(c.CourseName, 80) }}
+        </div>
+
+        <div class="course-row__enrolled" [title]="(c?.Students ?? 0) | number : '1.0-0'">
+          <ng-container *ngIf="c?.Students !== null && c?.Students !== undefined; else dash">
+            {{ c.Students | number : '1.0-0' }}
+          </ng-container>
+          <ng-template #dash>—</ng-template>
+        </div>
+
+        <div class="course-row__view right">
+          <a class="view-link" (click)="onCourseClick(c.CourseId)" title="Open course in a new tab">
+            View
+            <svg class="icon-search" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="empty" *ngIf="selectedTopic && !sortedCourses?.length">
+        No courses were found for the selected topic.
+      </div>
+
+      <div class="empty" *ngIf="!selectedTopic">
+        Select a topic to view the list of courses
+      </div>
+    </div>
+
+    <!-- pagination -->
+    <div class="pagination" *ngIf="selectedTopic && total > 0">
+      <div class="results-info">
+        Showing {{ startIndex }}–{{ endIndex }} of {{ total | number }}
+      </div>
+
+      <div>
+        <label style="margin-right:8px;">Per page:</label>
+        <select class="page-size" [value]="pageSize" (change)="onPageSizeChange($any($event.target).value)">
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="30">30</option>
+          <option [value]="50">50</option>
+        </select>
+      </div>
+
+      <div>
+        <button class="page-btn" (click)="prevPage()" [disabled]="page<=1">Prev</button>
+        <span style="margin: 0 10px;">Page {{ page }} of {{ pageCount }}</span>
+        <button class="page-btn" (click)="nextPage()" [disabled]="page>=pageCount">Next</button>
       </div>
     </div>
   </div>

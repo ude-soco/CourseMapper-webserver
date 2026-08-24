@@ -63,7 +63,7 @@ module.exports = function (app) {
     );
 
 
-    // Endpoint to get concepts for a platform
+    /* Endpoint to get concepts for a platform
     app.get(
         "/api/vis-dashboard/concept-by-platform/:platform",
          [authJwt.verifyToken],
@@ -75,6 +75,18 @@ module.exports = function (app) {
     app.get(
         "/api/vis-dashboard/courses-for-explore/:platform/:concept",
          [authJwt.verifyToken],
+        controller.getCoursesByConceptAndPlatform
+    );*/
+
+    // Endpoint to get concepts for a platform
+    app.get("/api/vis-dashboard/concept-by-platform/:platform",
+        // [authJwt.verifyToken],
+        controller.getConceptsByPlatform
+    );
+
+    // Get courses for explore
+    app.get("/api/vis-dashboard/courses-for-explore/:platform/:concept",
+        // [authJwt.verifyToken],
         controller.getCoursesByConceptAndPlatform
     );
 
@@ -184,9 +196,57 @@ module.exports = function (app) {
         controller.getTopicsByCategory
     );
 
+    // Courses for a teacher (by Neo4j id) on a platform
+    app.get(
+        "/api/vis-dashboard/teacher-courses/:teacherId/:platform",
+        // [authJwt.verifyToken],
+        controller.getCoursesByTeacherForVisById
+    ); 
 
+    // Courses for a teacher (by Neo4j name) on a platform
+    app.get(
+        "/api/vis-dashboard/teacher-courses-by-name/:teacherName/:platform",
+        // [authJwt.verifyToken],
+        controller.getCoursesByTeacherForVisByName
+    );
 
+    // Courses for an institution (by Neo4j id) on a platform
+    app.get(
+     "/api/vis-dashboard/institution-courses/:institutionId/:platform",
+      // [authJwt.verifyToken],
+      controller.getCoursesByInstitutionForVisById
+    );
 
+    // Same, if you only have the institution's name from the chart label
+    app.get(
+      "/api/vis-dashboard/institution-courses-by-name/:institutionName/:platform",
+      controller.getCoursesByInstitutionForVisByName
+    );
 
+    // Teachers in a platform (paginated)
+    app.get(
+        "/api/vis-dashboard/platform-teachers/:platform",
+        // [authJwt.verifyToken],
+        controller.getTeachersByPlatform
+    );
+
+    // Institutions in a platform (paginated)
+    app.get(
+        "/api/vis-dashboard/platform-institutions/:platform",
+        // [authJwt.verifyToken],
+        controller.getInstitutionsByPlatform
+    );
+
+    app.get(
+        "/api/vis-dashboard/courses-lite",
+        // [authJwt.verifyToken],
+        controller.getCoursesLite
+    );
+
+    app.get(
+        "/api/vis-dashboard/platform-courses",
+        // [authJwt.verifyToken],
+        controller.getPlatformCourses
+    );
 
 }

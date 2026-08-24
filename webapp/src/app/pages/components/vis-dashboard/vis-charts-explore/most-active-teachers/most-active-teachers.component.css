@@ -33,3 +33,13 @@
   margin-bottom: 10px;
 
 }
+
+/* this guarantees the hand cursor on bars/labels */
+:host ::ng-deep .apexcharts-series path,
+:host ::ng-deep .apexcharts-series rect,
+:host ::ng-deep .apexcharts-xaxis-texts-g,
+:host ::ng-deep .apexcharts-yaxis-texts-g {
+  cursor: pointer;
+}
+
+
