@@ -175,7 +175,7 @@ export async function getConceptsByCourseId(courseId) {
   // );
   const { records } = await graphDb.driver.executeQuery(
     `
-        MATCH (course:Course)-[:CONTAINS_CONCEPT]->(concept:Concept)
+        MATCH (course:Course)-[:CONTAINS_CONCEPT]->(concept:concept)
         WHERE course.course_id = $courseId
         RETURN concept.name AS ConceptName
         `,
@@ -708,7 +708,7 @@ export async function getCoursesByConceptForCompare(concept, platforms) {
   //   );
   const { records } = await graphDb.driver.executeQuery(
     `
-    MATCH (platform:Platform)<-[:AVAILABLE_ON]-(course:Course)-[:CONTAINS_CONCEPT]->(concept:Concept)
+    MATCH (platform:Platform)<-[:AVAILABLE_ON]-(course:Course)-[:CONTAINS_CONCEPT]->(concept:concept)
     WHERE platform.name IN $platforms AND course.description CONTAINS $concept
     RETURN DISTINCT course.course_id AS CourseId, course.name AS CourseName, platform.name AS PlatformName
     LIMIT 9
@@ -732,7 +732,7 @@ export async function getConceptsByPlatforms(platforms) {
   //   );
   const { records } = await graphDb.driver.executeQuery(
     `
-    MATCH (p:Platform)<-[:AVAILABLE_ON]-(c:Course)-[:CONTAINS_CONCEPT]->(k:Concept)
+    MATCH (p:Platform)<-[:AVAILABLE_ON]-(c:Course)-[:CONTAINS_CONCEPT]->(k:concept)
     WHERE ANY(pl IN $platforms WHERE toLower(trim(p.name)) = toLower(trim(pl)))
     RETURN DISTINCT k.name AS ConceptName, count(DISTINCT c) AS Count
     ORDER BY Count DESC
@@ -765,7 +765,7 @@ export async function getCoursesByConceptsFind(concept) {
   //   );
   const { records } = await graphDb.driver.executeQuery(
     `
-    MATCH (concept:Concept)
+    MATCH (concept:concept)
     WHERE toLower(concept.name) CONTAINS toLower($concept)
     MATCH (course:Course)-[:CONTAINS_CONCEPT]->(concept)
     MATCH (course)-[:AVAILABLE_ON]->(platform:Platform)
@@ -801,7 +801,7 @@ export async function addLanguageToPlatform() {
   try {
     const result = await graphDb.driver.executeQuery(
       //   "MATCH (p:platform) WHERE (p.language) IS NULL RETURN p"
-      "MATCH (p:platform) WHERE NOT EXISTS(p.language) RETURN p"
+      "MATCH (p:Platform) WHERE NOT EXISTS(p.language) RETURN p"
     );
     const platformsWithoutLanguage = result.records.map((record) =>
       record.get("p")
@@ -824,7 +824,7 @@ export async function addLanguageToPlatform() {
         language = "German";
       }
       await graphDb.driver.executeQuery(
-        "MATCH (p:platform {name: $name}) SET p.language = $language",
+        "MATCH (p:Platform {name: $name}) SET p.language = $language",
         { name, language }
       );
     }
@@ -888,7 +888,7 @@ export async function getTopicsByCategory(course_category) {
   //   );
   const { records } = await graphDb.driver.executeQuery(
     `
-    MATCH (platform:platform) <-[:AVAILABLE_ON]- (course:course)-[:CONTAINS_CONCEPT]->(concept:concept)
+    MATCH (platform:Platform) <-[:AVAILABLE_ON]- (course:Course)-[:CONTAINS_CONCEPT]->(concept:concept)
     WHERE toLower(course.course_category) = toLower($course_category)
     RETURN DISTINCT concept.name AS ConceptName, platform.name AS PlatformName
     LIMIT 20

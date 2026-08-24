@@ -189,6 +189,7 @@ export class MostActiveInstitutionsComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.platform) this.platform = this.route.snapshot.paramMap.get('platform') ?? '';
+    this.platform = this.platform.trim().replace(/\s+/g, ' ');
     this.getActiveInstitutions(this.platform.toLowerCase(), this.dataPointCount2);
   }
 

@@ -191,7 +191,7 @@ import { PlatformColorPipe } from './services/vis-dashboard/platform-color.pipe'
   MaterialDashboardComponent,
   EngagementDashboardComponent,
   InterestLevelDashboardComponent,
-    BackButtonComponent,
+    // BackButtonComponent,
     VisLandingPageComponent,
     VisDashboardLayoutComponent,
     VisHeaderComponent,

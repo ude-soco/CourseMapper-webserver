@@ -232,6 +232,7 @@ export class CourseCategoryChartsComponent implements OnInit {
 
   ngOnInit(): void {
     this.platform = (this.route.snapshot.paramMap.get('platform') ?? '').toLowerCase();
+    this.platform = this.platform.trim().replace(/\s+/g, ' ');
     this.getPopularCourses(this.platform, this.dataPointCount);
     this.getPopularCategories(this.platform, this.dataPointCount2);
     this.getCoursesRatingsPrices(this.platform, this.dataPointCount3);

@@ -186,6 +186,7 @@ export class MostActiveTeachersComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.platform) this.platform = this.route.snapshot.paramMap.get('platform') ?? '';
+     this.platform = this.platform.trim().replace(/\s+/g, ' ');
     this.getActiveTeachers(this.platform.toLowerCase(), this.dataPointCount2);
   }
 
