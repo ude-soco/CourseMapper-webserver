@@ -30,7 +30,7 @@ function recordsToObjects(records) {
 
 export async function checkplatform() {
   const { records, summary, keys } = await graphMoocDb.driver.executeQuery(
-    "MATCH (n:platform) RETURN n LIMIT 25"
+    "MATCH (n:Platform) RETURN n LIMIT 25"
   );
   return recordsToObjects(records);
 }

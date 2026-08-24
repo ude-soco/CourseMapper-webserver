@@ -449,7 +449,8 @@ export class ConceptMapUserKgComponent {
   ngOnDestroy(): void {
     this.conceptMapData = undefined;
     this.loading.emit(this.isLoading);
-    this.socket.off('log', [this.printLogMessage]);
+    // this.socket.off('log', [this.printLogMessage]);
+    this.socket.removeListener('log', this.printLogMessage);
 
     for (let subscription of this.subscriptions) {
       subscription.unsubscribe();
