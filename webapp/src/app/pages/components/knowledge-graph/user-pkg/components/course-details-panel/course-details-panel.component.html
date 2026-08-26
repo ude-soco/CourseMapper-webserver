@@ -36,9 +36,7 @@
     </h2>
     
     <!-- Course Description -->
-    <p *ngIf="courseDetails.description" class="text-gray-600 mt-4 text-sm leading-relaxed">
-      {{ courseDetails.description }}
-    </p>
+    <p *ngIf="courseDetails.description" class="text-gray-600 mt-4 text-sm leading-relaxed" [innerHTML]="courseDetails.description"></p>
     
     <!-- View Course Link -->
     <a (click)="onViewCourse()" 
