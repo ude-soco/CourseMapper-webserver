@@ -29,6 +29,7 @@ if (typeof cytoscape !== 'undefined') {
 export class InterestLevelGraphComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private cy: any = null;
+  private nodeHintTooltipEl: HTMLElement | null = null;
   private currentSearchTerm = '';
   private currentUser: User | null = null;
   private tooltipTimeout: any = null;
@@ -75,6 +76,7 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     if (this.cy) {
       this.cy.destroy();
     }
+    this.destroyNodeHintTooltip();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -202,6 +204,26 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
         console.log('[Interest Level Graph] User node clicked');
       }
     });
+
+    const nodeHintSelector = 'node[type="concept"], node[type="related_concept"]';
+
+    this.cy.on('mouseover', nodeHintSelector, (event: any) => {
+      this.showNodeHintTooltip('Click to see concept details or right-click and hold to show options', event.originalEvent.clientX, event.originalEvent.clientY);
+    });
+
+    this.cy.on('mousemove', nodeHintSelector, (event: any) => {
+      this.positionNodeHintTooltip(event.originalEvent.clientX, event.originalEvent.clientY);
+    });
+
+    this.cy.on('mouseout', nodeHintSelector, () => {
+      this.hideNodeHintTooltip();
+    });
+
+    // Hide node hint on right-click hold/release and tap completion.
+    this.cy.on('cxttapstart', nodeHintSelector, () => this.hideNodeHintTooltip());
+    this.cy.on('cxttapend', nodeHintSelector, () => this.hideNodeHintTooltip());
+    this.cy.on('tapend', nodeHintSelector, () => this.hideNodeHintTooltip());
+    this.cy.on('tap', nodeHintSelector, () => this.hideNodeHintTooltip());
     
     // Add hover tooltip for edges
     this.cy.on('mouseover', 'edge', (event: any) => {
@@ -515,6 +537,51 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     
     const visibleNodes = this.cy.nodes().map((node: any) => node.data());
     this.visibleNodesChanged.emit(visibleNodes);
+  }
+
+  private ensureNodeHintTooltip(): void {
+    if (this.nodeHintTooltipEl) return;
+
+    this.nodeHintTooltipEl = document.createElement('div');
+    this.nodeHintTooltipEl.style.position = 'absolute';
+    this.nodeHintTooltipEl.style.background = 'rgba(0, 0, 0, 0.85)';
+    this.nodeHintTooltipEl.style.color = 'white';
+    this.nodeHintTooltipEl.style.padding = '8px 12px';
+    this.nodeHintTooltipEl.style.borderRadius = '6px';
+    this.nodeHintTooltipEl.style.fontSize = '12px';
+    this.nodeHintTooltipEl.style.pointerEvents = 'none';
+    this.nodeHintTooltipEl.style.zIndex = '9999';
+    this.nodeHintTooltipEl.style.whiteSpace = 'nowrap';
+    this.nodeHintTooltipEl.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+    this.nodeHintTooltipEl.style.display = 'none';
+    document.body.appendChild(this.nodeHintTooltipEl);
+  }
+
+  private showNodeHintTooltip(text: string, mouseX: number, mouseY: number): void {
+    this.ensureNodeHintTooltip();
+    if (!this.nodeHintTooltipEl) return;
+
+    this.nodeHintTooltipEl.textContent = text;
+    this.positionNodeHintTooltip(mouseX, mouseY);
+    this.nodeHintTooltipEl.style.display = 'block';
+  }
+
+  private positionNodeHintTooltip(mouseX: number, mouseY: number): void {
+    if (!this.nodeHintTooltipEl) return;
+
+    this.nodeHintTooltipEl.style.left = `${mouseX + 15}px`;
+    this.nodeHintTooltipEl.style.top = `${mouseY + 15}px`;
+  }
+
+  private hideNodeHintTooltip(): void {
+    if (!this.nodeHintTooltipEl) return;
+    this.nodeHintTooltipEl.style.display = 'none';
+  }
+
+  private destroyNodeHintTooltip(): void {
+    if (!this.nodeHintTooltipEl) return;
+    this.nodeHintTooltipEl.remove();
+    this.nodeHintTooltipEl = null;
   }
   
   // Tooltip interaction methods
