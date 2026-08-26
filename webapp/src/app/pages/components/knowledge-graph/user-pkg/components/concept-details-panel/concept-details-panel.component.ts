@@ -213,7 +213,7 @@ export class PkgConceptDetailsPanelComponent implements OnChanges {
     }
 
     // Navigate to course overview page
-    const targetURL = `/course/${detail.courseId}`;
+    const targetURL = `/course/${detail.courseId}/welcome`;
     this.router.navigateByUrl(targetURL);
 
     this.messageService.add({
