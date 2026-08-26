@@ -208,7 +208,7 @@ export class InterestLevelGraphComponent implements OnInit, OnDestroy {
     const nodeHintSelector = 'node[type="concept"], node[type="related_concept"]';
 
     this.cy.on('mouseover', nodeHintSelector, (event: any) => {
-      this.showNodeHintTooltip('Click to see concept details or right-click and hold to show options', event.originalEvent.clientX, event.originalEvent.clientY);
+      this.showNodeHintTooltip('Click to show concept details or right-click and hold to show options', event.originalEvent.clientX, event.originalEvent.clientY);
     });
 
     this.cy.on('mousemove', nodeHintSelector, (event: any) => {
