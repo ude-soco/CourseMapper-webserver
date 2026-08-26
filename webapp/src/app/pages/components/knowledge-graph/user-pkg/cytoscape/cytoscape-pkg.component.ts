@@ -353,11 +353,13 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
 
     // Hover tooltips for nodes
     let tooltipDiv: HTMLElement | null = null;
+    const hideTooltip = () => {
+      if (tooltipDiv) {
+        this.renderer.setStyle(tooltipDiv, 'display', 'none');
+      }
+    };
 
-    this.cy.on('mouseover', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', (event: any) => {
-      const node = event.target;
-      const nodeType = node.data('type');
-      
+    this.cy.on('mouseover', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', () => {
       // Create tooltip if it doesn't exist
       if (!tooltipDiv) {
         tooltipDiv = this.renderer.createElement('div');
@@ -375,7 +377,7 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       }
 
       // Set tooltip text based on node type
-      let tooltipText = 'Right-click and hold to show options';
+      const tooltipText = 'Right-click and hold to show options';
 
       
       this.renderer.setProperty(tooltipDiv, 'textContent', tooltipText);
@@ -391,11 +393,13 @@ export class CytoscapePkgComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.cy.on('mouseout', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', () => {
-      if (tooltipDiv) {
-        this.renderer.setStyle(tooltipDiv, 'display', 'none');
-      }
-    });
+    this.cy.on('mouseout', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', hideTooltip);
+
+    // Ensure hover tooltip is hidden when the context-menu gesture starts/ends.
+    this.cy.on('cxttapstart', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', hideTooltip);
+    this.cy.on('cxttapend', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', hideTooltip);
+    this.cy.on('tapend', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', hideTooltip);
+    this.cy.on('tap', 'node[type="main_concept"], node[type="related_concept"], node[type="course"]', hideTooltip);
   }
 
   private initializeContextMenu(): void {
