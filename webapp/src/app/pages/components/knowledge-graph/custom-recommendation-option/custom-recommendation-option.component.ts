@@ -32,7 +32,7 @@ export class CustomRecommendationOptionComponent implements OnChanges, OnInit {
   @Input() activatorPartCRO: ActivatorPartCRO;
   @Input() conceptsUpdated: any;
 
-  isCustomRecOptionDisplayed = true;
+  isCustomRecOptionDisplayed = false;
   cro_concept_weight: number;
   cro_concept_selected: any | undefined;
   croForm: any = {
