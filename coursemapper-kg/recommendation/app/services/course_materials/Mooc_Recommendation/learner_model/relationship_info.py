@@ -1,5 +1,5 @@
 """
-Purpose of This File
+Purpose of This File: fetch the relationship data from the database
 --------------------
 This file prepares the input information needed before computing updated embeddings and relation components.
 For a given learner, this file collects information from three relation types: dnu, INTEREST_IN, and ENGAGED_IN.

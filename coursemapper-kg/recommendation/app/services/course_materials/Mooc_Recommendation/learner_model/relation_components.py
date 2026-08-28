@@ -1,8 +1,9 @@
 """
-Goal: Compute the relation component for each relationship type (dnu / interested_in / engaged_in) for a learner.
+Goal: Compute the relation weight for each relationship type (dnu / interested_in / engaged_in) for a learner .
 
-    Will calculate this component for each relationship type (dnu / interested_in / engaged_in):
-    relationship_weight_sum = Σω_c
+    Will calculate this component (part) for each relationship type (dnu / interested_in / engaged_in):
+    relationship_weight_sum = Σω_c contains two weights; 1st one is the cos betn the concept and LM, 2nd weight: position weight. 
+    This is calculated for all nodes then we take the summation of all the weights for a relationship type (dnu / interested_in / engaged_in) to get the relationship_weight_sum.
     weighted_embedding_sum = Σ(ω_c * e_c)
 """
 

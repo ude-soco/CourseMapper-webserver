@@ -71,8 +71,8 @@ Returned mooccentral recommended course format:
 import numpy as np
 import textwrap
 
-from ..database_connection.coursemapper_connection import CourseMapperConnection
-from ..database_connection.mooccentral_connection import MoocCentralConnection
+from ..database_connection.CourseMapper_connection import CourseMapperConnection
+from ..database_connection.MoocCentral_connection import MoocCentralConnection
 
 
 class MOOCRecommendationList:

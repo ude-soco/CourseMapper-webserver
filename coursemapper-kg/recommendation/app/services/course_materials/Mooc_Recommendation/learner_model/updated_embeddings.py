@@ -4,11 +4,11 @@ relationship_type_info structure:
     cid: {
         "relation": str,
         "unupdated_embedding": numpy_array,
-        "first_weight_component": float,
+        "first_weight_component": float, 1st weight component for each relationship e.g: is W^DNU_c: the cosine similarity between the concept embedding and the learner model embedding
         "timestamp": datetime,
         "position_weight": float,
         "position_time": int,
-        "updated_embedding": numpy_array
+        "updated_embedding": numpy_array; means the New embedding: New= B*V^T
     }
 }
 
@@ -16,6 +16,7 @@ relationship_type_info structure:
 Goal: Update the concept embeddings and course embeddings based on the relationships and their temporal order.
 
 Update formula: updated_embedding matrix = sequential matrix * unupdated_embedding matrix
+unupdated_embedding is the embedding of concepts from rrgcn
 
 """
 
