@@ -190,8 +190,10 @@ export const getSequence = async (req, res) => {
   }
 
 export const getMOOCRecommendations = async (req, res) => {
+    // const body = req.body;
     const userId = req.userId;
-    const room = "user:" + userId;
+    console.log("getMOOCRecommendations called for userId: %s", userId);
+     const room = "user:" + userId;
     socketio.getIO().to(room).emit("log", { called: "MOOC recommendation started" });
 
     const result = await redis.addJob('MOOC-recommendation', {

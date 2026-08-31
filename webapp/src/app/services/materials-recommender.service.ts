@@ -37,8 +37,8 @@ recommendedSequenceConcepts: any
     return this.recommendedSequenceConcepts
   }
 
-  getRecommendedMOOCs(): Observable<any> {
-    return this.http.post<any>(`${this.LEAF_URL}/MOOC-recommendation`, {}, HTTPOptions);
+  getRecommendedMOOCs(data: any): Observable<any> {
+    return this.http.post<any>(`${this.LEAF_URL}/MOOC-recommendation`, data, HTTPOptions);
   }
 
   getRecommendedConceptsLog(data: any): Observable<any> {

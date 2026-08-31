@@ -1861,7 +1861,7 @@ next: async (resultSequence) => {
                   //this.tabs[2].disabled = false;
                   //this.kgTabsActivated = true;
                   
-                  this.materialsRecommenderService.getRecommendedMOOCs().subscribe({})
+                  this.materialsRecommenderService.getRecommendedMOOCs(reqDataMaterial1).subscribe({})
                 },
                 
                 complete: () => {
