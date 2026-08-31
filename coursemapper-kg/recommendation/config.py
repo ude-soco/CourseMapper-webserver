@@ -38,7 +38,7 @@ class Config(object):
     REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
     MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
     MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME", "coursemapper_v2")
-    PIPELINES = os.environ.get("PIPELINES", "concept-recommendation,sequence-recommendation,resource-recommendation")
+    PIPELINES = os.environ.get("PIPELINES", "concept-recommendation,sequence-recommendation,resource-recommendation,MOOC-recommendation")
     STANFORDCORENLP = STANFORDCORENLP
     ELMO_OPTIONS_FILE = ELMO_OPTIONS_FILE
     ELMO_WEIGHT_FILE = ELMO_WEIGHT_FILE

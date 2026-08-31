@@ -6,7 +6,7 @@ const socketio = require("../socketio");
 const redis = {}
 const listeners = {};
 
-const pipelines = ['concept-map', 'modify-graph', 'expand-material', 'sequence-recommendation','concept-recommendation', 'resource-recommendation',
+const pipelines = ['concept-map', 'modify-graph', 'expand-material', 'sequence-recommendation','concept-recommendation', 'resource-recommendation', 'MOOC-recommendation',
   , 'get_resources_by_main_concepts'
 ];
 

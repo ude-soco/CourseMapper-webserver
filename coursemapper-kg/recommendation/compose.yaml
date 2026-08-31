@@ -13,7 +13,7 @@ services:
       REDIS_PASSWORD: 
       MONGO_DB_URI: mongodb://mongo:27017
       MONGO_DB_NAME: coursemapper_v2
-      PIPELINES: concept-recommendation,resource-recommendation,get_resources_by_main_concepts
+      PIPELINES: concept-recommendation,resource-recommendation,get_resources_by_main_concepts,MOOC-recommendation
     depends_on:
       mongo:
         condition: service_healthy

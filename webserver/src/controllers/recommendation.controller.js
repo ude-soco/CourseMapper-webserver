@@ -189,6 +189,30 @@ export const getSequence = async (req, res) => {
     socketio.getIO().to("material:"+materialId).emit("log", { addJob:result, pipeline:'sequence-recommendation'});
   }
 
+export const getMOOCRecommendations = async (req, res) => {
+    const userId = req.userId;
+    const room = "user:" + userId;
+    socketio.getIO().to(room).emit("log", { called: "MOOC recommendation started" });
+
+    const result = await redis.addJob('MOOC-recommendation', {
+        data: { userId }
+    }, undefined, (result) => {
+        socketio.getIO().to(room).emit("log", { result });
+        if (res.headersSent) {
+            return;
+        }
+        if (result.error) {
+            return res.status(500).send({ error: result.error });
+        }
+        return res.status(200).send(result.result);
+    });
+
+    socketio.getIO().to(room).emit("log", {
+        addJob: result,
+        pipeline: 'MOOC-recommendation'
+    });
+}
+
 export const getResources = async (req, res) => {
     const body = req.body;
     await redis.addJob("resource-recommendation", {"data": body}, undefined, (result) => {

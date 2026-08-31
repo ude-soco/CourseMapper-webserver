@@ -239,6 +239,11 @@ module.exports = function (app) {
   recommendationController.getSequence
    // "/api/courses/:courseId/materials/:materialId/sequence-recommendation",
 );
+   app.post(
+    "/api/recommendation/MOOC-recommendation",
+    [authJwt.verifyToken],
+    recommendationController.getMOOCRecommendations
+   );
  app.get(
     "/api/knowledge-graph/get-user/:userId",
     [authJwt.verifyToken],
