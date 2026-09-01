@@ -121,7 +121,11 @@ export class RegistrationComponent implements OnInit {
            this.router.navigate(['validateEmail'], { queryParams: { token: data.token }});
         },
         error: (err) => {
-          this.errorMessage = err.error.message;
+          console.error('Signup error:', err);
+
+          this.errorMessage =
+          err.error?.error || 'Sign up unsuccessful. Please try again.';
+
           this.isSignUpFailed = true;
         },
       });
