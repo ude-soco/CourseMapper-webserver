@@ -51,7 +51,8 @@ import {
 import {
   FindByTopicMainComponent
 } from "./pages/vis-dashboard/find-topic-page/find-by-topic-main/find-by-topic-main.component";
-
+import {RecLandingPageComponent} from "./pages/rec-dashboard/rec-landing-page/rec-landing-page.component";
+import { RecDashboardLayoutComponent } from './pages/components/rec-dashboard/rec-dashboard-layout/rec-dashboard-layout.component';
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
   {
@@ -210,6 +211,15 @@ const routes: Routes = [
       {path:'find-moocs-by-topic-main',component: FindByTopicMainComponent},
     ],
   },
+{
+  path: '',
+  component: RecDashboardLayoutComponent,
+  canActivate: [AuthGuardService],
+  children: [{
+    path: 'rec-dashboard-landing-page',
+    component: RecLandingPageComponent,
+  }]
+}
 
 ];
 

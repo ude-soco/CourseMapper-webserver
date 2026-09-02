@@ -149,6 +149,9 @@ import { PopularTopicsComponent } from './pages/components/vis-dashboard/cards/p
 import { CoursesPanelComponent } from './pages/components/vis-dashboard/vis-charts-explore/courses-panel/courses-panel.component';
 import { EntityCoursePanelsComponent } from './pages/components/vis-dashboard/vis-charts-compare/entity-course-panels/entity-course-panels.component';
 import { PlatformColorPipe } from './services/vis-dashboard/platform-color.pipe';
+import { RecLandingPageComponent } from './pages/rec-dashboard/rec-landing-page/rec-landing-page.component';
+import { BrowseRecommendationsPageComponent } from './pages/rec-dashboard/browse-recommendations-page/browse-recommendations-page.component';
+import { RecDashboardLayoutComponent } from './pages/components/rec-dashboard/rec-dashboard-layout/rec-dashboard-layout.component';
 
 
 @NgModule({
@@ -274,6 +277,9 @@ import { PlatformColorPipe } from './services/vis-dashboard/platform-color.pipe'
   CarouselBackwardButtonComponent,
   SvgIconVisComponent,
   PopularTopicsComponent,
+  RecLandingPageComponent,
+  BrowseRecommendationsPageComponent,
+  RecDashboardLayoutComponent,
 ],
   imports: [
   MentionModule,

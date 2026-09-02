@@ -1,0 +1,9 @@
+<p *ngIf="loading">Loading recommendations...</p>
+
+<p *ngIf="error">{{ error }}</p>
+
+<div *ngFor="let recommendation of recommendations">
+  <h3>{{ recommendation.name }}</h3>
+  <p>Source: {{ recommendation.source }}</p>
+  <p>Score: {{ recommendation.score }}</p>
+</div>

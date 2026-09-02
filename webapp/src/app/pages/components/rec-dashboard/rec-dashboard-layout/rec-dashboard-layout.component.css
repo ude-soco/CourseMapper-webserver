@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  margin-top: 10px;
+  margin-left: inherit;
+  margin-right: inherit;
+}
+
+.content {
+  margin-left: calc(4em + 30px);
+  margin-right: 8em;
+  margin-top: 2em;
+  max-width: 1110px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  margin-top: 4em;
+}
+
+.footer{
+  margin-top: 20em;
+}
+
+
+/* Media query for larger screens */
+@media screen and (min-width: 1200px) {
+  .content {
+    margin-left: auto; /* Center content horizontally by setting left margin to auto */
+    margin-right: auto; /* Center content horizontally by setting right margin to auto */
+  }
+}
