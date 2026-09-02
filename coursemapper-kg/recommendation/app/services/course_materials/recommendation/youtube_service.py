@@ -37,18 +37,18 @@ class YoutubeService:
     api_version = "v3"
 
     # DEVELOPER_KEY = os.environ.get("YOUTUBE_API_KEY")
-    DEVELOPER_KEY = "AIzaSyBphZOn7EJmPMmZwrB71aepaA5Rbuex9MU"
+    DEVELOPER_KEY = "xyz"
     youtube = googleapiclient.discovery.build(
         api_service_name,
         api_version,
-        developerKey="AIzaSyCbPQuGNVzXhjA9CMcJ3x1R6l30PGek_zY",
+        developerKey="abc",
     )
     DEVELOPER_KEYS = [  
-                        "AIzaSyCbPQuGNVzXhjA9CMcJ3x1R6l30PGek_zY",
-                        "AIzaSyClxnNwQ1x34pGioQazLlGxOjO9Fp2GGTY",
-                        "AIzaSyADNntK6m7DbA6eZFYOa9Y8e6IYHykUUFE",
-                        "AIzaSyBphZOn7EJmPMmZwrB71aepaA5Rbuex9MU",
-                        "AIzaSyB2Wck31LUlgsqI7dgTcC2dMeeVXgb9TDI"
+                        "temporary",
+                        "hiding",
+                        "keys",
+                        "while finding",
+                        "a solution"
                     ]
 
     def search_youtube_videos(self, developer_keys, query, top_n=50, api_service_name="youtube", api_version="v3"):
