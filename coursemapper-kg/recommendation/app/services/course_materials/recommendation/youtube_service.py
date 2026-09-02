@@ -48,7 +48,7 @@ class YoutubeService:
                         "AIzaSyClxnNwQ1x34pGioQazLlGxOjO9Fp2GGTY",
                         "AIzaSyADNntK6m7DbA6eZFYOa9Y8e6IYHykUUFE",
                         "AIzaSyBphZOn7EJmPMmZwrB71aepaA5Rbuex9MU",
-                        "AIzaSyB2Wck31LUlgsqI7dgTcC2dMeeVXgb9TDI"
+                        "AIzaSyARCRcy4vR_g902muwpSmzc5ne4kvZRjQ8"
                     ]
 
     def search_youtube_videos(self, developer_keys, query, top_n=50, api_service_name="youtube", api_version="v3"):
