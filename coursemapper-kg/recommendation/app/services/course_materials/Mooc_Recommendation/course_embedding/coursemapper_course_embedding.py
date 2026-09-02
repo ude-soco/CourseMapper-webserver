@@ -52,8 +52,8 @@ Each Course node in CourseMapper Neo4j will finally contain two embeddings:
 
 
 
-from ..database_connection.CourseMapper_connection import CourseMapperConnection
-from ..database_connection.MongoDB_connection import MongoDBConnection
+from ..database_connection.coursemapper_connection import CourseMapperConnection
+from ..database_connection.mongodb_connection import MongoDBConnection
 
 from bson import ObjectId
 from sentence_transformers import SentenceTransformer

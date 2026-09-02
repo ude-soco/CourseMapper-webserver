@@ -56,7 +56,7 @@ After running this script, Neo4j will contain:
 
 
 
-from ..database_connection.MoocCentral_connection import MoocCentralConnection
+from ..database_connection.mooccentral_connection import MoocCentralConnection
 from sentence_transformers import SentenceTransformer
 
 import numpy as np
