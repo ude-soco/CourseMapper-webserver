@@ -37,6 +37,9 @@ class Config(object):
     REDIS_DB = int(os.environ.get("REDIS_DB", "0"))
     REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
     PIPELINES = os.environ.get("PIPELINES")
+    YOUTUBE_API_KEYS = [
+        k for k in os.environ.get("YOUTUBE_API_KEYS", "").split(",") if k
+    ]
     STANFORDCORENLP = STANFORDCORENLP
     ELMO_OPTIONS_FILE = ELMO_OPTIONS_FILE
     ELMO_WEIGHT_FILE = ELMO_WEIGHT_FILE

@@ -11,9 +11,8 @@ import os
 import re
 import logging
 from log import LOG
-import time
 from googleapiclient.errors import HttpError
-
+from config import Config
 logger = LOG(name=__name__, level=logging.DEBUG)
 
 
@@ -30,26 +29,18 @@ def get_subtitles(video_id):
 
 
 class YoutubeService:
-    os.environ[
-        "GOOGLE_APPLICATION_CREDENTIALS"
-    ] = "masterthesis-350015-47ab14d0b53b.json"
     api_service_name = "youtube"
     api_version = "v3"
 
     # DEVELOPER_KEY = os.environ.get("YOUTUBE_API_KEY")
-    DEVELOPER_KEY = "xyz"
-    youtube = googleapiclient.discovery.build(
-        api_service_name,
-        api_version,
-        developerKey="abc",
-    )
-    DEVELOPER_KEYS = [  
-                        "temporary",
-                        "hiding",
-                        "keys",
-                        "while finding",
-                        "a solution"
-                    ]
+    DEVELOPER_KEYS = Config.YOUTUBE_API_KEYS
+    
+    def __init__(self):
+        if not self.DEVELOPER_KEYS:
+            raise RuntimeError(
+                "No YouTube API keys found. Set YOUTUBE_API_KEYS in your .env "
+                "file as a comma-separated list, e.g. YOUTUBE_API_KEYS=key1,key2,key3"
+            )
 
     def search_youtube_videos(self, developer_keys, query, top_n=50, api_service_name="youtube", api_version="v3"):
         """
@@ -123,6 +114,13 @@ class YoutubeService:
             # Avoid join collision if both have "channelId"
             if "channelId" in df_ids.columns and "channelId" in df_snippet.columns:
                 df_ids = df_ids.drop(columns=["channelId"])
+
+            # Drop rows with no videoId (e.g. channel/playlist results mixed
+            # into search results despite type="video"), and keep df_ids and
+            # df_snippet aligned by resetting both indices the same way.
+            valid_mask = df_ids["id"].notna()
+            df_ids = df_ids[valid_mask].reset_index(drop=True)
+            df_snippet = df_snippet[valid_mask].reset_index(drop=True)
 
             for index, id in enumerate(df_ids["id"]):
                 # try:

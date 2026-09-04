@@ -55,7 +55,7 @@
   </div>
 
   <!-- Bookmark (always on the far right) -->
-  <div class="ml-4" (click)="addToBookmark()">
+  <div class="ml-4" (click)="addToBookmark()" *ngIf="false">
     <i
       class="pi"
       [ngClass]="videoElement?.is_bookmarked_fill ? 'pi-bookmark-fill text-[#0277bd]' : 'pi-bookmark text-black'"
@@ -213,7 +213,7 @@
           *ngIf="resultTabType !== 'saved'"
         >
           <button
-            (click)="toggleWhy()"
+            *ngIf="false" (click)="toggleWhy()"
             class="bg-[#3F51B5] text-white py-2 px-4 rounded-md shadow-md hover:bg-[#2C387E] flex items-center space-x-2"
           >
             <i class="pi pi-chart-bar text-sm"></i> <span>Why?</span>

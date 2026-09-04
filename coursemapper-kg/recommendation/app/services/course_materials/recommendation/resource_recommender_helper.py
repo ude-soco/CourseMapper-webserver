@@ -342,7 +342,9 @@ def rank_resources(resources: list, weights: dict = None, recommendation_type=No
         
         resources_videos = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_videos)
         #resources_videos = remove_keys_from_resources(resources=resources_videos, recommendation_type=recommendation_type)
-
+        #resort selected videos by similarityscore for UI
+        resources_videos = sorted(resources_videos, key=lambda x: float(x.get("similarity_score",0)), reverse=True)
+    
         # articles items
         resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
         if len(article_weights_normalized) > 0:
@@ -362,15 +364,15 @@ def get_paginated_resources(resources: list, pagination_params: dict=None):
         Simulate Pagination Logic with Resource List
         pagination_params: {
             "page_number": 1,
-            "page_size": 10
+            "page_size": 5
         }
     '''
     page_number =  1
-    page_size = 10
+    page_size = 5 #changed videos per page for user study
     if pagination_params:
         page_number =  pagination_params["page_number"]
-        page_size = pagination_params["page_size"]
-    
+        #page_size = pagination_params["page_size"]
+        
     total_items = len(resources)
     total_pages = -(-total_items // page_size)
     start_index = (page_number - 1) * page_size
@@ -537,23 +539,24 @@ def parallel_crawling_resources(function, concept_updated, result_type: str, top
             future_videos = executor.submit(function, concept_updated["name"], True, result_type, top_n_videos, top_n_articles)
         if concept_updated["resources_video_exist"] == False:
             future_videos = executor.submit(function, concept_updated["name"], True, result_type, top_n_videos, top_n_articles)
-        
-        future_articles = Future().set_result([])
-        if concept_updated["is_article_too_old"] == True:
-            future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
-        if concept_updated["resources_article_exist"] == False:
-            future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
+
+        #temporarily disabling articles service for user study
+        #future_articles = Future().set_result([])
+        #if concept_updated["is_article_too_old"] == True:
+            #future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
+        #if concept_updated["resources_article_exist"] == False:
+            #future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
 
         result_videos = future_videos.result() if future_videos is not None else []
-        result_articles = future_articles.result() if future_articles is not None else []
+        #result_articles = future_articles.result() if future_articles is not None else []
 
         return {    "cid": concept_updated["cid"], 
                     "videos": result_videos, 
-                    "articles": result_articles,
+                    "articles": [],
                     "resources_video_exist": concept_updated["resources_video_exist"], 
                     "resources_article_exist": concept_updated["resources_article_exist"],
                     "is_video_too_old": concept_updated["is_video_too_old"], 
-                    "is_article_too_old": concept_updated["is_video_too_old"],
+                    "is_article_too_old": concept_updated["is_article_too_old"],
                 }
 
 
@@ -564,11 +567,12 @@ def parallel_crawling_resources_v2(function, concept_name: str, cid: str, result
         submit function: takes
             function: canditate_selection (this function takes the params below)
             query, video, result_type="records", top_n_videos=2, top_n_articles=2
+            disabling articles for user study
     '''
     with ThreadPoolExecutor() as executor:
         future_videos = executor.submit(function, concept_name, True, result_type, top_n_videos, top_n_articles)
-        future_articles = executor.submit(function, concept_name, False, result_type, top_n_videos, top_n_articles)
+        #future_articles = executor.submit(function, concept_name, False, result_type, top_n_videos, top_n_articles)
         result_videos = future_videos.result()
-        result_articles = future_articles.result()
-        return {"cid": cid, "videos": result_videos, "articles": result_articles}
+        #result_articles = future_articles.result()
+        return {"cid": cid, "videos": result_videos, "articles": []}
     
