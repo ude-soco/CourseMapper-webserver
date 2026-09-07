@@ -139,6 +139,15 @@ class CourseMapperCourseEmbedding:
         # Return the dictionary in the format course_id -> course_name.
         return courses_id_to_name_dict
 
+    def get_courses_missing_embeddings(self):
+        with self.coursemapper_driver.session() as session:
+            result = session.run("""
+            MATCH (c:Course)
+            WHERE c.course_embedding IS NULL
+            RETURN c.cid AS course_id
+            """)
+            return [record["course_id"] for record in result]
+
     # ---------------------------------------------------
     # generate embeddings using SBERT
     # ---------------------------------------------------
@@ -355,7 +364,7 @@ class CourseMapperCourseEmbedding:
     #   then the  course embedding = course_name_emb
     # ---------------------------------------------------
    
-    def compute_course_embedding(self):
+    def compute_course_embedding(self, course_ids=None):
         
         # ---------------------------------------------------
         # Step 1: Load all required data.
@@ -370,7 +379,12 @@ class CourseMapperCourseEmbedding:
         # Step 2: Compute the embedding for each course.
         # ---------------------------------------------------
 
+        if course_ids is not None:
+            course_ids = set(course_ids)
+
         for course_id, course_name_emb in course_name_emb_dict.items():
+            if course_ids is not None and course_id not in course_ids:
+                continue
 
             concept_ids_list = course_concepts_mapping_dict.get(course_id, [])   # Get all concept IDs linked to the current course.
             valid_concept_rrgcn_emb_list = []   # Create a list to store all valid Concept RGCN embeddings for the current course.
@@ -483,8 +497,16 @@ class CourseMapperCourseEmbedding:
             print("No new courses found, skip generating course name embeddings.")
 
 
-        print("Star calculating course embedding.")
-        course_embeddings = self.compute_course_embedding()
+        course_ids = self.get_courses_missing_embeddings()
+        print(f"Found {len(course_ids)} CourseMapper courses without course embeddings")
+
+        if len(course_ids) == 0:
+            print("No missing CourseMapper course embeddings found, skipping computation.")
+            print("\n==========================================================================================\n")
+            return
+
+        print("Start calculating missing CourseMapper course embeddings.")
+        course_embeddings = self.compute_course_embedding(course_ids=course_ids)
 
         print("Writing generated course embeddings into CourseMapper database...") 
         self.store_course_embeddings(course_embeddings)
