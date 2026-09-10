@@ -1,0 +1,17 @@
+<h2 class="text-xl mb-[30px] font-bold">Recommendation of the day</h2>
+<a
+  class="flex flex-col items-center justify-center mb-[30px]"
+  [routerLink]="['/course-detail', RecommendationOfTheDay.course_id]"
+>
+  <div
+    class="flex flex-col justify-end w-[700px] h-[400px] bg-[url('/assets/img/courseDefaultImage.png')] bg-cover bg-center rounded-md pb-[15px] pl-[20px] pt-auto"
+  >
+    <p class="text-lg font-bold text-[#0277BD]">
+      {{ RecommendationOfTheDay.name }}
+    </p>
+    <p class="text-sm text-gray-600">
+      {{ RecommendationOfTheDay.teachers[0].name }} |
+      {{ RecommendationOfTheDay.platforms[0].name }}
+    </p>
+  </div>
+</a>
