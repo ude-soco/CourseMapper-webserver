@@ -32,27 +32,21 @@ import { UserPkgComponent } from './pages/components/knowledge-graph/user-pkg/us
 import { EngagementDashboardComponent } from './pages/components/Dashboards/engagement-dashboard/engagement-dashboard.component';
 import { InterestLevelDashboardComponent } from './pages/components/Dashboards/interest-level-dashboard/interest-level-dashboard.component';
 import { CanDeactivateService } from './services/can-deactivate.service';
-import {VisLandingPageComponent} from "./pages/vis-dashboard/vis-landing-page/vis-landing-page.component";
-import {
-  VisDashboardLayoutComponent
-} from "./pages/components/vis-dashboard/vis-dashboard-layout/vis-dashboard-layout.component";
-import {VisExplorePageComponent} from "./pages/vis-dashboard/vis-explore-page/vis-explore-page.component";
-import {VisComparePageComponent} from "./pages/vis-dashboard/vis-compare-page/vis-compare-page.component";
-import {FindTopicPageComponent} from "./pages/vis-dashboard/find-topic-page/find-topic-page.component";
-import {CourseDetailsPageComponent} from "./pages/vis-dashboard/course-details-page/course-details-page.component";
-import {CourseCategoryPageComponent} from "./pages/vis-dashboard/course-category-page/course-category-page.component";
-import {TeacherPageComponent} from "./pages/vis-dashboard/teacher-page/teacher-page.component";
-import {
-  ExploreChartsPageComponent
-} from "./pages/vis-dashboard/vis-explore-page/explore-charts-page/explore-charts-page.component";
-import {
-  CompareChartsPageComponent
-} from "./pages/vis-dashboard/vis-compare-page/compare-charts-page/compare-charts-page.component";
-import {
-  FindByTopicMainComponent
-} from "./pages/vis-dashboard/find-topic-page/find-by-topic-main/find-by-topic-main.component";
-import {RecLandingPageComponent} from "./pages/rec-dashboard/rec-landing-page/rec-landing-page.component";
+import { VisLandingPageComponent } from './pages/vis-dashboard/vis-landing-page/vis-landing-page.component';
+import { VisDashboardLayoutComponent } from './pages/components/vis-dashboard/vis-dashboard-layout/vis-dashboard-layout.component';
+import { VisExplorePageComponent } from './pages/vis-dashboard/vis-explore-page/vis-explore-page.component';
+import { VisComparePageComponent } from './pages/vis-dashboard/vis-compare-page/vis-compare-page.component';
+import { FindTopicPageComponent } from './pages/vis-dashboard/find-topic-page/find-topic-page.component';
+import { CourseDetailsPageComponent } from './pages/vis-dashboard/course-details-page/course-details-page.component';
+import { CourseCategoryPageComponent } from './pages/vis-dashboard/course-category-page/course-category-page.component';
+import { TeacherPageComponent } from './pages/vis-dashboard/teacher-page/teacher-page.component';
+import { ExploreChartsPageComponent } from './pages/vis-dashboard/vis-explore-page/explore-charts-page/explore-charts-page.component';
+import { CompareChartsPageComponent } from './pages/vis-dashboard/vis-compare-page/compare-charts-page/compare-charts-page.component';
+import { FindByTopicMainComponent } from './pages/vis-dashboard/find-topic-page/find-by-topic-main/find-by-topic-main.component';
+import { RecLandingPageComponent } from './pages/rec-dashboard/rec-landing-page/rec-landing-page.component';
 import { RecDashboardLayoutComponent } from './pages/components/rec-dashboard/rec-dashboard-layout/rec-dashboard-layout.component';
+import { BrowseRecommendationsPageComponent } from './pages/rec-dashboard/browse-recommendations-page/browse-recommendations-page.component';
+
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
   {
@@ -185,42 +179,82 @@ const routes: Routes = [
     path: '',
     component: VisDashboardLayoutComponent,
     canActivate: [AuthGuardService],
-    children:[{path:'vis-dashboard-landing-page',component: VisLandingPageComponent, data:{
-      breadcrumb: 'MOOCentral'
-      } },
-      {path:'explore-moocs',component: VisExplorePageComponent,data:{
-          breadcrumb: 'Discover a MOOC'
-        } },
-      {path:'compare-moocs',component: VisComparePageComponent,data:{
-          breadcrumb: 'Compare MOOC platforms'
-        } },
-      {path:'find-moocs-by-topic',component: FindTopicPageComponent,data:{
-          breadcrumb: 'FInd by Topics'
-        } },
-      {path:'course-detail/:id',component: CourseDetailsPageComponent, data:{
-          breadcrumb: 'Course Detail'
-        } },
-      {path:'course-category',component: CourseCategoryPageComponent,data:{
-          breadcrumb: 'Course Category'
-        }},
-      {path:'teacher-detail/:id',component: TeacherPageComponent,data:{
-          breadcrumb: 'Teacher Detail'
-        } },
-      {path:'explore-moocs/:platform',component: ExploreChartsPageComponent },
-      {path:'compare-moocs-vis',component: CompareChartsPageComponent},
-      {path:'find-moocs-by-topic-main',component: FindByTopicMainComponent},
+    children: [
+      {
+        path: 'vis-dashboard-landing-page',
+        component: VisLandingPageComponent,
+        data: {
+          breadcrumb: 'MOOCentral',
+        },
+      },
+      {
+        path: 'explore-moocs',
+        component: VisExplorePageComponent,
+        data: {
+          breadcrumb: 'Discover a MOOC',
+        },
+      },
+      {
+        path: 'compare-moocs',
+        component: VisComparePageComponent,
+        data: {
+          breadcrumb: 'Compare MOOC platforms',
+        },
+      },
+      {
+        path: 'find-moocs-by-topic',
+        component: FindTopicPageComponent,
+        data: {
+          breadcrumb: 'FInd by Topics',
+        },
+      },
+      {
+        path: 'course-detail/:id',
+        component: CourseDetailsPageComponent,
+        data: {
+          breadcrumb: 'Course Detail',
+        },
+      },
+      {
+        path: 'course-category',
+        component: CourseCategoryPageComponent,
+        data: {
+          breadcrumb: 'Course Category',
+        },
+      },
+      {
+        path: 'teacher-detail/:id',
+        component: TeacherPageComponent,
+        data: {
+          breadcrumb: 'Teacher Detail',
+        },
+      },
+      {
+        path: 'explore-moocs/:platform',
+        component: ExploreChartsPageComponent,
+      },
+      { path: 'compare-moocs-vis', component: CompareChartsPageComponent },
+      { path: 'find-moocs-by-topic-main', component: FindByTopicMainComponent },
+      {
+        path: '',
+        component: RecDashboardLayoutComponent,
+        canActivate: [AuthGuardService],
+        children: [
+          {
+            path: 'rec-dashboard-landing-page',
+            component: RecLandingPageComponent,
+            data: {
+              breadcrumb: 'Recommendation Dashboard',
+            },
+          },
+          {
+            path: 'browse-recommendations',
+            component: BrowseRecommendationsPageComponent,
+          },
+        ],
+      },
     ],
   },
-{
-  path: '',
-  component: RecDashboardLayoutComponent,
-  canActivate: [AuthGuardService],
-  children: [{
-    path: 'rec-dashboard-landing-page',
-    component: RecLandingPageComponent,
-  }]
-}
-
 ];
 
 @NgModule({

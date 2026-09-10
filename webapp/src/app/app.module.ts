@@ -152,6 +152,8 @@ import { PlatformColorPipe } from './services/vis-dashboard/platform-color.pipe'
 import { RecLandingPageComponent } from './pages/rec-dashboard/rec-landing-page/rec-landing-page.component';
 import { BrowseRecommendationsPageComponent } from './pages/rec-dashboard/browse-recommendations-page/browse-recommendations-page.component';
 import { RecDashboardLayoutComponent } from './pages/components/rec-dashboard/rec-dashboard-layout/rec-dashboard-layout.component';
+import { NavBarComponent } from './pages/components/rec-dashboard/nav-bar/nav-bar.component';
+import { RecOfTheDayComponent } from './pages/components/rec-dashboard/rec-of-the-day/rec-of-the-day.component';
 
 
 @NgModule({
@@ -280,6 +282,8 @@ import { RecDashboardLayoutComponent } from './pages/components/rec-dashboard/re
   RecLandingPageComponent,
   BrowseRecommendationsPageComponent,
   RecDashboardLayoutComponent,
+  NavBarComponent,
+  RecOfTheDayComponent,
 ],
   imports: [
   MentionModule,
