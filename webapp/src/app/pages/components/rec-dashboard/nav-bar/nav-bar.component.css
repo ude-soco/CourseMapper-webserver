@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.nav-link {
+  text-decoration: none;
+  transition: color 200ms ease, border-color 200ms ease;
+  color: #434546;
+  font-size: 18px;
+}
+
+.nav-link:hover {
+  color: #0277bd;
+}
+
+.nav-link.active-link {
+  border-bottom: 2px solid #0277bd;
+  color: black;
+}

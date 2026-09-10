@@ -1,0 +1,25 @@
+<div class="container">
+  <a
+    class="nav-link"
+    routerLink="/rec-dashboard-landing-page"
+    routerLinkActive="active-link"
+  >
+    Home
+  </a>
+  <a
+    routerLink="/browse-recommendations"
+    routerLinkActive="active-link"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    Browse Recommendations
+  </a>
+  <a
+    routerLink="/favourite-recommendations"
+    routerLinkActive="active-link"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    Favourites
+  </a>
+</div>
