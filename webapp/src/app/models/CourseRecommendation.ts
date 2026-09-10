@@ -4,8 +4,8 @@ export interface CourseRecommendation {
   course_id: string;
   name: string;
   institutions?: string[];
-  teachers?: string[];
-  platforms?: string[];
+  teachers?: { teacher_id: string; name: string }[];
+  platforms?: { platform_id: string; name: string }[];
   node_properties:
     | {
         cid: string;
