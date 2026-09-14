@@ -46,6 +46,7 @@ import { FindByTopicMainComponent } from './pages/vis-dashboard/find-topic-page/
 import { RecLandingPageComponent } from './pages/rec-dashboard/rec-landing-page/rec-landing-page.component';
 import { RecDashboardLayoutComponent } from './pages/components/rec-dashboard/rec-dashboard-layout/rec-dashboard-layout.component';
 import { BrowseRecommendationsPageComponent } from './pages/rec-dashboard/browse-recommendations-page/browse-recommendations-page.component';
+import { FavouriteRecommendationsPageComponent } from './pages/rec-dashboard/favourite-recommendations-page/favourite-recommendations-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -250,6 +251,16 @@ const routes: Routes = [
           {
             path: 'browse-recommendations',
             component: BrowseRecommendationsPageComponent,
+            data: {
+              breadcrumb: 'Browse Recommendations',
+            },
+          },
+          {
+            path: 'favourite-recommendations',
+            component: FavouriteRecommendationsPageComponent,
+            data: {
+              breadcrumb: 'Favourite Recommendations',
+            },
           },
         ],
       },

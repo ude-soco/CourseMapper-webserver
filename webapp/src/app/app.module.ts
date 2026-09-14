@@ -154,6 +154,8 @@ import { BrowseRecommendationsPageComponent } from './pages/rec-dashboard/browse
 import { RecDashboardLayoutComponent } from './pages/components/rec-dashboard/rec-dashboard-layout/rec-dashboard-layout.component';
 import { NavBarComponent } from './pages/components/rec-dashboard/nav-bar/nav-bar.component';
 import { RecOfTheDayComponent } from './pages/components/rec-dashboard/rec-of-the-day/rec-of-the-day.component';
+import { RecommendationCarouselComponent } from './pages/components/rec-dashboard/recommendation-carousel/recommendation-carousel.component';
+import { FavouriteRecommendationsPageComponent } from './pages/rec-dashboard/favourite-recommendations-page/favourite-recommendations-page.component';
 
 
 @NgModule({
@@ -284,6 +286,8 @@ import { RecOfTheDayComponent } from './pages/components/rec-dashboard/rec-of-th
   RecDashboardLayoutComponent,
   NavBarComponent,
   RecOfTheDayComponent,
+  RecommendationCarouselComponent,
+  FavouriteRecommendationsPageComponent,
 ],
   imports: [
   MentionModule,
