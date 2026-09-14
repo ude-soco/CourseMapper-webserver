@@ -56,7 +56,7 @@
 
           <div id="cro_sorting" class="w-3/12"></div>
           
-          <div id="cro_sorting" class="w-3/12" (click)="op.toggle($event, targetEl)">
+          <div id="cro_sorting" class="w-3/12" (click)="op.toggle($event, targetEl)" *ngIf="false">
             <div #targetEl class="border-solid border-2 border-[#cecece] p-4 w-72">
               <div  class="flex flex-row justify-between" >
                 <div>Sort by</div>
@@ -157,7 +157,7 @@
       </p-tabPanel>
 
       <p-tabPanel 
-        [cache]="true" header="Articles" leftIcon="pi pi-book"
+        *ngIf="false" [cache]="true" header="Articles" leftIcon="pi pi-book"
       >
       <div class="mt-1 w-full" id="cro_viedo_list">
         <div
@@ -197,7 +197,7 @@
       </p-tabPanel>
 
       <!-- display resources saved and offer filtering possibility -->
-      <p-tabPanel header="Saved" leftIcon="pi pi-bookmark">
+      <p-tabPanel *ngIf="false" header="Saved" leftIcon="pi pi-bookmark">
 
         <div class="flex flex-row justify-between items-center w-full gap-4">
           <!-- Left side: Content type radios -->
@@ -319,7 +319,7 @@
   </div>
 
   <!-- Pagination UI -->
-  <div>
+  <div *ngIf="false">
     <div class="flex justify-end fixed inset-x-0 bottom-0 bg-white">
 
       <div 

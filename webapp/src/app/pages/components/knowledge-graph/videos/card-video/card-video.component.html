@@ -40,7 +40,7 @@
                   <span class="pi pi-info-circle" style="font-size: 0.8rem"></span>
                 </div>
               </div>
-              <div>
+              <div *ngIf="false">
                 <div class="my-auto" (click)="addToBookmark()" *ngIf="!videoElement?.is_bookmarked_fill">
                   <i class="pi pi-bookmark" style="font-size: 1.2rem; color: #000000"></i>
                 </div>
@@ -92,7 +92,21 @@
         <div class="">
           <span class="font-semibold">Description: </span>
           <span id="video_description">
-            {{ videoElement.description }}
+            {{ isDescriptionFullDisplayed
+              ? videoElement.description_full
+              : (videoElement.description_full | slice:0:DESCRIPTION_MAX_LENGTH) }}
+            <span
+            *ngIf="!isDescriptionFullDisplayed && videoElement.description_full?.length > DESCRIPTION_MAX_LENGTH"
+            >
+              ...
+            </span>
+          </span>
+          <span
+            *ngIf="videoElement.description_full?.length > DESCRIPTION_MAX_LENGTH"
+            class="text-[#0288d1] cursor-pointer ml-1"
+            (click)="showDescriptionFull()"
+          >   
+          {{ isDescriptionFullDisplayed ? 'Collapse' : 'Expand' }}  
           </span>
         </div>
       </div>

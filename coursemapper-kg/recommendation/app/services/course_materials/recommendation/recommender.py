@@ -125,10 +125,13 @@ class Recommender:
             end_time = time.time()
             print("Get Videos Execution time: ", end_time - start_time, flush=True)
         else:
-            start_time = time.time()
-            data = self.wikipedia_service.get_articles(query, top_n=top_n_articles)
-            end_time = time.time()
-            print("Get Articles Execution time: ", end_time - start_time, flush=True)
+            #start_time = time.time()
+            #data = self.wikipedia_service.get_articles(query, top_n=top_n_articles)
+            #end_time = time.time()
+            #print("Get Articles Execution time: ", end_time - start_time, flush=True)
+            if result_type == "records":
+                return []
+            return pd.DataFrame()
 
         if result_type == "records":
             return data.to_dict('records')

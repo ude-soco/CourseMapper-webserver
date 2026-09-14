@@ -226,6 +226,13 @@ def calculate_factors_weights(category: int, resources: list, weights: dict = No
         weights: dict containing factors weight
         {'similarity_score': 0.2, 'creation_date': 0.2, 'views': 0.3, 'like_count': 0.1, 'user_rating': 0.1, 'saves_count': 0.1}
     """
+    # Nothing to calculate
+    if not resources:
+        return []
+
+    if weights is None:
+        weights = {}
+
     now = datetime.now()
     default_weight = 0.001
 
@@ -333,24 +340,50 @@ def rank_resources(resources: list, weights: dict = None, recommendation_type=No
 
     if len(resources) > 0:
         video_weights_normalized = normalize_factor_weights(factor_weights=weights["video"], method_type="l1", complete=True, sum_value=False)
-        article_weights_normalized = normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
+        #article_weights_normalized = normalize_factor_weights(factor_weights=weights["article"], method_type="l1", complete=True, sum_value=False)
 
         # video items
         resources_videos = [resource for resource in resources if "Video" in resource["labels"]]
         if len(video_weights_normalized) > 0:
-            resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
-        
+            if len(video_weights_normalized) > 0:
+                resources_videos = calculate_factors_weights(
+                    category=1,
+                    resources=resources_videos,
+                    weights=video_weights_normalized
+                )
+            #resources_videos = calculate_factors_weights(category=1, resources=resources_videos, weights=video_weights_normalized)
         resources_videos = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_videos)
-        resources_videos = remove_keys_from_resources(resources=resources_videos, recommendation_type=recommendation_type)
+        #resources_videos = remove_keys_from_resources(resources=resources_videos, recommendation_type=recommendation_type)
+        #resorting based on sim score
+        resources_videos = sorted(resources_videos, key=lambda x: float(x.get("similarity_score",0)), reverse=True)
 
         # articles items
-        resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
-        if len(article_weights_normalized) > 0:
-            resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
+        #resources_articles = [resource for resource in resources if "Article" in resource["labels"]]
+        #if len(article_weights_normalized) > 0:
+            #resources_articles = calculate_factors_weights(category=2, resources=resources_articles, weights=article_weights_normalized)
         
-        resources_articles = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_articles)
-        resources_articles = remove_keys_from_resources(resources=resources_articles, recommendation_type=recommendation_type)
+        #resources_articles = rank_resources_proportional_top_n_with_remainder_by_concept_cid(resources_articles)
+        #resources_articles = remove_keys_from_resources(resources=resources_articles, recommendation_type=recommendation_type)
+        resources_articles = []
 
+        #if len(resources_articles) > 0:
+            #if len(article_weights_normalized) > 0:
+                #resources_articles = calculate_factors_weights(
+                    #category=2,
+                    #resources=resources_articles,
+                    #weights=article_weights_normalized
+                #)
+
+            #resources_articles = rank_resources_proportional_top_n_with_remainder_by_concept_cid(
+                #resources_articles
+            #)
+
+            #resources_articles = remove_keys_from_resources(
+                #resources=resources_articles,
+                #recommendation_type=recommendation_type
+            #)
+    #else:
+        #resources_articles = []
     return {
         "articles": get_paginated_resources(resources_articles, pagination_params), # resources_articles[: top_n_resources],
         "videos": get_paginated_resources(resources_videos, pagination_params) # resources_videos[: top_n_resources]
@@ -362,14 +395,14 @@ def get_paginated_resources(resources: list, pagination_params: dict=None):
         Simulate Pagination Logic with Resource List
         pagination_params: {
             "page_number": 1,
-            "page_size": 10
+            "page_size": 5
         }
     '''
     page_number =  1
-    page_size = 10
+    page_size = 5
     if pagination_params:
         page_number =  pagination_params["page_number"]
-        page_size = pagination_params["page_size"]
+        #page_size = pagination_params["page_size"]
     
     total_items = len(resources)
     total_pages = -(-total_items // page_size)
@@ -537,23 +570,24 @@ def parallel_crawling_resources(function, concept_updated, result_type: str, top
             future_videos = executor.submit(function, concept_updated["name"], True, result_type, top_n_videos, top_n_articles)
         if concept_updated["resources_video_exist"] == False:
             future_videos = executor.submit(function, concept_updated["name"], True, result_type, top_n_videos, top_n_articles)
-        
-        future_articles = Future().set_result([])
-        if concept_updated["is_article_too_old"] == True:
-            future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
-        if concept_updated["resources_article_exist"] == False:
-            future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
+
+        #temporarily disabling articles for user study
+        #future_articles = Future().set_result([])
+        #if concept_updated["is_article_too_old"] == True:
+            #future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
+        #if concept_updated["resources_article_exist"] == False:
+            #future_articles = executor.submit(function, concept_updated["name"], False, result_type, top_n_videos, top_n_articles)
 
         result_videos = future_videos.result() if future_videos is not None else []
-        result_articles = future_articles.result() if future_articles is not None else []
+        #result_articles = future_articles.result() if future_articles is not None else []
 
         return {    "cid": concept_updated["cid"], 
                     "videos": result_videos, 
-                    "articles": result_articles,
+                    "articles": [],
                     "resources_video_exist": concept_updated["resources_video_exist"], 
                     "resources_article_exist": concept_updated["resources_article_exist"],
                     "is_video_too_old": concept_updated["is_video_too_old"], 
-                    "is_article_too_old": concept_updated["is_video_too_old"],
+                    "is_article_too_old": concept_updated["is_article_too_old"],
                 }
 
 
@@ -567,8 +601,8 @@ def parallel_crawling_resources_v2(function, concept_name: str, cid: str, result
     '''
     with ThreadPoolExecutor() as executor:
         future_videos = executor.submit(function, concept_name, True, result_type, top_n_videos, top_n_articles)
-        future_articles = executor.submit(function, concept_name, False, result_type, top_n_videos, top_n_articles)
+        #future_articles = executor.submit(function, concept_name, False, result_type, top_n_videos, top_n_articles)
         result_videos = future_videos.result()
-        result_articles = future_articles.result()
-        return {"cid": cid, "videos": result_videos, "articles": result_articles}
+        #result_articles = future_articles.result()
+        return {"cid": cid, "videos": result_videos, "articles": []}
     

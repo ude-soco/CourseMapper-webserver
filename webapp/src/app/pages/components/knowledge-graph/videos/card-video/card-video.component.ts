@@ -16,7 +16,7 @@ export class CardVideoComponent {
     private materialsRecommenderService: MaterialsRecommenderService,
   ) {}
 
-  DESCRIPTION_MAX_LENGTH = 450;
+  DESCRIPTION_MAX_LENGTH = 250;
   isActive = false;
   showModal = false;
   selectedConcepts: string[] = [];
