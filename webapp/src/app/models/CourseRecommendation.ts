@@ -8,10 +8,7 @@ export interface CourseRecommendation {
   platforms?: { platform_id: string; name: string }[];
   node_properties:
     | {
-        cid: string;
-        name: string;
-      }
-    | {
+        // MOOCentral properties
         audience: string;
         certification: string;
         course_category: string;
@@ -30,5 +27,10 @@ export interface CourseRecommendation {
         price: string;
         rating: string;
         recommendations: string;
+      }
+    | {
+        // courseMapper properties
+        cid: string;
+        name: string;
       };
 }
