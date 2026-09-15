@@ -1,0 +1,81 @@
+.course-name {
+  font-size: 12px;
+  font-weight: bold;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.teacher-name {
+  font-size: 10px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+}
+
+.carousel-wrapper {
+  position: relative;
+  margin: 0 15px;
+}
+
+.scroll-container {
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+  scroll-behavior: smooth;
+  width: 100%;
+  padding: 10px 20px;
+}
+
+.prev-button,
+.next-button {
+  position: absolute;
+  top: 60%;
+  transform: translateY(-65%);
+  z-index: 2;
+  width: 18px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.prev-button {
+  left: 0;
+}
+
+.next-button {
+  right: 0;
+}
+
+.bounce-forward:hover {
+  animation: bounce-forward 450ms ease-out;
+  transform: translateX(3px);
+}
+
+@keyframes bounce-forward {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(3px);
+  }
+
+  60% {
+    transform: translateX(2px);
+  }
+
+  70% {
+    transform: translateX(4px);
+  }
+
+  45% {
+    transform: translateX(5px);
+  }
+}

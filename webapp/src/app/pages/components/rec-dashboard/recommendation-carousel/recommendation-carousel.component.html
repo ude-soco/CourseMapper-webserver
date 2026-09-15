@@ -1,0 +1,42 @@
+<div class="mb-[30px] mt-[30px]">
+  <a
+    class="border-b pb-[10px] flex gap-[10px] z-[5] relative"
+    [routerLink]="routerLink"
+  >
+    <h2 class="text-[24px] font-bold">{{ carouselTitle }}</h2>
+    <i
+      class="pi pi-angle-double-right bounce-forward mt-[7px]"
+      style="font-size: 1.75rem"
+      *ngIf="routerLink"
+    ></i>
+  </a>
+  <div class="carousel-wrapper">
+    <div #scrollContainer class="scroll-container">
+      <div
+        *ngFor="let item of carouselItems"
+        [routerLink]="['/course-detail', item.course_id]"
+      >
+        <div
+          class="w-[200px] h-[134px] bg-cover bg-center border-gray-300 rounded-lg mt-[5px] mb-[5px] transition-all duration-300 ease-in-out shadow-[0px_3px_6px_rgba(0,0,0,0.16),_0px_3px_6px_rgba(0,0,0,0.23)] hover:shadow-lg transition-transform hover:-translate-y-1 cursor-pointer"
+          style="background-color: hsl(var(--random-hue, 500deg), 70%, 60%)"
+        ></div>
+        <h3 class="course-name">{{ item.name }}</h3>
+        <p class="teacher-name">
+          {{ item.teachers?.[0]?.name || "Unknown instructor" }}
+        </p>
+      </div>
+    </div>
+    <div>
+      <app-carousel-backward-button
+        class="prev-button"
+        (backwardClick)="scroll('left')"
+        *ngIf="carouselItems.length > 5"
+      ></app-carousel-backward-button>
+      <app-carousel-forward-button
+        class="next-button"
+        (forwardClick)="scroll('right')"
+        *ngIf="carouselItems.length > 5"
+      ></app-carousel-forward-button>
+    </div>
+  </div>
+</div>
