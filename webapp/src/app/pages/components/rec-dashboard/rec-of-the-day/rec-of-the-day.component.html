@@ -1,5 +1,6 @@
 <h2 class="text-xl mb-[30px] font-bold">Recommendation of the day</h2>
 <a
+  *ngIf="RecommendationOfTheDay"
   class="flex flex-col items-center justify-center mb-[30px]"
   [routerLink]="['/course-detail', RecommendationOfTheDay.course_id]"
 >
@@ -10,8 +11,8 @@
       {{ RecommendationOfTheDay.name }}
     </p>
     <p class="text-sm text-gray-600">
-      {{ RecommendationOfTheDay.teachers[0].name }} |
-      {{ RecommendationOfTheDay.platforms[0].name }}
+      {{ RecommendationOfTheDay.teachers?.[0]?.name || 'Unknown instructor' }} |
+      {{ RecommendationOfTheDay.platforms?.[0]?.name || 'Unknown platform' }}
     </p>
   </div>
 </a>
