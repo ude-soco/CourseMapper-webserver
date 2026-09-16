@@ -1,6 +1,6 @@
 import { AuthGuardService } from './services/auth-guard.service';
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './pages/components/login/login.component';
 
 import { RegistrationComponent } from './pages/components/registration/registration.component';
@@ -47,6 +47,11 @@ import { RecLandingPageComponent } from './pages/rec-dashboard/rec-landing-page/
 import { RecDashboardLayoutComponent } from './pages/components/rec-dashboard/rec-dashboard-layout/rec-dashboard-layout.component';
 import { BrowseRecommendationsPageComponent } from './pages/rec-dashboard/browse-recommendations-page/browse-recommendations-page.component';
 import { FavouriteRecommendationsPageComponent } from './pages/rec-dashboard/favourite-recommendations-page/favourite-recommendations-page.component';
+
+const routerOptions: ExtraOptions = {
+  scrollPositionRestoration: 'top',
+  anchorScrolling: 'enabled',
+};
 
 const routes: Routes = [
   { path: '', redirectTo: 'landingPage', pathMatch: 'full' },
@@ -269,7 +274,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, routerOptions)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
