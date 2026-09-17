@@ -11,11 +11,9 @@ import os
 import re
 import logging
 from log import LOG
-import time
 from googleapiclient.errors import HttpError
-
 logger = LOG(name=__name__, level=logging.DEBUG)
-
+from config import Config
 
 def get_subtitles(video_id):
     transcripts = YouTubeTranscriptApi.get_transcript(
@@ -30,34 +28,25 @@ def get_subtitles(video_id):
 
 
 class YoutubeService:
-    os.environ[
-        "GOOGLE_APPLICATION_CREDENTIALS"
-    ] = "masterthesis-350015-47ab14d0b53b.json"
     api_service_name = "youtube"
     api_version = "v3"
 
-    # DEVELOPER_KEY = os.environ.get("YOUTUBE_API_KEY")
-    DEVELOPER_KEY = "AIzaSyBphZOn7EJmPMmZwrB71aepaA5Rbuex9MU"
-    youtube = googleapiclient.discovery.build(
-        api_service_name,
-        api_version,
-        developerKey="AIzaSyClxnNwQ1x34pGioQazLlGxOjO9Fp2GGTY",
-    )
-    DEVELOPER_KEYS = [
-        "AIzaSyD_CGmR_Voq4DIV5okRaR6G8adoe-ZSZsM",
-        "AIzaSyClxnNwQ1x34pGioQazLlGxOjO9Fp2GGTY",
-        "AIzaSyADNntK6m7DbA6eZFYOa9Y8e6IYHykUUFE",
-        "AIzaSyBphZOn7EJmPMmZwrB71aepaA5Rbuex9MU",
-        "AIzaSyB2Wck31LUlgsqI7dgTcC2dMeeVXgb9TDI",
-    ]
+    DEVELOPER_KEYS = Config.YOUTUBE_API_KEYS
+    
+    def __init__(self):
+        if not self.DEVELOPER_KEYS:
+            raise RuntimeError(
+                "No YouTube API keys found."
+                "Set YOUTUBE_API_KEY, YOUTUBE_API_KEY_2, etc. in your .env file."
+            )
 
     def search_youtube_videos(self, developer_keys, query, top_n=50, api_service_name="youtube", api_version="v3"):
         """
             Switching YouTube API keys
         """
-        retry_count = 3
-        retry_delay = 5
-        i = 0
+        #retry_count = 3
+        #retry_delay = 5
+        #i = 0
         for key in developer_keys:
             try:
                 youtube = googleapiclient.discovery.build(api_service_name, api_version, developerKey=key)
@@ -70,23 +59,25 @@ class YoutubeService:
                 )
                 return request.execute(), youtube
 
-            except (ConnectionAbortedError, ConnectionResetError, timeout) as e:
-                logger.error("Error while getting the videos")
-                logger.error(e)
-                if i == retry_count - 1:
-                    raise  # re-raise the exception if all retries fail
-                delay = retry_delay * (2 ** i)  # use a backoff algorithm to increase the delay
-                time.sleep(delay)
-                logger.info("New Try")
-
-                if retry_count == 0:
-                    return None, None
             except HttpError as e:
-                if e.resp.status == 403 and "quota" in str(e):
-                    print(f"Quota exceeded for key: {key}. Trying next key...")
-                else:
-                    raise e
-        raise Exception("All API keys have exceeded their quota.")
+                if e.resp.status == 403 and "quota" in str(e).lower():
+                    logger.warning(
+                        "YouTube quota exceeded. Trying next API key."
+                    )
+                    continue
+
+                raise
+
+            except (ConnectionAbortedError, ConnectionResetError, timeout) as e:
+                logger.error(
+                    "Connection error while calling YouTube API: %s",
+                    e,
+                )
+                continue
+            
+        raise RuntimeError(
+                "All YouTube API keys failed or exceeded their quota."
+        )
 
     def get_videos(self, concepts, top_n=15):
         logger.info("Get Videos")
@@ -97,11 +88,11 @@ class YoutubeService:
         description_list = []
         like_count_list = []
         channel_title_list = []
-        retry_count = 3
-        retry_delay = 5
+        #retry_count = 3
+        #retry_delay = 5
 
         # Switching keys
-        response, youtube_api_sinlge = self.search_youtube_videos(
+        response, youtube_api = self.search_youtube_videos(
             developer_keys=self.DEVELOPER_KEYS, query=concepts, top_n=top_n
         )
 
@@ -124,7 +115,14 @@ class YoutubeService:
             if "channelId" in df_ids.columns and "channelId" in df_snippet.columns:
                 df_ids = df_ids.drop(columns=["channelId"])
 
-            for index, id in enumerate(df_ids["id"]):
+             # Drop rows with no videoId (e.g. channel/playlist results mixed
+            # into search results despite type="video"), and keep df_ids and
+            # df_snippet aligned by resetting both indices the same way.
+            valid_mask = df_ids["id"].notna()
+            df_ids = df_ids[valid_mask].reset_index(drop=True)
+            df_snippet = df_snippet[valid_mask].reset_index(drop=True)
+
+            for index, video_id in enumerate(df_ids["id"]):
                 # try:
                 #     df_snippet["text"][index] = df_snippet["text"][index] + ". " + get_subtitles(id)
                 # except (NoTranscriptFound, TranscriptsDisabled) as e:
@@ -132,9 +130,9 @@ class YoutubeService:
                 #                  "https://www.youtube.com/watch?v={} ".format(id))
 
                 try:
-                    res = self.get_video_details(youtube_api_sinlge, id)
+                    res = self.get_video_details(youtube_api, video_id)
                     if res is None:
-                        raise ValueError("No details returned for video id {}".format(id))
+                        raise ValueError("No details returned for video id {}".format(video_id))
 
                     duration, views, description, like_count, channel_title = res
 
@@ -143,7 +141,7 @@ class YoutubeService:
                     duration = ":".join(duration)
                 except Exception:
                     # Fix logging formatter error and keep same message semantics
-                    logger.exception("Error while getting the videos details for id %s", id)
+                    logger.exception("Error while getting the videos details for id %s", video_id)
                     # Append safe defaults to keep list lengths aligned with df_ids
                     duration = "0"
                     views = 0
@@ -177,12 +175,12 @@ class YoutubeService:
 
         return video_data
 
-    def get_video_details(self, youtube_api_sinlge, video_id):
+    def get_video_details(self, youtube_api, video_id):
         # print("get_video_details for id -------------------- ", video_id)
         try:
             r = (
                 # self.youtube.videos()
-                youtube_api_sinlge.videos()
+                youtube_api.videos()
                 .list(
                     part="snippet,statistics,contentDetails",
                     id=video_id,
