@@ -12,6 +12,11 @@ services:
       REDIS_DB: 0
       REDIS_PASSWORD: 
       PIPELINES: concept-recommendation,resource-recommendation,get_resources_by_main_concepts
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-}
+      YOUTUBE_API_KEY_2: ${YOUTUBE_API_KEY_2:-}
+      YOUTUBE_API_KEY_3: ${YOUTUBE_API_KEY_3:-}
+      YOUTUBE_API_KEY_4: ${YOUTUBE_API_KEY_4:-}
+      YOUTUBE_API_KEY_5: ${YOUTUBE_API_KEY_5:-}
     depends_on:
       neo4j:
         condition: service_healthy
