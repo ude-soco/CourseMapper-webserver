@@ -20,11 +20,6 @@ const notifications = require("../middlewares/Notifications/notifications");
 const {
   getNotificationSettingsWithFollowingAnnotations,
 } = require("../middlewares/Notifications/notifications");
-/**
- * @function getAllCourses
- * Get all courses controller
- *
- */
 
 // User identification for the logging system
 const findUserById = async (userId) => {
@@ -32,12 +27,18 @@ const findUserById = async (userId) => {
   if (!user) throw new Error("User not found!");
   return user;
 };
+
 const handleError = (res, error, message) => {
   console.error(error);
   return res.status(500).send({ error: message });
 };
 
-export const getAllCourses = async (req, res) => {
+/**
+ * @function getAllCourses
+ * Get all courses controller
+ *
+ */
+export const getAllCourses = async (_, res) => {
   let courses;
   try {
     courses = await Course.find({})
@@ -65,6 +66,7 @@ export const getAllCourses = async (req, res) => {
   });
   return res.status(200).send(results);
 };
+
 /**
  * @function getMyCourses
  * Get all courses the logged in user is enrolled in controller
@@ -102,39 +104,11 @@ export const getMyCourses = async (req, res) => {
       url: object?.courseId.url,
     };
     results.push(course);
-    // users.forEach(user => {
-    //   console.log("UserId:", user.userId);
-    //   console.log("Role object:", user.role); // This prints the whole populated role object
-    // });
   });
   
   //console.log("getMyCourses called with userId: ", results); 
   return res.status(200).send(results);
 };
-
-/**
- * @function getCourse
- * Get details of a course controller
- *
- * @param {string} req.params.courseId The id of the course
- */
-// export const getCourse = async (req, res) => {
-//   const courseId = req.params.courseId;
-//   let foundCourse;
-//   try {
-//     foundCourse = await Course.findOne({
-//       _id: ObjectId(courseId),
-//     }).populate("topics channels", "-__v");
-//     if (!foundCourse) {
-//       return res.status(404).send({
-//         error: `Course with id ${courseId} doesn't exist!`,
-//       });
-//     }
-//   } catch (err) {
-//     return res.status(500).send({ message: err });
-//   }
-//   return res.status(200).send(foundCourse);
-// };
 
 /**
  * @function getCourse
@@ -161,7 +135,6 @@ export const getCourse = async (req, res) => {
 
   let foundCourse;
   try {
-
     foundCourse = await Course.findById(courseId)
       .populate("topics", "-__v")
       .populate({ path: "users", populate: { path: "role" } })
@@ -174,16 +147,9 @@ export const getCourse = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ message: "Error finding a course" });
   }
-  // foundCourse.users.forEach(user => {
-  //   console.log(`UserId: ${user.userId}, Role: ${user.role?.name}`);
-  // });
+
   let notificationSettings;
   try {
-    /*     notificationSettings = await BlockingNotification.findOne({
-      userId: userId,
-      courseId: courseId,
-    }); */
-
     notificationSettings =
       await getNotificationSettingsWithFollowingAnnotations(courseId, userId);
   } catch (err) {
@@ -192,18 +158,19 @@ export const getCourse = async (req, res) => {
       .send({ message: "Error finding notification settings" });
   }
 
-    // Find the user within the course's users array
-    const currentUser = foundCourse.users.find((user) => user.userId.toString() === userId);
+  // Find the user within the course's users array
+  const currentUser = foundCourse.users.find((user) => user.userId.toString() === userId);
 
-    // Attach the found user's role to the course data
-    const courseWithUserRole = {
-      ...foundCourse.toObject(), // Convert the Mongoose document to a plain object
-      role: currentUser?.role.name || null, // Attach the role of the found user or null if not found
-    };
-  
-    courseWithUserRole.users.forEach(user => {
-      console.log(`UserId: ${user.userId}, Role: ${user.role?.name}`);
-    });
+  // Attach the found user's role to the course data
+  const courseWithUserRole = {
+    ...foundCourse.toObject(), // Convert the Mongoose document to a plain object
+    role: currentUser?.role.name || null, // Attach the role of the found user or null if not found
+  };
+
+  courseWithUserRole.users.forEach(user => {
+    console.log(`UserId: ${user.userId}, Role: ${user.role?.name}`);
+  });
+
   return res.status(200).send({
     course: courseWithUserRole,
     notificationSettings: notificationSettings[0],
@@ -456,7 +423,6 @@ export const withdrawCourse = async (req, res, next) => {
 export const newCourse = async (req, res, next) => {
   const courseName = req.body.name;
   const courseDesc = req.body.description;
-  const url = req.body.url;
 
   let shortName = req.body.shortname;
   const userId = req.userId;
@@ -503,8 +469,10 @@ export const newCourse = async (req, res, next) => {
     role: foundRole._id,
   };
   userList.push(newUser);
+
   // Use the helper to get a random image URL
- const imageUrl = await helpers.getRandomImageUrl(req);
+  const imageUrl = await helpers.getRandomImageUrl(req);
+
   let course = new Course({
     name: courseName,
     shortName: shortName,
@@ -650,8 +618,8 @@ export const deleteCourse = async (req, res, next) => {
       return res.status(500).send({ error: "Error deleting activity" });
     }
 
-    //delete all entries from UserNotification where acitivityId is in activitiesToBeDeleted array
-    //TODO: Test the below method
+    // Delete all entries from UserNotification where acitivityId is in activitiesToBeDeleted array
+    // :TODO: Test the below method
     try {
       await UserNotification.deleteMany({
         courseId: foundCourse._id,
@@ -662,7 +630,7 @@ export const deleteCourse = async (req, res, next) => {
         .send({ error: "Error deleting user notification" });
     }
 
-    //find all blockingNotifications where courseId is courseId
+    // Find all blockingNotifications where courseId is courseId
     let usersSubscribedToCourse = [];
     try {
       let blockingNotificationDocuments = await BlockingNotification.find({
@@ -743,6 +711,7 @@ export const deleteCourse = async (req, res, next) => {
 
   return next();
 };
+
 /**
  * @function shareCourse
  * Share a course controller
@@ -780,10 +749,6 @@ export const shareCourse = async (req, res, next) => {
     success: `Course "${foundCourse.name}" shared successfully!`,
   };
   next();
-  // res.status(200).json({
-  //   success: `Course "${foundCourse.name}" shared successfully!`,
-  //   courseUrl: courseUrl, // Include the generated URL
-  // });
 };
 
 /**
@@ -847,6 +812,7 @@ export const editCourse = async (req, res, next) => {
   req.locals.newCourse = foundCourse;
   return next();
 };
+
 /**
  * @function accessCourseDashboard
  * access Course Dashboard
@@ -943,10 +909,6 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator added successfully!`,
-  //   indicator: indicator,
-  // });
 };
 
 /**
@@ -1012,9 +974,6 @@ export const deleteIndicator = async (req, res, next) => {
     success: `Indicator deleted successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator deleted successfully!`,
-  // });
 };
 
 /**
@@ -1118,7 +1077,6 @@ export const resizeIndicator = async (req, res, next) => {
     success: `Indicator resized successfully!`,
   };
   next();
-  //return res.status(200).send();
 };
 
 /**
@@ -1178,10 +1136,6 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicators updated successfully!`,
-  //   indicators: foundCourse.indicators,
-  // });
 };
 
 export const getCourseTest = async (req, res) => {
@@ -1201,7 +1155,6 @@ export const getCourseTest = async (req, res) => {
   }
 
   let foundCourse;
-  let results = [];
   foundCourse = await BlockingNotification.aggregate([
     {
       $match: {
@@ -1250,35 +1203,6 @@ export const getCourseTest = async (req, res) => {
         result: 0,
       },
     },
-    /* 
-    {
-      $project: {
-        topics: {
-          $map: {
-            input: "$topics",
-            as: "topic",
-            in: {
-              $arrayToObject: {
-                $filter: {
-                  input: {
-                    $objectToArray: "$$topic"
-                  },
-                  cond: {
-                    $ne: ["$$this.k", "channels"]
-                  }
-                }
-              }
-            }
-          }
-        },
-        courseId: 1,
-        userId: 1,
-        materials: 1,
-        channels: 1,
-        __v: 1
-      }
-    }, */
-
     {
       $lookup: {
         from: "channels",
@@ -1411,8 +1335,5 @@ export const getCourseTest = async (req, res) => {
       error: `Course with id ${courseId} doesn't exist!`,
     });
   }
-  /* catch (err) {
-    return res.status(500).send({ message: "Error finding a course", err });
-  } */
   return res.status(200).send(foundCourse[0]);
 };

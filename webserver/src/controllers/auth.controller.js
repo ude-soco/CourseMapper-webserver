@@ -90,7 +90,6 @@ export const register = async (req, res, next) => {
       
       response: { success: "User is successfully registered!" },
     };
-    // return next();
   } catch (err) {
     return res.status(500).send({ error: "Error saving user" });
   }
@@ -124,14 +123,14 @@ export const signIn = async (req, res, next) => {
     if (!user) {
       return res.status(404).send({ error: "User not found." });
     }
-    //check if the email is verified or not ahhs i have it in email vervication just the flag
+
+    // Check if the email is verified or not ahhs i have it in email vervication just the flag
     let token = sign({ id: user.id }, config.secret, {
       expiresIn: 86400, // 24 hours
     });
-    // If the flag is missing (undefined) or false, send verification email
-    if (!user.verified) {
-      // Send the verification email using nodemailer
 
+    // If the flag is missing (undefined) or false, send verification email using nodemailer
+    if (!user.verified) {
       let mailDetails = {
         from: "coursemapper.soco@gmail.com",
         to: user.email,
@@ -234,15 +233,6 @@ export const sendEmail = async (req, res, next) => {
         token: token,
         email: user.email,
       });
-      // const mailTransporter = nodemailer.createTransport({
-      //   host: "smtp.gmail.com",
-      //   port: 587,
-      //   secure: false,
-      //   auth: {
-      //     user: "coursemapper.soco@gmail.com",
-      //     pass: "gzxi ednk zaft zyow",
-      //   },
-      // });
 
       let mailDetails = {
         from: "coursemapper.soco@gmail.com",
@@ -348,33 +338,30 @@ export const verifyEmail = async (req, res, next) => {
 };
 
 
-export const resendVerifyEmail = async (req, res, next) => {
+export const resendVerifyEmail = async (req, res, _) => {
   let token = req.body.token;
 
+  verify(token, config.secret, async (err, data) => {
+    if (err) {
+      return res.status(500).send({ message: "Reset link is expired!" });
+    }
 
+    let user = await User.findOne({
+      $or: [
+        { email: data.email },
+        { _id: data.id }, // Assuming 'data.id' holds the user ID when email is not present
+      ],
+    });
 
-
-    verify(token, config.secret, async (err, data) => {
-      if (err) {
-        return res.status(500).send({ message: "Reset link is expired!" });
-      }
-
-      let user = await User.findOne({
-        $or: [
-          { email: data.email },
-          { _id: data.id }, // Assuming 'data.id' holds the user ID when email is not present
-        ],
-      });
-
-      if (!user) {
-        return res.status(404).send({ error: "User not found." });
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
     }
 
     if (user.verified) {
         return res.status(400).send({ message: "Email is already verified." });
     }
     
-       // Send verification email
+    // Send verification email
     let mailDetails = {
       from: "coursemapper.soco@gmail.com",
       to: user.email,
@@ -393,9 +380,7 @@ export const resendVerifyEmail = async (req, res, next) => {
     </html>`,
     };
 
-
     try {
-     
       await mailTransporter.sendMail(mailDetails);
       return res.status(200).send({
         message:
@@ -406,19 +391,5 @@ export const resendVerifyEmail = async (req, res, next) => {
         error: "Failed to send verification email. Please try again later.",
       });
     }
-    });
-
-
-    // const userId = req.params.userId;
-    // const user = await User.findById(userId);
-
-
-    // Generate a new verification token
-    // let token = sign({ id: user.id }, config.secret, {
-    //   expiresIn: 86400, // 24 hours
-    // });
-    
-
-   
-
+  });
 };

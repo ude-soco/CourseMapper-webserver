@@ -118,17 +118,11 @@ export const generteTestdata = async (req, res, next) => {
                 }
               }
               res.send({});
-            } else {
             }
-          } else {
           }
-        } else {
         }
-      } else {
       }
-    } else {
     }
-  } else {
   }
 };
 

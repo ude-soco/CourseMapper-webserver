@@ -16,6 +16,7 @@ const handleError = (res, error, message) => {
   console.error(error);
   return res.status(500).send({ error: message });
 };
+
 /**
  * @function courseTags
  * Get all tags of a course controller.
@@ -236,6 +237,7 @@ export const selectTopicTag = async (req, res, next) => {
   };
   next();
 };
+
 export const selectChannelTag = async (req, res, next) => {
   //console.log(req);
   const tagId = req.params.tagId;
@@ -275,6 +277,7 @@ export const selectChannelTag = async (req, res, next) => {
   };
   next();
 };
+
 export const selectMaterialTag = async (req, res, next) => {
   //console.log(req);
   const tagId = req.params.tagId;

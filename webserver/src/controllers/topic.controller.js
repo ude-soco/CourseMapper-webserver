@@ -242,7 +242,8 @@ export const deleteTopic = async (req, res, next) => {
   return next();
 };
 
-//TODO: Maybe the extraMessage can be changed for topic being edited. from "<newTopicName> was edited" to <"old topic name> was renamed to <newTopicName>"
+// :TODO: Maybe the extraMessage can be changed for topic being edited, e.g. from
+//        "<newTopicName> was edited" to <"old topic name> was renamed to <newTopicName>"
 /**
  * @function editTopic
  * Edit a topic controller
@@ -324,6 +325,7 @@ export const editTopic = async (req, res, next) => {
 
   return next();
 };
+
 /**
  * @function accessTopicDashboard
  * access topic Dashboard
@@ -420,10 +422,6 @@ export const newIndicator = async (req, res, next) => {
     success: `Indicator added successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator added successfully!`,
-  //   indicator: indicator,
-  // });
 };
 
 /**
@@ -489,9 +487,6 @@ export const deleteIndicator = async (req, res, next) => {
     success: `Indicator deleted successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicator deleted successfully!`,
-  // });
 };
 
 /**
@@ -654,8 +649,4 @@ export const reorderIndicators = async (req, res, next) => {
     success: `Indicators updated successfully!`,
   };
   next();
-  // return res.status(200).send({
-  //   success: `Indicators updated successfully!`,
-  //   indicators: foundTopic.indicators,
-  // });
 };
