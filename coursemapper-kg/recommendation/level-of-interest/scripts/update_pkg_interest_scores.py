@@ -298,8 +298,8 @@ def main():
     parser.add_argument(
         '--neo4j-password',
         type=str,
-        default='1234qwer!',
-        help='Neo4j password (default: 1234qwer!)'
+        default='password',
+        help='Neo4j password (default: password)'
     )
     
     args = parser.parse_args()
