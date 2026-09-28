@@ -44,7 +44,7 @@ export class RatingComponent {
     );
   }
 
-  @Input() element: ArticleElementModel | VideoElementModel;
+  @Input() element!: ArticleElementModel | VideoElementModel;
   @Input() notUnderstoodConcepts: any[];
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Input() currentMaterial?: Material;
@@ -52,6 +52,7 @@ export class RatingComponent {
   isLiked = false;
   isDisliked = false;
   selectedConcepts: string[] = [];
+  selectedConceptCids: string[] = [];
   loggedInUser: User;
 
   ngOnInit(): void {
@@ -80,10 +81,13 @@ export class RatingComponent {
   ): void {
     if (!this.isLiked) {
       op.toggle(event);
-    } else {
-      this.likeElement(element, op);
+    }else{
+      // this.likeElement(element, op);
+      this.rateRecommendedMaterials(Rating.HELPFUL, true);
+      this.displayInfofulMessage();
     }
   }
+
   public async likeElement(
     element: ArticleElementModel | VideoElementModel,
     op: OverlayPanel
@@ -115,7 +119,7 @@ export class RatingComponent {
             );
         }
       }
-      await this.rateRecommendedMaterials(Rating.HELPFUL);
+      await this.rateRecommendedMaterials(Rating.HELPFUL, false);
       this.displaySuccessfulMessage();
     } catch (e) {
       console.error(e);
@@ -153,8 +157,14 @@ export class RatingComponent {
             );
         }
       }
-      await this.rateRecommendedMaterials(Rating.NOT_HELPFUL);
-      this.displaySuccessfulMessage();
+      
+      if (!this.isDisliked) {
+        await this.rateRecommendedMaterials(Rating.NOT_HELPFUL, false);
+        this.displaySuccessfulMessage();
+      } else {
+        await this.rateRecommendedMaterials(Rating.NOT_HELPFUL, true);
+        this.displayInfofulMessage();
+      }
     } catch (e) {
       console.log(e);
     }
@@ -178,18 +188,32 @@ export class RatingComponent {
     });
   }
 
-  async rateRecommendedMaterials(rating: Rating): Promise<void> {
-    const data = {
-      rating: rating,
-      resourceId: this.element.id,
-      concepts: this.selectedConcepts,
-    };
+  onChangeConcept(event, cid: string) {
+    this.selectedConceptCids.push(cid);
+  }
 
-    const result =
-      await this.materialsRecommenderService.rateRecommendedMaterials(data);
-    this.isLiked = result.voted === Rating.HELPFUL;
-    this.isDisliked = result.voted === Rating.NOT_HELPFUL;
-    this.element.helpful_counter = result.helpful_count;
-    this.element.not_helpful_counter = result.not_helpful_count;
+  async rateRecommendedMaterials(rating: Rating, reset: boolean): Promise<void> {
+    const data = {
+      user_id: this.userid.toString(),
+      value: rating.toString(),
+      rid: this.element.rid,
+      cids: [...new Set(this.selectedConceptCids)],
+      reset: reset
+    }
+
+    const result = await this.materialsRecommenderService.rateRecommendedMaterials(data);
+    if (!data.reset) {
+      this.isLiked = result.voted === Rating.HELPFUL;
+      this.isDisliked = result.voted === Rating.NOT_HELPFUL;
+    } else {
+      this.isLiked = false;
+      this.isDisliked = false;
+    }
+    this.element.helpful_count = result.helpful_count;
+    this.element.not_helpful_count = result.not_helpful_count;
+  }
+
+  displayInfofulMessage(): void {
+    this.messageService.add({key: 'rating', severity: 'info', summary: '', detail: 'You undo your feedback!'});
   }
 }

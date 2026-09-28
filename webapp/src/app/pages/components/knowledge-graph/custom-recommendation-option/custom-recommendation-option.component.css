@@ -1,0 +1,135 @@
+:host ::ng-deep #add_more_concept .p-ripple {
+  font-size: 0.7rem;
+  color: #0288d1;
+}
+
+
+:host ::ng-deep #search_concept_category_1 .p-dropdown {
+  width: 20em;
+}
+
+:host ::ng-deep #search_concept_category_1 .p-dropdown .p-dropdown-label {
+  font-size: 12px;
+}
+:host ::ng-deep #search_concept_category_1 .p-dropdown .p-dropdown-item {
+  font-size: 12px;
+}
+
+/* :host ::ng-deep #search_concept_category_3 .p-dropdown {
+  width: 20em;
+}
+:host ::ng-deep #search_concept_category_3 .p-dropdown .p-dropdown-label {
+  font-size: 12px;
+}
+:host ::ng-deep #search_concept_category_3 .p-dropdown .p-dropdown-item {
+  font-size: 12px;
+} */
+
+
+:host ::ng-deep #search_concept_category_3 .p-multiSelect {
+  width: 20em;
+}
+
+
+
+:host ::ng-deep .raning_progress_bar .p-progressbar .p-progressbar-label {
+  display: block !important;
+  font-size: 0.6rem;
+}
+
+/* change checkbox color */
+:host ::ng-deep .p-checkbox .p-checkbox-box {
+  border: 2px solid #0288d1; 
+}
+:host ::ng-deep .p-checkbox-box:hover {
+  border-color: #0288d1;
+}
+:host ::ng-deep .p-checkbox-box.p-highlight {
+  background: #0288d1;
+  border-color: #0288d1;
+}
+
+/* change slider color */
+:host ::ng-deep .p-slider .p-slider-range {
+  background-color: #0288d1;
+}
+:host ::ng-deep .p-slider .p-slider-handle {
+  border: 2px solid #0288d1;
+  background-color: #0288d1;
+}
+
+/* change radio button color */
+.p-radiobutton {
+  width: 16px !important;
+  height: 16px !important;
+}
+.p-radiobutton .p-radiobutton-box {
+  border: 2px solid #0288d1;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+}
+.p-radiobutton .p-radiobutton-box .p-radiobutton-icon {
+  background-color: #0288d1;
+  width: 8px !important;
+  height: 8px !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+.p-radiobutton-box:hover {
+  border-color: #0288d1;
+}
+.p-radiobutton-box.p-highlight {
+  background: #0288d1;
+  border-color: #0288d1;
+}
+
+.factor_weight_disabled {
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* info tooltip icon */
+/* :host ::ng-deep #cro_content .pi pi-info-circle {
+  font-size: 0.6rem;
+} */
+
+.raning_progress_bar_value {
+  position: absolute;
+  /* top: 0; */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  line-height: 30px; /* Match the height of the progress bar */
+  color: #000; /* Set the text color */
+  font-size: 1rem;
+}
+
+
+
+/* :host ::ng-deep #cro_second .p-panel-title {
+  color: #2196F3;
+  font-size: 12px;
+}
+
+:host ::ng-deep #cro_second .p-panel {
+  border: 2px solid #0288d1;
+}
+
+:host ::ng-deep #cro_second .p-panel-content {
+  border-style: none !important;
+} */
+
+
+
+/* :host ::ng-deep #cro_sorting .p-panel-title {
+  color: #2196F3;
+  font-size: 12px;
+}
+
+:host ::ng-deep #cro_sorting .p-panel {
+  border: 2px solid #0288d1;
+} */

@@ -1,0 +1,87 @@
+
+:host ::ng-deep #cro_sorting .p-panel-title {
+  color: #0277BD;
+  font-size: 14px;
+}
+
+:host ::ng-deep #cro_sorting .p-panel {
+  border: 2px solid #cecece;
+}
+
+:host ::ng-deep .scroll_panel_list {
+  width: 100%;
+  height: 55rem;
+}
+
+/* :host ::ng-deep .p-tabview-panels {
+  position: fixed;
+} */
+
+:host ::ng-deep .p-paginator {
+  height: 3.7rem;
+}
+
+/* from TagMenu: move bookmarks to left corner */
+:host ::ng-deep .p-tabview-nav-content ul.p-tabview-nav > li:nth-child(3) {
+  margin-left: auto;
+}
+
+.left_panel_interaction {
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* search videos_articles */
+.p-float-label input {
+  width: 30rem; /* Set to desired width */
+  padding-right: 2rem;
+}
+.p-float-label {
+  position: relative;
+}
+.p-float-label input {
+  padding-right: 2rem; /* Adjust padding to fit the icon */
+}
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: gray;
+}
+
+/* change checkbox color */
+:host ::ng-deep .p-checkbox .p-checkbox-box {
+  border: 2px solid #0288d1; 
+}
+:host ::ng-deep .p-checkbox-box:hover {
+  border-color: #0288d1;
+}
+:host ::ng-deep .p-checkbox-box.p-highlight {
+  background: #0288d1;
+  border-color: #0288d1;
+}
+
+:host ::ng-deep #result_concepts_modified .p-multiSelect {
+  width: 16rem;
+}
+
+:host ::ng-deep .p-multiSelect .p-multiselect-panel {
+  width: 16rem;
+}
+
+.p-multiselect-panel {
+  width: 16rem;
+}
+
+/* -- */
+
+.close-icon {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: gray;
+}

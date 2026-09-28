@@ -2,6 +2,7 @@ import logging
 
 from log import LOG
 import time
+import json
 
 from ..services.course_materials.recommendation.resource_recommender import ResourceRecommenderService
 from ..services.course_materials.recommendation.recommendation_type import RecommendationType
@@ -12,57 +13,38 @@ logger = LOG(name=__name__, level=logging.DEBUG)
 
 
 def get_concepts(job):
-    material_id = job["materialId"]
-    user_id = job["userId"]
-    understood = job["understood"]
-    non_understood = job["nonUnderstood"]
-    new_concepts = job["newConcepts"]
+    data = job["data"]
 
+    # material_page = data("materialPage")
+    material_id = data["materialId"]
+    user_id = data["userId"]
+    understood = data["understoodConcepts"]
+    non_understood = data["nonUnderstoodConcepts"]
+    new_concepts = data["newConcepts"]
+
+    # print("not-understood:", non_understood, flush=True)
     understood = [cid for cid in understood.split(",") if understood]
     non_understood = [cid for cid in non_understood.split(",") if non_understood]
     new_concepts = [cid for cid in new_concepts.split(",") if new_concepts]
     material_id = material_id.split("-")[0]
+    # slide_id = str(material_id) + "_slide_" + str(material_page)
 
-    print(
-        "material_id:",
-        material_id,
-        "user_id: ",
-        user_id,
-        "understood: ",
-        understood,
-        "nonUnderstood: ",
-        non_understood,
-        "new_concepts: ",
-        new_concepts,
-        flush=True,
-    )
     start_time1 = time.time()
     start_time = time.time()
     data_service = RecService()
     end_time = time.time()
     print("Get RecService time: ", end_time - start_time, flush=True)
-    # use GCN to get final embedding of each node
+
     start_time = time.time()
     data_service._extract_vector_relation(mid=material_id)
+    # logger.info("GCN")
     gcn = GCN()
     gcn.load_data()
-
-    ### ========
-    ### LightGCN Variant
-    # from ..services.course_materials.GCN.lightGCN import LightGCN
-    # lightGCN = LightGCN()
-    # lightGCN.load_data(variant=True)
-    ### ========
-    ### LightGCN
-    # from ..services.course_materials.GCN.lightGCN import LightGCN
-    # lightGCN = LightGCN()
-    # lightGCN.load_data(variant=False)
-    ### ========
-
     end_time = time.time()
     print("use gcn Execution time: ", end_time - start_time, flush=True)
 
     start_time = time.time()
+    # user = {"name": username, "id": user_id, "user_email": user_email}
     data_service._construct_user(
         user_id=user_id,
         non_understood=non_understood,
@@ -85,89 +67,19 @@ def get_concepts(job):
     )
     end_time1 = time.time()
     print("Execution time: ", end_time1 - start_time1, flush=True)
-    #make_response.headers.add('Access-Control-Allow-Origin', '*')
-
     return resp
 
+
+def get_resources_by_main_concepts(job):
+    data = job["data"]
+    data = json.loads(data)
+    mid = data["materialId"]
+    resource_recommender_service = ResourceRecommenderService()
+    result = resource_recommender_service._get_resources_by_main_concepts(mid=mid)
+    return result
 
 def get_resources(job):
-    material_id = job["materialId"]
-    user_id = job["userId"]
-    slide_id = job["slideId"]
-    understood = job["understood"]
-    non_understood = job["nonUnderstood"]
-    new_concepts = job["newConcepts"]
-
-    print("not-understood from paul:", non_understood, flush=True)
-    understood_concept_ids = [cid for cid in understood.split(",") if understood]
-    non_understood_concept_ids = [
-        cid for cid in non_understood.split(",") if non_understood
-    ]
-    new_concept_ids = [cid for cid in new_concepts.split(",") if new_concepts]
-
-    print(
-        "material_id:",
-        material_id,
-        "slide_id: ",
-        slide_id,
-        "user_id: ",
-        user_id,
-        "understood: ",
-        understood,
-        "nonUnderstood: ",
-        non_understood,
-        "new_concepts: ",
-        new_concepts,
-        flush=True,
-    )
+    data = job["data"]
     resource_recommender_service = ResourceRecommenderService()
-    # TODO comment out or remove the next line if the recommendation_type is sent from the frontend
-    # Only first model is needed ==> no model_type will be sent from frontend (other models were added for evaluation task)
-    recommendation_type = "1"
-
-    # Check if parameters exist. If one doesn't exist, return not found message
-    check_message = resource_recommender_service.check_parameters(
-        slide_id=slide_id,
-        material_id=material_id,
-        non_understood_concept_ids=non_understood_concept_ids,
-        understood_concept_ids=understood_concept_ids,
-        new_concept_ids=new_concept_ids,
-        recommendation_type=recommendation_type,
-    )
-    if check_message != "":
-        return make_response(check_message, 404)
-
-    # Map recommendation type to enum values
-
-    if recommendation_type == "1":
-        recommendation_type = RecommendationType.DYNAMIC_KEYPHRASE_BASED
-    elif recommendation_type == "2":
-        recommendation_type = RecommendationType.DYNAMIC_DOCUMENT_BASED
-    elif recommendation_type == "3":
-        recommendation_type = RecommendationType.STATIC_KEYPHRASE_BASED
-    elif recommendation_type == "4":
-        recommendation_type = RecommendationType.STATIC_DOCUMENT_BASED
-
-    # If personalized recommendtion, build user model
-    if (
-        recommendation_type != RecommendationType.WITHOUT_EMBEDDING
-        and recommendation_type != RecommendationType.COMBINED_STATIC
-        and recommendation_type != RecommendationType.STATIC_KEYPHRASE_BASED
-        and recommendation_type != RecommendationType.STATIC_DOCUMENT_BASED
-    ):
-        resource_recommender_service._construct_user(
-            user_id=user_id,
-            non_understood=non_understood_concept_ids,
-            understood=understood_concept_ids,
-            new_concepts=new_concept_ids,
-            mid=material_id,
-        )
-
-    resp = resource_recommender_service._get_resources(
-        user_id=user_id,
-        slide_id=slide_id,
-        material_id=material_id,
-        recommendation_type=recommendation_type,
-    )
-
-    return resp
+    result = resource_recommender_service._get_resources(data_default=data["default"], data_rec_params=data["rec_params"])
+    return result

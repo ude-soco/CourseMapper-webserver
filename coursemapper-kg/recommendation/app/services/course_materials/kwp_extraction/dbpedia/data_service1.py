@@ -52,7 +52,7 @@ class RecService:
         recommend_concepts = self.recommendation.recommend(concept_list, user, top_n=5)
         for i in recommend_concepts:
             info = i["n"]["name"] + " : " + str(i["n"]["score"])
-            logger.info(info)
+            # logger.info(info)
 
         # Use paths for interpretability
         recommend_concepts = self._get_road(recommend_concepts, user_id, mid)
@@ -108,8 +108,8 @@ class RecService:
                 names.append(road[i]["name"])
         for name in names:
             for i in range(len(road)):
-                print("len(road)",len(road))
-                print("name",name)
+                # print("len(road)",len(road))
+                # print("name",name)
                 if road[i]["name"] == name:
                     weights = road[i]["weight"]
                 if max_weight <= weights:

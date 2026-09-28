@@ -13,8 +13,8 @@ export const ArticleMock: ArticleElementModel[] = [
     post_date: '10th August 2020',
     uri: 'https://de.wikipedia.org/wiki/Wikipedia:Hauptseite',
     similarity_score: 0.95,
-    helpful_counter: 9,
-    not_helpful_counter: 2
+    helpful_count: 9,
+    not_helpful_count: 2
   },
   {
     id: 2,
@@ -28,8 +28,8 @@ export const ArticleMock: ArticleElementModel[] = [
     post_date: '10th August 2020',
     uri: 'https://de.wikipedia.org/wiki/Wikipedia:Kontakt',
     similarity_score: 0.90,
-    helpful_counter: 5,
-    not_helpful_counter: 0
+    helpful_count: 5,
+    not_helpful_count: 0
   },
   {
     id: 3,
@@ -43,8 +43,8 @@ export const ArticleMock: ArticleElementModel[] = [
     post_date: '10th August 2020',
     uri: 'https://de.wikibooks.org/wiki/Wikibooks:Chat',
     similarity_score: 0.90,
-    helpful_counter: 4,
-    not_helpful_counter: 2
+    helpful_count: 4,
+    not_helpful_count: 2
   },
   {
     id: 4,
@@ -58,8 +58,8 @@ export const ArticleMock: ArticleElementModel[] = [
     post_date: '10th August 2020',
     uri: 'https://de.wikibooks.org/wiki/Wikibooks:Administratoren',
     similarity_score: 0.87,
-    helpful_counter: 2,
-    not_helpful_counter: 0
+    helpful_count: 2,
+    not_helpful_count: 0
   },
   {
     id: 5,
@@ -73,8 +73,8 @@ export const ArticleMock: ArticleElementModel[] = [
     post_date: '10th August 2020',
     uri: 'https://de.wikibooks.org/wiki/Wikibooks:Portal',
     similarity_score: 0.85,
-    helpful_counter: 1,
-    not_helpful_counter: 0
+    helpful_count: 1,
+    not_helpful_count: 0
   },
   {
     id: 6,
@@ -88,8 +88,8 @@ export const ArticleMock: ArticleElementModel[] = [
     post_date: '10th August 2020',
     uri: 'https://wikisource.org/wiki/Wikisource:Community_Portal',
     similarity_score: 0.7,
-    helpful_counter: 3,
-    not_helpful_counter: 2
+    helpful_count: 3,
+    not_helpful_count: 2
   },
   {
     id: 7,
@@ -103,8 +103,8 @@ export const ArticleMock: ArticleElementModel[] = [
     post_date: '10th August 2020',
     uri: 'https://de.wikipedia.org/wiki/Wikipedia:Autorenportal',
     similarity_score: 0.69,
-    helpful_counter: 4,
-    not_helpful_counter: 4
+    helpful_count: 4,
+    not_helpful_count: 4
   },
   {
     id: 8,
@@ -118,7 +118,7 @@ export const ArticleMock: ArticleElementModel[] = [
     post_date: '10th August 2020',
     uri: 'https://de.wikipedia.org/w/index.php?title=Wikipedia:Hauptseite&action=info',
     similarity_score: 0.5,
-    helpful_counter: 0,
-    not_helpful_counter: 0
+    helpful_count: 0,
+    not_helpful_count: 0
   },
 ];

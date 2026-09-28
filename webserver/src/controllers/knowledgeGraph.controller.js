@@ -512,7 +512,14 @@ export const searchWikipedia = async (req, res) => {
   try {
     const conceptNameEncoded = encodeURIComponent(query);
     const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${conceptNameEncoded}&utf8=&format=json`;
-    const response = await axios.get(url);
+    // const response = await axios.get(url);
+     const response = await axios.get(url, {
+      headers: {
+        // Use your app name + version + contact (email or URL)
+        "User-Agent": "CourseMapper (coursemapper@example.com)"
+      },
+      timeout: 10000
+    });
     const searchResults = response.data.query.search;
      // Add the Wikipedia URL to each search result
      const resultsWithUrls = searchResults.map(result => {

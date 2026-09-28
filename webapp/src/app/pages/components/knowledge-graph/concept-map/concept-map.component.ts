@@ -4,8 +4,9 @@ import {
   Output,
   EventEmitter,
   ChangeDetectorRef,
-  Renderer2, 
-  
+  ViewChild,
+  Renderer2,
+
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -30,6 +31,8 @@ import { getCurrentMaterial } from '../../materials/state/materials.reducer';
 import { getCurrentPdfPage } from '../../annotations/pdf-annotation/state/annotation.reducer';
 import { Socket } from 'ngx-socket-io';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatorPartCRO, ResourcesPagination } from 'src/app/models/croForm';
+import { CustomRecommendationOptionComponent } from '../custom-recommendation-option/custom-recommendation-option.component';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 import { CytoscapeComponent } from '../cytoscape/cytoscape.component';
@@ -154,10 +157,11 @@ export class ConceptMapComponent {
   courseIsEmpty?: boolean = undefined;
   recommendedConceptType = 'recommended_concept';
   allSelected = false;
+  skippedFirst = true;
 
   tabs = [
     {
-      label: 'Main Concepts',
+      label: 'Main Concepts', // graphSection
       command: (e) => {
         let tempMapData = this.filteredMapData;
         this.filteredMapData = null;
@@ -189,36 +193,39 @@ export class ConceptMapComponent {
         }
       },
     },
-    {
-      label: 'Recommended Concepts',
-      icon: 'pi pi-fw pi-external-link',
-      disabled: true,
-      command: (e) => {
-        this.mainConceptsTab = false;
-        this.recommendedConceptsTab = true;
-        //Log the Activity User viewedrecommendedConcepts
-        this.logUserViewedRecommendedConcepts();
-        //if navigating from materials tab
-        if (this.recommendedMaterialsTab) {
-          this.recommendedMaterialsTab = false;
-          //show sidebar on main tab
-          setTimeout(() => {
-            this.showConceptsList();
-          }, 50);
-        } else {
-          this.recommendedMaterialsTab = false;
-          if (this.showConceptsListSidebar) {
-            setTimeout(() => {
-              this.showConceptsList();
-            }, 1);
-          } else {
-            setTimeout(() => {
-              this.hideConceptsList();
-            }, 1);
-          }
-        }
-      },
-    },
+    // {
+    //   //label: '',
+    //   //icon: 'pi pi-fw pi-external-link',
+    //   //disabled: true,
+    //   hidden: true,  
+    //   command: (e) => {
+    //     // this.mainConceptsTab = false;
+    //     // this.recommendedConceptsTab = false;
+    //     // this.skippedFirst = true;
+        
+    //     //Log the Activity User viewedrecommendedConcepts
+    //     //this.logUserViewedRecommendedConcepts();
+    //     //if navigating from materials tab
+    //     // if (this.recommendedMaterialsTab) {
+    //     //   this.recommendedMaterialsTab = false;
+    //     //   //show sidebar on main tab
+    //     //   setTimeout(() => {
+    //     //     this.showConceptsList();
+    //     //   }, 50);
+    //     // } else {
+    //     //   this.recommendedMaterialsTab = false;
+    //     //   if (this.showConceptsListSidebar) {
+    //     //     setTimeout(() => {
+    //     //       this.showConceptsList();
+    //     //     }, 1);
+    //     //   } else {
+    //     //     setTimeout(() => {
+    //     //       this.hideConceptsList();
+    //     //     }, 1);
+    //     //   }
+    //     // }
+    //   },
+    // },
     {
       label: 'Recommended Materials',
       icon: 'pi pi-fw pi-book', //changed the youtube icon to address violation
@@ -259,6 +266,14 @@ export class ConceptMapComponent {
   currentPDFPage: number;
 
   private subscriptions: Subscription[] = [];
+
+  activatorPartCRO: ActivatorPartCRO = { resetFormStatus: false, modelStatus: false, vennDiagramStatus: false};
+  @ViewChild('croComponent', { static: false }) croComponent: CustomRecommendationOptionComponent;
+  resourcesPagination: ResourcesPagination = undefined;
+  isRecommendationButtonDisplayed = true;
+  conceptsUpdatedCRO: any;
+
+
   totalPages: any;
   constructor(
     private messageService: MessageService, //show toast messages
@@ -309,11 +324,12 @@ export class ConceptMapComponent {
 
         this.kgNodes = null;
         this.recommendedConcepts = null;
-        this.tabs[1].disabled = true;
-        this.tabs[2].disabled = true;
-        this.kgTabsActivated = false;
+         this.tabs[1].disabled = true;
+        // this.tabs[2].disabled = true;
+       this.kgTabsActivated = true;
         this.filteredMapData = null;
         this.resultMaterials = null;
+        
 
         this.concepts1 = null;
         this.concepts2 = null;
@@ -399,7 +415,7 @@ export class ConceptMapComponent {
     this.subscriptions.push(
       this.kgTabs.activateKgTabs().subscribe(() => {
         this.tabs[1].disabled = false;
-        this.tabs[2].disabled = false;
+        // this.tabs[2].disabled = false;
         this.kgTabsActivated = true;
       })
     ); //Activate tabs
@@ -456,6 +472,7 @@ export class ConceptMapComponent {
     );
     this.subscriptions.push(
       slideConceptservice.didNotUnderstandConcepts.subscribe((res) => {
+        this.croUpdater(res, undefined);
         this.didNotUnderstandConceptsObj = res;
         this.didNotUnderstandConceptsNames =
           this.didNotUnderstandConceptsNames.map((concept) => concept.name);
@@ -617,6 +634,9 @@ export class ConceptMapComponent {
     this.selectedTopConcepts = this.defaultTopConcepts;
     this.defaultTopConcepts = 15;
     this.resetFilter();
+
+    this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
+
   }
   ngOnInit() {
     this.socket.on('log', this.printLogMessage);
@@ -643,6 +663,7 @@ export class ConceptMapComponent {
             this.conceptFromChipObj
           );
           this.conceptFromChipObj = null;
+          this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
         },
       },
       {
@@ -658,6 +679,7 @@ export class ConceptMapComponent {
             );
           this.slideConceptservice.updateNewConcepts(this.conceptFromChipObj);
           this.conceptFromChipObj = null;
+          this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
         },
       },
     ];
@@ -674,6 +696,7 @@ export class ConceptMapComponent {
             this.previousConceptFromChipObj
           );
           this.previousConceptFromChipObj = null;
+          this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
         },
       },
       {
@@ -688,6 +711,7 @@ export class ConceptMapComponent {
             this.previousConceptFromChipObj
           );
           this.previousConceptFromChipObj = null;
+          this.croUpdater(this.didNotUnderstandConceptsObj, this.previousConceptsObj);
         },
       },
     ];
@@ -698,6 +722,8 @@ export class ConceptMapComponent {
       conceptName: new FormControl(null),
       conceptSlides: new FormControl(null),
     });
+
+    this.setResponsiveWidthKnowledgeGraph();
   }
 
   ngAfterViewChecked() {
@@ -778,9 +804,20 @@ export class ConceptMapComponent {
 
     if (this.materialKgActivated && !this.showMaterialKg) {
       this.materialKgActivated = false;
-    }
+    }    
   }
 
+  onActiveItemChange(event: MenuItem) {
+    // console.warn("tab onActiveItemChange") // graphSection
+    if (event.label === 'Main Concepts') {
+      // console.warn("Main Concepts")
+    } else if (event.label === 'Recommended Concepts') {
+      // console.warn("Recommended Concepts")
+    } else {
+    }
+
+  }
+  
   onResize(e) {
     if (this.showSlideKg) {
       try {
@@ -799,7 +836,22 @@ export class ConceptMapComponent {
       this.changeDetectorRef.detectChanges();
     }
     this.cyWidth = window.innerWidth * 0.9;
+
+    this.setResponsiveWidthKnowledgeGraph()
   }
+
+  setResponsiveWidthKnowledgeGraph() {
+    console.warn("window.innerWidth ", window.innerWidth)
+    let knowledgeGraph = document.getElementById('graphSection');
+    if (knowledgeGraph && knowledgeGraph.style) {
+      if (window.innerWidth < 2700) {
+        knowledgeGraph.style.width = '75%';
+      } else if (window.innerWidth > 2700) {
+        knowledgeGraph.style.width = '85%';
+      }
+    }
+  }
+
 
   //? This is responsible for setting the chip concept from the first section of the not understood concept list
   setChipConcept(concept: any): void {
@@ -837,11 +889,16 @@ export class ConceptMapComponent {
       if (flexboxNotUnderstood) {
         this.slideKgWidth =
           slideKgDialogDiv.offsetWidth - flexboxNotUnderstood.offsetWidth;
-        knowledgeGraph.style.marginLeft = 1 + 'rem';
+
+          if (knowledgeGraph) {
+            knowledgeGraph.style.marginLeft = 1 + 'rem';
+          }
       } else {
         this.slideKgWidth = slideKgDialogDiv.offsetWidth;
       }
-      knowledgeGraph.style.width = this.slideKgWidth + 'px';
+      // knowledgeGraph.style.width = this.slideKgWidth + 'px';
+      this.setResponsiveWidthKnowledgeGraph();
+
     }, 2);
   }
   // hide sidebar
@@ -1390,6 +1447,7 @@ export class ConceptMapComponent {
     this.conceptMapData = conceptsList;
   }
   async showRecommendations() {
+    this.resourcesPagination = null;
     if (this.disableShowRecommendationsButton) {
       this.infoToast();
     } else {
@@ -1399,9 +1457,9 @@ export class ConceptMapComponent {
         this.conceptMapRecommendedData = this.recommendedConcepts;
         this.filteredMapRecData = this.conceptMapRecommendedData;
         this.tabs[1].disabled = true;
-        this.tabs[2].disabled = true;
+        // this.tabs[2].disabled = true;
         this.kgTabsActivated = false;
-
+        
         this.understoodConceptsObj.forEach((concept) => {
           this.allUnderstoodConcepts.push(concept.cid);
         });
@@ -1426,6 +1484,7 @@ export class ConceptMapComponent {
       } catch (err) {
         console.error(err);
       }
+      this.tabIndex = 2;
       this.showRecommendationButtonClicked = true;
       // this.callRecommendationsService.showRecommendationsClicked();
 
@@ -1436,6 +1495,7 @@ export class ConceptMapComponent {
 
       const reqDataMaterial1 =
         await this.getRecommendedMaterialsPerSlideMaterial();
+      reqDataMaterial1["userId"] = this.userid;
 
       this.materialsRecommenderService
         .getRecommendedConcepts(
@@ -1463,97 +1523,43 @@ export class ConceptMapComponent {
               }, 1);
             }
 
-            this.kgTabs.kgTabsEnable();
-            this.mainConceptsTab = false;
-            this.recommendedConceptsTab = true;
-            //receive recommended concepts
-            //Log the activity User viewed all recommended concepts
-            this.logUserViewedRecommendedConcepts();
-            // this.tabs[2].disabled = true;
-            this.recommendedMaterialsTab = false;
-            //////////////////////////call material-recommender/////////////////////////
-            this.materialsRecommenderService
-              .getRecommendedMaterials(reqData) //req data will be sent to the backend to search for materials based on not understood concepts
-              .subscribe({
-                next: (result) => {
-                  this.resultMaterials = result;
-                  this.concepts1 = this.resultMaterials.concepts;
-                  // ! Here is the problem this.resultMaterials.concepts includes just cid, id, name, weight. We also nee the type of each concept for the logging.
-                  // Problem solved
-                  this.concepts1.forEach((el, index, array) => {
-                    let matchedConcept = this.didNotUnderstandConceptsObj.find(
-                      (concept) => concept.id.toString() === el.id.toString()
-                    );
+          //this.kgTabs.kgTabsEnable();
+          //this.kgTabsActivated = true;
+          this.mainConceptsTab = false;
+          this.recommendedConceptsTab = false;
+          
+          //Log the activity User viewed all recommended concepts
+          this.logUserViewedRecommendedConcepts();
+          //this.tabs[2].disabled = false;
+          //this.tabs[1].disabled = false;
+          // this.tabIndex = 2; 
+          //this.tabs[1].disabled = true;
+          //this.recommendedMaterialsTab = true;
+          
+          //////////////////////////call material-recommender/////////////////////////
 
-                    if (matchedConcept) {
-                      el.status = 'notUnderstood';
-                      el.type = matchedConcept.type; // Assigning type
-                    } else {
-                      matchedConcept = this.previousConceptsObj.find(
-                        (concept) =>
-                          concept.cid.toString() === el.cid.toString()
-                      );
+          
+          this.setHeightGraphComponent();
+          this.isRecommendationButtonDisplayed = false;
+          let reqDataFinal = this.croComponent.buildFinalRequestRecMaterial(reqData);
 
-                      if (matchedConcept) {
-                        el.status = 'notUnderstood';
-                        el.type = matchedConcept.type; // Assigning type
-                      } else {
-                        matchedConcept = this.understoodConceptsObj.find(
-                          (concept) =>
-                            concept.id.toString() === el.id.toString()
-                        );
-
-                        if (matchedConcept) {
-                          el.status = 'understood';
-                          el.type = matchedConcept.type; // Assigning type
-                        } else {
-                          matchedConcept = this.newConceptsObj.find(
-                            (concept) =>
-                              concept.id.toString() === el.id.toString()
-                          );
-                          if (matchedConcept) {
-                            el.status = 'unread';
-                            el.type = matchedConcept.type; // Assigning type
-                          }
-                        }
-                      }
-                    }
-
-                    array[index] = el; // Update the array element
-                  });
-
-                  // this.concepts1.forEach((el, index, array) => {
-                  //   if (
-                  //     this.didNotUnderstandConceptsObj.some(
-                  //       (concept) => concept.id.toString() === el.id.toString()
-                  //     )
-                  //   ) {
-                  //     el.status = 'notUnderstood';
-                  //     array[index] = el;
-                  //   } else if (
-                  //     this.previousConceptsObj.some(
-                  //       (concept) =>
-                  //         concept.cid.toString() === el.cid.toString()
-                  //     )
-                  //   ) {
-                  //     el.status = 'notUnderstood';
-                  //     array[index] = el;
-                  //   } else if (
-                  //     this.understoodConceptsObj.some(
-                  //       (concept) => concept.id.toString() === el.id.toString()
-                  //     )
-                  //   ) {
-                  //     el.status = 'understood';
-                  //     array[index] = el;
-                  //   } else {
-                  //     el.status = 'unread';
-                  //     array[index] = el;
-                  //   }
-                  // });
-
-                  this.resultMaterials = this.resultMaterials.nodes;
+          this.materialsRecommenderService
+          .getRecommendedMaterials(reqDataFinal) // reqData
+          .subscribe({
+            next: (result) => {
+              this.isRecommendationButtonDisplayed = true;
+              this.resourcesPagination = result;
 
                   this.kgTabs.kgTabsEnable();
+                  this.mainConceptsTab = false;
+                  this.recommendedConceptsTab = false;
+                  this.recommendedMaterialsTab = true;
+                 // this.tabs[1].disabled = false;
+                  //this.tabIndex = 2;
+                  //this.tabs[2].disabled = false;
+                  //this.kgTabsActivated = true;
+                  
+                  
                 },
                 complete: () => {
                   this.showRecommendationButtonClicked = false;
@@ -1763,8 +1769,9 @@ export class ConceptMapComponent {
           this.kgNodes = null;
           this.recommendedConcepts = null;
           this.tabs[1].disabled = true;
-          this.tabs[2].disabled = true;
+          // this.tabs[2].disabled = true;
           this.kgTabsActivated = false;
+          
           this.filteredMapData = null;
           this.resultMaterials = null;
 
@@ -1831,7 +1838,7 @@ export class ConceptMapComponent {
     this.recommendedConcepts = null;
     this.slideConceptservice.setUnderstoodConcepts(this.understoodConceptsObj);
     this.tabs[1].disabled = true;
-    this.tabs[2].disabled = true;
+    // this.tabs[2].disabled = true;
     this.kgTabsActivated = false;
     this.filteredMapData = null;
     this.selectedFilterValues = null;
@@ -1936,7 +1943,7 @@ export class ConceptMapComponent {
       key: 'emptyList',
       severity: 'warn',
       summary: 'Empty Not Understood Concepts List',
-      detail: 'Select not understood concept(s) from the graph!',
+      detail: 'Mark some concept(s) as not understood first to get recommendations',
     });
   }
   displayMessage(message: string): void {
@@ -2294,6 +2301,37 @@ export class ConceptMapComponent {
     }
   }
 
+  croUpdater(didNotUnderstandConceptsObj: any[], previousConceptsObj: any[]) {
+    this.croComponent?.updateCROformAll(didNotUnderstandConceptsObj, previousConceptsObj);
+  }
+
+  setHeightGraphComponent() {
+    let knowledgeGraph = document.getElementById('graphSection');
+    if (knowledgeGraph) {
+      let ipo_interact = document.getElementById('ipo_interact');
+      // console.warn("ipo_interact with -> ", ipo_interact.offsetWidth)
+      this.cyHeight = ipo_interact.offsetHeight - (ipo_interact.offsetHeight * 0.15);
+    }
+  }
+
+  setWeightGraphComponent(event) {
+    setTimeout(() => {
+      let knowledgeGraph = document.getElementById('graphSection');
+      if (this.showMaterialKg) {
+        console.warn("resize -> hideConceptsList -> HostListener event.screen ->", event.screen.width);
+        // let screenWidth = window.innerHeight;
+        let screenWidth = event.screen.width; // event.outerWidth
+
+        if (screenWidth >= 768 && screenWidth < 992) {
+          knowledgeGraph.style.width = '40em';
+        }
+        if (screenWidth > 992 && screenWidth <= 1200) {
+          knowledgeGraph.style.width = '40em';
+        }
+      }
+    }, 3);
+  }
+  
   pagechanging(e: any) {
     this.currentPDFPage = e.page + 1; // Update the current page
   }
@@ -2303,5 +2341,4 @@ export class ConceptMapComponent {
     event.stopPropagation();
     window.open(url, '_blank');
   }
-
 }
