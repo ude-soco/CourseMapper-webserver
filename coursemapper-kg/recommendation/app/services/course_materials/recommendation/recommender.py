@@ -12,7 +12,8 @@ from ..kwp_extraction.dbpedia.concept_tagging import DBpediaSpotlight
 from .wikipedia_service import WikipediaService
 from .youtube_service import YoutubeService
 import json
-
+from config import Config
+from ..db.neo4_db import NeoDataBase
 from log import LOG
 
 logger = LOG(name=__name__, level=logging.DEBUG)
@@ -103,6 +104,12 @@ class Recommender:
         self.youtube_service = YoutubeService()
         self.wikipedia_service = WikipediaService()
         self.dbpedia = DBpediaSpotlight()
+        neo4j_uri = Config.NEO4J_URI
+        neo4j_user = Config.NEO4J_USER
+        neo4j_pass = Config.NEO4J_PASSWORD
+
+        self.db = NeoDataBase(neo4j_uri, neo4j_user, neo4j_pass)
+
         if not embedding_model:
             # embedding_model = "sentence-transformers/msmarco-distilbert-base-tas-b"
             embedding_model = "all-mpnet-base-v2"
@@ -210,6 +217,9 @@ class Recommender:
 
             # Step 2: compute keyphrase-based embedding for resources
             data = self.compute_keyphrase_based_embeddings(data)
+
+             # Compute document embedding for resources For Color band
+            data = self.compute_document_based_embeddings(data)
             
             # Step 3: compute keyphrase-based similarity between user embeddings and
             # resources weighted average keyphrase embeddings
@@ -217,6 +227,8 @@ class Recommender:
             
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 1: Execution time {str(total_time)}")
+
+            
             return data
         
         # If Model 2
@@ -225,7 +237,13 @@ class Recommender:
 
             # Transform embedding to tensor
             user_tensor = get_tensor_from_embedding(user_embedding.split(","))
-            
+
+            # Retrieve Keyphrases
+            data = retrieve_keyphrases(data)
+
+            # compute keyphrase embeddings for concept-keyphrase similarity
+            data = self.compute_keyphrase_based_embeddings(data)
+
             # Step 1: compute document embedding for resources
             data = self.compute_document_based_embeddings(data)
                 
@@ -234,8 +252,9 @@ class Recommender:
 
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 2: Execution time {str(total_time)}")
-            return data 
-    
+
+            return data
+
         # If Model 3
         elif recommendation_type == RecommendationType.CONTENT_BASED_KEYPHRASE_VARIANT:
             start_time = time.time()
@@ -248,6 +267,9 @@ class Recommender:
 
             # Step 2: compute keyphrase-based embedding for resources
             data = self.compute_keyphrase_based_embeddings(data)
+
+             # Compute document embedding for resources For Color band
+            data = self.compute_document_based_embeddings(data)
 
             # Step 3: compute keyphrase-based similarity between slide weighted average keyphrase embeddings and
             # resources weighted average keyphrase embeddings
@@ -265,6 +287,12 @@ class Recommender:
             # Transform embedding to tensor
             slide_document_embedding_tensor = get_tensor_from_embedding(slide_document_embedding.split(","))
 
+            # Retrieve Keyphrases
+            data = retrieve_keyphrases(data)
+            
+            # compute keyphrase embeddings for concept-keyphrase similarity
+            data = self.compute_keyphrase_based_embeddings(data)
+
             # Step 1: compute document embedding for resources
             data = self.compute_document_based_embeddings(data)
 
@@ -273,6 +301,7 @@ class Recommender:
 
             total_time = time.time() - start_time
             logger.info(f"Algorithm Model 4: Execution time {str(total_time)}")
+        
             return data
 
 
@@ -281,21 +310,18 @@ class Recommender:
             Compute keyphrase-based embedding for resources
         '''
         logger.info("Add relevant Columns for keyphrase embeddings")
-        # print(data["keyphrases_infos"].head(5))
+        
 
         def do(row):
-            if len(row["keyphrase_embedding"]) < 1:
+            if (len(row["keyphrase_embedding"]) < 1 or len(row.get("individual_keyphrase_embeddings", [])) < 1) and row.get("keyphrases_infos") is not None:
                 keyphrase_infos = row["keyphrases_infos"]
-                keyphrases_avg_embedding = (
-                    self.compute_weighted_avg_embedding_of_keyphrases(
-                        keyphrase_infos
-                    ).tolist()
-                )
-                return keyphrases_avg_embedding
+                avg_embedding, individual_embeddings = self.compute_weighted_avg_embedding_of_keyphrases(keyphrase_infos)
+                return pd.Series([avg_embedding.tolist(), individual_embeddings])
             else:
-                return row["keyphrase_embedding"]
+                
+                return row["keyphrase_embedding"],row["individual_keyphrase_embeddings"]
 
-        data['keyphrase_embedding'] = data.apply(do, axis=1)
+        data[["keyphrase_embedding", "individual_keyphrase_embeddings"]] = data.apply(do, axis=1)
         return data
 
     def compute_document_based_embeddings(self, data):
@@ -338,11 +364,13 @@ class Recommender:
     def compute_weighted_avg_embedding_of_keyphrases(self, keyphrase_infos):
         np.seterr("raise")
         embedding_list = []
+        individual_embeddings_list=[]
         weight_sum = 0
         keyphrase_infos = json.loads(keyphrase_infos)
         for keyphrase in keyphrase_infos:
             embedding = self.embedding.encode(keyphrase[0])
             embedding_list.append(embedding * keyphrase[1])
+            individual_embeddings_list.append(embedding.tolist())
             weight_sum += keyphrase[1]
         if len(embedding_list) != 0:
             vectors = np.sum(embedding_list, axis=0)
@@ -351,6 +379,186 @@ class Recommender:
             # dividing by the sum of weights
             average_embedding = vectors / weight_sum
             # print("average_embedding: %s", type(average_embedding))
-            return average_embedding
+            return average_embedding,individual_embeddings_list
         else:
-            return 0
+            return 0,[] 
+
+    def compute_concept_keyphrase_similarity(self,row,concepts_nodes):
+        """
+        Compute cosine similarity scores between each keyphrase embedding in the row and each DNU concept embedding.
+
+        For each keyphrase in the provided row, this method:
+        1. Iterates through all DNU concepts.
+        2. Computes cosine similarity between the keyphrase embedding and each concept embedding.
+        3. Sorts the similarities in descending order for each keyphrase.
+        4. Stores the sorted similarity scores as a dictionary per keyphrase.
+
+        Args:
+            row (pd.Series): A DataFrame row containing 'individual_keyphrase_embeddings'.
+            concepts_nodes (List[Dict]): A list of DNU concept nodes, each containing:
+                - 'name': Concept name.
+                - 'final_embedding': Comma-separated string of floats representing the embedding.
+
+        Returns:
+            List[Dict[str, float]]: A list of dictionaries where each dictionary represents
+            a keyphrase and its similarity scores to all DNU concepts, sorted by similarity (descending).
+        """
+
+        row_keyphrases_dnu_similarities=[]
+        for i,keyphrase_embedding in enumerate(row["individual_keyphrase_embeddings"]):
+            keyphrase_similarity={}
+            for concept in concepts_nodes:
+                concept_embedding = [float(x.strip()) for x in concept["final_embedding"].split(',')]
+                keyphrase_similarity[concept["name"]]=compute_cosine_similarity_with_embeddings(keyphrase_embedding,concept_embedding)
+            sorted_similarity=dict(sorted(keyphrase_similarity.items(), key=lambda item: item[1], reverse=True))
+            row_keyphrases_dnu_similarities.append(sorted_similarity)
+
+        return row_keyphrases_dnu_similarities
+
+    def compute_concept_document_similarity(self,row,concepts_nodes):
+        """
+        Compute cosine similarity scores between the document embedding and each DNU concept embedding.
+
+        For the provided row, this method:
+        1. Iterates through all DNU concepts.
+        2. Computes cosine similarity between the document embedding and each concept embedding.
+        3. Stores the similarity scores in a dictionary keyed by concept name.
+
+        Args:
+            row (pd.Series): A DataFrame row containing 'document_embedding'.
+            concepts_nodes (List[Dict]): A list of DNU concept nodes, each containing:
+                - 'name': Concept name.
+                - 'final_embedding': Comma-separated string of floats representing the embedding.
+
+        Returns:
+            Dict[str, float]: A dictionary mapping each concept name to its cosine similarity
+            score with the document embedding.
+        """
+
+        document_similarity={}
+
+        for concept in concepts_nodes:
+            concept_embedding = [float(x.strip()) for x in concept["final_embedding"].split(',')]
+            document_similarity[concept["name"]]=compute_cosine_similarity_with_embeddings(concept_embedding
+                                                                                                   ,row["document_embedding"])
+
+        return document_similarity
+
+    def _process_keyphrases_infos(self, row):
+
+        """Process keyphrase info from a DataFrame row from string to list."""
+        kp_infos = json.loads(row["keyphrases_infos"])
+        emb_count = len(row["individual_keyphrase_embeddings"])
+        return [tuple(kp) for kp in kp_infos[:emb_count]]
+
+
+    def post_retrieve_keyphrases(self,data,dnu_concepts,mid):
+        """
+        Extract keyphrases from the 'abstract' column and store them in a new 'keyphrases' column.
+        Uses the SingleRank algorithm for keyphrase extraction.
+        1. Keyphrases Extraction from abstract/description 
+        2. Keyphrase Extraction also gives automatically the importance ranking for each keyphrase in the doc.
+        3. Compute the embedding of each Kephrase
+        4. Compute the embedding of each DNU concept
+        5. Comute and store the similarity score between each kephrase and the DNU concept
+        6. to do: get the max s.c betweeen each keyphrase and one dnu for keyphrase coloring
+        """
+        logger.info("Extracting keyphrases and adding to DataFrame.")
+        keyphrases_concept_similarity_score=[]  # list of lists of dictionaries (one to one) first attr is DNU concept and second is similarity score between the dnu and the keyphrase
+        concept_ids=[concept["cid"] for concept in dnu_concepts]
+        concepts_nodes=self.db.get_concepts_nodes(concept_ids,mid)
+        document_concept_similarity=[]
+        for index, row in data.iterrows():
+            text = row.get("text", "")
+            if text:
+                row_keyphrases_dnu_similarities= self.compute_concept_keyphrase_similarity(row,concepts_nodes)
+                keyphrases_concept_similarity_score.append(row_keyphrases_dnu_similarities)
+                document_similarity=self.compute_concept_document_similarity(row,concepts_nodes)                                                                                    
+                document_concept_similarity.append(document_similarity) 
+            else:
+                keyphrases_concept_similarity_score.append([])
+                document_concept_similarity.append([])
+
+        data["keyphrases"] = data.apply(self._process_keyphrases_infos, axis=1)
+        data["keyphrases_concept_similarity_score"]=keyphrases_concept_similarity_score
+        data["document_concept_similarity"]=document_concept_similarity
+
+        return data
+
+    def concept_keyphrase_similarities(self, data, concepts, mid):
+        """
+        Compute keyphrase-level similarity scores between each keyphrase and the provided DNU concepts.
+
+        For each document:
+        - Retrieves concept embeddings.
+        - Computes the similarity between each keyphrase embedding and each DNU concept.
+        - Stores the sorted similarity scores.
+
+        Also extracts processed keyphrases and stores them in a new 'keyphrases' column.
+
+        Args:
+            data (pd.DataFrame): DataFrame with 'individual_keyphrase_embeddings' and 'keyphrases_infos'.
+            dnu_concepts (List[Dict]): List of DNU concepts with 'cid' and other metadata.
+            mid (str): Model or metadata identifier used to retrieve concept embeddings.
+
+        Returns:
+            pd.DataFrame: Updated DataFrame with:
+                - 'keyphrases': Truncated keyphrase info.
+                - 'keyphrases_concept_similarity_score': List of similarity dicts per keyphrase.
+        """
+        logger.info("Computing keyphrase-to-concept similarity scores.")
+        keyphrases_concept_similarity_score = []
+
+        concept_ids = [concept["cid"] for concept in concepts]
+        concepts_nodes = self.db.get_concepts_nodes(concept_ids, mid)
+
+        for _, row in data.iterrows():
+            text = row.get("text", "")
+            if text:
+                row_similarities = self.compute_concept_keyphrase_similarity(row, concepts_nodes)
+                keyphrases_concept_similarity_score.append(row_similarities)
+            else:
+                keyphrases_concept_similarity_score.append([])
+
+        data["keyphrases"] = data.apply(self._process_keyphrases_infos, axis=1)
+        data["keyphrases_concept_similarity_score"] = keyphrases_concept_similarity_score
+
+        return data
+
+
+    def concept_document_similarities(self, data, concepts, mid):
+        """
+        Compute document-level similarity scores between each document embedding and the DNU concepts.
+
+        For each document:
+        - Retrieves concept embeddings.
+        - Computes cosine similarity between document embedding and each concept.
+        - Stores the similarity scores.
+
+        Args:
+            data (pd.DataFrame): DataFrame with 'document_embedding' column.
+            dnu_concepts (List[Dict]): List of DNU concepts with 'cid' and other metadata.
+            mid (str): Model or metadata identifier used to retrieve concept embeddings.
+
+        Returns:
+            pd.DataFrame: Updated DataFrame with:
+                - 'document_concept_similarity': Dict of similarity scores per document.
+        """
+        logger.info("Computing document-to-concept similarity scores.")
+        document_concept_similarity = []
+
+        concept_ids = [concept["cid"] for concept in concepts]
+        concepts_nodes = self.db.get_concepts_nodes(concept_ids, mid)
+
+        for _, row in data.iterrows():
+            text = row.get("text", "")
+            if text:
+                similarity = self.compute_concept_document_similarity(row, concepts_nodes)
+                document_concept_similarity.append(similarity)
+            else:
+                document_concept_similarity.append([])
+
+        data["document_concept_similarity"] = document_concept_similarity
+        return data
+
+

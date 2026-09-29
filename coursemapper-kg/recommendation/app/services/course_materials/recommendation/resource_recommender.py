@@ -154,7 +154,12 @@ class ResourceRecommenderService:
                 data=data_df
             )
             resources_df.replace({np.nan: None}, inplace=True)
-            resources = resources_df.to_dict(orient='records') 
+            resources=recommender.concept_keyphrase_similarities(resources_df,rec_params["concepts"],rec_params["mid"])
+            resources=recommender.concept_document_similarities(resources_df,rec_params["concepts"],rec_params["mid"])
+            resources = resources_df.to_dict(orient='records')
+
+            # resources=post_retrieve_keyphrases(resources)
+
             self.db.store_resources(resources_list=resources, resources_form="list",resources_dict=None, cid=None)
 
             # insert attribute "is_bookmarked_fill" for resource saved by the user
@@ -166,11 +171,13 @@ class ResourceRecommenderService:
                                             top_n_resources=top_n_resources, recommendation_type=recommendation_type,
                                             pagination_params=rec_params["pagination_params"]
                                         )
+        
         result_final = {    
                             "recommendation_type": rec_params["recommendation_type"],
                             "concepts": rec_params["concepts"], 
                             "nodes": resources_dict
                         }
+        
         return result_final
 
     def _get_resources(self, data_rec_params: dict, data_default: dict=None, top_n = 5):
@@ -210,7 +217,7 @@ class ResourceRecommenderService:
             clu = rrh.save_and_get_concepts_modified(   db=self.db,
                                                         rec_params=rec_params, 
                                                         top_n=5, 
-                                                        user_embedding_status=True, 
+                                                        user_embedding_status=True,
                                                         understood_list=body["understood_concept_ids"], 
                                                         non_understood_list=body["non_understood_concept_ids"]
                                                     )

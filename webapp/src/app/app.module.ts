@@ -103,6 +103,8 @@ import { BackButtonComponent } from './pages/components/back-button/back-button.
 import { EmailValidationComponent } from './pages/components/email-validation/email-validation.component';
 import { RequestEmailValidationComponent } from './pages/components/email-validation/request-email-validation/request-email-validation.component';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -145,6 +147,7 @@ import { RequestEmailValidationComponent } from './pages/components/email-valida
    BackButtonComponent,
    EmailValidationComponent,
    RequestEmailValidationComponent,
+   
 
   ],
   imports: [
@@ -181,6 +184,7 @@ import { RequestEmailValidationComponent } from './pages/components/email-valida
     KnowledgeGraphModule,
     TabMenuModule,
     DividerModule,
+
   ],
   exports: [],
   providers: [httpInterceptorProviders, DatePipe],

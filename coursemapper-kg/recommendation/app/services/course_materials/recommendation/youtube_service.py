@@ -12,6 +12,7 @@ import re
 import logging
 from log import LOG
 from googleapiclient.errors import HttpError
+from config import Config
 logger = LOG(name=__name__, level=logging.DEBUG)
 from config import Config
 
@@ -115,7 +116,7 @@ class YoutubeService:
             if "channelId" in df_ids.columns and "channelId" in df_snippet.columns:
                 df_ids = df_ids.drop(columns=["channelId"])
 
-             # Drop rows with no videoId (e.g. channel/playlist results mixed
+            # Drop rows with no videoId (e.g. channel/playlist results mixed
             # into search results despite type="video"), and keep df_ids and
             # df_snippet aligned by resetting both indices the same way.
             valid_mask = df_ids["id"].notna()

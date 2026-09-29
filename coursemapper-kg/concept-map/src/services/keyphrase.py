@@ -12,18 +12,19 @@ from services.sifrank.method import (
 from services.sifrank.stanford_core_nlp_tagger import StanfordCoreNLPTagger
 from services.sifrank.flair_transformers_word_emb import FlairTransformerWordEmbeddings
 from config import Config
+import logging
 
 
-stanfordcorenlp_file = os.path.abspath("stanford-corenlp-full-2018-02-27")
+stanfordcorenlp_file = os.path.abspath("C:\\Users\\farah\\OneDrive\\Desktop\\CourseMapper-webserver\\coursemapper-kg\\concept-map\\stanford-corenlp-full-2018-02-27")
 
 class KeyphraseService:
     def __init__(self):
         self.model = FlairTransformerWordEmbeddings(TransformerWordEmbeddings(
             "squeezebert/squeezebert-mnli", subtoken_pooling="mean", layers="3,5"
         ))
+        print("model loading done")
         self.tagger_model = StanfordCoreNLPTagger(StanfordCoreNLP(
-            stanfordcorenlp_file, quiet=True
-        ))
+            stanfordcorenlp_file, quiet=False, logging_level=logging.DEBUG))
 
     def __del__(self):
         if self.tagger_model is not None:

@@ -598,6 +598,7 @@ def parallel_crawling_resources_v2(function, concept_name: str, cid: str, result
         submit function: takes
             function: canditate_selection (this function takes the params below)
             query, video, result_type="records", top_n_videos=2, top_n_articles=2
+            disabling articles for user study
     '''
     with ThreadPoolExecutor() as executor:
         future_videos = executor.submit(function, concept_name, True, result_type, top_n_videos, top_n_articles)

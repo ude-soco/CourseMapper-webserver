@@ -999,9 +999,11 @@ class NeoDataBase:
                                 else:
                                     self.edit_resource_to_concept_relationship(rid=rid, cid=cid, weight=weight,
                                                                                relation_type="CONTAINS")
+    
 
                 user_to_concept_relationships = retrieve_user_to_concept_relationships(session, user_id)
                 relationships.extend([r for r in user_to_concept_relationships if r not in relationships])
+    
 
                 for cid in concept_ids:
                     resource = retrieve_concept_resources(session, material_id, cid)
@@ -1168,6 +1170,24 @@ class NeoDataBase:
                 return True
             else:
                 return False
+    
+    def get_concepts_nodes(self, cids, mid):
+        """
+        Retrieve Concept nodes matching any of the given cids and the given mid.
+        Returns a list of nodes if found, otherwise None.
+        """
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (c:Concept)
+                WHERE c.cid IN $cids AND c.mid = $mid
+                RETURN c
+                """,
+                cids=cids,
+                mid=mid
+            )
+            nodes = [record["c"] for record in result]
+            return nodes if nodes else None
 
     def get_concept_cid(self, node):
         with self.driver.session() as session:

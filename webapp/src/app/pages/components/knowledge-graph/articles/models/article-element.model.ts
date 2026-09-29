@@ -2,6 +2,9 @@ export interface ArticleElementModel {
     id: number;
     thumbnail?: string;
     keyphrases?: string[];
+    keyphrases_concept_similarity_score?:any[];
+    document_concept_similarity?:any[];
+    selectedKeyphrase?: string;
     title: string;
     abstract: string;
     post_date?: string;

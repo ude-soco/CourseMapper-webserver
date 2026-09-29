@@ -3,10 +3,10 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnInit,
   Output,
   SecurityContext,
   ViewChild,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { getCurrentPdfPage } from '../../../annotations/pdf-annotation/state/annotation.reducer';
 import { ArticleElementModel } from '../models/article-element.model';
@@ -14,10 +14,14 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MessageService } from 'primeng/api';
 import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
+import { Chart } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Material } from 'src/app/models/Material';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/state/app.reducer';
 import { Subscription } from 'rxjs';
+import { ResourcesPagination } from 'src/app/models/croForm';
+
 @Component({
   selector: 'app-card-article',
   templateUrl: './card-article.component.html',
@@ -28,6 +32,7 @@ export class CardArticleComponent {
   constructor(
     private sanitizer: DomSanitizer,
     private materialsRecommenderService: MaterialsRecommenderService,
+    private cdr: ChangeDetectorRef,
     private messageService: MessageService,
     private store: Store<State>
   ) {
@@ -39,13 +44,10 @@ export class CardArticleComponent {
     );
   }
 
-  @Input()
-  article!: ArticleElementModel;
-  @Input()
-  public notUnderstoodConcepts: string[];
+  @Input() article!: ArticleElementModel;
+
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Input() userId: string;
-
   @Input() currentMaterial?: Material;
   subscriptions: Subscription = new Subscription(); // Manage subscriptions
   ABSTRACT_MAX_LENGTH = 600;
@@ -55,15 +57,109 @@ export class CardArticleComponent {
   selectedConcepts: string[] = [];
   userCanExpand = true;
 
-   isDescriptionFullDisplayed = false;
-   isBookmarkFill = false;
-   articleDescription = "";
-   saveOrRemoveParams = {"user_id": "", "rid": "", "status": this.isBookmarkFill};
-   saveOrRemoveStatus = false;
-   @Input() resultTabType: string = "";
-   @Output() resourceRemovedEvent = new EventEmitter<string>(); // take rid
+  isDescriptionFullDisplayed = false;
+  isBookmarkFill = false;
+  articleDescription = '';
+  saveOrRemoveParams = { user_id: '', rid: '', status: this.isBookmarkFill };
+  saveOrRemoveStatus = false;
+  @Input() resultTabType: string = '';
+  @Output() resourceRemovedEvent = new EventEmitter<string>(); // take rid
 
-  ngOnInit(): void {}
+  @Input() public conceptColors!: string[];
+  @Input() public concepts: { name: string }[] = [];
+  public conceptsNames: string[] = [];
+  isWhyExpanded: boolean = false;
+  @Input() resourcesPagination: ResourcesPagination;
+
+  abstractParts: { text: string; isKeyphrase: boolean; keyphraseMeta?: any }[] =
+    [];
+  abstractPartsTruncated: {
+    text: string;
+    isKeyphrase: boolean;
+    keyphraseMeta?: any;
+  }[] = [];
+
+  coloredBandData = {
+    document_concept_similarity_colorband: {} as { [key: string]: number },
+    tags: [] as { text: string; color: string }[],
+  };
+
+  @Output() keyphraseClicked = new EventEmitter<{
+    keyphrase: string;
+    clientX: number;
+    clientY: number;
+  }>();
+  selectedKeyphrase: string | null = null;
+  @ViewChild('popupBarChartCanvas', { static: false })
+  popupBarChartCanvas!: ElementRef<HTMLCanvasElement>;
+  popupChart: any; // Chart instance for the popup
+
+  ngOnInit() {
+    this.getConceptsNames();
+
+    this.coloredBandData = {
+      document_concept_similarity_colorband: this.concepts.reduce(
+        (acc, concept, i) => {
+          acc[concept.name] =
+            this.article.document_concept_similarity[concept.name] || 0;
+          return acc;
+        },
+        {}
+      ),
+      tags: this.concepts.map((concept, index) => ({
+        text: concept.name,
+        color: this.conceptColors[index] || '#cccccc',
+      })),
+    };
+
+    this.generateParts(
+      this.article.abstract,
+      this.article.keyphrases,
+      this.article.keyphrases_concept_similarity_score
+    );
+
+    this.abstractPartsTruncated = this.truncateParts(
+      this.abstractParts,
+      this.ABSTRACT_MAX_LENGTH
+    );
+
+ 
+  /*    //  For debugging:
+
+    console.log(this.article); 
+    console.log('keyphrases_concept_similarity_score:', this.article.keyphrases_concept_similarity_score); 
+    console.log("document_concept_similarity_colorband:", this.article.document_concept_similarity);
+    console.log("coloredBandData:", this.coloredBandData);
+    console.log("DNU Names:", this.conceptsNames);
+    console.log("DNU Colors:", this.conceptColors); */
+  }
+
+  /*   //  For debugging:
+  ngAfterViewInit(){
+    console.log("coloredBandData:", this.coloredBandData);
+  }
+ */
+  ngOnChanges() {
+    this.isBookmarkFill = this.article?.is_bookmarked_fill;
+    this.saveOrRemoveParams.user_id = this.userId;
+    this.saveOrRemoveParams.rid = this.article?.rid;
+
+    if (this.article?.abstract && this.article?.keyphrases) {
+      this.generateParts(
+        this.article.abstract,
+        this.article.keyphrases,
+        this.article.keyphrases_concept_similarity_score
+      );
+      this.abstractPartsTruncated = this.truncateParts(
+        this.abstractParts,
+        this.ABSTRACT_MAX_LENGTH
+      );
+    }
+  }
+
+  getConceptsNames() {
+    this.conceptsNames = this.concepts?.map((dnu) => dnu.name) ?? [];
+  }
 
   public openArticle(article: any): void {
     const safeURL = this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -105,17 +201,12 @@ export class CardArticleComponent {
     this.userCanExpand = !this.userCanExpand;
   }
 
-  ngOnChanges() {
-    this.isBookmarkFill = this.article?.is_bookmarked_fill;
-    this.saveOrRemoveParams.user_id = this.userId;
-    this.saveOrRemoveParams.rid = this.article?.rid;
-  }
-
   showDescriptionFull() {
-    this.isDescriptionFullDisplayed = this.isDescriptionFullDisplayed === true ? false : true;
+    this.isDescriptionFullDisplayed =
+      this.isDescriptionFullDisplayed === true ? false : true;
   }
 
-  addToBookmark() {    
+  addToBookmark() {
     this.isBookmarkFill = this.isBookmarkFill === true ? false : true;
     this.saveOrRemoveParams.status = this.isBookmarkFill;
     this.SaveOrRemoveUserResource(this.saveOrRemoveParams);
@@ -126,20 +217,31 @@ export class CardArticleComponent {
     // detail: 'Open your Bookmark List to find this article'
     if (this.isBookmarkFill == true) {
       if (this.saveOrRemoveStatus === true) {
-        this.messageService.add({ key: 'resource_bookmark_article', severity: 'success', summary: '', detail: 'Article saved successfully'});
+        this.messageService.add({
+          key: 'resource_bookmark_article',
+          severity: 'success',
+          summary: '',
+          detail: 'Article saved successfully',
+        });
       }
     } else {
       if (this.saveOrRemoveStatus === false) {
-        this.messageService.add({key: 'resource_bookmark_article', severity: 'info', summary: '', detail: 'Article removed from saved'});
+        this.messageService.add({
+          key: 'resource_bookmark_article',
+          severity: 'info',
+          summary: '',
+          detail: 'Article removed from saved',
+        });
       }
     }
   }
 
   SaveOrRemoveUserResource(params) {
-    this.materialsRecommenderService.SaveOrRemoveUserResource(params)
+    this.materialsRecommenderService
+      .SaveOrRemoveUserResource(params)
       .subscribe({
         next: (data: any) => {
-          if (data["msg"] == "saved") {
+          if (data['msg'] == 'saved') {
             this.saveOrRemoveStatus = true;
             this.article.is_bookmarked_fill = true;
           } else {
@@ -153,13 +255,496 @@ export class CardArticleComponent {
           this.saveOrRemoveStatus = false;
           this.article.is_bookmarked_fill = false;
         },
-      }
-    );
+      });
   }
 
   onResourceRemovedEvent() {
-    if (this.isBookmarkFill === false && this.resultTabType === "saved") {
+    if (this.isBookmarkFill === false && this.resultTabType === 'saved') {
       this.resourceRemovedEvent.emit(this.article.rid);
     }
   }
+  getColorForConcept(concept: string): string {
+    const index = this.conceptsNames.indexOf(concept);
+    return index !== -1 ? this.conceptColors[index] : 'red';
+  }
+
+  isURL(text: string): boolean {
+    const trimmed = text.trim();
+
+    // Only treat it as a URL if it starts with http/https/www
+    // Ignore any trailing stuff like " ▷SECURE"
+    return /^(https?:\/\/|www\.)[^\s]+/i.test(trimmed);
+  }
+
+  escapeRegex(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+  }
+
+  cleanKeyphrase(kp: string): string {
+    return (
+      kp
+        // --- LaTeX cleanup ---
+        .replace(/\\[a-zA-Z]+\s*/g, '') // remove LaTeX commands like \frac, \alpha, \displaystyle
+        .replace(/[{}]/g, '') // remove LaTeX braces
+
+        .replace(/\s*([|<>=()\-+])\s*/g, '$1') // remove spaces around math symbols
+        // --- General text normalization ---
+        .toLowerCase() // make case-insensitive
+        .replace(/\s+/g, ' ') // collapse multiple spaces/tabs/newlines into one space
+        .trim()
+    ); // remove leading/trailing spaces
+  }
+
+  cleanTextForLatex(text: string): string {
+    return (
+      text
+        // --- Remove invisible Unicode math characters (like ⁡ U+2061) ---
+        .replace(/[\u200B-\u200F\u2060-\u206F]/g, '')
+
+        // Remove paired patterns like: "F {\displaystyle F}" => "F"
+        .replace(/\b([A-Za-z])\s*\{\s*\\[a-zA-Z]+\s*\1\s*\}/g, '$1')
+
+        // Remove full LaTeX blocks like: {\command ...}
+        .replace(/\{\s*\\[a-zA-Z]+\s*[^{}]*?\}/g, '')
+
+        // Remove standalone LaTeX commands like \displaystyle
+        .replace(/\\[a-zA-Z]+\s*/g, '')
+
+        // Remove stray braces
+        .replace(/[{}]/g, '')
+
+        // Remove spaces around math symbols
+        .replace(/\s*([|<>=()\-+])\s*/g, '$1')
+
+        // Collapse multiple spaces
+        .replace(/\s{2,}/g, ' ')
+
+        .trim()
+    );
+  }
+
+  generateKeyphraseVariants(kp: string): string[] {
+    const variants = new Set<string>();
+
+    const base = kp.toLowerCase().trim();
+
+    // normalize multiple spaces
+    const collapsed = base.replace(/\s+/g, ' ');
+    variants.add(collapsed);
+
+    // hyphen/space variants
+    variants.add(collapsed.replace(/\s*-\s*/g, '-')); // no space hyphen
+    variants.add(collapsed.replace(/\s*-\s*/g, ' - ')); // spaced hyphen
+    variants.add(collapsed.replace(/\s*-\s*/g, ' ')); // no hyphen
+
+    // diacritic-insensitive variant
+    variants.add(collapsed.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+    // plural form (add s at end of last word)
+    const pluralForm = collapsed.replace(/(\b\w+)$/, '$1s');
+    variants.add(pluralForm);
+
+    // singular form (if already ends with s, drop it)
+    if (collapsed.endsWith('s')) {
+      variants.add(collapsed.slice(0, -1));
+    }
+
+    return Array.from(variants);
+  }
+
+  generateParts(
+  text: string,
+  keyphrases: string[],
+  keyphrases_concept_similarity_score: any[]
+) {
+  this.abstractParts = [];
+
+  const cleanedAbstract = this.cleanTextForLatex(text);
+  /* //  For debugging:     
+  console.log(' Original abstract:', text);
+  console.log(' Cleaned abstract:', cleanedAbstract); */
+
+  if (!cleanedAbstract || !keyphrases || keyphrases.length === 0) {
+    this.abstractParts = [{ text: cleanedAbstract, isKeyphrase: false }];
+    return;
+  }
+
+  const expandedKeyphrases: {
+    text: string;
+    dnu: string;
+    original: string;
+  }[] = [];
+
+  keyphrases.forEach((kp, i) => {
+    const raw = Array.isArray(kp) ? kp[0] : kp;
+    const cleaned = this.cleanKeyphrase(raw);
+    const dnu = Object.keys(keyphrases_concept_similarity_score[i])[0];
+
+    // ✅ Skip keyphrases that have no positive similarity scores
+    const similarityObj = keyphrases_concept_similarity_score[i];
+const hasPositive = Object.values(similarityObj)
+  .filter((v): v is number => typeof v === 'number')
+  .some(v => v > 0);
+
+    if (!hasPositive) {
+      /* // For debugging:
+      console.warn(`Skipping unrelated keyphrase: "${cleaned}"`);
+      */
+      return;
+    }
+
+    if (this.isURL(cleaned)) {
+      /* // For debugging: Skip keyphrases that look like URLs
+      console.warn(`Skipping URL-like keyphrase: "${cleaned}"`); */
+      return;
+    }
+
+    const variants = this.generateKeyphraseVariants(cleaned);
+
+    let foundVariantInAbstract = false;
+    variants.forEach((v) => {
+      const regex = new RegExp(this.escapeRegex(v), 'gi');
+      if (regex.test(cleanedAbstract)) {
+        foundVariantInAbstract = true;
+      }
+
+      expandedKeyphrases.push({
+        text: v,
+        dnu,
+        original: cleaned,
+      });
+    });
+
+    /* //  For debugging:
+    if (!foundVariantInAbstract) {
+      console.warn(`⚠️ No match in abstract for keyphrase: "${cleaned}"`);
+    } */
+  });
+
+  const matches: {
+    index: number;
+    length: number;
+    kp: string;
+    dnu: string;
+  }[] = [];
+
+  expandedKeyphrases.forEach(({ text: kp, dnu, original }) => {
+    if (!kp) return;
+
+    let regex: RegExp;
+
+    if (kp.length <= 3) {
+      // For very short keyphrases like "a", "an", "x", use word boundaries & Use custom boundary to avoid including parentheses
+      regex = new RegExp(`(?<!\\w)${this.escapeRegex(kp)}(?!\\w)`, 'gi');
+    } else {
+      regex = new RegExp(this.escapeRegex(kp), 'gi');
+    }
+
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(cleanedAbstract)) !== null) {
+      matches.push({
+        index: match.index,
+        length: match[0].length,
+        kp: original,
+        dnu,
+      });
+    }
+  });
+
+  matches.sort((a, b) => a.index - b.index || b.length - a.length);
+
+  const filteredMatches: typeof matches = [];
+  let lastIndex = -1;
+  for (const match of matches) {
+    if (match.index >= lastIndex) {
+      filteredMatches.push(match);
+      lastIndex = match.index + match.length;
+    }
+  }
+
+  let currentIndex = 0;
+  for (const match of filteredMatches) {
+    if (match.index > currentIndex) {
+      this.abstractParts.push({
+        text: cleanedAbstract.slice(currentIndex, match.index),
+        isKeyphrase: false,
+      });
+    }
+
+    this.abstractParts.push({
+      text: cleanedAbstract.slice(match.index, match.index + match.length),
+      isKeyphrase: true,
+      keyphraseMeta: {
+        concept: match.dnu,
+        originalKeyphrase: match.kp,
+        color: this.getColorForConcept(match.dnu),
+      },
+    });
+
+    currentIndex = match.index + match.length;
+  }
+
+  if (currentIndex < cleanedAbstract.length) {
+    this.abstractParts.push({
+      text: cleanedAbstract.slice(currentIndex),
+      isKeyphrase: false,
+    });
+  }
+}
+
+  truncateParts(
+    parts: { text: string; isKeyphrase: boolean; keyphraseMeta?: any }[],
+    maxLength: number
+  ) {
+    const result: typeof this.abstractParts = [];
+    let count = 0;
+
+    for (const part of parts) {
+      const partLength = part.text.length;
+
+      // If adding this part exceeds maxLength
+      if (count + partLength > maxLength) {
+        if (part.isKeyphrase) {
+          // Always include full keyphrase even if it slightly exceeds maxLength
+          result.push(part);
+        } else {
+          // Truncate non-keyphrase text to fit remaining length
+          const remaining = maxLength - count;
+          if (remaining > 0) {
+            result.push({ ...part, text: part.text.slice(0, remaining) });
+          }
+        }
+        break; // Stop after truncating
+      }
+
+      // Add part fully
+      result.push(part);
+      count += partLength;
+    }
+
+    return result;
+  }
+
+
+
+ hasPositiveScores = true; 
+ 
+ private getKeyphraseIndex(clickedKeyphrase: string): number {
+  if (!clickedKeyphrase) return -1;
+
+  let originalKeyphrase = clickedKeyphrase;
+
+  // Resolve variant → original keyphrase
+  const part = this.abstractParts.find(
+    (p) =>
+      p.isKeyphrase &&
+      p.text === clickedKeyphrase &&
+      p.keyphraseMeta?.originalKeyphrase
+  );
+
+  if (part?.keyphraseMeta?.originalKeyphrase) {
+    originalKeyphrase = part.keyphraseMeta.originalKeyphrase;
+  }
+
+  const cleanedKey = this.cleanKeyphrase(originalKeyphrase);
+
+  // Find index in article.keyphrases
+  return this.article.keyphrases.findIndex((tuple) => {
+    const candidate = Array.isArray(tuple)
+      ? String(tuple[0])
+      : String(tuple);
+    return this.cleanKeyphrase(candidate) === cleanedKey;
+  });
+}
+
+private destroyPopupChart(): void {
+  if (this.popupChart) {
+    this.popupChart.destroy();
+    this.popupChart = null;
+  }
+}
+
+ generatePopupBarChart(): void {
+  if (!this.popupBarChartCanvas || !this.selectedKeyphrase) {
+    return;
+  }
+
+  const canvas = this.popupBarChartCanvas.nativeElement;
+
+  // 1. Resolve clicked keyphrase → canonical keyphrase index
+  const keyphraseIndex = this.getKeyphraseIndex(this.selectedKeyphrase);
+
+  if (
+    keyphraseIndex === -1 ||
+    !this.article.keyphrases_concept_similarity_score?.[keyphraseIndex]
+  ) {
+    this.hasPositiveScores = false;
+    this.destroyPopupChart();
+    return;
+  }
+
+  // 2. Backend-ranked similarity object (ORDER MATTERS)
+  const similarityObject =
+    this.article.keyphrases_concept_similarity_score[keyphraseIndex];
+  // type: Record<string, number>
+
+  // 3. Take top 3 positive similarities IN BACKEND ORDER
+const rankedEntries = Object.entries(similarityObject as Record<string, number>)
+  .filter(([, score]) => score > 0)
+  .slice(0, 3);
+
+
+  this.hasPositiveScores = rankedEntries.length > 0;
+
+  if (!this.hasPositiveScores) {
+    this.destroyPopupChart();
+    return;
+  }
+
+  // 4. Prepare chart data
+  const labels = rankedEntries.map(([concept]) =>
+    concept.length > 20 ? concept.slice(0, 20) + '…' : concept
+  );
+
+  const data = rankedEntries.map(([, score]) => score * 100);
+
+  const colors = rankedEntries.map(([concept]) => {
+    const idx = this.conceptsNames.indexOf(concept);
+    return this.conceptColors[idx] || 'red';
+  });
+
+  // 5. Update or create chart
+  if (this.popupChart) {
+    this.popupChart.data.labels = labels;
+    this.popupChart.data.datasets[0].data = data;
+    this.popupChart.data.datasets[0].backgroundColor = colors;
+    this.popupChart.update('none');
+    return;
+  }
+
+  this.popupChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Similarity Score (%)',
+          data,
+          backgroundColor: colors,
+          barThickness: 20,
+        },
+      ],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: false,
+      maintainAspectRatio: true,
+      animation: { duration: 0 },
+      scales: {
+        x: {
+          beginAtZero: true,
+          min: 0,
+          max: 100,
+          title: { display: true, text: 'Similarity Score (%)', font: { weight: 'bold', size: 14 } },
+          ticks: { stepSize: 20 },
+          grid: { display: false },
+        },
+        y: {
+          grid: { display: false },
+          title: { display: true, text: 'Concepts', font: { weight: 'bold', size: 14 } },
+
+        },
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+    enabled: true,
+    callbacks: {
+      // Use chart data labels for the title
+      title: (tooltipItems) => {
+        const idx = tooltipItems[0].dataIndex;
+        return labels[idx]; // 'labels' from rankedEntries
+      },
+      // Use chart data values for the label
+      label: (tooltipItem) => {
+        const value = tooltipItem.raw as number;
+        return value.toFixed(2) + '%';
+      },
+    },
+          },
+            datalabels: {
+           anchor: 'end',
+           align: 'right',
+           formatter: (value) => (value as number).toFixed(2) + '%',
+           color: '#000',
+           font: { weight: 'bold' },
+         },
+
+      },
+    },
+    plugins: [ChartDataLabels],
+  });
+}
+
+
+
+  lastTarget: EventTarget | null = null;
+
+  openKeyphrasePopover(
+    popover: OverlayPanel,
+    event: MouseEvent,
+    part: { text: string }
+  ) {
+    const target = event.currentTarget || event.target;
+
+    if (this.lastTarget === target) {
+      popover.toggle(event);
+    } else {
+      this.selectedKeyphrase = part.text;
+      this.keyphraseClicked.emit({
+        keyphrase: part.text,
+        clientX: event.clientX,
+        clientY: event.clientY,
+      });
+
+      this.cdr.detectChanges();
+
+      popover.hide();
+      setTimeout(() => {
+        popover.show(event);
+        this.lastTarget = target;
+
+        // Generate the popup bar chart after popover is visible
+        this.generatePopupBarChart();
+      }, 50);
+    }
+  }
+  toggleWhy() {
+    this.isWhyExpanded = !this.isWhyExpanded;
+  }
+
+
+ getTooltipText(part: { text: string; isKeyphrase: boolean; keyphraseMeta?: any }): string {
+  if (!part.isKeyphrase || !part.keyphraseMeta?.concept) return '';
+
+  const keyphrase = part.keyphraseMeta.originalKeyphrase || part.text;
+  const concept = part.keyphraseMeta.concept;
+
+  const index = this.article.keyphrases.findIndex((tuple) => {
+    const candidate = Array.isArray(tuple) ? String(tuple[0]) : String(tuple);
+    return this.cleanKeyphrase(candidate) === this.cleanKeyphrase(keyphrase);
+  });
+
+  if (index === -1) return '';
+
+  const similarityObj = this.article.keyphrases_concept_similarity_score[index];
+  const score = similarityObj?.[concept] ?? 0;
+
+  if (score <= 0) return '';
+
+  const percentage = (score * 100).toFixed(2);
+  
+  return `The keyphrase "${keyphrase}" is the most similar to the concept "${concept}" with a similarity of ${percentage}%.`;
+}
+
 }

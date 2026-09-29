@@ -38,4 +38,86 @@ a{
     display: inline-block;
     vertical-align: middle;
   }
+  .word-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
   
+  .highlight-keyphrase {
+  font-weight: 600;
+  display: inline-block;
+  cursor: pointer;
+  padding: 0.1em 0.2em;
+  border-radius: 2px; 
+  background-color: rgba(0,0,0,0);
+
+}
+
+:host ::ng-deep .p-overlaypanel.kp-panel {
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  width: 450px !important;
+  height: auto !important;  
+  min-height: 180px;        
+  padding: 0 0 0 0;
+}
+
+
+:host ::ng-deep .p-overlaypanel.kp-panel .p-overlaypanel-content {
+  padding: 10px 12px;
+}
+
+.kp-title {
+  font-weight: 400;
+  font-size: 14px;
+  margin-bottom: 6px;
+  padding-right: 30px; 
+}
+
+.kp-panel-content {
+  position: relative; 
+  padding: 0;
+  display: flex;       
+  flex-direction: column;  
+  align-items: center;
+  gap: 10px;            
+}
+
+.kp-btn:hover { filter: brightness(0.95); }
+
+.popup-chart {
+  width: 360px;  
+  height: 240px;  
+}
+.custom-close {
+  position: absolute;
+  top: 0;    
+  right: 0;  
+  font-size: 35px;
+  font-weight: bold;
+  color: grey;
+  cursor: pointer;
+  z-index: 10; 
+}
+
+.custom-close:hover {
+  color: black;
+}
+
+.p-overlaypanel {
+  transform-origin: top left !important;
+    width: 400px;  
+    height: 200px; 
+}
+
+
+::ng-deep .p-tooltip {
+  font-size: 0.85rem;
+  background-color: #333;
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  max-width: 250px;
+  white-space: normal;
+}

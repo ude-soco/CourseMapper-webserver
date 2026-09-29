@@ -1192,6 +1192,24 @@ class NeoDataBase:
             else:
                 return False
 
+    def get_concepts_nodes(self, cids, mid):
+    """
+    Retrieve Concept nodes matching any of the given cids and the given mid.
+    Returns a list of nodes if found, otherwise None.
+    """
+        with self.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (c:Concept)
+                WHERE c.cid IN $cids AND c.mid = $mid
+                RETURN c
+                """,
+                cids=cids,
+                mid=mid
+            )
+            nodes = [record["c"] for record in result]
+            return nodes if nodes else None
+
     def get_slide(self, sid):
         """
         """

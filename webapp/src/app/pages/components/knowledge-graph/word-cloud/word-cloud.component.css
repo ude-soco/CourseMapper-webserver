@@ -1,0 +1,68 @@
+canvas {
+    display: block; /* Ensure proper spacing */
+    border: none;
+    background-color: white;
+    outline: none !important; /* Remove any outlines */
+    background: transparent !important; /* Ensure no background */
+    display: block; /* Ensures it doesn’t add extra space */
+    padding: 0 !important;
+    margin: 0 auto !important; /* Centers it without extra space */
+}
+
+/* Container for both word cloud and bar chart */
+.fieldset-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: none; /* Optional: remove border if not needed */
+    background-color: white;
+    height: auto;
+    min-height: 500px; /* Ensure enough height */
+    padding: 0 !important;  /* Remove inner spacing */
+    margin: 0 !important;   /* Remove outer spacing */
+
+}
+
+/* Ensure equal space but allow the bar chart to expand */
+.word-cloud-container, .bar-chart-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px; /* Ensure both sections are visible */
+}
+
+/* Adjust word cloud */
+.word-cloud-container {
+    width: 100%;
+    min-height: 500px;
+    background-color: white;
+}
+
+/* Adjust canvas size for better word visibility */
+.word-cloud-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain; /* Ensures words fit */
+}
+
+.bar-chart-container {
+    flex: 1;
+    max-width: 60%; /* Increase from 50% to 60% */
+    min-height: 500px; /* Keep height unchanged */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Ensure the bar chart SVG expands */
+.bar-chart-container svg {
+    width: 110% !important; /* Extend slightly to the right */
+    height: auto;
+}
+
+.container-class {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
