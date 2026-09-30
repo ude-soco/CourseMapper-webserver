@@ -38,6 +38,7 @@ import { MaterilasService } from 'src/app/services/materials.service';
 import { getCurrentCourseId } from 'src/app/pages/courses/state/course.reducer';
 
 import { CytoscapeComponent } from '../cytoscape/cytoscape.component';
+import { MoocRecommendationsService } from 'src/app/services/rec-dashboard/mooc-recommendations.service';
 interface topN {
   name: string;
   code: string;
@@ -359,7 +360,8 @@ export class ConceptMapComponent {
     private changeDetectorRef: ChangeDetectorRef, // avoids errors when property changed after being checked
     private store: Store<State>,
     private socket: Socket,
-    private materialsService: MaterilasService
+    private materialsService: MaterilasService,
+    private moocRecommendationsService: MoocRecommendationsService
   ) {
     // get current user
     this.subscriptions.push(
@@ -1861,7 +1863,7 @@ next: async (resultSequence) => {
                   //this.tabs[2].disabled = false;
                   //this.kgTabsActivated = true;
                   
-                  this.materialsRecommenderService.getRecommendedMOOCs(reqDataMaterial1).subscribe({})
+                  this.moocRecommendationsService.getRecommendedMOOCs(reqDataMaterial1).subscribe({})
                 },
                 
                 complete: () => {
