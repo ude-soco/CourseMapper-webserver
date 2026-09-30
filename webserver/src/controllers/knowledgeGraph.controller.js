@@ -1872,6 +1872,9 @@ export const updateInterestScore = async (req, res) => {
     // Update the interest score in Neo4j
     const result = await neo4j.updateInterestScore(userId, conceptId, score);
 
+    // Invalidate Redis cache for MOOC recommendations
+    await redis.invalidateMOOCRecommendationsCache(userId);
+
     console.log(
       `[Interest Score Update] User ${userId} adjusted score for concept ${conceptId} to ${score}`,
     );
@@ -1924,6 +1927,9 @@ export const updateInterestScoreBatch = async (req, res) => {
       conceptIds,
       score,
     );
+
+    // Invalidate Redis cache for MOOC recommendations
+    await redis.invalidateMOOCRecommendationsCache(userId);
 
     // Also update the JSON file if conceptName is provided
     if (conceptName) {

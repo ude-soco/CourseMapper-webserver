@@ -1,5 +1,7 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const db = require("../models");
+const redis = require("../graph/redis");
+
 const User = db.user;
 
 /**
@@ -452,6 +454,9 @@ export const updateConceptsStatus = async (req, res) => {
 
     await foundUser.save();
 
+    // Invalidate Redis cache for MOOC recommendations
+    await redis.invalidateMOOCRecommendationsCache(userId);
+
     res.status(200).send({ 
       message: 'Concept status updated successfully',
       updatedConceptIds: idsToUpdate,
@@ -508,6 +513,9 @@ export const updateConceptsStatus = async (req, res) => {
           message: "No changes made. Check if the concepts are the same as before.",
         });
       }
+
+      // Invalidate Redis cache for MOOC recommendations
+      await redis.invalidateMOOCRecommendationsCache(userId);
   
       // Send success response
       res.status(200).send({ message: "User concepts updated successfully." });

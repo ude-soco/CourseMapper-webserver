@@ -6,8 +6,7 @@ const socketio = require("../socketio");
 const redis = {}
 const listeners = {};
 
-const pipelines = ['concept-map', 'modify-graph', 'expand-material', 'sequence-recommendation','concept-recommendation', 'resource-recommendation', 'MOOC-recommendation',
-  , 'get_resources_by_main_concepts'
+const pipelines = ['concept-map', 'modify-graph', 'expand-material', 'sequence-recommendation','concept-recommendation', 'resource-recommendation', 'MOOC-recommendation', 'get_resources_by_main_concepts'
 ];
 
 const jobTimeout = 30;
@@ -124,6 +123,24 @@ export async function addJob(pipeline, job, beforeStart, onDone) {
   }
 
   return { exists: !jobAdded, jobId };
+}
+
+// MOOC Recommendations Cache Functions
+export async function getMOOCRecommendationsCache(userId) {
+  return redis.client.get(`mooc:recommendations:${userId}`);
+}
+
+export async function setMOOCRecommendationsCache(userId, recommendations) {
+  await redis.client.set(
+    `mooc:recommendations:${userId}`,
+    JSON.stringify(recommendations),
+    // Cache recommendations for 24 hours (86400 seconds)
+    { EX: 86400 }
+  );
+}
+
+export async function invalidateMOOCRecommendationsCache(userId) {
+  await redis.client.del(`mooc:recommendations:${userId}`);
 }
 
 export async function trackJob(pipeline, job, onDone) {

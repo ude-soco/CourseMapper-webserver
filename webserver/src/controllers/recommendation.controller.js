@@ -196,6 +196,13 @@ export const getMOOCRecommendations = async (req, res) => {
      const room = "user:" + userId;
     socketio.getIO().to(room).emit("log", { called: "MOOC recommendation started" });
 
+    // Check if recommendations are cached
+    const cachedRecommendations = await redis.getMOOCRecommendationsCache(userId);
+    if (cachedRecommendations) {
+        console.log("Returning cached MOOC recommendations for userId: %s", userId);
+        return res.status(200).send(JSON.parse(cachedRecommendations));
+    }
+
     const result = await redis.addJob('MOOC-recommendation', {
         data: { userId }
     }, undefined, (result) => {
@@ -206,6 +213,10 @@ export const getMOOCRecommendations = async (req, res) => {
         if (result.error) {
             return res.status(500).send({ error: result.error });
         }
+
+        // Cache the recommendations for future requests
+        redis.setMOOCRecommendationsCache(userId, result.result)
+            .catch((error) => console.error("Failed to cache MOOC recommendations:", error));
         return res.status(200).send(result.result);
     });
 
