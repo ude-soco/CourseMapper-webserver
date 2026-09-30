@@ -30,9 +30,7 @@ function handleEnrollment(userId, courseId, materialIds) {
     const scriptPath = path.join(__dirname, '../../../coursemapper-kg/recommendation/level-of-interest/scripts/handle_enrollment.py');
     
     // Use the same Python path as other scripts
-    const pythonCmd = process.platform === 'win32' 
-      ? 'C:/Users/Belal Elbehairy/AppData/Local/Programs/Python/Python311/python.exe'
-      : 'python';
+    const pythonCmd = 'python';
     
     // Pass material IDs as comma-separated string
     const materialIdsStr = materialIds.join(',');
