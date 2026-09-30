@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CourseRecommendation } from 'src/app/models/CourseRecommendation';
-import { MaterialsRecommenderService } from 'src/app/services/materials-recommender.service';
+import { map } from 'rxjs';
+import { MoocRecommendationsService } from 'src/app/services/rec-dashboard/mooc-recommendations.service';
 
 @Component({
   selector: 'app-rec-landing-page',
@@ -8,30 +8,15 @@ import { MaterialsRecommenderService } from 'src/app/services/materials-recommen
   styleUrls: ['./rec-landing-page.component.css']
 })
 export class RecLandingPageComponent implements OnInit {
-  recommendations: CourseRecommendation[] = [];
-  loading = false;
-  error = '';
+  readonly loading$ = this.moocRecommendationService.loading$;
+  readonly error$ = this.moocRecommendationService.error$;
+  readonly recommendations$ = this.moocRecommendationService.recommendation$.pipe(
+    map((items) => this.moocRecommendationService.normalizeRecommendations(items)),
+  );
 
-  constructor(private recommendationService: MaterialsRecommenderService) {}
+  constructor(private moocRecommendationService: MoocRecommendationsService) {}
 
   ngOnInit() {
-    this.getRecommendations();
+    this.moocRecommendationService.getRecommendedMOOCs().subscribe();
   }
-
-  getRecommendations() {
-    this.loading = true;
-    this.error = '';
-
-    this.recommendationService.getRecommendedMOOCs({}).subscribe({
-      next: (result) => {
-        this.recommendations = result;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = err.message || 'Failed to fetch recommendations.';
-        this.loading = false;
-      }
-    })
-  }
-
 }

@@ -1,0 +1,82 @@
+:host ::ng-deep .p-card {
+  border-radius: 8px;
+}
+
+:host ::ng-deep .p-card .p-card-title {
+  font-size: 15px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+:host ::ng-deep .p-card .p-card-subtitle {
+  font-size: 12px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.sort-button {
+  flex: 1;
+  padding: 12px 16px;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.sort-button:not(:last-child) {
+  border-right: 1px solid #d1d5db;
+}
+
+.sort-button.active {
+  background-color: #3182ce;
+  color: #ffffff;
+}
+
+/* Subtle hover effect for unselected items */
+.sort-button:not(.active):hover {
+  background-color: #e2e8f0;
+}
+
+.filter-box {
+  display: block;
+  border-bottom: 1px solid #ccc;
+  margin-right: 30px;
+}
+
+.filter-box-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  list-style: none;
+}
+
+.filter-box-heading::-webkit-details-marker {
+  display: none;
+}
+
+.filter-caret {
+  width: 8px;
+  height: 8px;
+  margin-right: 4px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+.filter-box:not([open]) .filter-caret {
+  transform: rotate(-45deg);
+}

@@ -1,9 +1,28 @@
-<p *ngIf="loading">Loading recommendations...</p>
+<p *ngIf="error$ | async as error">{{ error }}</p>
 
-<p *ngIf="error">{{ error }}</p>
-
-<div *ngFor="let recommendation of recommendations">
-  <h3>{{ recommendation.name }}</h3>
-  <p>Source: {{ recommendation.source }}</p>
-  <p>Score: {{ recommendation.score }}</p>
+<!-- Loading state -->
+<div *ngIf="loading$ | async" class="flex justify-center items-center h-[400px] flex-col">
+  <i class="pi pi-spin pi-spinner-dotted" style="font-size: 55px"></i>
+  <p>Please wait while your recommendations are being generated...</p>
 </div>
+
+<ng-container *ngIf="!(loading$ | async) && !(error$ | async)">
+  <ng-container *ngIf="recommendations$ | async as recommendations">
+  <app-rec-of-the-day
+    *ngIf="recommendations.length"
+    [RecommendationOfTheDay]="recommendations[0]"
+  ></app-rec-of-the-day>
+
+  <app-recommendation-carousel
+    [carouselTitle]="'My Top Recommendations'"
+    [carouselItems]="recommendations.slice(1, 6)"
+    routerLink="/browse-recommendations"
+  ></app-recommendation-carousel>
+
+  <app-recommendation-carousel
+    [carouselTitle]="'Favourites'"
+    [carouselItems]="recommendations.slice(1, 6)" 
+    routerLink="/favourite-recommendations"
+  ></app-recommendation-carousel>
+  </ng-container>
+</ng-container>

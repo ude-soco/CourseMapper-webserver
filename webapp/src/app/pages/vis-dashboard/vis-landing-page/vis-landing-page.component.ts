@@ -4,6 +4,7 @@ import { VisDashboardService } from '../../../services/vis-dashboard/vis-dashboa
 import { filterAndSelectCategories } from '../../../utils/FillterSelectCategories';
 import { CourseCarouselType } from '../../components/vis-dashboard/carousel/course-carousel/course-carousel.component';
 import { MoocRecommendationsService } from 'src/app/services/rec-dashboard/mooc-recommendations.service';
+import { map } from 'rxjs';
 
 interface OptionsType {
   text: string;
@@ -16,7 +17,9 @@ interface OptionsType {
 })
 export class VisLandingPageComponent implements OnInit {
   protected readonly CourseCarouselType = CourseCarouselType;
-  recommendations: CourseRecommendation[] = [];
+  readonly recommendations$ = this.moocRecommendationService.recommendation$.pipe(
+    map((items) => this.moocRecommendationService.normalizeRecommendations(items)),
+  );
   courseCategoryData: string[] = [];
   optionsData: OptionsType[] = [];
   
@@ -43,10 +46,6 @@ export class VisLandingPageComponent implements OnInit {
         console.log(error);
       });
 
-    this.moocRecommendationService.recommendation$.subscribe((items) => {
-      this.recommendations =
-        this.moocRecommendationService.normalizeRecommendations(items);
-    });
-    this.moocRecommendationService.getRecommendations();
+    this.moocRecommendationService.getRecommendedMOOCs().subscribe();
   }
 }

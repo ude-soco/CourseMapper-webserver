@@ -1,1 +1,193 @@
-<p>browse-recommendations-page works!</p>
+<p *ngIf="error$ | async as error">{{ error }}</p>
+
+<!-- Loading state -->
+<div
+  *ngIf="loading$ | async"
+  class="flex justify-center items-center h-[400px] flex-col"
+>
+  <i class="pi pi-spin pi-spinner-dotted" style="font-size: 55px"></i>
+  <p>Please wait while your recommendations are being generated...</p>
+</div>
+
+<ng-container *ngIf="!(loading$ | async) && !(error$ | async)">
+  <div class="grid grid-cols-4 mt-[40px]">
+    <div class="col-span-1">
+      <details class="filter-box" open>
+        <summary class="filter-box-heading">
+          <h3 class="font-semibold text-[26px]">Platforms</h3>
+          <span class="filter-caret" aria-hidden="true"></span>
+        </summary>
+        <div
+          *ngFor="let platform of availablePlatforms$ | async"
+          class="ml-[20px] capitalize"
+        >
+          <label
+            class="text-[17px] font-light leading-[2] cursor-pointer align-middle"
+          >
+            <input
+              type="checkbox"
+              (change)="onTogglePlatform(platform, $event)"
+              [checked]="(filterState$ | async)?.platforms?.includes(platform)"
+              class="mr-[5px] w-[17px] h-[17px]"
+            />
+            {{ platform }}</label
+          >
+        </div>
+      </details>
+
+      <details class="filter-box" open>
+        <summary class="filter-box-heading">
+          <h3 class="font-semibold text-[26px]">Categories</h3>
+          <span class="filter-caret" aria-hidden="true"></span>
+        </summary>
+        <div
+          *ngFor="let category of availableCategories$ | async"
+          class="ml-[20px] capitalize"
+        >
+          <label
+            class="text-[17px] font-light leading-[2] cursor-pointer align-middle"
+          >
+            <input
+              type="checkbox"
+              (change)="onToggleCategory(category, $event)"
+              [checked]="(filterState$ | async)?.categories?.includes(category)"
+              class="mr-[5px] w-[17px] h-[17px]"
+            />
+            {{ category }}</label
+          >
+        </div>
+      </details>
+
+      <details class="filter-box" open>
+        <summary class="filter-box-heading">
+          <h3 class="font-semibold text-[26px]">Price</h3>
+          <span class="filter-caret" aria-hidden="true"></span>
+        </summary>
+        <div class="mb-[30px]">
+        <p class="mb-[10px] text-[15px] ">
+          0€ - {{ (filterState$ | async)?.maxPrice }}€
+        </p>
+          <p-slider
+            [min]="0"
+            [max]="maxAvailablePrice$ | async"
+            [ngModel]="(filterState$ | async)?.maxPrice"
+            (ngModelChange)="onChangeMaxPrice($event)"
+          /></div>
+      </details>
+
+      <details class="filter-box" open>
+        <summary class="filter-box-heading">
+          <h3 class="font-semibold text-[26px]">Duration</h3>
+          <span class="filter-caret" aria-hidden="true"></span>
+        </summary>
+        <div
+          *ngFor="let duration of durationOptions"
+          class="ml-[20px] capitalize"
+        >
+          <label
+            class="text-[17px] font-light leading-[2] cursor-pointer align-middle"
+          >
+            <input
+              type="checkbox"
+              (change)="onToggleDuration(duration.value, $event)"
+              [checked]="
+                (filterState$ | async)?.duration?.includes(duration.value)
+              "
+              class="mr-[5px] w-[17px] h-[17px]"
+            />
+            {{ duration.label }}</label
+          >
+        </div>
+      </details>
+    </div>
+
+    <div class="col-[2/-1]">
+      <div
+        class="flex w-full overflow-hidden rounded-lg border border-gray-200 bg-slate-50 font-sans text-sm font-medium text-gray-800 mb-[20px]"
+      >
+        <button
+          class="sort-button"
+          [ngClass]="{ active: (sortBy$ | async) === 'relevant' }"
+          (click)="setSortBy('relevant')"
+        >
+          Most Relevant
+        </button>
+        <button
+          class="sort-button"
+          [ngClass]="{ active: (sortBy$ | async) === 'rated' }"
+          (click)="setSortBy('rated')"
+        >
+          Highest Rated
+        </button>
+        <button
+          class="sort-button"
+          [ngClass]="{ active: (sortBy$ | async) === 'A to Z' }"
+          (click)="setSortBy('A to Z')"
+        >
+          A to Z
+        </button>
+        <button
+          class="sort-button"
+          [ngClass]="{ active: (sortBy$ | async) === 'Z to A' }"
+          (click)="setSortBy('Z to A')"
+        >
+          Z to A
+        </button>
+      </div>
+
+      <span class="flex items-center gap-[10px] mb-[20px]">
+        <i
+          class="pi pi-info-circle text-gray-500"
+          style="font-size: 1.5rem"
+        ></i>
+        <p class="text-lg italic text-gray-500">
+          Your Recommendations are based on your personal learner model
+        </p>
+        <a
+          routerLink="/user/pkg"
+          class="italic underline text-blue-500 hover:text-blue-700"
+        >
+          See more
+        </a>
+      </span>
+
+      <div class="flex gap-[10px] justify-start flex-wrap width-[100%]">
+        <div
+          *ngIf="(displayedRecommendations$ | async)?.length === 0"
+          class="text-[20px]"
+        >
+          Sorry there are no recommendations according to your filters!
+        </div>
+        <div *ngFor="let recommendation of displayedRecommendations$ | async">
+          <p-card
+            header="{{ recommendation.name }}"
+            subheader="{{
+              recommendation.teachers?.[0]?.name || 'Unknown instructor'
+            }}"
+            [routerLink]="['/course-detail', recommendation.course_id]"
+            [style]="{
+              width: '200px',
+              height: '240px',
+              cursor: 'pointer',
+              textAlign: 'center',
+            }"
+          >
+            <ng-template pTemplate="header">
+              <!-- <img
+          src="/assets/img/courseDefaultImage.png"
+          alt="Course"
+          class="w-full object-cover rounded-xl border-gray-300 border"
+        /> -->
+              <div
+                class="w-full h-[130px] object-cover rounded-xl border border-gray-300"
+                style="
+                  background-color: hsl(var(--random-hue, 390deg), 70%, 60%);
+                "
+              ></div>
+            </ng-template>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
