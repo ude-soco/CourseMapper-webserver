@@ -371,7 +371,7 @@ export class CytoscapeSlideComponent implements OnInit, OnChanges {
     setTimeout(() => {
       let cy_container = this.renderer.selectRootElement('#cySlide');
 
-      if (this.elements !== undefined) {
+      if (this.elements && this.elements !== undefined) {
         if (Object.keys(this.elements.nodes).length > 5) {
           let topElements = this.elements.nodes.filter(
             (node) => node.data.rank < 6

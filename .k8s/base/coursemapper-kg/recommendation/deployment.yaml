@@ -28,6 +28,9 @@ spec:
           value: ""
         - name: PIPELINES
           value: concept-recommendation,resource-recommendation
+        envFrom:
+        - secretRef:
+            name: coursemapper-kg-recommendation
         resources:
           requests:
             cpu: 100m

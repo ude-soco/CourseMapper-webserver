@@ -81,6 +81,14 @@ neo4j.connect(
   process.env.NEO4J_PASSWORD
 );
 
+const recs = require("./graph/recommendation.neo4j");
+recs.connect(
+  process.env.NEO4J_URI,
+  process.env.NEO4J_USER,
+  process.env.NEO4J_PASSWORD
+);
+
+
 // Create connection to Redis
 const redis = require("./graph/redis");
 redis.connect(

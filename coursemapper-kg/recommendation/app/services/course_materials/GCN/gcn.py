@@ -34,11 +34,11 @@ class GCN:
         # Read ids and initial embeddings of nodes from idfeature.text
         # The structure of text: first column is new id of node(type:int), the second column is the original id (type:string), and the rest is the initial embedding
         idx_features = np.genfromtxt("idfeature.txt", dtype=np.dtype(str))
-        logger.info(idx_features.shape[0])
+        # logger.info(idx_features.shape[0])
         # Construct initial embedding matrix
         # Extract initial embedding starts from the third column
         features = sp.csr_matrix(idx_features[:, 2:], dtype=np.float32)
-        logger.info(features.A)
+        # logger.info(features.A)
 
         # Construct Adjacency matrix
 
@@ -66,11 +66,12 @@ class GCN:
             dtype=np.float32,
         )
         adj = np.around(adj, 2)
+
         # matrix plus its unit matrix and transpose matrix to obtain the complete adjacency matrix
         adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
 
         adj = self.normalize(adj) + sp.eye(adj.shape[0])
-        logger.info(adj.A)
+        # logger.info(adj.A)
         # GCN Multiply Adjacency matrix and initial embedding matrix
         # mutiply Adjacency matrix and initial embedding matrix, output is new embedding matrix
         # The new embedding of a node is obtained by aggregating the embeddings of its first hop neighbours
@@ -79,7 +80,7 @@ class GCN:
         # The final embedding of a node is obtained by aggregating the embeddings of its first and second hop neighbours
         output = np.dot(adj, output)
         final_embeddings = output.A
-        logger.info(final_embeddings)
+        # logger.info(final_embeddings)
 
         # Extract original ids of nodes
         idx = np.array(idx_features[:, 1], dtype=np.dtype(str))
@@ -122,8 +123,8 @@ class GCN:
 
     def normalize(self, mx):
         rowsum = np.array(mx.sum(1))
-        d_inv = np.power(rowsum, -0.5).flatten()
-        d_inv[np.isinf(d_inv)] = 0.0
+        d_inv = np.power(rowsum, -0.5, where=rowsum != 0).flatten()
+        d_inv[rowsum.flatten() == 0] = 0.0 
         d_mat_inv = sp.diags(d_inv)
         norm_adj = d_mat_inv.dot(mx)
         norm_adj = norm_adj.dot(d_mat_inv)

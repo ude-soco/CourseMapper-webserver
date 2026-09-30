@@ -9,6 +9,11 @@ export interface ArticleElementModel {
     author_name?: string;
     uri: string;
     similarity_score: number;
-    helpful_counter: number;
-    not_helpful_counter: number;
+    helpful_count: number;
+    not_helpful_count: number;
+    bookmarked_count?: number,
+    like_count?: number,
+    rid?: string,
+    updated_at?: string,
+    is_bookmarked_fill?: boolean
   }

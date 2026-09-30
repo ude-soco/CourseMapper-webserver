@@ -37,6 +37,14 @@ import { DateAgoPipe } from './videos/pipes/date-ago.pipe';
 import { LinkifyPipe } from './videos/pipes/linkify.pipe';
 import { SafeHtmlPipe } from './videos/pipes/safehtml.pipe';
 import {TabViewModule} from 'primeng/tabview';
+import { TooltipModule } from 'primeng/tooltip';
+import { SliderModule } from 'primeng/slider';
+import { CustomRecommendationOptionComponent } from './custom-recommendation-option/custom-recommendation-option.component';
+import { PanelModule } from 'primeng/panel';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { ListboxModule } from 'primeng/listbox';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -65,6 +73,7 @@ import { PaginatorModule } from 'primeng/paginator';
     DateAgoPipe,
     LinkifyPipe,
     SafeHtmlPipe,
+    CustomRecommendationOptionComponent,    
   ],
   imports: [
     InputTextModule,
@@ -86,7 +95,24 @@ import { PaginatorModule } from 'primeng/paginator';
     RadioButtonModule,
     OverlayPanelModule,
     TabViewModule,
+    
+    // boby024
+    RadioButtonModule,
+    TooltipModule,
+    CheckboxModule,
+    SliderModule,
+    FormsModule,
+    DropdownModule,
     ReactiveFormsModule,
+    PaginatorModule,
+    PanelModule,
+    ScrollPanelModule,
+    ListboxModule,
+    ProgressBarModule,
+    InputTextModule,
+    MultiSelectModule,
+    CardModule,
+    // ReactiveFormsModule,
     AutoCompleteModule,
     MultiSelectModule,
     PdfViewerModule,
