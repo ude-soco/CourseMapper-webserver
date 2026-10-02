@@ -64,10 +64,10 @@ spec:
           subPath: videos
         resources:
           requests:
-            memory: 2.2Gi
+            memory: 2.8Gi
             cpu: 100m
           limits:
-            memory: 2.8Gi
+            memory: 3.2Gi
             cpu: "1.15"
             ephemeral-storage: 1Gi
       volumes:
