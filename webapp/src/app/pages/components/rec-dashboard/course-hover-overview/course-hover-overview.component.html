@@ -1,0 +1,38 @@
+<div class="container" [class.placement-left]="placement === 'left'">
+  <h3 class="title">{{ rec.name }}</h3>
+
+  <div
+    *ngIf="rec.platforms?.[0]?.name || rec.source as platformName"
+    [ngStyle]="{
+      'background-color':
+        'rgb(from' +
+        (platformBackgroundColours[platformName] || '#FFFFFF') +
+        ' r g b / 0.5)',
+      color: platformBackgroundColours[platformName] || '#FFFFFF',
+    }"
+    class="platform"
+  >
+    <p>{{ platformName }}</p>
+  </div>
+  <span>
+    <p class="duration">
+      {{
+        isMoocProperties(rec.node_properties)
+          ? rec.node_properties.duration.split(" ").slice(0, 4).join(" ")
+          : "CourseMapper course"
+      }}
+    </p>
+  </span>
+  <div class="description">
+    <p>
+      {{
+        isMoocProperties(rec.node_properties)
+          ? rec.node_properties.description
+          : "Click the button below to see more details about this course"
+      }}
+    </p>
+  </div>
+  <a [routerLink]="['/course-detail', rec.course_id]" class="p-button button">
+    See Course Details
+  </a>
+</div>

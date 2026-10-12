@@ -1,0 +1,123 @@
+:host {
+  display: var(--child-display, none);
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.container {
+  width: 300px;
+  height: 400px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 35px 35px 10px 35px;
+  background: #fff;
+  color: #1f2937;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 22%);
+
+  position: absolute;
+  top: 50%;
+  left: calc(100% - 1px);
+  transform: translateY(-50%);
+
+  opacity: var(--child-opacity, 0);
+  visibility: var(--child-visibility, hidden);
+  animation: overview-enter-right 0.22s ease-out both;
+  pointer-events: auto;
+}
+
+.container.placement-left {
+  right: calc(100% - 1px);
+  left: auto;
+  animation-name: overview-enter-left;
+}
+
+.container::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #fff transparent transparent;
+  left: -10px;
+}
+
+.container.placement-left::after {
+  right: -10px;
+  left: auto;
+  border-color: transparent transparent transparent #fff;
+}
+
+@keyframes overview-enter-right {
+  from {
+    opacity: 0;
+    transform: translate(8px, -50%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+@keyframes overview-enter-left {
+  from {
+    opacity: 0;
+    transform: translate(-8px, -50%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+.title {
+  font-weight: bold;
+  font-size: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* number of lines to show */
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  padding-bottom: 10px;
+}
+
+.platform {
+  width: fit-content;
+  padding: 0 15px;
+  margin-top: 5px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.duration {
+  color: #8d8686;
+  font-size: 14px;
+  margin-top: 7px;
+}
+
+.description {
+  font-size: 16px;
+  margin: 10px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 7; /* number of lines to show */
+  line-clamp: 7;
+  -webkit-box-orient: vertical;
+}
+
+.button {
+  background-color: #1b50d6;
+  margin-top: auto;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
