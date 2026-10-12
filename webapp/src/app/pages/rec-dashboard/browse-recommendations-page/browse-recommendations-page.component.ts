@@ -13,6 +13,20 @@ import { MoocRecommendationsService } from 'src/app/services/rec-dashboard/mooc-
 type SortBy = 'relevant' | 'rated' | 'A to Z' | 'Z to A';
 const UNCATEGORIZED = 'Uncategorized';
 
+export const PLATFORM_BACKGROUND_COLOURS: Record<string, string> = {
+  'on Campus': '#F7DF05',
+  'KI Campus': '#6A05F7',
+  OpenVhb: '#00A3FF',
+  EdX: '#00B8A9',
+  OpenHPI: '#FF6B00',
+  Coursera: '#0056D2',
+  CourseMapper: '#00A86B',
+  IMoox: '#F0007A',
+  Udemy: '#FF3B30',
+  Udacity: '#A3E635',
+  'Future Learn': '#c019dd'
+};
+
 type MoocProperties = Extract<
   CourseRecommendation['node_properties'],
   { rating: string }
@@ -28,7 +42,7 @@ interface FilterState {
 }
 
 // check if node properties are of MOOCentral courses
-function isMoocProperties(
+export function isMoocProperties(
   properties: CourseRecommendation['node_properties'],
 ): properties is MoocProperties {
   return 'rating' in properties;
@@ -43,6 +57,17 @@ function getCategory(recommendation: CourseRecommendation): string {
   return category && category !== 'Course_category information not available'
     ? category
     : UNCATEGORIZED;
+}
+
+function getPlatformNames(recommendation: CourseRecommendation): string[] {
+  const platforms =
+    recommendation.platforms?.map((platform) => platform.name) ?? [];
+
+  if (recommendation.source === 'CourseMapper') {
+    platforms.push('CourseMapper');
+  }
+
+  return [...new Set(platforms)];
 }
 
 function parseDuration(duration) {
@@ -155,8 +180,12 @@ function getPrice(rec: CourseRecommendation) {
   styleUrls: ['./browse-recommendations-page.component.css'],
 })
 export class BrowseRecommendationsPageComponent {
+  overviewPlacement: 'left' | 'right' = 'right';
+
   readonly loading$ = this.moocRecommendationService.loading$;
   readonly error$ = this.moocRecommendationService.error$;
+
+  readonly platformBackgroundColours = PLATFORM_BACKGROUND_COLOURS;
 
   readonly recommendations$ =
     this.moocRecommendationService.recommendation$.pipe(
@@ -169,13 +198,7 @@ export class BrowseRecommendationsPageComponent {
   readonly availablePlatforms$: Observable<string[]> =
     this.moocRecommendationService.recommendation$.pipe(
       map((items) => {
-        const platforms = items.flatMap((item) =>
-          item.platforms.map((platform) => platform.name),
-        );
-
-        if (items.some((item) => item.source === 'CourseMapper')) {
-          platforms.push('CourseMapper');
-        }
+        const platforms = items.flatMap(getPlatformNames);
 
         return [...new Set(platforms)];
       }),
@@ -203,6 +226,50 @@ export class BrowseRecommendationsPageComponent {
 
         return Math.round(Math.max(...prices));
       }),
+    );
+
+  // filter counts
+  readonly platformCounts$: Observable<Record<string, number>> =
+    this.recommendations$.pipe(
+      map((items) =>
+        items.reduce(
+          (counts, item) => {
+            getPlatformNames(item).forEach((platform) => {
+              counts[platform] = (counts[platform] ?? 0) + 1;
+            });
+            return counts;
+          },
+          {} as Record<string, number>,
+        ),
+      ),
+    );
+
+  readonly categoryCounts$: Observable<Record<string, number>> =
+    this.recommendations$.pipe(
+      map((items) =>
+        items.reduce(
+          (counts, item) => {
+            const category = getCategory(item);
+            counts[category] = (counts[category] ?? 0) + 1;
+            return counts;
+          },
+          {} as Record<string, number>,
+        ),
+      ),
+    );
+
+  readonly durationCounts$: Observable<Record<string, number>> =
+    this.recommendations$.pipe(
+      map((items) =>
+        items.reduce(
+          (counts, item) => {
+            const duration = getDurationCategory(item);
+            counts[duration] = (counts[duration] ?? 0) + 1;
+            return counts;
+          },
+          {} as Record<string, number>,
+        ),
+      ),
     );
 
   durationOptions = [
@@ -239,11 +306,11 @@ export class BrowseRecommendationsPageComponent {
       const filteredRecommendations = recommendations.filter((rec) => {
         const matchesPlatforms =
           filters.platforms.length === 0 ||
-          rec.platforms.some((b) => filters.platforms.includes(b.name));
+          getPlatformNames(rec).some((platform) =>
+            filters.platforms.includes(platform),
+          );
 
-        const matchesCategory =
-          filters.categories.length === 0 ||
-          filters.categories.includes(getCategory(rec));
+        const matchesCategory = filters.categories.includes(getCategory(rec));
 
         const matchesDuration = filters.duration.includes(
           getDurationCategory(rec),
@@ -253,7 +320,9 @@ export class BrowseRecommendationsPageComponent {
           isMoocProperties(rec.node_properties) &&
           getPrice(rec) <= filters.maxPrice;
 
-        return matchesPlatforms && matchesCategory && matchesDuration && matchesPrice;
+        return (
+          matchesPlatforms && matchesCategory && matchesDuration && matchesPrice
+        );
       });
 
       return this.sortRecommendations(filteredRecommendations, sortBy);
@@ -307,6 +376,17 @@ export class BrowseRecommendationsPageComponent {
 
   setSortBy(sortBy: SortBy) {
     this.sortBySubject.next(sortBy);
+  }
+
+  // Get card position to calculate hover overview placement
+  setOverviewPlacement(event: MouseEvent) {
+    const card = event.currentTarget as HTMLElement;
+    const bounds = card.getBoundingClientRect();
+    const spaceOnRight = window.innerWidth - bounds.right;
+    const spaceOnLeft = bounds.left;
+
+    this.overviewPlacement =
+      spaceOnRight >= 320 || spaceOnRight >= spaceOnLeft ? 'right' : 'left';
   }
 
   private sortRecommendations(

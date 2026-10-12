@@ -22,16 +22,19 @@
           class="ml-[20px] capitalize"
         >
           <label
-            class="text-[17px] font-light leading-[2] cursor-pointer align-middle"
+            class="flex items-center justify-between mr-2 text-[17px] font-light leading-[2] cursor-pointer align-middle"
           >
-            <input
-              type="checkbox"
-              (change)="onTogglePlatform(platform, $event)"
-              [checked]="(filterState$ | async)?.platforms?.includes(platform)"
-              class="mr-[5px] w-[17px] h-[17px]"
-            />
-            {{ platform }}</label
-          >
+            <span class="flex items-center">
+              <input
+                type="checkbox"
+                (change)="onTogglePlatform(platform, $event)"
+                [checked]="(filterState$ | async)?.platforms?.includes(platform)"
+                class="mr-[5px] w-[17px] h-[17px]"
+              />
+              {{ platform }}
+            </span>
+            <span class="text-sm text-gray-500">({{ (platformCounts$ | async)?.[platform] || 0 }})</span>
+          </label>
         </div>
       </details>
 
@@ -45,16 +48,19 @@
           class="ml-[20px] capitalize"
         >
           <label
-            class="text-[17px] font-light leading-[2] cursor-pointer align-middle"
+            class="flex items-center justify-between mr-2 text-[17px] font-light leading-[2] cursor-pointer align-middle"
           >
-            <input
-              type="checkbox"
-              (change)="onToggleCategory(category, $event)"
-              [checked]="(filterState$ | async)?.categories?.includes(category)"
-              class="mr-[5px] w-[17px] h-[17px]"
-            />
-            {{ category }}</label
-          >
+            <span class="flex items-center">
+              <input
+                type="checkbox"
+                (change)="onToggleCategory(category, $event)"
+                [checked]="(filterState$ | async)?.categories?.includes(category)"
+                class="mr-[5px] w-[17px] h-[17px]"
+              />
+              {{ category }}
+            </span>
+            <span class="text-sm text-gray-500">({{ (categoryCounts$ | async)?.[category] || 0 }})</span>
+          </label>
         </div>
       </details>
 
@@ -85,18 +91,21 @@
           class="ml-[20px] capitalize"
         >
           <label
-            class="text-[17px] font-light leading-[2] cursor-pointer align-middle"
+            class="flex items-center justify-between mr-2 text-[17px] font-light leading-[2] cursor-pointer align-middle"
           >
-            <input
-              type="checkbox"
-              (change)="onToggleDuration(duration.value, $event)"
-              [checked]="
-                (filterState$ | async)?.duration?.includes(duration.value)
-              "
-              class="mr-[5px] w-[17px] h-[17px]"
-            />
-            {{ duration.label }}</label
-          >
+            <span class="flex items-center">
+              <input
+                type="checkbox"
+                (change)="onToggleDuration(duration.value, $event)"
+                [checked]="
+                  (filterState$ | async)?.duration?.includes(duration.value)
+                "
+                class="mr-[5px] w-[17px] h-[17px]"
+              />
+              {{ duration.label }}
+            </span>
+            <span class="text-sm text-gray-500">({{ (durationCounts$ | async)?.[duration.value] || 0 }})</span>
+          </label>
         </div>
       </details>
     </div>
@@ -158,7 +167,11 @@
         >
           Sorry there are no recommendations according to your filters!
         </div>
-        <div *ngFor="let recommendation of displayedRecommendations$ | async">
+        <div
+          *ngFor="let recommendation of displayedRecommendations$ | async"
+          class="course-card"
+          (mouseenter)="setOverviewPlacement($event)"
+        >
           <p-card
             header="{{ recommendation.name }}"
             subheader="{{
@@ -166,26 +179,31 @@
             }}"
             [routerLink]="['/course-detail', recommendation.course_id]"
             [style]="{
-              width: '200px',
+              width: '270px',
               height: '240px',
               cursor: 'pointer',
-              textAlign: 'center',
             }"
           >
             <ng-template pTemplate="header">
-              <!-- <img
-          src="/assets/img/courseDefaultImage.png"
-          alt="Course"
-          class="w-full object-cover rounded-xl border-gray-300 border"
-        /> -->
               <div
-                class="w-full h-[130px] object-cover rounded-xl border border-gray-300"
-                style="
-                  background-color: hsl(var(--random-hue, 390deg), 70%, 60%);
-                "
-              ></div>
+                class="course-banner w-full h-[130px] rounded-xl border border-gray-300"
+              >
+                <span
+                  *ngIf="(recommendation.platforms?.[0]?.name || recommendation.source) as platformName"
+                  class="platform-ribbon"
+                  [style.backgroundColor]="
+                    platformBackgroundColours[platformName] || '#52636B'
+                  "
+                >
+                  {{ platformName }}
+                </span>
+              </div>
             </ng-template>
           </p-card>
+          <app-course-hover-overview
+            [rec]="recommendation"
+            [placement]="overviewPlacement"
+          ></app-course-hover-overview>
         </div>
       </div>
     </div>

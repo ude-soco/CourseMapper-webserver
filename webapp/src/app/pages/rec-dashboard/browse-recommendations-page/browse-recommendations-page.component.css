@@ -1,3 +1,14 @@
+.course-card {
+  position: relative;
+}
+
+.course-card:hover {
+  z-index: 20;
+  --child-display: block;
+  --child-opacity: 1;
+  --child-visibility: visible;
+}
+
 :host ::ng-deep .p-card {
   border-radius: 8px;
 }
@@ -73,10 +84,34 @@
   margin-right: 4px;
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
-  transform: rotate(45deg);
-  transition: transform 0.15s ease;
+  transform: rotate(-135deg);
+  transition: transform 0.3s ease;
 }
 
 .filter-box:not([open]) .filter-caret {
-  transform: rotate(-45deg);
+  transform: rotate(45deg);
+}
+
+.course-banner {
+  position: relative;
+  overflow: hidden;
+  background-color: #e8eef0;
+}
+
+.platform-ribbon {
+  position: absolute;
+  top: 18px;
+  left: -34px;
+  width: 150px;
+  padding: 5px 8px;
+  transform: rotate(-35deg);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 20%);
 }
