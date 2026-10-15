@@ -98,9 +98,9 @@ redis.connect(
   process.env.REDIS_PASSWORD
 );
 
-// xAPI scheduler
-const xapiScheduler = require("./activity-logger/scheduler/scheduler");
-xapiScheduler.ActivityScheduler();
+// xAPI scheduler temporarily disabled
+// const xapiScheduler = require("./activity-logger/scheduler/scheduler");
+//xapiScheduler.ActivityScheduler();
 
 // Create HTTP server
 const server = http.createServer(app);
