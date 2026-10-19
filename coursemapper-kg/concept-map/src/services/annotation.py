@@ -45,7 +45,7 @@ def make_parallel_requests(url: str, headers: Dict[str, str], params: List[Any])
     threads = []
 
     def make_request(url: str, headers: Dict[str, str], params: Any):
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params,timeout=60)
         responses.append((params, response))
 
     for param in params:

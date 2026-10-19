@@ -12,7 +12,7 @@ export class WatchVideoComponent {
   @Input() currentMaterial?: Material;
   @Input() public video!: VideoElementModel;
   @Input()
-  public notUnderstoodConcepts: string[];
+  public concepts: string[];
   public safeURL: SafeResourceUrl;
   constructor(private sanitizer: DomSanitizer) {}
   ngOnInit(): void {

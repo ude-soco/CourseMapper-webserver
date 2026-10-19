@@ -65,8 +65,14 @@ class ConceptMapPipeline:
         material_node = Node(material_id, material_name, '', 'material', 1, '', '\n\n'.join(pdf_text), True, False, False,False, file_embedding, [], Config.EMBEDDING_MODEL)
         graph.add_node(material_node)
 
+        push_log_message(f'[DEBUG] pages_df shape: {pages_df.shape}')
+        push_log_message(f'[DEBUG] pages_df first row:\n{pages_df.row(0)}')
+
         for i, (page, page_parts, page_embedding) in enumerate(pages_df.iter_rows()):
             push_log_message(f'Processing page {i+1}/{pages_df.height}')
+
+            push_log_message(f'[DEBUG] Raw text froom page {i+1}:\n{page[:500]}')
+
 
             page_node = Node(f'{material_id}_slide_{i+1}', f'slide_{i+1}', '', 'Slide', 1, '', page, False, False, False,False, page_embedding , page_parts, Config.EMBEDDING_MODEL )
             graph.add_node(page_node)
@@ -133,7 +139,7 @@ class ConceptMapPipeline:
                     pl.Series(name='page categories', values=[page.categories for page in alternative_pages if page is not None] or None, dtype=pl.List(pl.Utf8)),
                     pl.Series(name='page summary', values=[page.summary for page in alternative_pages if page is not None] or None, dtype=pl.Utf8)
                 ])
-
+                
                 # Get embeddings for alternative pages
                 alternative_embeddings = self.wikipedia_service.get_or_create_page_embeddings(self.embedding_service, alternative_pages_df['page title'].to_list())
                 alternative_embeddings_df = pl.DataFrame([
@@ -164,6 +170,9 @@ class ConceptMapPipeline:
             # Remove annotations below weight threshold
             disambiguated_df = disambiguated_df.filter(pl.col('abstract weight') >= Config.WEIGHT_THRESHOLD)
 
+            push_log_message(f'This is a log message')
+            print(disambiguated_df.head(),flush=True)
+            push_log_message(f'This is a log message {disambiguated_df.head()}')
             for keyphrase, annotation, page_title, page_categories, page_summary, page_embedding, weight, material_weight in disambiguated_df.iter_rows():
                 # Add concept node to graph
                 concept_node = Node(f'{material_id}_concept_{str(abs(hash(str(page_embedding))))}', page_title, '', 'main_concept', (material_weight + 1) / 2, f'https://en.wikipedia.org/wiki/{page_title}', page_summary, False,False,False, False, page_embedding)

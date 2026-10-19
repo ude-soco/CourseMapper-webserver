@@ -6,13 +6,15 @@
             <h4 class="text-[#0277BD] mr-3">
               Recommendation based on the following concepts:
             </h4>
-            <div class="flex flex-wrap gap-1 w-9/12"> 
+      <!--       <div class="flex flex-wrap gap-1 w-9/12">  -->
+              <div class="flex flex-wrap gap-1 w-full">
+
               <button
-                *ngFor="let concept of allConceptsObj"
-                class="dislike-button {{concept?.status === 'notUnderstood' ? 'bg-[#D32F2F]' : concept?.status === 'understood' ? 'bg-[#689F38]':  'bg-[#2196F3]'}}
-                text-white px-2 mx-1 border border-transparent rounded-full"
-              >
+              *ngFor="let concept of allConceptsObj; let i = index"
+               class="dislike-button text-white px-2 mx-1 border border-transparent rounded-full" [ngStyle]="{ 'background-color': this.conceptColor[i] }">
+
                 {{ concept?.name }}
+                
                 <button
                   #notUnderstoodConcept
                   class="bg-transparent hover focus:outline-none cursor-pointer"
@@ -76,7 +78,6 @@
                       [style.pointer-events]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key)  ? 'none' : 'auto'"
                       [style.opacity]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 0.3 : 1"
                       [style.cursor]="activeIndex === 1 && !factorsTabArticle.includes(sort_factor.key) ? 'not-allowed' : 'pointer'">
-                      
                       <div>
                         <p-radioButton 
                           [inputId]="sort_factor.key" 
@@ -113,33 +114,78 @@
           </div>
         </div>
 
-      <p-tabPanel 
-        [cache]="true" 
-        header="Videos" 
-        leftIcon="pi pi-video"
-      >
+        <p-tabPanel 
+          *ngIf="!recievedVideoResultIsEmpty"
+          [cache]="true" 
+          header="Videos" 
+          leftIcon="pi pi-video"
+        >
+          <div class="mt-1 w-full" id="cro_viedo_list">
+            <div
+              *ngIf="resourcesPagination?.nodes?.videos?.total_items > 0, else elseBlockRsVideos"
+            >
+            </div>
+              <p-scrollPanel styleClass="scroll_panel_list">
+                <app-card-video-list
+                  [concepts]="concepts"
+                  [videoElements]="resourcesPagination?.nodes?.videos?.content"
+                  [conceptColors]="conceptColor"
+                  [userId]="userId"
+                  (backButtonClicked)="logUserViewedRecommendedVideos()"
+                  [currentMaterial]="currentMaterial"
+                  [resourcesPagination]="resourcesPagination"
+                ></app-card-video-list>
+              </p-scrollPanel>
+          </div>
+          <ng-template #elseBlockRsVideos>
+            <div *ngIf="resourcesPagination?.nodes?.videos?.total_items == 0; else elseBlockRsVideos2">
+              <div class="flex flex-col items-center justify-center">
+                No Video Materials Found
+              </div>
+            </div>
+            <ng-template #elseBlockRsVideos2>
+              <div class="flex flex-col items-center justify-center">
+                <div>
+                  <p-progressSpinner
+                        [style]="{ width: '80px', height: '80px' }"
+                        styleClass="custom-spinner"
+                        strokeWidth="5"
+                        fill="var(--surface-ground)"
+                        animationDuration=".5s"
+                  ></p-progressSpinner>
+                </div>
+                <h4 class="my-auto mt-4">Loading Video Materials</h4>
+              </div>
+            </ng-template>
+          </ng-template>
+        </p-tabPanel>
+
+        <p-tabPanel 
+          *ngIf="false" [cache]="true" header="Articles" leftIcon="pi pi-book"
+        >
         <div class="mt-1 w-full" id="cro_viedo_list">
           <div
-            *ngIf="resourcesPagination?.nodes?.videos?.total_items > 0, else elseBlockRsVideos"
+            *ngIf="resourcesPagination?.nodes?.articles?.total_items > 0, else elseBlockRsArticles"
           >
           </div>
             <p-scrollPanel styleClass="scroll_panel_list">
-              <app-card-video-list
-                [notUnderstoodConcepts]="concepts"
-                [videoElements]="resourcesPagination?.nodes?.videos?.content"
+              <app-card-article-list
+                [concepts]="concepts"
+                [articleElements]="resourcesPagination?.nodes?.articles?.content"
+                [conceptColors]="conceptColor"
                 [userId]="userId"
-                (backButtonClicked)="logUserViewedRecommendedVideos()"
+                [resourcesPagination]="resourcesPagination"
                 [currentMaterial]="currentMaterial"
-              ></app-card-video-list>
+              ></app-card-article-list>
             </p-scrollPanel>
         </div>
-        <ng-template #elseBlockRsVideos>
-          <div *ngIf="resourcesPagination?.nodes?.videos?.total_items == 0; else elseBlockRsVideos2">
+        <ng-template #elseBlockRsArticles>
+          <div *ngIf="resourcesPagination?.nodes?.articles?.total_items == 0; else elseBlockRsArticles2">
             <div class="flex flex-col items-center justify-center">
-              No Video Materials Found
+              No Articles Materials Found
             </div>
           </div>
-          <ng-template #elseBlockRsVideos2>
+          <ng-template #elseBlockRsArticles2>
             <div class="flex flex-col items-center justify-center">
               <div>
                 <p-progressSpinner
@@ -150,50 +196,10 @@
                       animationDuration=".5s"
                 ></p-progressSpinner>
               </div>
-              <h4 class="my-auto mt-4">Loading Video Materials</h4>
+              <h4 class="my-auto mt-4">Loading Articles Materials</h4>
             </div>
           </ng-template>
         </ng-template>
-      </p-tabPanel>
-
-      <p-tabPanel 
-        *ngIf="false" [cache]="true" header="Articles" leftIcon="pi pi-book"
-      >
-      <div class="mt-1 w-full" id="cro_viedo_list">
-        <div
-          *ngIf="resourcesPagination?.nodes?.articles?.total_items > 0, else elseBlockRsArticles"
-        >
-        </div>
-          <p-scrollPanel styleClass="scroll_panel_list">
-            <app-card-article-list
-              [notUnderstoodConcepts]="concepts"
-              [articleElements]="resourcesPagination?.nodes?.articles?.content"
-              [userId]="userId"
-              [currentMaterial]="currentMaterial"
-            ></app-card-article-list>
-          </p-scrollPanel>
-      </div>
-      <ng-template #elseBlockRsArticles>
-        <div *ngIf="resourcesPagination?.nodes?.articles?.total_items == 0; else elseBlockRsArticles2">
-          <div class="flex flex-col items-center justify-center">
-            No Articles Materials Found
-          </div>
-        </div>
-        <ng-template #elseBlockRsArticles2>
-          <div class="flex flex-col items-center justify-center">
-            <div>
-              <p-progressSpinner
-                    [style]="{ width: '80px', height: '80px' }"
-                    styleClass="custom-spinner"
-                    strokeWidth="5"
-                    fill="var(--surface-ground)"
-                    animationDuration=".5s"
-              ></p-progressSpinner>
-            </div>
-            <h4 class="my-auto mt-4">Loading Articles Materials</h4>
-          </div>
-        </ng-template>
-      </ng-template>
       </p-tabPanel>
 
       <!-- display resources saved and offer filtering possibility -->
@@ -294,7 +300,7 @@
         <div>
           <div *ngIf="filteringResourcesFound?.videos.length > 0">
               <app-card-video-list
-              [notUnderstoodConcepts]="concepts"
+              [concepts]="concepts"
               [videoElements]="filteringResourcesFound?.videos"
               [userId]="userId"
               [resultTabType]="'saved'"
@@ -304,7 +310,7 @@
           </div>
           <div *ngIf="filteringResourcesFound?.articles.length > 0">
               <app-card-article-list
-              [notUnderstoodConcepts]="concepts"
+              [concepts]="concepts"
               [articleElements]="filteringResourcesFound?.articles"
               [userId]="userId"
               [resultTabType]="'saved'"

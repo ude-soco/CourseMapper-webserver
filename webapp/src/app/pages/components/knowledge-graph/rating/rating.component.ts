@@ -45,7 +45,7 @@ export class RatingComponent {
   }
 
   @Input() element!: ArticleElementModel | VideoElementModel;
-  @Input() notUnderstoodConcepts: any[];
+  @Input() concepts: any[];
   @Output() onClick: EventEmitter<any> = new EventEmitter();
   @Input() currentMaterial?: Material;
   userid: any;

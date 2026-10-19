@@ -7,9 +7,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { VideoElementModel } from '../models/video-element.model';
-import { videoMock } from '../mocks/video.mock';
 import { Router } from '@angular/router';
 import { Material } from 'src/app/models/Material';
+import { ResourcesPagination } from 'src/app/models/croForm';
 
 @Component({
   selector: 'app-card-video-list',
@@ -19,15 +19,15 @@ import { Material } from 'src/app/models/Material';
 export class CardVideoListComponent {
   @ViewChild('videoPlayer', { static: false }) videoplayer: ElementRef;
 
-  @Input()
-  public videoElements: VideoElementModel[] = [];
-  @Input()
-  public notUnderstoodConcepts: string[];
+  @Input() public videoElements: VideoElementModel[] = [];
+  @Input() public concepts: any[];
   public showVideo = false;
   public video: VideoElementModel;
   @Input() userId: string;
   @Input() resultTabType: string = "";
+  @Input() public conceptColors!: string[];
   @Input() currentMaterial?: Material;
+  @Input() resourcesPagination: ResourcesPagination
 
   @Output() backButtonClicked: EventEmitter<void> = new EventEmitter();
 

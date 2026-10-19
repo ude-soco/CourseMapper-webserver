@@ -49,6 +49,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { HighlightPipe } from 'src/app/highlight.pipe';
+import { WordCloudComponent } from './word-cloud/word-cloud.component';
+
+import { StackedColumnComponentComponent } from './stacked-column-component/stacked-column-component.component';
+import { ColoredBandComponent } from './colored-band/colored-band.component';
+
 import { PaginatorModule } from 'primeng/paginator';
 
 
@@ -73,8 +79,13 @@ import { PaginatorModule } from 'primeng/paginator';
     DateAgoPipe,
     LinkifyPipe,
     SafeHtmlPipe,
-    CustomRecommendationOptionComponent,    
-  ],
+    CustomRecommendationOptionComponent, 
+    HighlightPipe, WordCloudComponent,
+    WordCloudComponent,
+    StackedColumnComponentComponent,
+    ColoredBandComponent
+    
+    ],
   imports: [
     InputTextModule,
     FormsModule,
@@ -125,6 +136,7 @@ import { PaginatorModule } from 'primeng/paginator';
     CytoscapeRoadsComponent,
     GraphComponent,
     GraphRecommednedComponent,
+    HighlightPipe
   ],
 
 })

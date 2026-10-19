@@ -4,6 +4,7 @@ import numpy as np
 import logging
 from log import LOG
 logger = LOG(name=__name__, level=logging.DEBUG)
+import sys
 
 
 def compute_cos_sim_score(embedding1, embedding2):
@@ -35,4 +36,5 @@ class Recommendation:
             concept["n"]["score"] = compute_cos_sim_score(concept_embedding, user_embedding)
         
         return sorted(concept_list, key=lambda x: x["n"]["score"], reverse=True)[0:top_n]
+        
         
