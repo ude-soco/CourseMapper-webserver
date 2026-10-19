@@ -15,7 +15,7 @@ from config import Config
 import logging
 
 
-stanfordcorenlp_file = os.path.abspath("C:\\Users\\farah\\OneDrive\\Desktop\\CourseMapper-webserver\\coursemapper-kg\\concept-map\\stanford-corenlp-full-2018-02-27")
+stanfordcorenlp_file = os.path.abspath("stanford-corenlp-full-2018-02-27")
 
 class KeyphraseService:
     def __init__(self):
