@@ -3,12 +3,16 @@ updates:
 - package-ecosystem: "github-actions"
   directory: "/"
   target-branch: "dev"
+  assignees:
+  - "ralf-berger"
   schedule:
     interval: "weekly"
 
 - package-ecosystem: "docker"
   directory: "/proxy"
   target-branch: "dev"
+  assignees:
+  - "ralf-berger"
   schedule:
     interval: "weekly"
   labels:
