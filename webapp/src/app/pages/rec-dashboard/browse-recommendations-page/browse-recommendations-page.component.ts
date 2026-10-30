@@ -9,30 +9,32 @@ import {
 } from 'rxjs';
 import { CourseRecommendation } from 'src/app/models/CourseRecommendation';
 import { MoocRecommendationsService } from 'src/app/services/rec-dashboard/mooc-recommendations.service';
+import { FavouriteRecommendationsService } from 'src/app/services/rec-dashboard/favourite-recommendations.service';
 
-type SortBy = 'relevant' | 'rated' | 'A to Z' | 'Z to A';
 const UNCATEGORIZED = 'Uncategorized';
 
+// available platforms = [ 'On Campus', 'KI Campus', 'OpenVhb', 'EdX', 'OpenHPI','Coursera','CourseMapper','IMoox','Udemy','Udacity', 'Future Learn' ]
 export const PLATFORM_BACKGROUND_COLOURS: Record<string, string> = {
   'on Campus': '#F7DF05',
   'KI Campus': '#6A05F7',
   OpenVhb: '#00A3FF',
   EdX: '#00B8A9',
-  OpenHPI: '#FF6B00',
+  OpenHPI: '#00A86B',
   Coursera: '#0056D2',
-  CourseMapper: '#00A86B',
-  IMoox: '#F0007A',
+  CourseMapper: '#FF6B00',
+  iMoox: '#F0007A',
   Udemy: '#FF3B30',
   Udacity: '#A3E635',
   'Future Learn': '#c019dd'
 };
 
+// Define the type for sorting options
+type SortBy = 'relevant' | 'rated' | 'A to Z' | 'Z to A';
+
 type MoocProperties = Extract<
   CourseRecommendation['node_properties'],
   { rating: string }
 >;
-
-// available platforms = [ 'On Campus', 'KI Campus', 'OpenVhb', 'EdX', 'OpenHPI','Coursera','CourseMapper','IMoox','Udemy','Udacity']
 
 interface FilterState {
   platforms: string[];
@@ -48,6 +50,7 @@ export function isMoocProperties(
   return 'rating' in properties;
 }
 
+// Get category for a recommendation, or 'Uncategorized' if not available
 function getCategory(recommendation: CourseRecommendation): string {
   if (!isMoocProperties(recommendation.node_properties)) {
     return UNCATEGORIZED;
@@ -59,6 +62,7 @@ function getCategory(recommendation: CourseRecommendation): string {
     : UNCATEGORIZED;
 }
 
+// Get all platform names for a recommendation, including the source platform if it's CourseMapper
 function getPlatformNames(recommendation: CourseRecommendation): string[] {
   const platforms =
     recommendation.platforms?.map((platform) => platform.name) ?? [];
@@ -70,6 +74,7 @@ function getPlatformNames(recommendation: CourseRecommendation): string[] {
   return [...new Set(platforms)];
 }
 
+// Parse duration string from recommendation object into a value and unit
 function parseDuration(duration) {
   const match = duration.match(/\d+(\.\d+)?/);
 
@@ -103,6 +108,7 @@ function parseDuration(duration) {
   };
 }
 
+// Categorize duration into predefined ranges for filtering
 function getDurationCategory(rec: CourseRecommendation) {
   if (!isMoocProperties(rec.node_properties)) {
     return 'Not given';
@@ -156,6 +162,7 @@ function getDurationCategory(rec: CourseRecommendation) {
   return 'Not given';
 }
 
+// Parse price string from recommendation object into a numeric value
 function parsePrice(price) {
   if (!price) {
     return null;
@@ -166,6 +173,7 @@ function parsePrice(price) {
   return isNaN(value) ? null : value;
 }
 
+// Get price for a recommendation, or null if not available
 function getPrice(rec: CourseRecommendation) {
   if (!isMoocProperties(rec.node_properties)) {
     return null;
@@ -185,10 +193,14 @@ export class BrowseRecommendationsPageComponent {
   readonly loading$ = this.moocRecommendationService.loading$;
   readonly error$ = this.moocRecommendationService.error$;
 
+  // original recommendations observable from the service, unfiltered and unsorted
+  readonly moocRecommendations$ = this.moocRecommendationService.recommendations$;
+
   readonly platformBackgroundColours = PLATFORM_BACKGROUND_COLOURS;
 
+  // normalized recommendations observable, used for filtering and sorting
   readonly recommendations$ =
-    this.moocRecommendationService.recommendation$.pipe(
+    this.moocRecommendations$.pipe(
       map((items) =>
         this.moocRecommendationService.normalizeRecommendations(items),
       ),
@@ -196,7 +208,7 @@ export class BrowseRecommendationsPageComponent {
 
   // Filtering information
   readonly availablePlatforms$: Observable<string[]> =
-    this.moocRecommendationService.recommendation$.pipe(
+    this.recommendations$.pipe(
       map((items) => {
         const platforms = items.flatMap(getPlatformNames);
 
@@ -205,7 +217,7 @@ export class BrowseRecommendationsPageComponent {
     );
 
   readonly availableCategories$: Observable<string[]> =
-    this.moocRecommendationService.recommendation$.pipe(
+    this.recommendations$.pipe(
       map((items) => {
         const categories = items.flatMap((item) => {
           return [getCategory(item)];
@@ -216,7 +228,7 @@ export class BrowseRecommendationsPageComponent {
     );
 
   readonly maxAvailablePrice$: Observable<number> =
-    this.moocRecommendationService.recommendation$.pipe(
+    this.moocRecommendations$.pipe(
       map((items) => {
         const prices = items
           .flatMap((item) => {
@@ -228,7 +240,7 @@ export class BrowseRecommendationsPageComponent {
       }),
     );
 
-  // filter counts
+  // Number of recommendations per platform, category, and duration displayed on filtering
   readonly platformCounts$: Observable<Record<string, number>> =
     this.recommendations$.pipe(
       map((items) =>
@@ -272,7 +284,8 @@ export class BrowseRecommendationsPageComponent {
       ),
     );
 
-  durationOptions = [
+  // Duration filter options
+  readonly durationOptions = [
     { label: 'Less than 2 hours', value: 'lessThan2Hours' },
     { label: '2-10 hours', value: '2To10Hours' },
     { label: '10-20 hours', value: '10To20Hours' },
@@ -329,11 +342,16 @@ export class BrowseRecommendationsPageComponent {
     }),
   );
 
-  constructor(private moocRecommendationService: MoocRecommendationsService) {}
+  constructor(
+    private moocRecommendationService: MoocRecommendationsService,
+    private favouriteRecommendationsService: FavouriteRecommendationsService,
+  ) {}
 
   ngOnInit() {
     this.moocRecommendationService.getRecommendedMOOCs().subscribe();
+    this.favouriteRecommendationsService.getFavouriteRecommendations().subscribe();
 
+    // Sets the state array to contain ALL available platforms in the generated recommendations on init
     this.availablePlatforms$
       .pipe(
         filter((platforms) => platforms.length > 0),
@@ -343,10 +361,11 @@ export class BrowseRecommendationsPageComponent {
         const current = this.filterState$.value;
         this.filterState$.next({
           ...current,
-          platforms: platforms, // Sets the state array to contain ALL available platforms in the generated recommendations on init
+          platforms: platforms, 
         });
       });
 
+    // Sets the state array to contain ALL available categories in the generated recommendations on init
     this.availableCategories$
       .pipe(
         filter((categories) => categories.length > 0),
@@ -356,7 +375,7 @@ export class BrowseRecommendationsPageComponent {
         const current = this.filterState$.value;
         this.filterState$.next({
           ...current,
-          categories: categories, // Sets the state array to contain ALL available categories in the generated recommendations on init
+          categories: categories, 
         });
       });
 
@@ -440,6 +459,7 @@ export class BrowseRecommendationsPageComponent {
     return sortedRecommendations;
   }
 
+  // Filtering functions : platform, category, duration, price
   onTogglePlatform(platformName: string, event: Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
     const current = this.filterState$.value;

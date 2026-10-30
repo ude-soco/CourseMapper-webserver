@@ -150,7 +150,7 @@
           style="font-size: 1.5rem"
         ></i>
         <p class="text-lg italic text-gray-500">
-          Your Recommendations are based on your personal learner model
+          Your Recommendations are based on your personal learner profile
         </p>
         <a
           routerLink="/user/pkg"
@@ -188,6 +188,10 @@
               <div
                 class="course-banner w-full h-[130px] rounded-xl border border-gray-300"
               >
+              <app-favourite-course-button
+                [course]="recommendation"
+                class="favourite-button"
+              ></app-favourite-course-button>
                 <span
                   *ngIf="(recommendation.platforms?.[0]?.name || recommendation.source) as platformName"
                   class="platform-ribbon"
