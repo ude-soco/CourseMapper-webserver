@@ -18,11 +18,11 @@
       >
         <div
           class="w-[200px] h-[134px] bg-cover bg-center border-gray-300 rounded-lg mt-[5px] mb-[5px] transition-all duration-300 ease-in-out shadow-[0px_3px_6px_rgba(0,0,0,0.16),_0px_3px_6px_rgba(0,0,0,0.23)] hover:shadow-lg transition-transform hover:-translate-y-1 cursor-pointer"
-          style="background-color: hsl(var(--random-hue, 500deg), 70%, 60%)"
+          style="background-color: hsl(var(--random-hue, 360deg), 70%, 60%)"
         ></div>
         <h3 class="course-name">{{ item.name }}</h3>
         <p class="teacher-name">
-          {{ item.teachers?.[0]?.name || "Unknown instructor" }}
+          {{ item.teacher || "Unknown instructor" }}
         </p>
       </div>
     </div>

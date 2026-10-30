@@ -25,7 +25,7 @@
 
 <app-recommendation-carousel
   [carouselTitle]="'Top Recommendations'"
-  [carouselItems]="(recommendations$ | async)"
+  [carouselItems]="getCourseCarouselObject(recommendations$ | async)"
   routerLink="/rec-dashboard-landing-page"
 ></app-recommendation-carousel>
 

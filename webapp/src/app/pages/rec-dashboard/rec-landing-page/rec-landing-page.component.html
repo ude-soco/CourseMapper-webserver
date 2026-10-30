@@ -15,13 +15,13 @@
 
   <app-recommendation-carousel
     [carouselTitle]="'My Top Recommendations'"
-    [carouselItems]="recommendations.slice(1, 6)"
+    [carouselItems]="getCourseCarouselObject(recommendations.slice(1, 6))"
     routerLink="/browse-recommendations"
   ></app-recommendation-carousel>
 
   <app-recommendation-carousel
     [carouselTitle]="'Favourites'"
-    [carouselItems]="recommendations.slice(1, 6)" 
+    [carouselItems]="(getCourseCarouselObject((favouriteRecommendations$ | async)) || []).slice(0, 5)"
     routerLink="/favourite-recommendations"
   ></app-recommendation-carousel>
   </ng-container>

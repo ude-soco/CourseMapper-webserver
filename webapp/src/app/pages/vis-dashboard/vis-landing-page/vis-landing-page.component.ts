@@ -5,6 +5,7 @@ import { filterAndSelectCategories } from '../../../utils/FillterSelectCategorie
 import { CourseCarouselType } from '../../components/vis-dashboard/carousel/course-carousel/course-carousel.component';
 import { MoocRecommendationsService } from 'src/app/services/rec-dashboard/mooc-recommendations.service';
 import { map } from 'rxjs';
+import { getCourseCarouselObject } from '../../components/rec-dashboard/recommendation-carousel/recommendation-carousel.component';
 
 interface OptionsType {
   text: string;
@@ -17,12 +18,17 @@ interface OptionsType {
 })
 export class VisLandingPageComponent implements OnInit {
   protected readonly CourseCarouselType = CourseCarouselType;
-  readonly recommendations$ = this.moocRecommendationService.recommendation$.pipe(
-    map((items) => this.moocRecommendationService.normalizeRecommendations(items)),
-  );
+  readonly recommendations$ =
+    this.moocRecommendationService.recommendations$.pipe(
+      map((items) =>
+        this.moocRecommendationService.normalizeRecommendations(items),
+      ),
+    );
   courseCategoryData: string[] = [];
   optionsData: OptionsType[] = [];
-  
+
+  getCourseCarouselObject = getCourseCarouselObject;
+
   constructor(
     private readonly visDashboardService: VisDashboardService,
     private moocRecommendationService: MoocRecommendationsService,
