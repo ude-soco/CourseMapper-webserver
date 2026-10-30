@@ -4,6 +4,14 @@
   grid-gap: 10rem;
 }
 
+.rec-score {
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 10px;
+  vertical-align: middle;
+  text-align: center;
+}
+
 .left {
   margin-bottom: 10px;
   h2{
