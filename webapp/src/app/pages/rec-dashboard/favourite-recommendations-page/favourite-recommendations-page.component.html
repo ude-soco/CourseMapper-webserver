@@ -1,0 +1,27 @@
+<h1 class="text-2xl font-bold mb-4">My Favourites</h1>
+<div class="flex gap-[10px] w-full flex-wrap">
+  <div
+    *ngFor="let item of (favouriteRecommendations$ | async) || []"
+    [routerLink]="['/course-detail', item.courseId]"
+  >
+    <div
+      class="w-[200px] h-[134px] bg-cover bg-center border-gray-300 rounded-lg mt-[5px] mb-[5px] transition-all duration-300 ease-in-out shadow-[0px_3px_6px_rgba(0,0,0,0.16),_0px_3px_6px_rgba(0,0,0,0.23)] hover:shadow-lg transition-transform hover:-translate-y-1 cursor-pointer relative"
+      style="background-color: #0056D2"
+    >
+    <p-button
+    icon="pi pi-heart-fill" 
+    styleClass="p-button-rounded p-button-secondary p-button-text p-button-lg"
+    class="absolute bottom-0 right-0 z-10"
+    (onClick)="removeFavourite(item.courseId, item.source, item.name, $event)"
+  >
+  </p-button>
+  </div>
+    <h3 class="course-name">{{ item.name }}</h3>
+    <p class="teacher-name">
+      {{ item.teacher || 'Unknown instructor' }}
+    </p>
+  </div>
+</div>
+<div *ngIf="(favouriteRecommendations$ | async)?.length === 0">
+  <p>You don't have any favourite recommendations yet</p>
+</div>
