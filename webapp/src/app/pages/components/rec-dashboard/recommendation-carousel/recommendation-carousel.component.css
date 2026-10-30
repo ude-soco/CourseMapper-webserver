@@ -6,6 +6,7 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   overflow: hidden;
+  width: 200px;
 }
 
 .teacher-name {
@@ -15,6 +16,7 @@
   -webkit-line-clamp: 1;
   line-clamp: 1;
   overflow: hidden;
+  width: 200px;
 }
 
 .carousel-wrapper {
