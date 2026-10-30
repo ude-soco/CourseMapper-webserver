@@ -13,6 +13,86 @@ export const allAccess = (req, res) => {
   res.status(200).send("Public content");
 };
 
+export const getFavoriteCourseRecommendations = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select(
+      "favoriteCourseRecommendations"
+    );
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+    return res.status(200).send(user.favoriteCourseRecommendations);
+  } catch (error) {
+    console.error("Error getting favorite course recommendations:", error);
+    return res.status(500).send({ error: "Failed to get favorite recommendations." });
+  }
+};
+
+export const addFavoriteCourseRecommendation = async (req, res) => {
+  const { courseId, source, name, teacher } = req.body;
+  const allowedSources = ["CourseMapper", "MoocCentral"];
+
+  if (typeof courseId !== "string" || !courseId.trim() || !allowedSources.includes(source)) {
+    return res.status(400).send({ error: "A valid courseId and source are required." });
+  }
+
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+    const alreadyFavorite = user.favoriteCourseRecommendations.some(
+      (favorite) => favorite.courseId === courseId && favorite.source === source
+    );
+
+    if (!alreadyFavorite) {
+      user.favoriteCourseRecommendations.push({
+        courseId,
+        source,
+        name,
+        teacher: teacher || "Unknown instructor",
+      });
+      await user.save();
+    }
+
+    return res.status(200).send(user.favoriteCourseRecommendations);
+  } catch (error) {
+    console.error("Error adding favorite course recommendation:", error);
+    return res.status(500).send({ error: "Failed to add favorite recommendation." });
+  }
+};
+
+export const removeFavoriteCourseRecommendation = async (req, res) => {
+  const { courseId, source, name } = req.body;
+  const allowedSources = ["CourseMapper", "MoocCentral"];
+
+  if (typeof courseId !== "string" || !courseId.trim() || !allowedSources.includes(source)) {
+    return res.status(400).send({ error: "A valid courseId and source are required." });
+  }
+
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found." });
+    }
+
+    user.favoriteCourseRecommendations = user.favoriteCourseRecommendations.filter(
+      (favorite) => !(favorite.courseId === courseId && favorite.source === source)
+    );
+    await user.save();
+
+    return res.status(200).send(user.favoriteCourseRecommendations);
+  } catch (error) {
+    console.error("Error removing favorite course recommendation:", error);
+    return res.status(500).send({ error: "Failed to remove favorite recommendation." });
+  }
+};
+
 /**
  * @function userBoard
  * Test access to role user

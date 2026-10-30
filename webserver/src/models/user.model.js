@@ -25,20 +25,20 @@ const User = new Schema({
   ],
   understoodConcepts: [], //saves ids for concepts that user understand
   didNotUnderstandConcepts: [], //saves ids for concepts that user did not understand
-  
+
   // Map to store concept IDs and their respective timestamps
   conceptTimestamps: {
     type: Map,
     of: Date,
-    default: {}
+    default: {},
   },
 
   // Advanced filter profiles for PKG
   pkgAdvancedFilterProfiles: [
     {
       name: { type: String, required: true },
-      slideIds: [{ type: String, required: true }]
-    }
+      slideIds: [{ type: String, required: true }],
+    },
   ],
 
   indicators: [
@@ -60,6 +60,23 @@ const User = new Schema({
   isReplyAndMentionedNotificationsEnabled: { type: Boolean, default: true },
   isCourseUpdateNotificationsEnabled: { type: Boolean, default: true },
   lastTimeCourseMapperOpened: { type: Date, default: Date.now() },
+
+  favoriteCourseRecommendations: {
+    type: [
+      {
+        source: {
+          type: String,
+          enum: ["CourseMapper", "MoocCentral"],
+          required: true,
+        },
+        courseId: { type: String, required: true },
+        name: { type: String, required: true },
+        teacher: { type: String, default: "Unknown instructor" },
+        addedAt: { type: Date, default: Date.now },
+      },
+    ],
+    default: [],
+  },
 });
 
 module.exports = mongoose.model("user", User);

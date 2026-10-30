@@ -92,4 +92,22 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     controller.updateConceptsStatus
   );
+
+  app.get(
+    "/api/user/favorite-recommendations",
+    [authJwt.verifyToken],
+    controller.getFavoriteCourseRecommendations
+  );
+
+  app.post(
+    "/api/user/favorite-recommendations",
+    [authJwt.verifyToken],
+    controller.addFavoriteCourseRecommendation
+  );
+
+  app.delete(
+    "/api/user/favorite-recommendations",
+    [authJwt.verifyToken],
+    controller.removeFavoriteCourseRecommendation
+  );
 };
