@@ -16,7 +16,7 @@ export class MoocRecommendationsService {
 
   // recommendations
   private recommendationSubject = new BehaviorSubject<CourseRecommendation[]>([]);
-  readonly recommendation$ = this.recommendationSubject.asObservable();
+  readonly recommendations$ = this.recommendationSubject.asObservable();
 
   // loading state
   private loadingSubject = new BehaviorSubject<boolean>(false);
