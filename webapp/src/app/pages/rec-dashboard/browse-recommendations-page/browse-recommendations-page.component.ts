@@ -326,11 +326,9 @@ export class BrowseRecommendationsPageComponent {
     map(([recommendations, sortBy, filters]) => {
       console.log(filters);
       const filteredRecommendations = recommendations.filter((rec) => {
-        const matchesPlatforms =
-          filters.platforms.length === 0 ||
-          getPlatformNames(rec).some((platform) =>
-            filters.platforms.includes(platform),
-          );
+        const matchesPlatforms = getPlatformNames(rec).some((platform) =>
+          filters.platforms.includes(platform),
+        );
 
         const matchesCategory = filters.categories.includes(getCategory(rec));
 
@@ -362,7 +360,7 @@ export class BrowseRecommendationsPageComponent {
       .getFavouriteRecommendations()
       .subscribe();
 
-    this.resetFilters();
+    this.resetAllFilters();
   }
 
   setSortBy(sortBy: SortBy) {
@@ -388,7 +386,7 @@ export class BrowseRecommendationsPageComponent {
 
     switch (sortBy) {
       case 'relevant':
-        // Implement relevant sorting logic
+        // Default sorting order
         break;
 
       case 'rated':
@@ -517,10 +515,30 @@ export class BrowseRecommendationsPageComponent {
           maxPrice: price,
         });
       });
-
   }
 
-  resetFilters() {
+  clearCategoryFilters() {
+    this.filterState$.next({
+      ...this.filterState$.value,
+      categories: [],
+    });
+  }
+
+  clearPlatformFilters() {
+    this.filterState$.next({
+      ...this.filterState$.value,
+      platforms: [],
+    });
+  }
+
+  clearDurationFilters() {
+    this.filterState$.next({
+      ...this.filterState$.value,
+      duration: [],
+    });
+  }
+
+  resetAllFilters() {
     this.resetPlatformFilters();
     this.resetCategoryFilters();
     this.resetDurationFilters();

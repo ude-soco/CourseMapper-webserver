@@ -1,0 +1,5 @@
+<span class="flex items-center gap-[10px] mb-[10px]">
+  <button [disabled]="disable_select_all" [class]="disable_select_all ? 'disabled_option' : 'active_option'" (click)="onSelectAll()">Select All</button>
+  <p>|</p>
+  <button [disabled]="disable_clear_all" [class]="disable_clear_all ? 'disabled_option' : 'active_option'" (click)="onClearAll()">Clear All</button>
+</span>

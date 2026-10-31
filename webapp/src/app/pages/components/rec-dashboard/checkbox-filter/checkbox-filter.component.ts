@@ -24,8 +24,17 @@ export class CheckboxFilterComponent {
   @Input() counts: Record<string, number> = {};
 
   @Output() filterChange = new EventEmitter<CheckboxFilterChange>();
+  @Output() onSelectAllEvent = new EventEmitter<void>();
+  @Output() onClearAllEvent = new EventEmitter<void>();
 
-  onToggle(value: string, event: Event) {
+  onSelectAll() {
+    this.onSelectAllEvent.emit();
+  }
+  onClearAll() {
+    this.onClearAllEvent.emit();
+  }
+
+  onToggleOption(value: string, event: Event) {
     this.filterChange.emit({
       value,
       checked: (event.target as HTMLInputElement).checked,

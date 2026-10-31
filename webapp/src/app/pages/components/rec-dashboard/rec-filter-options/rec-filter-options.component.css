@@ -1,0 +1,12 @@
+.active_option {
+  color: #1d4fd8c6; 
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.disabled_option {
+  color: #9ca3af;
+  cursor: not-allowed;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}

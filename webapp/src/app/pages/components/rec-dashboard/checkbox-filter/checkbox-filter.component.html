@@ -3,6 +3,12 @@
     <h3 class="font-semibold text-[26px]">{{ title }}</h3>
     <span class="filter-caret" aria-hidden="true"></span>
   </summary>
+  <app-rec-filter-options
+    (onSelectAllEvent)="onSelectAll()"
+    (onClearAllEvent)="onClearAll()"
+    [disable_select_all]="selectedValues.length === options.length"
+    [disable_clear_all]="selectedValues.length === 0"
+  ></app-rec-filter-options>
   <div *ngFor="let option of options" class="ml-[20px] capitalize">
     <label
       class="flex items-center justify-between mr-2 text-[17px] font-light leading-[2] cursor-pointer align-middle"
@@ -10,7 +16,7 @@
       <span class="flex items-center">
         <input
           type="checkbox"
-          (change)="onToggle(option.value, $event)"
+          (change)="onToggleOption(option.value, $event)"
           [checked]="selectedValues.includes(option.value)"
           class="mr-[5px] w-[17px] h-[17px]"
         />
