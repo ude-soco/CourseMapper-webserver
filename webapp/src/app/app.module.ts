@@ -158,6 +158,8 @@ import { RecommendationCarouselComponent } from './pages/components/rec-dashboar
 import { FavouriteRecommendationsPageComponent } from './pages/rec-dashboard/favourite-recommendations-page/favourite-recommendations-page.component';
 import { CourseHoverOverviewComponent } from './pages/components/rec-dashboard/course-hover-overview/course-hover-overview.component';
 import { FavouriteCourseButtonComponent } from './pages/components/rec-dashboard/favourite-course-button/favourite-course-button.component';
+import { RecFilterOptionsComponent } from './pages/components/rec-dashboard/rec-filter-options/rec-filter-options.component';
+import { CheckboxFilterComponent } from './pages/components/rec-dashboard/checkbox-filter/checkbox-filter.component';
 
 
 @NgModule({
@@ -292,6 +294,8 @@ import { FavouriteCourseButtonComponent } from './pages/components/rec-dashboard
   FavouriteRecommendationsPageComponent,
   CourseHoverOverviewComponent,
   FavouriteCourseButtonComponent,
+  RecFilterOptionsComponent,
+  CheckboxFilterComponent,
 ],
   imports: [
   MentionModule,

@@ -6,6 +6,7 @@ import {
   map,
   Observable,
   take,
+  tap,
 } from 'rxjs';
 import { CourseRecommendation } from 'src/app/models/CourseRecommendation';
 import { MoocRecommendationsService } from 'src/app/services/rec-dashboard/mooc-recommendations.service';
@@ -25,7 +26,7 @@ export const PLATFORM_BACKGROUND_COLOURS: Record<string, string> = {
   iMoox: '#F0007A',
   Udemy: '#FF3B30',
   Udacity: '#A3E635',
-  'Future Learn': '#c019dd'
+  'Future Learn': '#c019dd',
 };
 
 // Define the type for sorting options
@@ -194,17 +195,17 @@ export class BrowseRecommendationsPageComponent {
   readonly error$ = this.moocRecommendationService.error$;
 
   // original recommendations observable from the service, unfiltered and unsorted
-  readonly moocRecommendations$ = this.moocRecommendationService.recommendations$;
+  readonly moocRecommendations$ =
+    this.moocRecommendationService.recommendations$;
 
   readonly platformBackgroundColours = PLATFORM_BACKGROUND_COLOURS;
 
   // normalized recommendations observable, used for filtering and sorting
-  readonly recommendations$ =
-    this.moocRecommendations$.pipe(
-      map((items) =>
-        this.moocRecommendationService.normalizeRecommendations(items),
-      ),
-    );
+  readonly recommendations$ = this.moocRecommendations$.pipe(
+    map((items) =>
+      this.moocRecommendationService.normalizeRecommendations(items),
+    ),
+  );
 
   // Filtering information
   readonly availablePlatforms$: Observable<string[]> =
@@ -226,6 +227,14 @@ export class BrowseRecommendationsPageComponent {
         return [...new Set(categories)];
       }),
     );
+
+  readonly platformFilterOptions$ = this.availablePlatforms$.pipe(
+    map((platforms) => platforms.map((value) => ({ value, label: value }))),
+  );
+
+  readonly categoryFilterOptions$ = this.availableCategories$.pipe(
+    map((categories) => categories.map((value) => ({ value, label: value }))),
+  );
 
   readonly maxAvailablePrice$: Observable<number> =
     this.moocRecommendations$.pipe(
@@ -349,48 +358,11 @@ export class BrowseRecommendationsPageComponent {
 
   ngOnInit() {
     this.moocRecommendationService.getRecommendedMOOCs().subscribe();
-    this.favouriteRecommendationsService.getFavouriteRecommendations().subscribe();
+    this.favouriteRecommendationsService
+      .getFavouriteRecommendations()
+      .subscribe();
 
-    // Sets the state array to contain ALL available platforms in the generated recommendations on init
-    this.availablePlatforms$
-      .pipe(
-        filter((platforms) => platforms.length > 0),
-        take(1),
-      )
-      .subscribe((platforms) => {
-        const current = this.filterState$.value;
-        this.filterState$.next({
-          ...current,
-          platforms: platforms, 
-        });
-      });
-
-    // Sets the state array to contain ALL available categories in the generated recommendations on init
-    this.availableCategories$
-      .pipe(
-        filter((categories) => categories.length > 0),
-        take(1),
-      )
-      .subscribe((categories) => {
-        const current = this.filterState$.value;
-        this.filterState$.next({
-          ...current,
-          categories: categories, 
-        });
-      });
-
-    this.maxAvailablePrice$
-      .pipe(
-        filter((price) => Number.isFinite(price)),
-        take(1),
-      )
-      .subscribe((price) => {
-        const current = this.filterState$.value;
-        this.filterState$.next({
-          ...current,
-          maxPrice: price,
-        });
-      });
+    this.resetFilters();
   }
 
   setSortBy(sortBy: SortBy) {
@@ -460,8 +432,7 @@ export class BrowseRecommendationsPageComponent {
   }
 
   // Filtering functions : platform, category, duration, price
-  onTogglePlatform(platformName: string, event: Event) {
-    const isChecked = (event.target as HTMLInputElement).checked;
+  onTogglePlatform(platformName: string, isChecked: boolean) {
     const current = this.filterState$.value;
     const updatedPlatforms = isChecked
       ? [...current.platforms, platformName]
@@ -470,8 +441,7 @@ export class BrowseRecommendationsPageComponent {
     this.filterState$.next({ ...current, platforms: updatedPlatforms });
   }
 
-  onToggleCategory(category: string, event: Event) {
-    const isChecked = (event.target as HTMLInputElement).checked;
+  onToggleCategory(category: string, isChecked: boolean) {
     const current = this.filterState$.value;
     const updatedCategories = isChecked
       ? [...current.categories, category]
@@ -480,8 +450,7 @@ export class BrowseRecommendationsPageComponent {
     this.filterState$.next({ ...current, categories: updatedCategories });
   }
 
-  onToggleDuration(duration: string, event: Event) {
-    const isChecked = (event.target as HTMLInputElement).checked;
+  onToggleDuration(duration: string, isChecked: boolean) {
     const current = this.filterState$.value;
     const updatedDuration = isChecked
       ? [...current.duration, duration]
@@ -493,5 +462,68 @@ export class BrowseRecommendationsPageComponent {
   onChangeMaxPrice(price: number) {
     const current = this.filterState$.value;
     this.filterState$.next({ ...current, maxPrice: price });
+  }
+
+  resetPlatformFilters() {
+    // Sets the state array to contain ALL available platforms in the generated recommendations
+    this.availablePlatforms$
+      .pipe(
+        filter((platforms) => platforms.length > 0),
+        take(1),
+      )
+      .subscribe((platforms) => {
+        const current = this.filterState$.value;
+        this.filterState$.next({
+          ...current,
+          platforms: platforms,
+        });
+      });
+  }
+
+  resetCategoryFilters() {
+    // Sets the state array to contain ALL available categories in the generated recommendations
+    this.availableCategories$
+      .pipe(
+        filter((categories) => categories.length > 0),
+        take(1),
+      )
+      .subscribe((categories) => {
+        const current = this.filterState$.value;
+        this.filterState$.next({
+          ...current,
+          categories: categories,
+        });
+      });
+  }
+
+  resetDurationFilters() {
+    this.filterState$.next({
+      ...this.filterState$.value,
+      duration: [...this.durationOptions.map((d) => d.value)],
+    });
+  }
+
+  resetPriceFilter() {
+    // Sets the state array to contain maximum price available in the generated recommendations
+    this.maxAvailablePrice$
+      .pipe(
+        filter((price) => Number.isFinite(price)),
+        take(1),
+      )
+      .subscribe((price) => {
+        const current = this.filterState$.value;
+        this.filterState$.next({
+          ...current,
+          maxPrice: price,
+        });
+      });
+
+  }
+
+  resetFilters() {
+    this.resetPlatformFilters();
+    this.resetCategoryFilters();
+    this.resetDurationFilters();
+    this.resetPriceFilter();
   }
 }

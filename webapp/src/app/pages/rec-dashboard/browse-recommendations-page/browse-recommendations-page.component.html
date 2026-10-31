@@ -9,60 +9,25 @@
   <p>Please wait while your recommendations are being generated...</p>
 </div>
 
+<!-- Filters -->
 <ng-container *ngIf="!(loading$ | async) && !(error$ | async)">
   <div class="grid grid-cols-4 mt-[40px]">
     <div class="col-span-1">
-      <details class="filter-box" open>
-        <summary class="filter-box-heading">
-          <h3 class="font-semibold text-[26px]">Platforms</h3>
-          <span class="filter-caret" aria-hidden="true"></span>
-        </summary>
-        <div
-          *ngFor="let platform of availablePlatforms$ | async"
-          class="ml-[20px] capitalize"
-        >
-          <label
-            class="flex items-center justify-between mr-2 text-[17px] font-light leading-[2] cursor-pointer align-middle"
-          >
-            <span class="flex items-center">
-              <input
-                type="checkbox"
-                (change)="onTogglePlatform(platform, $event)"
-                [checked]="(filterState$ | async)?.platforms?.includes(platform)"
-                class="mr-[5px] w-[17px] h-[17px]"
-              />
-              {{ platform }}
-            </span>
-            <span class="text-sm text-gray-500">({{ (platformCounts$ | async)?.[platform] || 0 }})</span>
-          </label>
-        </div>
-      </details>
+      <app-checkbox-filter
+        title="Platforms"
+        [options]="(platformFilterOptions$ | async) || []"
+        [selectedValues]="(filterState$ | async)?.platforms || []"
+        [counts]="(platformCounts$ | async) || {}"
+        (filterChange)="onTogglePlatform($event.value, $event.checked)"
+      ></app-checkbox-filter>
 
-      <details class="filter-box" open>
-        <summary class="filter-box-heading">
-          <h3 class="font-semibold text-[26px]">Categories</h3>
-          <span class="filter-caret" aria-hidden="true"></span>
-        </summary>
-        <div
-          *ngFor="let category of availableCategories$ | async"
-          class="ml-[20px] capitalize"
-        >
-          <label
-            class="flex items-center justify-between mr-2 text-[17px] font-light leading-[2] cursor-pointer align-middle"
-          >
-            <span class="flex items-center">
-              <input
-                type="checkbox"
-                (change)="onToggleCategory(category, $event)"
-                [checked]="(filterState$ | async)?.categories?.includes(category)"
-                class="mr-[5px] w-[17px] h-[17px]"
-              />
-              {{ category }}
-            </span>
-            <span class="text-sm text-gray-500">({{ (categoryCounts$ | async)?.[category] || 0 }})</span>
-          </label>
-        </div>
-      </details>
+      <app-checkbox-filter
+        title="Categories"
+        [options]="(categoryFilterOptions$ | async) || []"
+        [selectedValues]="(filterState$ | async)?.categories || []"
+        [counts]="(categoryCounts$ | async) || {}"
+        (filterChange)="onToggleCategory($event.value, $event.checked)"
+      ></app-checkbox-filter>
 
       <details class="filter-box" open>
         <summary class="filter-box-heading">
@@ -70,46 +35,28 @@
           <span class="filter-caret" aria-hidden="true"></span>
         </summary>
         <div class="mb-[30px]">
-        <p class="mb-[10px] text-[15px] ">
-          0€ - {{ (filterState$ | async)?.maxPrice }}€
-        </p>
+          <p class="mb-[10px] text-[15px]">
+            0€ - {{ (filterState$ | async)?.maxPrice }}€
+          </p>
           <p-slider
             [min]="0"
             [max]="maxAvailablePrice$ | async"
             [ngModel]="(filterState$ | async)?.maxPrice"
             (ngModelChange)="onChangeMaxPrice($event)"
-          /></div>
-      </details>
-
-      <details class="filter-box" open>
-        <summary class="filter-box-heading">
-          <h3 class="font-semibold text-[26px]">Duration</h3>
-          <span class="filter-caret" aria-hidden="true"></span>
-        </summary>
-        <div
-          *ngFor="let duration of durationOptions"
-          class="ml-[20px] capitalize"
-        >
-          <label
-            class="flex items-center justify-between mr-2 text-[17px] font-light leading-[2] cursor-pointer align-middle"
-          >
-            <span class="flex items-center">
-              <input
-                type="checkbox"
-                (change)="onToggleDuration(duration.value, $event)"
-                [checked]="
-                  (filterState$ | async)?.duration?.includes(duration.value)
-                "
-                class="mr-[5px] w-[17px] h-[17px]"
-              />
-              {{ duration.label }}
-            </span>
-            <span class="text-sm text-gray-500">({{ (durationCounts$ | async)?.[duration.value] || 0 }})</span>
-          </label>
+          />
         </div>
       </details>
+
+      <app-checkbox-filter
+        title="Duration"
+        [options]="durationOptions"
+        [selectedValues]="(filterState$ | async)?.duration || []"
+        [counts]="(durationCounts$ | async) || {}"
+        (filterChange)="onToggleDuration($event.value, $event.checked)"
+      ></app-checkbox-filter>
     </div>
 
+    <!-- Sort and Reset Filters -->
     <div class="col-[2/-1]">
       <div
         class="flex w-full overflow-hidden rounded-lg border border-gray-200 bg-slate-50 font-sans text-sm font-medium text-gray-800 mb-[20px]"
@@ -144,10 +91,10 @@
         </button>
       </div>
 
-      <span class="flex items-center gap-[10px] mb-[20px]">
+      <span class="flex items-center gap-[10px] mb-[10px]">
         <i
           class="pi pi-info-circle text-gray-500"
-          style="font-size: 1.5rem"
+          style="font-size: 1.2rem"
         ></i>
         <p class="text-lg italic text-gray-500">
           Your Recommendations are based on your personal learner profile
@@ -160,6 +107,15 @@
         </a>
       </span>
 
+      <span class="flex items-center mb-[10px]">
+        <p class="text-lg text-gray-700">
+          Showing {{ (displayedRecommendations$ | async)?.length || 0 }} of
+          {{ (recommendations$ | async)?.length || 0 }} recommendations
+        </p>
+        <p-button label="Reset filters" styleClass="p-button-text p-button-primary" (click)="resetFilters()" class="reset_filters_button"></p-button>
+      </span>
+
+      <!-- Displayed Recommendations -->
       <div class="flex gap-[10px] justify-start flex-wrap width-[100%]">
         <div
           *ngIf="(displayedRecommendations$ | async)?.length === 0"
@@ -188,12 +144,15 @@
               <div
                 class="course-banner w-full h-[130px] rounded-xl border border-gray-300"
               >
-              <app-favourite-course-button
-                [course]="recommendation"
-                class="favourite-button"
-              ></app-favourite-course-button>
+                <app-favourite-course-button
+                  [course]="recommendation"
+                  class="favourite-button"
+                ></app-favourite-course-button>
                 <span
-                  *ngIf="(recommendation.platforms?.[0]?.name || recommendation.source) as platformName"
+                  *ngIf="
+                    recommendation.platforms?.[0]?.name ||
+                    recommendation.source as platformName
+                  "
                   class="platform-ribbon"
                   [style.backgroundColor]="
                     platformBackgroundColours[platformName] || '#52636B'

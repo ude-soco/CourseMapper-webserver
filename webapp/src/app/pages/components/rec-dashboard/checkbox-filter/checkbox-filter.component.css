@@ -1,0 +1,31 @@
+.filter-box {
+  display: block;
+  border-bottom: 1px solid #ccc;
+  margin-right: 30px;
+}
+
+.filter-box-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  list-style: none;
+}
+
+.filter-box-heading::-webkit-details-marker {
+  display: none;
+}
+
+.filter-caret {
+  width: 8px;
+  height: 8px;
+  margin-right: 4px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-135deg);
+  transition: transform 0.3s ease;
+}
+
+.filter-box:not([open]) .filter-caret {
+  transform: rotate(45deg);
+}

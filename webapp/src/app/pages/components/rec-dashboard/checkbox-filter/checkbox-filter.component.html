@@ -1,0 +1,24 @@
+<details class="filter-box" open>
+  <summary class="filter-box-heading">
+    <h3 class="font-semibold text-[26px]">{{ title }}</h3>
+    <span class="filter-caret" aria-hidden="true"></span>
+  </summary>
+  <div *ngFor="let option of options" class="ml-[20px] capitalize">
+    <label
+      class="flex items-center justify-between mr-2 text-[17px] font-light leading-[2] cursor-pointer align-middle"
+    >
+      <span class="flex items-center">
+        <input
+          type="checkbox"
+          (change)="onToggle(option.value, $event)"
+          [checked]="selectedValues.includes(option.value)"
+          class="mr-[5px] w-[17px] h-[17px]"
+        />
+        {{ option.label }}
+      </span>
+      <span class="text-sm text-gray-500"
+        >({{ counts[option.value] || 0 }})</span
+      >
+    </label>
+  </div>
+</details>
