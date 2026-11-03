@@ -2,11 +2,13 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { CourseRecommendation } from 'src/app/models/CourseRecommendation';
 import { FavouriteRecommendation } from 'src/app/models/FavouriteRecommendation';
 
+// Combines the properties of CourseRecommendation and FavouriteRecommendation into a single type for the carousel
 export type CourseCarouselObject = {
   course_id: string;
   score: number;
   name: string;
   teacher: string;
+  recommendation?: CourseRecommendation;
 };
 
 export function getCourseCarouselObject(
@@ -17,6 +19,7 @@ export function getCourseCarouselObject(
     score: rec.score,
     name: rec.name,
     teacher: rec.teacher || rec.teachers?.[0]?.name || 'Unknown instructor',
+    recommendation: 'node_properties' in rec ? rec : undefined,
   }));
 }
 
