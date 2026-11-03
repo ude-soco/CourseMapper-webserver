@@ -18,55 +18,9 @@
       <ng-container
         *ngIf="matchingRecommendation$ | async as recommendation"
       >
-        <div
-          class="rec-score"
-          [style.border-color]="getScoreBackgroundColor(recommendation.score * 100)"
-          [style.border-width]="'2px'"
-          [style.border-style]="'solid'"
-        >
-          <span
-            [style]="{
-              display: 'flex',
-              gap: '5px',
-              margin: 0,
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 0,
-              fontWeight: 'bold',
-            }"
-          >
-            <p
-              [style.color]="
-                getScoreBackgroundColor(recommendation.score * 100)
-              "
-            >
-              {{ recommendation.score * 100 | number: '1.0-2' }}%
-            </p>
-            <p>Match based on your personal learner profile</p>
-          </span>
-
-          <span
-            [style]="{
-              display: 'flex',
-              gap: '5px',
-              margin: 0,
-              alignItems: 'end',
-              justifyContent: 'end',
-              padding: 0,
-            }"
-          >
-            <p [style]="{ fontStyle: 'italic' }">Not right?</p>
-            <p
-              [style]="{
-                'font-weight': 500,
-                'text-decoration': 'underline',
-                color: 'blue',
-              }"
-            >
-              <a routerLink="/user/pkg">edit</a>
-            </p>
-          </span>
-        </div>
+        <app-rec-score-match-box
+          [raw_score]="recommendation.score"
+        ></app-rec-score-match-box>
       </ng-container>
       <h3>Description</h3>
       <span>{{ c.Description }}</span>

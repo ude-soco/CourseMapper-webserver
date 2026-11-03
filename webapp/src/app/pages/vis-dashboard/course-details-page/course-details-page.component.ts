@@ -82,14 +82,4 @@ export class CourseDetailsPageComponent implements OnInit {
   }
 
   onWorkClick($event: any) {}
-
-  getScoreBackgroundColor(score: number): string {
-    if (score >= 80) {
-      return 'green';
-    } else if (score >= 50) {
-      return 'yellow';
-    } else {
-      return 'red';
-    }
-  }
 }

@@ -1,0 +1,20 @@
+<div
+  class="border-[2px] rounded-[20px] p-5 mb-5 align-middle text-center"
+  [style.border-color]="getScoreBackgroundColor(raw_score * 100)"
+>
+    <p class="m-0 p-0 italic">
+      Recommended based on a
+      <em [style.color]="getScoreBackgroundColor(raw_score * 100)" class="font-bold">
+        {{ raw_score * 100 | number: "1.0-2" }}%</em
+      >
+
+      match to your personal learner profile
+    </p>
+
+  <span class="flex gap-[5px] m-0 items-end justify-end p-0">
+    <p class="italic"></p>
+    <p class="font-medium underline text-blue-600 hover:text-blue-700 cursor-pointer">
+      <a routerLink="/user/pkg">Modify my learner profile</a>
+    </p>
+  </span>
+</div>
