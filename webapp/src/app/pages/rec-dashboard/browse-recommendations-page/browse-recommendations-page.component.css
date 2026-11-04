@@ -3,6 +3,7 @@
 }
 
 .course-card:hover {
+  /* Set overviewdisplay variables on hover */
   z-index: 20;
   --child-display: block;
   --child-opacity: 1;
@@ -118,7 +119,13 @@
 
 .favourite-button {
   position: absolute;
-  bottom: 5px;
-  right: 5px;
+  bottom: 2px;
+  right: 2px;
+  z-index: 10;
+}
+
+.rec-info-icon {
+  position: absolute;
+  right: 2px;
   z-index: 10;
 }

@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
+import { OverlayPanel } from 'primeng/overlaypanel';
 import {
   BehaviorSubject,
   combineLatest,
   filter,
   map,
   Observable,
-  take,
-  tap,
+  take
 } from 'rxjs';
 import { CourseRecommendation } from 'src/app/models/CourseRecommendation';
 import { MoocRecommendationsService } from 'src/app/services/rec-dashboard/mooc-recommendations.service';
@@ -44,7 +44,7 @@ interface FilterState {
   duration: string[];
 }
 
-// check if node properties are of MOOCentral courses
+// check if recommendation has MoocProperties (i.e., rating, duration, price, etc.)
 export function isMoocProperties(
   properties: CourseRecommendation['node_properties'],
 ): properties is MoocProperties {
@@ -190,6 +190,9 @@ function getPrice(rec: CourseRecommendation) {
 })
 export class BrowseRecommendationsPageComponent {
   overviewPlacement: 'left' | 'right' = 'right';
+
+  // store the panel of the recommendation whose score info overlay panel is currently active (open)
+  activeScorePanel: OverlayPanel | null = null;
 
   readonly loading$ = this.moocRecommendationService.loading$;
   readonly error$ = this.moocRecommendationService.error$;
@@ -367,17 +370,6 @@ export class BrowseRecommendationsPageComponent {
     this.sortBySubject.next(sortBy);
   }
 
-  // Get card position to calculate hover overview placement
-  setOverviewPlacement(event: MouseEvent) {
-    const card = event.currentTarget as HTMLElement;
-    const bounds = card.getBoundingClientRect();
-    const spaceOnRight = window.innerWidth - bounds.right;
-    const spaceOnLeft = bounds.left;
-
-    this.overviewPlacement =
-      spaceOnRight >= 320 || spaceOnRight >= spaceOnLeft ? 'right' : 'left';
-  }
-
   private sortRecommendations(
     recommendations: CourseRecommendation[],
     sortBy: SortBy,
@@ -544,4 +536,43 @@ export class BrowseRecommendationsPageComponent {
     this.resetDurationFilters();
     this.resetPriceFilter();
   }
+
+  // Toggle the display of the score info overlay panel for a specific recommendation
+  toggleScoreInfo(info: {
+    event: Event;
+    panel: OverlayPanel
+  }): void {
+    const { event, panel } = info;
+
+    if (this.activeScorePanel === panel && panel.overlayVisible) {
+      panel.hide();
+      this.activeScorePanel = null;
+      return;
+    }
+
+    if (this.activeScorePanel && this.activeScorePanel !== panel) {
+      this.activeScorePanel.hide();
+    }
+
+    this.activeScorePanel = panel;
+    panel.show(event);
+  }
+
+  onScoreInfoHide(panel: OverlayPanel): void {
+    if (this.activeScorePanel === panel) {
+      this.activeScorePanel = null;
+    }
+  }
+
+  // Get card position to calculate hover overview placement
+  setOverviewPlacement(event: MouseEvent) {
+    const card = event.currentTarget as HTMLElement;
+    const bounds = card.getBoundingClientRect();
+    const spaceOnRight = window.innerWidth - bounds.right;
+    const spaceOnLeft = bounds.left;
+
+    this.overviewPlacement =
+      spaceOnRight >= 320 || spaceOnRight >= spaceOnLeft ? 'right' : 'left';
+  }
+
 }

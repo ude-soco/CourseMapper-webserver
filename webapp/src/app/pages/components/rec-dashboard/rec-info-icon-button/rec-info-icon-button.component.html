@@ -1,0 +1,20 @@
+<p-button
+  icon="pi pi-info-circle"
+  styleClass="p-button-rounded p-button-primary p-button-text p-button-lg"
+  ariaLabel="Why this recommendation?"
+  (onClick)="toggleScorePanel($event, scorePanel)"
+>
+</p-button>
+
+<p-overlayPanel
+  #scorePanel
+  appendTo="body"
+  [dismissable]="true"
+  (onHide)="onPanelHide(scorePanel)"
+  styleClass="rounded-overlay"
+>
+  <app-rec-score-info
+    [raw_rec_score]="rawRecScore"
+    [course_id]="courseId"
+  ></app-rec-score-info>
+</p-overlayPanel>

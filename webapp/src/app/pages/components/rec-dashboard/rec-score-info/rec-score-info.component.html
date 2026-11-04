@@ -1,0 +1,24 @@
+<div class="w-[300px] flex flex-col items-center justify-center gap-4 p-0 m-0">
+  <p class="text-gray-500 text-sm">Recommendation Score Match</p>
+  <div class="flex items-center justify-center gap-2">
+    <div
+      class="rounded-[50%] w-[70px] h-[70px] bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 p-[8px]"
+    >
+      <div
+        class="bg-white text-black rounded-[50%] p-6 flex items-center justify-center w-full h-full"
+      >
+        <p class="text-sm font-bold">
+          {{ rec_score_percentage | number: "1.0-2" }}%
+        </p>
+      </div>
+    </div>
+    <p>
+      This course is recommended because it has a
+      <em class="font-bold">{{ rec_score_percentage | number: "1.0-2" }}%</em>
+      match to your personal learner profile.
+    </p>
+  </div>
+  <a [routerLink]="['/user/pkg']" class="p-button button w-full">
+    <p class="w-full text-center">Edit my learner profile</p>
+  </a>
+</div>

@@ -160,6 +160,9 @@ import { CourseHoverOverviewComponent } from './pages/components/rec-dashboard/c
 import { FavouriteCourseButtonComponent } from './pages/components/rec-dashboard/favourite-course-button/favourite-course-button.component';
 import { RecFilterOptionsComponent } from './pages/components/rec-dashboard/rec-filter-options/rec-filter-options.component';
 import { CheckboxFilterComponent } from './pages/components/rec-dashboard/checkbox-filter/checkbox-filter.component';
+import { RecScoreMatchBoxComponent } from './pages/components/rec-dashboard/rec-score-match-box/rec-score-match-box.component';
+import { RecScoreInfoComponent } from './pages/components/rec-dashboard/rec-score-info/rec-score-info.component';
+import { RecInfoIconButtonComponent } from './pages/components/rec-dashboard/rec-info-icon-button/rec-info-icon-button.component';
 
 
 @NgModule({
@@ -296,6 +299,9 @@ import { CheckboxFilterComponent } from './pages/components/rec-dashboard/checkb
   FavouriteCourseButtonComponent,
   RecFilterOptionsComponent,
   CheckboxFilterComponent,
+  RecScoreMatchBoxComponent,
+  RecScoreInfoComponent,
+  RecInfoIconButtonComponent,
 ],
   imports: [
   MentionModule,

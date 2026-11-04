@@ -126,6 +126,15 @@ border-color: transparent;
     overflow-y: scroll;
 }
 
+/* Set border radius of p-overlaypanel in ref-info-icon-button component */
+.p-overlaypanel.rounded-overlay {
+    border-radius: 10px !important;
+}
+
+.p-overlaypanel.rounded-overlay .p-overlaypanel-content {
+    border-radius: 10px !important;
+}
+
 .gu-mirror {
   position: fixed !important;
   margin: 0 !important;

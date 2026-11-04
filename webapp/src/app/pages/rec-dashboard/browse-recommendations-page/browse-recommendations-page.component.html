@@ -155,6 +155,13 @@
               <div
                 class="course-banner w-full h-[130px] rounded-xl border border-gray-300"
               >
+                <app-rec-info-icon-button
+                  class="rec-info-icon"
+                  [rawRecScore]="recommendation.score"
+                  [courseId]="recommendation.course_id"
+                  (scoreInfoClick)="toggleScoreInfo($event)"
+                  (scoreInfoHide)="onScoreInfoHide($event)"
+                ></app-rec-info-icon-button>
                 <app-favourite-course-button
                   [course]="recommendation"
                   class="favourite-button"
@@ -174,7 +181,10 @@
               </div>
             </ng-template>
           </p-card>
+
+           <!-- CSS driven display: only show when no score info overlay panel is active -->
           <app-course-hover-overview
+            *ngIf="activeScorePanel === null"
             [rec]="recommendation"
             [placement]="overviewPlacement"
           ></app-course-hover-overview>
