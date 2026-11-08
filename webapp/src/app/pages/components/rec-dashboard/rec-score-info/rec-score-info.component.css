@@ -1,0 +1,7 @@
+.button {
+  background-color: #1b50d6;
+  margin-top: auto;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
