@@ -1,4 +1,20 @@
-<h1 class="text-2xl font-bold mb-4">My Favourites</h1>
+<div class="flex w-full justify-between items-center mb-4">
+  <h1 class="text-2xl font-bold mb-4">My Favourites</h1>
+
+  <div>
+    <label for="float-label">Sort Favourites by: </label>
+    <p-dropdown
+      [options]="sortOptions"
+      (ngModelChange)="onSortChange($event)"
+      [style]="{ width: '200px', marginRight: '70px' }"
+      scrollHeight="350px"
+      [(ngModel)]="selectedSortOption"
+      placeholder="Sort Favourites by"
+      inputId="float-label"
+    >
+    </p-dropdown>
+  </div>
+</div>
 <div class="flex gap-[10px] w-full flex-wrap">
   <div
     *ngFor="let item of (favouriteRecommendations$ | async) || []"
@@ -6,22 +22,25 @@
   >
     <div
       class="w-[200px] h-[134px] bg-cover bg-center border-gray-300 rounded-lg mt-[5px] mb-[5px] transition-all duration-300 ease-in-out shadow-[0px_3px_6px_rgba(0,0,0,0.16),_0px_3px_6px_rgba(0,0,0,0.23)] hover:shadow-lg transition-transform hover:-translate-y-1 cursor-pointer relative"
-      style="background-color: #0056D2"
+      style="background-color: #d26900"
     >
-    <p-button
-    icon="pi pi-heart-fill" 
-    styleClass="p-button-rounded p-button-secondary p-button-text p-button-lg"
-    class="absolute bottom-0 right-0 z-10"
-    (onClick)="removeFavourite(item.courseId, item.source, item.name, $event)"
-  >
-  </p-button>
-  </div>
+      <p-button
+        icon="pi pi-heart-fill"
+        styleClass="p-button-rounded p-button-secondary p-button-text p-button-lg transition-transform duration-400 hover:scale-150"
+        class="absolute bottom-0 right-0 z-10"
+        (onClick)="
+          removeFavourite(item.courseId, item.source, item.name, $event)
+        "
+      >
+      </p-button>
+    </div>
     <h3 class="course-name">{{ item.name }}</h3>
     <p class="teacher-name">
-      {{ item.teacher || 'Unknown instructor' }}
+      {{ item.teacher || "Unknown instructor" }}
     </p>
   </div>
 </div>
+
 <div *ngIf="(favouriteRecommendations$ | async)?.length === 0">
   <p>You don't have any favourite recommendations yet</p>
 </div>
