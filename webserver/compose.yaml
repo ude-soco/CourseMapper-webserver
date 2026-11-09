@@ -36,6 +36,8 @@ services:
       JWT_SECRET: secret
       EMAIL: admin@soco.com
       PASS: adminpassword
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
       WEBAPP_URL: http://localhost:8000
       MONGO_DB: mongodb://mongo:27017/coursemapper
       NEO4J_URI: bolt://neo4j:7687
