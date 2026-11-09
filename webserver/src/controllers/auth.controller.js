@@ -53,7 +53,7 @@ export const register = async (req, res, next) => {
 
     // Email details
     let mailDetails = {
-      from: "coursemapper.soco@gmail.com",
+      from: process.env.SMTP_USER,
       to: user.email,
       subject: "Verify Your Email",
       html: `<html>
@@ -71,10 +71,13 @@ export const register = async (req, res, next) => {
     };
     mailTransporter.sendMail(mailDetails, async (err, data) => {
       if (err) {
-        return res
-          .status(500)
-          .send({ error: "Error sending verification email: " + err.message });
-        //return next(CreateError(500, "something went wrong"));
+        await User.findByIdAndDelete(user._id);
+
+        console.error("Verification email error:", err);
+
+        return res.status(500).send({
+        error: "Registration failed because the verification email could not be sent."
+    });
       } else {
         req.session.token = token;
         return res.status(200).send({
@@ -100,8 +103,8 @@ const mailTransporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "coursemapper.soco@gmail.com",
-    pass: "gzxi ednk zaft zyow",
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
@@ -133,7 +136,7 @@ export const signIn = async (req, res, next) => {
       // Send the verification email using nodemailer
 
       let mailDetails = {
-        from: "coursemapper.soco@gmail.com",
+        from: process.env.SMTP_USER,
         to: user.email,
         subject: "Verify Your Email",
         html: `<html>
@@ -245,7 +248,7 @@ export const sendEmail = async (req, res, next) => {
       // });
 
       let mailDetails = {
-        from: "coursemapper.soco@gmail.com",
+        from: process.env.SMTP_USER,
         to: user.email,
         subject: "Reset Password",
         html: `<html>
@@ -376,7 +379,7 @@ export const resendVerifyEmail = async (req, res, next) => {
     
        // Send verification email
     let mailDetails = {
-      from: "coursemapper.soco@gmail.com",
+      from: process.env.SMTP_USER,
       to: user.email,
       subject: "Verify Your Email",
       html: `<html>
