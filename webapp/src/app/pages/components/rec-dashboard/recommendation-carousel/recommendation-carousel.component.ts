@@ -15,7 +15,7 @@ export function getCourseCarouselObject(
   recommendations: CourseRecommendation[] | FavouriteRecommendation[],
 ): CourseCarouselObject[] {
   return recommendations.map((rec) => ({
-    course_id: rec.course_id,
+    course_id: rec.course_id || rec.courseId,
     score: rec.score,
     name: rec.name,
     teacher: rec.teacher || rec.teachers?.[0]?.name || 'Unknown instructor',
