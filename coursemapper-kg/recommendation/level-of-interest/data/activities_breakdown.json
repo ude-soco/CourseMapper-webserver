@@ -912,17 +912,45 @@
           },
           "A2": {
             "activity_code": "A2",
-            "instances": [],
+            "instances": [
+              {
+                "activity_id": "6ae4c163733411da5ff52be0",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              }
+            ],
             "activity_name": "User views recommended article",
-            "count": 0,
-            "message": "the user has not made this activity yet"
+            "count": 1
           },
           "A3": {
             "activity_code": "A3",
-            "instances": [],
+            "instances": [
+              {
+                "activity_id": "6ae4c152733411da5ff52bc9",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6ae4c152733411da5ff52bd3",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6ae4c166733411da5ff52bea",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              }
+            ],
             "activity_name": "User views recommended Videos",
-            "count": 0,
-            "message": "the user has not made this activity yet"
+            "count": 3
           }
         }
       },
@@ -1163,10 +1191,45 @@
                 "material_page": 1,
                 "course_id": "6a95f39438e8af141b2bc72b",
                 "course_name": "Boba's Course"
+              },
+              {
+                "activity_id": "6ae4c081733411da5ff52b36",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6ae4c086733411da5ff52b48",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6ae4c125733411da5ff52bad",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6ae4c135733411da5ff52bbf",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6ae4c169733411da5ff52bfc",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
               }
             ],
             "activity_name": "View Recommended Concepts",
-            "count": 8
+            "count": 13
           }
         }
       },
@@ -1594,10 +1657,38 @@
                 "material_page": 1,
                 "course_id": "6a95f39438e8af141b2bc72b",
                 "course_name": "Boba's Course"
+              },
+              {
+                "activity_id": "6ae4c03b733411da5ff52936",
+                "material_id": "6a7476ba1d9ace9b9a93a3cb",
+                "material_page": 1,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6ae4c03f733411da5ff52a31",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 1,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6ae4c042733411da5ff52aae",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 2,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6ae4c042733411da5ff52ac1",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 3,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
               }
             ],
             "activity_name": "User views a slide in LM",
-            "count": 60
+            "count": 64
           }
         }
       },

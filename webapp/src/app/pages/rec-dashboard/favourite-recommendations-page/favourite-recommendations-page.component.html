@@ -1,20 +1,29 @@
 <div class="flex w-full justify-between items-center mb-4">
   <h1 class="text-2xl font-bold mb-4">My Favourites</h1>
 
-  <div>
-    <label for="float-label">Sort Favourites by: </label>
-    <p-dropdown
-      [options]="sortOptions"
-      (ngModelChange)="onSortChange($event)"
-      [style]="{ width: '200px', marginRight: '70px' }"
-      scrollHeight="350px"
-      [(ngModel)]="selectedSortOption"
-      placeholder="Sort Favourites by"
-      inputId="float-label"
-    >
-    </p-dropdown>
+  <div class="w-[300px] mr-[70px]">
+    <app-recommendation-search
+      [query]="searchQuerySubject.value"
+      (queryChange)="searchQuerySubject.next($event)"
+      placeholder="Search favourites"
+    ></app-recommendation-search>
   </div>
 </div>
+
+<div>
+  <label for="float-label" [style]="{ fontSize: '18px' }">Sort Favourites by: </label>
+  <p-dropdown
+    [options]="sortOptions"
+    (ngModelChange)="onSortChange($event)"
+    [style]="{ width: '300px', marginBottom: '10px' }"
+    scrollHeight="350px"
+    [(ngModel)]="selectedSortOption"
+    placeholder="Sort Favourites by"
+    inputId="float-label"
+  >
+  </p-dropdown>
+</div>
+
 <div class="flex gap-[10px] w-full flex-wrap">
   <div
     *ngFor="let item of (favouriteRecommendations$ | async) || []"
@@ -41,6 +50,12 @@
   </div>
 </div>
 
-<div *ngIf="(favouriteRecommendations$ | async)?.length === 0">
-  <p>You don't have any favourite recommendations yet</p>
+<!-- Case: No favourites in list -->
+<div *ngIf="(favouriteRecommendations$ | async)?.length === 0" class="flex items-center justify-center mt-10">
+  <p *ngIf="!searchQuerySubject.value" class="text-gray-500 text-lg">
+    You don't have any favourite recommendations yet
+  </p>
+  <p *ngIf="searchQuerySubject.value" class="text-gray-500 text-lg">
+    No favourites found for "{{ searchQuerySubject.value }}"
+  </p>
 </div>

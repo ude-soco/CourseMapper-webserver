@@ -2,37 +2,146 @@
   "6a8ec90a5185741dddaefcc4": {
     "username": "Boba Dust",
     "concepts": {
-      "Tea": {
+      "Analytics": {
         "concept_ids": [
-          "6a96003938e8af141b2bcad0_concept_6859555484626450240"
+          "6a747ae31d9ace9b9a93a55c_concept_4437448917351681641"
         ],
-        "raw_score": 3.9166666666666665,
+        "raw_score": 3.3055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 1,
-          "z_score_k2": 1,
-          "z_score_k3": 0.9824958730708163
+          "min_max_interpolation": 0.43548387096774194,
+          "z_score_k2": 0.6508150901581644,
+          "z_score_k3": 0.6005433934387763
         },
         "activities_breakdown": [
           {
-            "activity_id": "G2_A1",
-            "activity_name": "User views related Concepts in Material KG",
-            "count": 9,
+            "activity_id": "G1_A2",
+            "activity_name": "User views recommended article",
+            "count": 1,
             "weight": 0.19444444444444445,
-            "contribution": 1.75
+            "contribution": 0.19444444444444445
+          },
+          {
+            "activity_id": "G1_A3",
+            "activity_name": "User views recommended Videos",
+            "count": 3,
+            "weight": 0.19444444444444445,
+            "contribution": 0.5833333333333334
           },
           {
             "activity_id": "G7_A1",
             "activity_name": "View Recommended Concepts",
-            "count": 8,
+            "count": 13,
             "weight": 0.05555555555555555,
-            "contribution": 0.4444444444444444
+            "contribution": 0.7222222222222222
           },
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
+          },
+          {
+            "activity_id": "G10_A1",
+            "activity_name": "User enrolled in course teaching this concept",
+            "count": 1,
+            "weight": 0.027777777777777776,
+            "contribution": 0.027777777777777776
+          }
+        ],
+        "total_activity_count": 82,
+        "course_id": "6a5a0aecd2fc97cf33b42175",
+        "course_name": "Test"
+      },
+      "Learning analytics": {
+        "concept_ids": [
+          "6a747ae31d9ace9b9a93a55c_concept_1322190036426351578"
+        ],
+        "raw_score": 3.3055555555555554,
+        "normalized_scores": {
+          "min_max_interpolation": 0.43548387096774194,
+          "z_score_k2": 0.6508150901581644,
+          "z_score_k3": 0.6005433934387763
+        },
+        "activities_breakdown": [
+          {
+            "activity_id": "G1_A2",
+            "activity_name": "User views recommended article",
+            "count": 1,
+            "weight": 0.19444444444444445,
+            "contribution": 0.19444444444444445
+          },
+          {
+            "activity_id": "G1_A3",
+            "activity_name": "User views recommended Videos",
+            "count": 3,
+            "weight": 0.19444444444444445,
+            "contribution": 0.5833333333333334
+          },
+          {
+            "activity_id": "G7_A1",
+            "activity_name": "View Recommended Concepts",
+            "count": 13,
+            "weight": 0.05555555555555555,
+            "contribution": 0.7222222222222222
+          },
+          {
+            "activity_id": "G8_A1",
+            "activity_name": "User views a slide in LM",
+            "count": 64,
+            "weight": 0.027777777777777776,
+            "contribution": 1.7777777777777777
+          },
+          {
+            "activity_id": "G10_A1",
+            "activity_name": "User enrolled in course teaching this concept",
+            "count": 1,
+            "weight": 0.027777777777777776,
+            "contribution": 0.027777777777777776
+          }
+        ],
+        "total_activity_count": 82,
+        "course_id": "6a5a0aecd2fc97cf33b42175",
+        "course_name": "Test"
+      },
+      "Reference model": {
+        "concept_ids": [
+          "6a747ae31d9ace9b9a93a55c_concept_6393900464369835028"
+        ],
+        "raw_score": 3.333333333333333,
+        "normalized_scores": {
+          "min_max_interpolation": 0.44354838709677413,
+          "z_score_k2": 0.6583873959401643,
+          "z_score_k3": 0.6055915972934428
+        },
+        "activities_breakdown": [
+          {
+            "activity_id": "G1_A2",
+            "activity_name": "User views recommended article",
+            "count": 1,
+            "weight": 0.19444444444444445,
+            "contribution": 0.19444444444444445
+          },
+          {
+            "activity_id": "G1_A3",
+            "activity_name": "User views recommended Videos",
+            "count": 3,
+            "weight": 0.19444444444444445,
+            "contribution": 0.5833333333333334
+          },
+          {
+            "activity_id": "G7_A1",
+            "activity_name": "View Recommended Concepts",
+            "count": 13,
+            "weight": 0.05555555555555555,
+            "contribution": 0.7222222222222222
+          },
+          {
+            "activity_id": "G8_A1",
+            "activity_name": "User views a slide in LM",
+            "count": 64,
+            "weight": 0.027777777777777776,
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -42,7 +151,7 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 79,
+        "total_activity_count": 83,
         "course_ids": [
           "6a5a0aecd2fc97cf33b42175",
           "6a95f39438e8af141b2bc72b"
@@ -52,30 +161,44 @@
           "Boba's Course"
         ]
       },
-      "Taiwan": {
+      "Syrup": {
         "concept_ids": [
-          "6a96003938e8af141b2bcad0_concept_3974085458675176754"
+          "6a96003938e8af141b2bcad0_concept_1243393292253707102"
         ],
-        "raw_score": 3.472222222222222,
+        "raw_score": 3.333333333333333,
         "normalized_scores": {
-          "min_max_interpolation": 0.7999999999999999,
-          "z_score_k2": 1,
-          "z_score_k3": 0.8663338572343312
+          "min_max_interpolation": 0.44354838709677413,
+          "z_score_k2": 0.6583873959401643,
+          "z_score_k3": 0.6055915972934428
         },
         "activities_breakdown": [
           {
-            "activity_id": "G2_A1",
-            "activity_name": "User views related Concepts in Material KG",
-            "count": 9,
+            "activity_id": "G1_A2",
+            "activity_name": "User views recommended article",
+            "count": 1,
             "weight": 0.19444444444444445,
-            "contribution": 1.75
+            "contribution": 0.19444444444444445
+          },
+          {
+            "activity_id": "G1_A3",
+            "activity_name": "User views recommended Videos",
+            "count": 3,
+            "weight": 0.19444444444444445,
+            "contribution": 0.5833333333333334
+          },
+          {
+            "activity_id": "G7_A1",
+            "activity_name": "View Recommended Concepts",
+            "count": 13,
+            "weight": 0.05555555555555555,
+            "contribution": 0.7222222222222222
           },
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -85,7 +208,7 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 71,
+        "total_activity_count": 83,
         "course_ids": [
           "6a5a0aecd2fc97cf33b42175",
           "6a95f39438e8af141b2bc72b"
@@ -99,13 +222,27 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_1226771685633126096"
         ],
-        "raw_score": 3.6111111111111107,
+        "raw_score": 5.25,
         "normalized_scores": {
-          "min_max_interpolation": 0.8624999999999999,
+          "min_max_interpolation": 1,
           "z_score_k2": 1,
-          "z_score_k3": 0.9026344871832328
+          "z_score_k3": 0.9539176632654378
         },
         "activities_breakdown": [
+          {
+            "activity_id": "G1_A2",
+            "activity_name": "User views recommended article",
+            "count": 1,
+            "weight": 0.19444444444444445,
+            "contribution": 0.19444444444444445
+          },
+          {
+            "activity_id": "G1_A3",
+            "activity_name": "User views recommended Videos",
+            "count": 3,
+            "weight": 0.19444444444444445,
+            "contribution": 0.5833333333333334
+          },
           {
             "activity_id": "G2_A1",
             "activity_name": "User views related Concepts in Material KG",
@@ -121,161 +258,132 @@
             "contribution": 0.16666666666666666
           },
           {
+            "activity_id": "G7_A1",
+            "activity_name": "View Recommended Concepts",
+            "count": 13,
+            "weight": 0.05555555555555555,
+            "contribution": 0.7222222222222222
+          },
+          {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
+            "activity_name": "User enrolled in multiple courses teaching this concept",
+            "count": 2,
             "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
+            "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 71,
-        "course_id": "6a95f39438e8af141b2bc72b",
-        "course_name": "Boba's Course"
-      },
-      "Learning analytics": {
-        "concept_ids": [
-          "6a747ae31d9ace9b9a93a55c_concept_1322190036426351578"
+        "total_activity_count": 93,
+        "course_ids": [
+          "6a5a0aecd2fc97cf33b42175",
+          "6a95f39438e8af141b2bc72b"
         ],
-        "raw_score": 2.1388888888888884,
+        "course_names": [
+          "Test",
+          "Boba's Course"
+        ]
+      },
+      "Black tea": {
+        "concept_ids": [
+          "6a96003938e8af141b2bcad0_concept_7756810032704245592"
+        ],
+        "raw_score": 3.333333333333333,
         "normalized_scores": {
-          "min_max_interpolation": 0.19999999999999987,
-          "z_score_k2": 0.5267717145873148,
-          "z_score_k3": 0.5178478097248765
+          "min_max_interpolation": 0.44354838709677413,
+          "z_score_k2": 0.6583873959401643,
+          "z_score_k3": 0.6055915972934428
         },
         "activities_breakdown": [
           {
+            "activity_id": "G1_A2",
+            "activity_name": "User views recommended article",
+            "count": 1,
+            "weight": 0.19444444444444445,
+            "contribution": 0.19444444444444445
+          },
+          {
+            "activity_id": "G1_A3",
+            "activity_name": "User views recommended Videos",
+            "count": 3,
+            "weight": 0.19444444444444445,
+            "contribution": 0.5833333333333334
+          },
+          {
             "activity_id": "G7_A1",
             "activity_name": "View Recommended Concepts",
-            "count": 8,
+            "count": 13,
             "weight": 0.05555555555555555,
-            "contribution": 0.4444444444444444
+            "contribution": 0.7222222222222222
           },
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
+            "activity_name": "User enrolled in multiple courses teaching this concept",
+            "count": 2,
             "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
+            "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 69,
-        "course_id": "6a5a0aecd2fc97cf33b42175",
-        "course_name": "Test"
-      },
-      "Social computing": {
-        "concept_ids": [
-          "6a747ae31d9ace9b9a93a55c_concept_1241550187536201684"
+        "total_activity_count": 83,
+        "course_ids": [
+          "6a5a0aecd2fc97cf33b42175",
+          "6a95f39438e8af141b2bc72b"
         ],
-        "raw_score": 2.1388888888888884,
-        "normalized_scores": {
-          "min_max_interpolation": 0.6,
-          "z_score_k2": 0.6,
-          "z_score_k3": 0.6
-        },
-        "activities_breakdown": [
-          {
-            "activity_id": "G7_A1",
-            "activity_name": "View Recommended Concepts",
-            "count": 8,
-            "weight": 0.05555555555555555,
-            "contribution": 0.4444444444444444
-          },
-          {
-            "activity_id": "G8_A1",
-            "activity_name": "User views a slide in LM",
-            "count": 60,
-            "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
-          },
-          {
-            "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
-            "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
-          }
-        ],
-        "total_activity_count": 69,
-        "course_id": "6a5a0aecd2fc97cf33b42175",
-        "course_name": "Test",
-        "manually_adjusted": true,
-        "adjusted_at": "2026-10-30T15:57:02.075Z"
-      },
-      "Bubble tea": {
-        "concept_ids": [
-          "6a96003938e8af141b2bcad0_concept_7102192561268550222"
-        ],
-        "raw_score": 2.1388888888888884,
-        "normalized_scores": {
-          "min_max_interpolation": 0.19999999999999987,
-          "z_score_k2": 0.5267717145873148,
-          "z_score_k3": 0.5178478097248765
-        },
-        "activities_breakdown": [
-          {
-            "activity_id": "G7_A1",
-            "activity_name": "View Recommended Concepts",
-            "count": 8,
-            "weight": 0.05555555555555555,
-            "contribution": 0.4444444444444444
-          },
-          {
-            "activity_id": "G8_A1",
-            "activity_name": "User views a slide in LM",
-            "count": 60,
-            "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
-          },
-          {
-            "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
-            "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
-          }
-        ],
-        "total_activity_count": 69,
-        "course_id": "6a5a0aecd2fc97cf33b42175",
-        "course_name": "Test"
+        "course_names": [
+          "Test",
+          "Boba's Course"
+        ]
       },
       "Tapioca pearl": {
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_4303665753929157511"
         ],
-        "raw_score": 2.1388888888888884,
+        "raw_score": 3.3055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.19999999999999987,
-          "z_score_k2": 0.5267717145873148,
-          "z_score_k3": 0.5178478097248765
+          "min_max_interpolation": 0.43548387096774194,
+          "z_score_k2": 0.6508150901581644,
+          "z_score_k3": 0.6005433934387763
         },
         "activities_breakdown": [
           {
+            "activity_id": "G1_A2",
+            "activity_name": "User views recommended article",
+            "count": 1,
+            "weight": 0.19444444444444445,
+            "contribution": 0.19444444444444445
+          },
+          {
+            "activity_id": "G1_A3",
+            "activity_name": "User views recommended Videos",
+            "count": 3,
+            "weight": 0.19444444444444445,
+            "contribution": 0.5833333333333334
+          },
+          {
             "activity_id": "G7_A1",
             "activity_name": "View Recommended Concepts",
-            "count": 8,
+            "count": 13,
             "weight": 0.05555555555555555,
-            "contribution": 0.4444444444444444
+            "contribution": 0.7222222222222222
           },
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -285,7 +393,282 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 69,
+        "total_activity_count": 82,
+        "course_id": "6a5a0aecd2fc97cf33b42175",
+        "course_name": "Test"
+      },
+      "Green tea": {
+        "concept_ids": [
+          "6a96003938e8af141b2bcad0_concept_3073544699829939903"
+        ],
+        "raw_score": 3.333333333333333,
+        "normalized_scores": {
+          "min_max_interpolation": 0.44354838709677413,
+          "z_score_k2": 0.6583873959401643,
+          "z_score_k3": 0.6055915972934428
+        },
+        "activities_breakdown": [
+          {
+            "activity_id": "G1_A2",
+            "activity_name": "User views recommended article",
+            "count": 1,
+            "weight": 0.19444444444444445,
+            "contribution": 0.19444444444444445
+          },
+          {
+            "activity_id": "G1_A3",
+            "activity_name": "User views recommended Videos",
+            "count": 3,
+            "weight": 0.19444444444444445,
+            "contribution": 0.5833333333333334
+          },
+          {
+            "activity_id": "G7_A1",
+            "activity_name": "View Recommended Concepts",
+            "count": 13,
+            "weight": 0.05555555555555555,
+            "contribution": 0.7222222222222222
+          },
+          {
+            "activity_id": "G8_A1",
+            "activity_name": "User views a slide in LM",
+            "count": 64,
+            "weight": 0.027777777777777776,
+            "contribution": 1.7777777777777777
+          },
+          {
+            "activity_id": "G10_A1",
+            "activity_name": "User enrolled in multiple courses teaching this concept",
+            "count": 2,
+            "weight": 0.027777777777777776,
+            "contribution": 0.05555555555555555
+          }
+        ],
+        "total_activity_count": 83,
+        "course_ids": [
+          "6a5a0aecd2fc97cf33b42175",
+          "6a95f39438e8af141b2bc72b"
+        ],
+        "course_names": [
+          "Test",
+          "Boba's Course"
+        ]
+      },
+      "Maturity": {
+        "concept_ids": [
+          "6aa2e8539d29382d65707024_concept_6462962604161108366"
+        ],
+        "raw_score": 3.3055555555555554,
+        "normalized_scores": {
+          "min_max_interpolation": 0.43548387096774194,
+          "z_score_k2": 0.6508150901581644,
+          "z_score_k3": 0.6005433934387763
+        },
+        "activities_breakdown": [
+          {
+            "activity_id": "G1_A2",
+            "activity_name": "User views recommended article",
+            "count": 1,
+            "weight": 0.19444444444444445,
+            "contribution": 0.19444444444444445
+          },
+          {
+            "activity_id": "G1_A3",
+            "activity_name": "User views recommended Videos",
+            "count": 3,
+            "weight": 0.19444444444444445,
+            "contribution": 0.5833333333333334
+          },
+          {
+            "activity_id": "G7_A1",
+            "activity_name": "View Recommended Concepts",
+            "count": 13,
+            "weight": 0.05555555555555555,
+            "contribution": 0.7222222222222222
+          },
+          {
+            "activity_id": "G8_A1",
+            "activity_name": "User views a slide in LM",
+            "count": 64,
+            "weight": 0.027777777777777776,
+            "contribution": 1.7777777777777777
+          },
+          {
+            "activity_id": "G10_A1",
+            "activity_name": "User enrolled in course teaching this concept",
+            "count": 1,
+            "weight": 0.027777777777777776,
+            "contribution": 0.027777777777777776
+          }
+        ],
+        "total_activity_count": 82,
+        "course_id": "6a5a0aecd2fc97cf33b42175",
+        "course_name": "Test"
+      },
+      "Tea": {
+        "concept_ids": [
+          "6a96003938e8af141b2bcad0_concept_6859555484626450240"
+        ],
+        "raw_score": 4.305555555555555,
+        "normalized_scores": {
+          "min_max_interpolation": 0.7258064516129031,
+          "z_score_k2": 0.9234180983101604,
+          "z_score_k3": 0.7822787322067736
+        },
+        "activities_breakdown": [
+          {
+            "activity_id": "G2_A1",
+            "activity_name": "User views related Concepts in Material KG",
+            "count": 9,
+            "weight": 0.19444444444444445,
+            "contribution": 1.75
+          },
+          {
+            "activity_id": "G7_A1",
+            "activity_name": "View Recommended Concepts",
+            "count": 13,
+            "weight": 0.05555555555555555,
+            "contribution": 0.7222222222222222
+          },
+          {
+            "activity_id": "G8_A1",
+            "activity_name": "User views a slide in LM",
+            "count": 64,
+            "weight": 0.027777777777777776,
+            "contribution": 1.7777777777777777
+          },
+          {
+            "activity_id": "G10_A1",
+            "activity_name": "User enrolled in multiple courses teaching this concept",
+            "count": 2,
+            "weight": 0.027777777777777776,
+            "contribution": 0.05555555555555555
+          }
+        ],
+        "total_activity_count": 88,
+        "course_ids": [
+          "6a5a0aecd2fc97cf33b42175",
+          "6a95f39438e8af141b2bc72b"
+        ],
+        "course_names": [
+          "Test",
+          "Boba's Course"
+        ]
+      },
+      "Taiwan": {
+        "concept_ids": [
+          "6a96003938e8af141b2bcad0_concept_3974085458675176754"
+        ],
+        "raw_score": 3.583333333333333,
+        "normalized_scores": {
+          "min_max_interpolation": 0.5161290322580645,
+          "z_score_k2": 0.7265381479781633,
+          "z_score_k3": 0.6510254319854422
+        },
+        "activities_breakdown": [
+          {
+            "activity_id": "G2_A1",
+            "activity_name": "User views related Concepts in Material KG",
+            "count": 9,
+            "weight": 0.19444444444444445,
+            "contribution": 1.75
+          },
+          {
+            "activity_id": "G8_A1",
+            "activity_name": "User views a slide in LM",
+            "count": 64,
+            "weight": 0.027777777777777776,
+            "contribution": 1.7777777777777777
+          },
+          {
+            "activity_id": "G10_A1",
+            "activity_name": "User enrolled in multiple courses teaching this concept",
+            "count": 2,
+            "weight": 0.027777777777777776,
+            "contribution": 0.05555555555555555
+          }
+        ],
+        "total_activity_count": 75,
+        "course_ids": [
+          "6a5a0aecd2fc97cf33b42175",
+          "6a95f39438e8af141b2bc72b"
+        ],
+        "course_names": [
+          "Test",
+          "Boba's Course"
+        ]
+      },
+      "Social computing": {
+        "concept_ids": [
+          "6a747ae31d9ace9b9a93a55c_concept_1241550187536201684"
+        ],
+        "raw_score": 2.5277777777777777,
+        "normalized_scores": {
+          "min_max_interpolation": 0.20967741935483872,
+          "z_score_k2": 0.43879052826216763,
+          "z_score_k3": 0.4591936855081118
+        },
+        "activities_breakdown": [
+          {
+            "activity_id": "G7_A1",
+            "activity_name": "View Recommended Concepts",
+            "count": 13,
+            "weight": 0.05555555555555555,
+            "contribution": 0.7222222222222222
+          },
+          {
+            "activity_id": "G8_A1",
+            "activity_name": "User views a slide in LM",
+            "count": 64,
+            "weight": 0.027777777777777776,
+            "contribution": 1.7777777777777777
+          },
+          {
+            "activity_id": "G10_A1",
+            "activity_name": "User enrolled in course teaching this concept",
+            "count": 1,
+            "weight": 0.027777777777777776,
+            "contribution": 0.027777777777777776
+          }
+        ],
+        "total_activity_count": 78,
+        "course_id": "6a5a0aecd2fc97cf33b42175",
+        "course_name": "Test"
+      },
+      "Bubble tea": {
+        "concept_ids": [
+          "6a96003938e8af141b2bcad0_concept_7102192561268550222"
+        ],
+        "raw_score": 2.5277777777777777,
+        "normalized_scores": {
+          "min_max_interpolation": 0.20967741935483872,
+          "z_score_k2": 0.43879052826216763,
+          "z_score_k3": 0.4591936855081118
+        },
+        "activities_breakdown": [
+          {
+            "activity_id": "G7_A1",
+            "activity_name": "View Recommended Concepts",
+            "count": 13,
+            "weight": 0.05555555555555555,
+            "contribution": 0.7222222222222222
+          },
+          {
+            "activity_id": "G8_A1",
+            "activity_name": "User views a slide in LM",
+            "count": 64,
+            "weight": 0.027777777777777776,
+            "contribution": 1.7777777777777777
+          },
+          {
+            "activity_id": "G10_A1",
+            "activity_name": "User enrolled in course teaching this concept",
+            "count": 1,
+            "weight": 0.027777777777777776,
+            "contribution": 0.027777777777777776
+          }
+        ],
+        "total_activity_count": 78,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -293,26 +676,26 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_3135758739096965584"
         ],
-        "raw_score": 2.1388888888888884,
+        "raw_score": 2.5277777777777777,
         "normalized_scores": {
-          "min_max_interpolation": 0.19999999999999987,
-          "z_score_k2": 0.5267717145873148,
-          "z_score_k3": 0.5178478097248765
+          "min_max_interpolation": 0.20967741935483872,
+          "z_score_k2": 0.43879052826216763,
+          "z_score_k3": 0.4591936855081118
         },
         "activities_breakdown": [
           {
             "activity_id": "G7_A1",
             "activity_name": "View Recommended Concepts",
-            "count": 8,
+            "count": 13,
             "weight": 0.05555555555555555,
-            "contribution": 0.4444444444444444
+            "contribution": 0.7222222222222222
           },
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -322,44 +705,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 69,
-        "course_id": "6a5a0aecd2fc97cf33b42175",
-        "course_name": "Test"
-      },
-      "Maturity": {
-        "concept_ids": [
-          "6aa2e8539d29382d65707024_concept_6462962604161108366"
-        ],
-        "raw_score": 2.1388888888888884,
-        "normalized_scores": {
-          "min_max_interpolation": 0.19999999999999987,
-          "z_score_k2": 0.5267717145873148,
-          "z_score_k3": 0.5178478097248765
-        },
-        "activities_breakdown": [
-          {
-            "activity_id": "G7_A1",
-            "activity_name": "View Recommended Concepts",
-            "count": 8,
-            "weight": 0.05555555555555555,
-            "contribution": 0.4444444444444444
-          },
-          {
-            "activity_id": "G8_A1",
-            "activity_name": "User views a slide in LM",
-            "count": 60,
-            "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
-          },
-          {
-            "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
-            "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
-          }
-        ],
-        "total_activity_count": 69,
+        "total_activity_count": 78,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -367,26 +713,26 @@
         "concept_ids": [
           "6aa2e8539d29382d65707024_concept_2661791347627790206"
         ],
-        "raw_score": 2.1388888888888884,
+        "raw_score": 2.5277777777777777,
         "normalized_scores": {
-          "min_max_interpolation": 0.19999999999999987,
-          "z_score_k2": 0.5267717145873148,
-          "z_score_k3": 0.5178478097248765
+          "min_max_interpolation": 0.20967741935483872,
+          "z_score_k2": 0.43879052826216763,
+          "z_score_k3": 0.4591936855081118
         },
         "activities_breakdown": [
           {
             "activity_id": "G7_A1",
             "activity_name": "View Recommended Concepts",
-            "count": 8,
+            "count": 13,
             "weight": 0.05555555555555555,
-            "contribution": 0.4444444444444444
+            "contribution": 0.7222222222222222
           },
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -396,37 +742,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 69,
-        "course_id": "6a5a0aecd2fc97cf33b42175",
-        "course_name": "Test"
-      },
-      "Analytics": {
-        "concept_ids": [
-          "6a747ae31d9ace9b9a93a55c_concept_4437448917351681641"
-        ],
-        "raw_score": 1.6944444444444442,
-        "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
-        },
-        "activities_breakdown": [
-          {
-            "activity_id": "G8_A1",
-            "activity_name": "User views a slide in LM",
-            "count": 60,
-            "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
-          },
-          {
-            "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
-            "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
-          }
-        ],
-        "total_activity_count": 61,
+        "total_activity_count": 78,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -434,19 +750,19 @@
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_2106895782145941841"
         ],
-        "raw_score": 1.6944444444444442,
+        "raw_score": 1.8055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
+          "min_max_interpolation": 0.1497695852534562,
+          "z_score_k2": 0.24191057793017057,
+          "z_score_k3": 0.3279403852867804
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -456,7 +772,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 61,
+        "total_activity_count": 65,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -464,19 +780,19 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_6707066453942669842"
         ],
-        "raw_score": 1.6944444444444442,
+        "raw_score": 1.8055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
+          "min_max_interpolation": 0.1497695852534562,
+          "z_score_k2": 0.24191057793017057,
+          "z_score_k3": 0.3279403852867804
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -486,147 +802,27 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 61,
+        "total_activity_count": 65,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
-      },
-      "Reference model": {
-        "concept_ids": [
-          "6a747ae31d9ace9b9a93a55c_concept_6393900464369835028"
-        ],
-        "raw_score": 1.6944444444444442,
-        "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
-        },
-        "activities_breakdown": [
-          {
-            "activity_id": "G8_A1",
-            "activity_name": "User views a slide in LM",
-            "count": 60,
-            "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
-          },
-          {
-            "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
-            "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
-          }
-        ],
-        "total_activity_count": 61,
-        "course_id": "6a95f39438e8af141b2bc72b",
-        "course_name": "Boba's Course"
-      },
-      "Syrup": {
-        "concept_ids": [
-          "6a96003938e8af141b2bcad0_concept_1243393292253707102"
-        ],
-        "raw_score": 1.6944444444444442,
-        "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
-        },
-        "activities_breakdown": [
-          {
-            "activity_id": "G8_A1",
-            "activity_name": "User views a slide in LM",
-            "count": 60,
-            "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
-          },
-          {
-            "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
-            "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
-          }
-        ],
-        "total_activity_count": 61,
-        "course_id": "6a95f39438e8af141b2bc72b",
-        "course_name": "Boba's Course"
-      },
-      "Black tea": {
-        "concept_ids": [
-          "6a96003938e8af141b2bcad0_concept_7756810032704245592"
-        ],
-        "raw_score": 1.6944444444444442,
-        "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
-        },
-        "activities_breakdown": [
-          {
-            "activity_id": "G8_A1",
-            "activity_name": "User views a slide in LM",
-            "count": 60,
-            "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
-          },
-          {
-            "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
-            "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
-          }
-        ],
-        "total_activity_count": 61,
-        "course_id": "6a95f39438e8af141b2bc72b",
-        "course_name": "Boba's Course"
-      },
-      "Green tea": {
-        "concept_ids": [
-          "6a96003938e8af141b2bcad0_concept_3073544699829939903"
-        ],
-        "raw_score": 1.6944444444444442,
-        "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
-        },
-        "activities_breakdown": [
-          {
-            "activity_id": "G8_A1",
-            "activity_name": "User views a slide in LM",
-            "count": 60,
-            "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
-          },
-          {
-            "activity_id": "G10_A1",
-            "activity_name": "User enrolled in course teaching this concept",
-            "count": 1,
-            "weight": 0.027777777777777776,
-            "contribution": 0.027777777777777776
-          }
-        ],
-        "total_activity_count": 61,
-        "course_id": "6a95f39438e8af141b2bc72b",
-        "course_name": "Boba's Course"
       },
       "Straw": {
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_8967551232245040233"
         ],
-        "raw_score": 1.6944444444444442,
+        "raw_score": 1.8055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
+          "min_max_interpolation": 0.1497695852534562,
+          "z_score_k2": 0.24191057793017057,
+          "z_score_k3": 0.3279403852867804
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -636,7 +832,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 61,
+        "total_activity_count": 65,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -644,19 +840,19 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_1344542051495921422"
         ],
-        "raw_score": 1.6944444444444442,
+        "raw_score": 1.8055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
+          "min_max_interpolation": 0.1497695852534562,
+          "z_score_k2": 0.24191057793017057,
+          "z_score_k3": 0.3279403852867804
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -666,7 +862,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 61,
+        "total_activity_count": 65,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -674,19 +870,19 @@
         "concept_ids": [
           "6aa2e8539d29382d65707024_concept_3389415342335614082"
         ],
-        "raw_score": 1.6944444444444442,
+        "raw_score": 1.8055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
+          "min_max_interpolation": 0.1497695852534562,
+          "z_score_k2": 0.24191057793017057,
+          "z_score_k3": 0.3279403852867804
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -696,7 +892,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 61,
+        "total_activity_count": 65,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -704,19 +900,19 @@
         "concept_ids": [
           "6aa2e8539d29382d65707024_concept_5417567931578632526"
         ],
-        "raw_score": 1.6944444444444442,
+        "raw_score": 1.8055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
+          "min_max_interpolation": 0.1497695852534562,
+          "z_score_k2": 0.24191057793017057,
+          "z_score_k3": 0.3279403852867804
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -726,7 +922,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 61,
+        "total_activity_count": 65,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -734,19 +930,19 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_2357262140399904539"
         ],
-        "raw_score": 1.6944444444444442,
+        "raw_score": 1.8055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
+          "min_max_interpolation": 0.1497695852534562,
+          "z_score_k2": 0.24191057793017057,
+          "z_score_k3": 0.3279403852867804
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -756,7 +952,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 61,
+        "total_activity_count": 65,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -764,19 +960,19 @@
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_3291954897897738052"
         ],
-        "raw_score": 1.6944444444444442,
+        "raw_score": 1.8055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
+          "min_max_interpolation": 0.1497695852534562,
+          "z_score_k2": 0.24191057793017057,
+          "z_score_k3": 0.3279403852867804
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -786,7 +982,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 61,
+        "total_activity_count": 65,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -794,19 +990,19 @@
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_1941167088877282624"
         ],
-        "raw_score": 1.6944444444444442,
+        "raw_score": 1.8055555555555554,
         "normalized_scores": {
-          "min_max_interpolation": 0.15844155844155836,
-          "z_score_k2": 0.35252869083258753,
-          "z_score_k3": 0.4016857938883917
+          "min_max_interpolation": 0.1497695852534562,
+          "z_score_k2": 0.24191057793017057,
+          "z_score_k3": 0.3279403852867804
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 60,
+            "count": 64,
             "weight": 0.027777777777777776,
-            "contribution": 1.6666666666666665
+            "contribution": 1.7777777777777777
           },
           {
             "activity_id": "G10_A1",
@@ -816,7 +1012,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 61,
+        "total_activity_count": 65,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       }

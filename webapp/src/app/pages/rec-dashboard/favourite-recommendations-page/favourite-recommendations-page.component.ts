@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RecommendationSource } from 'src/app/models/FavouriteRecommendation';
 import { FavouriteRecommendationsService } from 'src/app/services/rec-dashboard/favourite-recommendations.service';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, map } from 'rxjs';
 
 type FavouriteSortOption = 'dateAddedAscending' | 'dateAddedDescending' | 'nameAscending' | 'nameDescending';
 
@@ -17,6 +17,13 @@ this page just displays the list of favourited courses
 })
 export class FavouriteRecommendationsPageComponent implements OnInit {
   selectedSortOption: FavouriteSortOption = 'dateAddedAscending';
+  searchQuerySubject = new BehaviorSubject<string>('');
+
+  // Observable for the search query, which emits the trimmed and lowercased query string
+  private readonly searchQuery$ = this.searchQuerySubject.pipe(
+  map((query) => query.trim().toLocaleLowerCase()),
+  distinctUntilChanged(),
+);
 
   // Options for sorting the favourite recommendations
   sortOptions = [
@@ -30,14 +37,19 @@ export class FavouriteRecommendationsPageComponent implements OnInit {
     this.selectedSortOption,
   );
 
-  // Sort favourites based on the selected sort option
+  // Sort and search favourites based on the selected sort option and search query
   favouriteRecommendations$ = combineLatest([
     this.favouriteRecommendationsService.favourites$,
+    this.searchQuery$,
     this.sortOptionSubject,
   ]).pipe(
-    map(([favourites, sortOption]) =>
-      [...favourites].sort((first, second) => {
-        if (sortOption === 'dateAddedAscending') {
+    map(([favourites, searchQuery, sortOption]) =>
+      [...favourites]
+        .filter((favourite) =>
+          favourite.name.toLowerCase().includes(searchQuery)
+        )
+        .sort((first, second) => {
+          if (sortOption === 'dateAddedAscending') {
           return (
             new Date(second.addedAt).getTime() -
             new Date(first.addedAt).getTime()
@@ -79,5 +91,9 @@ export class FavouriteRecommendationsPageComponent implements OnInit {
     this.favouriteRecommendationsService
       .removeFavouriteRecommendation(courseId, source, name)
       .subscribe();
+  }
+
+  searchQueryChange(query: string) {
+    this.searchQuerySubject.next(query);
   }
 }

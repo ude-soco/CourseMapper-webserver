@@ -1,0 +1,25 @@
+<div class="relative w-full max-w-md">
+  <span class="p-input-icon-left w-full">
+    <i
+      class="pi pi-search text-gray-500"
+      aria-hidden="true"
+    ></i>
+    <input
+      pInputText
+      type="text"
+      class="w-full pr-10"
+      [placeholder]="placeholder"
+      [attr.aria-label]="ariaLabel"
+      [(ngModel)]="query"
+      (ngModelChange)="queryChange.emit($event)"
+  /></span>
+  <button
+    *ngIf="query"
+    type="button"
+    class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-800"
+    [attr.aria-label]="'Clear ' + ariaLabel.toLowerCase()"
+    (click)="clearSearch()"
+  >
+    <i class="pi pi-times" aria-hidden="true"></i>
+  </button>
+</div>
