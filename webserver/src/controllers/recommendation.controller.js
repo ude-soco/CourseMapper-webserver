@@ -190,40 +190,37 @@ export const getSequence = async (req, res) => {
   }
 
 export const getMOOCRecommendations = async (req, res) => {
-    // const body = req.body;
     const userId = req.userId;
     console.log("getMOOCRecommendations called for userId: %s", userId);
-     const room = "user:" + userId;
+    const room = "user:" + userId;
     socketio.getIO().to(room).emit("log", { called: "MOOC recommendation started" });
 
-    // Check if recommendations are cached
+    // Check and return if recommendations are already cached
     const cachedRecommendations = await redis.getMOOCRecommendationsCache(userId);
     if (cachedRecommendations) {
         console.log("Returning cached MOOC recommendations for userId: %s", userId);
         return res.status(200).send(JSON.parse(cachedRecommendations));
     }
 
-    const result = await redis.addJob('MOOC-recommendation', {
+    const job = await redis.addJob('MOOC-recommendation', {
         data: { userId }
-    }, undefined, (result) => {
-        socketio.getIO().to(room).emit("log", { result });
-        if (res.headersSent) {
-            return;
-        }
-        if (result.error) {
-            return res.status(500).send({ error: result.error });
-        }
-
-        // Cache the recommendations for future requests
-        redis.setMOOCRecommendationsCache(userId, result.result)
-            .catch((error) => console.error("Failed to cache MOOC recommendations:", error));
-        return res.status(200).send(result.result);
+    }, async () => {
+        // Before starting the job, clear any previous error for this user
+        await redis.clearMOOCRecommendationsError(userId);
     });
 
     socketio.getIO().to(room).emit("log", {
-        addJob: result,
+        addJob: job,
         pipeline: 'MOOC-recommendation'
     });
+
+    try {
+        const recommendations = await redis.waitForMOOCRecommendations(userId);
+        return res.status(200).send(recommendations);
+    } catch (error) {
+        console.error("Failed waiting for MOOC recommendations:", error);
+        return res.status(error.statusCode || 500).send({ error: error.message });
+    }
 }
 
 export const getResources = async (req, res) => {

@@ -358,12 +358,12 @@ export class BrowseRecommendationsPageComponent {
   ) {}
 
   ngOnInit() {
-    this.moocRecommendationService.getRecommendedMOOCs().subscribe();
+    this.moocRecommendationService.getRecommendedMOOCs().subscribe({
+      next: () => this.resetAllFilters(),
+    });
     this.favouriteRecommendationsService
       .getFavouriteRecommendations()
       .subscribe();
-
-    this.resetAllFilters();
   }
 
   setSortBy(sortBy: SortBy) {

@@ -126,21 +126,53 @@ export async function addJob(pipeline, job, beforeStart, onDone) {
 }
 
 // MOOC Recommendations Cache Functions
+
+// retrieve cached MOOC Recommendations
 export async function getMOOCRecommendationsCache(userId) {
   return redis.client.get(`mooc:recommendations:${userId}`);
 }
 
-export async function setMOOCRecommendationsCache(userId, recommendations) {
-  await redis.client.set(
-    `mooc:recommendations:${userId}`,
-    JSON.stringify(recommendations),
-    // Cache recommendations for 24 hours (86400 seconds)
-    { EX: 86400 }
-  );
+// Clear MOOC Recommendations Error Cache 
+export async function clearMOOCRecommendationsError(userId) {
+  await redis.client.del(`mooc:recommendations:error:${userId}`);
 }
 
+// Wait for MOOC Recommendations by polling the redis key with a timeout in milliseconds (default: 10 minutes)
+export async function waitForMOOCRecommendations(userId, timeoutMs = 600000) {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const recommendations = await getMOOCRecommendationsCache(userId);
+    if (recommendations) {
+      return JSON.parse(recommendations);
+    }
+
+    const errorMessage = await redis.client.get(
+      `mooc:recommendations:error:${userId}`,
+    );
+
+    // If there's an error message, throw an error with the message and a 500 status code
+    if (errorMessage) {
+      const error = new Error(errorMessage);
+      error.statusCode = 500;
+      throw error;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  // If the timeout is reached, throw a timeout error with a 504 status code
+  const error = new Error('Timed out waiting for MOOC recommendations.');
+  error.statusCode = 504;
+  throw error;
+}
+
+// Invalidate MOOC Recommendations and/or Error Cache
 export async function invalidateMOOCRecommendationsCache(userId) {
-  await redis.client.del(`mooc:recommendations:${userId}`);
+  await redis.client.del([
+    `mooc:recommendations:${userId}`,
+    `mooc:recommendations:error:${userId}`,
+  ]);
 }
 
 export async function trackJob(pipeline, job, onDone) {

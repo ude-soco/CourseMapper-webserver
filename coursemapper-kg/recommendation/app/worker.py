@@ -143,6 +143,15 @@ def start_worker(pipelines):
             # Make sure we still have the lock
             check_lock(job_id)
 
+            # Cache the result in Redis for MOOC-recommendation pipeline
+            if pipeline == 'MOOC-recommendation':
+                user_id = job['data']['userId']
+                redis.set(
+                    f'mooc:recommendations:{user_id}',
+                    json.dumps(result),
+                    ex=86400,
+                )
+
             # Clean up
             clean_up(pipeline, job_id)
 
@@ -171,6 +180,17 @@ def start_worker(pipelines):
             # Quit
             sys.exit()
         except Exception as e:
+            # Save MOOC-recommendation error in Redis for 30 minutes if the job has a userId 
+            # To avoid stuck loading state 
+            if pipeline == 'MOOC-recommendation':
+                user_id = job.get('data', {}).get('userId')
+                if user_id:
+                    redis.set(
+                        f'mooc:recommendations:error:{user_id}',
+                        str(e),
+                        ex=1800,
+                    )
+
             # Send the error
             data = json.dumps({
                 "job_id": job_id,
