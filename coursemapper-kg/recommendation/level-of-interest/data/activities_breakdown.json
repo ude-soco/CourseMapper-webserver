@@ -1685,10 +1685,87 @@
                 "material_page": 3,
                 "course_id": "6a5a0aecd2fc97cf33b42175",
                 "course_name": "Test"
+              },
+              {
+                "activity_id": "6af5bf0df8011c184f974f73",
+                "material_id": "6aa2e8539d29382d65707024",
+                "material_page": 1,
+                "course_id": "6aa2e7cb9d29382d65706f01",
+                "course_name": "The art of giving in"
+              },
+              {
+                "activity_id": "6af5bf16f8011c184f974fe9",
+                "material_id": "6aa2e8539d29382d65707024",
+                "material_page": 2,
+                "course_id": "6aa2e7cb9d29382d65706f01",
+                "course_name": "The art of giving in"
+              },
+              {
+                "activity_id": "6af5bf17f8011c184f975008",
+                "material_id": "6aa2e8539d29382d65707024",
+                "material_page": 3,
+                "course_id": "6aa2e7cb9d29382d65706f01",
+                "course_name": "The art of giving in"
+              },
+              {
+                "activity_id": "6af5bf17f8011c184f975027",
+                "material_id": "6aa2e8539d29382d65707024",
+                "material_page": 4,
+                "course_id": "6aa2e7cb9d29382d65706f01",
+                "course_name": "The art of giving in"
+              },
+              {
+                "activity_id": "6af5bf17f8011c184f975063",
+                "material_id": "6aa2e8539d29382d65707024",
+                "material_page": 5,
+                "course_id": "6aa2e7cb9d29382d65706f01",
+                "course_name": "The art of giving in"
+              },
+              {
+                "activity_id": "6af5bf22f8011c184f975449",
+                "material_id": "6a7476ba1d9ace9b9a93a3cb",
+                "material_page": 1,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6af5bf29f8011c184f9755cd",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 1,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6af5bf2cf8011c184f9756a8",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 4,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6af5bf2cf8011c184f97574a",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 4,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6af5bf2cf8011c184f9757b5",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 4,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
+              },
+              {
+                "activity_id": "6af5bf2cf8011c184f975815",
+                "material_id": "6a747ae31d9ace9b9a93a55c",
+                "material_page": 4,
+                "course_id": "6a5a0aecd2fc97cf33b42175",
+                "course_name": "Test"
               }
             ],
             "activity_name": "User views a slide in LM",
-            "count": 64
+            "count": 75
           }
         }
       },

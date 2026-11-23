@@ -6,7 +6,7 @@
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_4437448917351681641"
         ],
-        "raw_score": 3.3055555555555554,
+        "raw_score": 3.6111111111111107,
         "normalized_scores": {
           "min_max_interpolation": 0.43548387096774194,
           "z_score_k2": 0.6508150901581644,
@@ -37,9 +37,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -49,7 +49,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 82,
+        "total_activity_count": 93,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -57,7 +57,7 @@
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_1322190036426351578"
         ],
-        "raw_score": 3.3055555555555554,
+        "raw_score": 3.6111111111111107,
         "normalized_scores": {
           "min_max_interpolation": 0.43548387096774194,
           "z_score_k2": 0.6508150901581644,
@@ -88,9 +88,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -100,7 +100,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 82,
+        "total_activity_count": 93,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -108,7 +108,7 @@
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_6393900464369835028"
         ],
-        "raw_score": 3.333333333333333,
+        "raw_score": 3.6388888888888884,
         "normalized_scores": {
           "min_max_interpolation": 0.44354838709677413,
           "z_score_k2": 0.6583873959401643,
@@ -139,9 +139,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -151,21 +151,21 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 83,
+        "total_activity_count": 94,
         "course_ids": [
-          "6a5a0aecd2fc97cf33b42175",
-          "6a95f39438e8af141b2bc72b"
+          "6a95f39438e8af141b2bc72b",
+          "6a5a0aecd2fc97cf33b42175"
         ],
         "course_names": [
-          "Test",
-          "Boba's Course"
+          "Boba's Course",
+          "Test"
         ]
       },
       "Syrup": {
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_1243393292253707102"
         ],
-        "raw_score": 3.333333333333333,
+        "raw_score": 3.6388888888888884,
         "normalized_scores": {
           "min_max_interpolation": 0.44354838709677413,
           "z_score_k2": 0.6583873959401643,
@@ -196,9 +196,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -208,25 +208,25 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 83,
+        "total_activity_count": 94,
         "course_ids": [
-          "6a5a0aecd2fc97cf33b42175",
-          "6a95f39438e8af141b2bc72b"
+          "6a95f39438e8af141b2bc72b",
+          "6a5a0aecd2fc97cf33b42175"
         ],
         "course_names": [
-          "Test",
-          "Boba's Course"
+          "Boba's Course",
+          "Test"
         ]
       },
       "Starch": {
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_1226771685633126096"
         ],
-        "raw_score": 5.25,
+        "raw_score": 5.555555555555555,
         "normalized_scores": {
           "min_max_interpolation": 1,
           "z_score_k2": 1,
-          "z_score_k3": 0.9539176632654378
+          "z_score_k3": 0.9539176632654377
         },
         "activities_breakdown": [
           {
@@ -267,9 +267,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -279,21 +279,21 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 93,
+        "total_activity_count": 104,
         "course_ids": [
-          "6a5a0aecd2fc97cf33b42175",
-          "6a95f39438e8af141b2bc72b"
+          "6a95f39438e8af141b2bc72b",
+          "6a5a0aecd2fc97cf33b42175"
         ],
         "course_names": [
-          "Test",
-          "Boba's Course"
+          "Boba's Course",
+          "Test"
         ]
       },
       "Black tea": {
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_7756810032704245592"
         ],
-        "raw_score": 3.333333333333333,
+        "raw_score": 3.6388888888888884,
         "normalized_scores": {
           "min_max_interpolation": 0.44354838709677413,
           "z_score_k2": 0.6583873959401643,
@@ -324,9 +324,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -336,21 +336,21 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 83,
+        "total_activity_count": 94,
         "course_ids": [
-          "6a5a0aecd2fc97cf33b42175",
-          "6a95f39438e8af141b2bc72b"
+          "6a95f39438e8af141b2bc72b",
+          "6a5a0aecd2fc97cf33b42175"
         ],
         "course_names": [
-          "Test",
-          "Boba's Course"
+          "Boba's Course",
+          "Test"
         ]
       },
       "Tapioca pearl": {
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_4303665753929157511"
         ],
-        "raw_score": 3.3055555555555554,
+        "raw_score": 3.6111111111111107,
         "normalized_scores": {
           "min_max_interpolation": 0.43548387096774194,
           "z_score_k2": 0.6508150901581644,
@@ -381,9 +381,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -393,7 +393,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 82,
+        "total_activity_count": 93,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -401,7 +401,7 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_3073544699829939903"
         ],
-        "raw_score": 3.333333333333333,
+        "raw_score": 3.6388888888888884,
         "normalized_scores": {
           "min_max_interpolation": 0.44354838709677413,
           "z_score_k2": 0.6583873959401643,
@@ -432,9 +432,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -444,21 +444,21 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 83,
+        "total_activity_count": 94,
         "course_ids": [
-          "6a5a0aecd2fc97cf33b42175",
-          "6a95f39438e8af141b2bc72b"
+          "6a95f39438e8af141b2bc72b",
+          "6a5a0aecd2fc97cf33b42175"
         ],
         "course_names": [
-          "Test",
-          "Boba's Course"
+          "Boba's Course",
+          "Test"
         ]
       },
       "Maturity": {
         "concept_ids": [
           "6aa2e8539d29382d65707024_concept_6462962604161108366"
         ],
-        "raw_score": 3.3055555555555554,
+        "raw_score": 3.6111111111111107,
         "normalized_scores": {
           "min_max_interpolation": 0.43548387096774194,
           "z_score_k2": 0.6508150901581644,
@@ -489,9 +489,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -501,7 +501,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 82,
+        "total_activity_count": 93,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -509,10 +509,10 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_6859555484626450240"
         ],
-        "raw_score": 4.305555555555555,
+        "raw_score": 4.611111111111111,
         "normalized_scores": {
           "min_max_interpolation": 0.7258064516129031,
-          "z_score_k2": 0.9234180983101604,
+          "z_score_k2": 0.9234180983101603,
           "z_score_k3": 0.7822787322067736
         },
         "activities_breakdown": [
@@ -533,9 +533,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -545,24 +545,24 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 88,
+        "total_activity_count": 99,
         "course_ids": [
-          "6a5a0aecd2fc97cf33b42175",
-          "6a95f39438e8af141b2bc72b"
+          "6a95f39438e8af141b2bc72b",
+          "6a5a0aecd2fc97cf33b42175"
         ],
         "course_names": [
-          "Test",
-          "Boba's Course"
+          "Boba's Course",
+          "Test"
         ]
       },
       "Taiwan": {
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_3974085458675176754"
         ],
-        "raw_score": 3.583333333333333,
+        "raw_score": 3.8888888888888884,
         "normalized_scores": {
           "min_max_interpolation": 0.5161290322580645,
-          "z_score_k2": 0.7265381479781633,
+          "z_score_k2": 0.7265381479781632,
           "z_score_k3": 0.6510254319854422
         },
         "activities_breakdown": [
@@ -576,9 +576,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -588,25 +588,25 @@
             "contribution": 0.05555555555555555
           }
         ],
-        "total_activity_count": 75,
+        "total_activity_count": 86,
         "course_ids": [
-          "6a5a0aecd2fc97cf33b42175",
-          "6a95f39438e8af141b2bc72b"
+          "6a95f39438e8af141b2bc72b",
+          "6a5a0aecd2fc97cf33b42175"
         ],
         "course_names": [
-          "Test",
-          "Boba's Course"
+          "Boba's Course",
+          "Test"
         ]
       },
       "Social computing": {
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_1241550187536201684"
         ],
-        "raw_score": 2.5277777777777777,
+        "raw_score": 2.833333333333333,
         "normalized_scores": {
           "min_max_interpolation": 0.20967741935483872,
-          "z_score_k2": 0.43879052826216763,
-          "z_score_k3": 0.4591936855081118
+          "z_score_k2": 0.4387905282621675,
+          "z_score_k3": 0.45919368550811174
         },
         "activities_breakdown": [
           {
@@ -619,9 +619,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -631,7 +631,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 78,
+        "total_activity_count": 89,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -639,11 +639,11 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_7102192561268550222"
         ],
-        "raw_score": 2.5277777777777777,
+        "raw_score": 2.833333333333333,
         "normalized_scores": {
           "min_max_interpolation": 0.20967741935483872,
-          "z_score_k2": 0.43879052826216763,
-          "z_score_k3": 0.4591936855081118
+          "z_score_k2": 0.4387905282621675,
+          "z_score_k3": 0.45919368550811174
         },
         "activities_breakdown": [
           {
@@ -656,9 +656,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -668,7 +668,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 78,
+        "total_activity_count": 89,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -676,11 +676,11 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_3135758739096965584"
         ],
-        "raw_score": 2.5277777777777777,
+        "raw_score": 2.833333333333333,
         "normalized_scores": {
           "min_max_interpolation": 0.20967741935483872,
-          "z_score_k2": 0.43879052826216763,
-          "z_score_k3": 0.4591936855081118
+          "z_score_k2": 0.4387905282621675,
+          "z_score_k3": 0.45919368550811174
         },
         "activities_breakdown": [
           {
@@ -693,9 +693,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -705,7 +705,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 78,
+        "total_activity_count": 89,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -713,11 +713,11 @@
         "concept_ids": [
           "6aa2e8539d29382d65707024_concept_2661791347627790206"
         ],
-        "raw_score": 2.5277777777777777,
+        "raw_score": 2.833333333333333,
         "normalized_scores": {
           "min_max_interpolation": 0.20967741935483872,
-          "z_score_k2": 0.43879052826216763,
-          "z_score_k3": 0.4591936855081118
+          "z_score_k2": 0.4387905282621675,
+          "z_score_k3": 0.45919368550811174
         },
         "activities_breakdown": [
           {
@@ -730,9 +730,9 @@
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -742,7 +742,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 78,
+        "total_activity_count": 89,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -750,19 +750,19 @@
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_2106895782145941841"
         ],
-        "raw_score": 1.8055555555555554,
+        "raw_score": 2.1111111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.1497695852534562,
-          "z_score_k2": 0.24191057793017057,
-          "z_score_k3": 0.3279403852867804
+          "min_max_interpolation": 0.1562302340290955,
+          "z_score_k2": 0.24191057793017046,
+          "z_score_k3": 0.3279403852867803
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -772,7 +772,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 65,
+        "total_activity_count": 76,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -780,19 +780,19 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_6707066453942669842"
         ],
-        "raw_score": 1.8055555555555554,
+        "raw_score": 2.1111111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.1497695852534562,
-          "z_score_k2": 0.24191057793017057,
-          "z_score_k3": 0.3279403852867804
+          "min_max_interpolation": 0.1562302340290955,
+          "z_score_k2": 0.24191057793017046,
+          "z_score_k3": 0.3279403852867803
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -802,7 +802,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 65,
+        "total_activity_count": 76,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -810,19 +810,19 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_8967551232245040233"
         ],
-        "raw_score": 1.8055555555555554,
+        "raw_score": 2.1111111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.1497695852534562,
-          "z_score_k2": 0.24191057793017057,
-          "z_score_k3": 0.3279403852867804
+          "min_max_interpolation": 0.1562302340290955,
+          "z_score_k2": 0.24191057793017046,
+          "z_score_k3": 0.3279403852867803
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -832,7 +832,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 65,
+        "total_activity_count": 76,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -840,19 +840,19 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_1344542051495921422"
         ],
-        "raw_score": 1.8055555555555554,
+        "raw_score": 2.1111111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.1497695852534562,
-          "z_score_k2": 0.24191057793017057,
-          "z_score_k3": 0.3279403852867804
+          "min_max_interpolation": 0.1562302340290955,
+          "z_score_k2": 0.24191057793017046,
+          "z_score_k3": 0.3279403852867803
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -862,7 +862,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 65,
+        "total_activity_count": 76,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -870,19 +870,19 @@
         "concept_ids": [
           "6aa2e8539d29382d65707024_concept_3389415342335614082"
         ],
-        "raw_score": 1.8055555555555554,
+        "raw_score": 2.1111111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.1497695852534562,
-          "z_score_k2": 0.24191057793017057,
-          "z_score_k3": 0.3279403852867804
+          "min_max_interpolation": 0.1562302340290955,
+          "z_score_k2": 0.24191057793017046,
+          "z_score_k3": 0.3279403852867803
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -892,7 +892,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 65,
+        "total_activity_count": 76,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -900,19 +900,19 @@
         "concept_ids": [
           "6aa2e8539d29382d65707024_concept_5417567931578632526"
         ],
-        "raw_score": 1.8055555555555554,
+        "raw_score": 2.1111111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.1497695852534562,
-          "z_score_k2": 0.24191057793017057,
-          "z_score_k3": 0.3279403852867804
+          "min_max_interpolation": 0.1562302340290955,
+          "z_score_k2": 0.24191057793017046,
+          "z_score_k3": 0.3279403852867803
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -922,7 +922,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 65,
+        "total_activity_count": 76,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -930,19 +930,19 @@
         "concept_ids": [
           "6a96003938e8af141b2bcad0_concept_2357262140399904539"
         ],
-        "raw_score": 1.8055555555555554,
+        "raw_score": 2.1111111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.1497695852534562,
-          "z_score_k2": 0.24191057793017057,
-          "z_score_k3": 0.3279403852867804
+          "min_max_interpolation": 0.1562302340290955,
+          "z_score_k2": 0.24191057793017046,
+          "z_score_k3": 0.3279403852867803
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -952,7 +952,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 65,
+        "total_activity_count": 76,
         "course_id": "6a95f39438e8af141b2bc72b",
         "course_name": "Boba's Course"
       },
@@ -960,19 +960,19 @@
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_3291954897897738052"
         ],
-        "raw_score": 1.8055555555555554,
+        "raw_score": 2.1111111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.1497695852534562,
-          "z_score_k2": 0.24191057793017057,
-          "z_score_k3": 0.3279403852867804
+          "min_max_interpolation": 0.1562302340290955,
+          "z_score_k2": 0.24191057793017046,
+          "z_score_k3": 0.3279403852867803
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -982,7 +982,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 65,
+        "total_activity_count": 76,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       },
@@ -990,19 +990,19 @@
         "concept_ids": [
           "6a747ae31d9ace9b9a93a55c_concept_1941167088877282624"
         ],
-        "raw_score": 1.8055555555555554,
+        "raw_score": 2.1111111111111107,
         "normalized_scores": {
-          "min_max_interpolation": 0.1497695852534562,
-          "z_score_k2": 0.24191057793017057,
-          "z_score_k3": 0.3279403852867804
+          "min_max_interpolation": 0.1562302340290955,
+          "z_score_k2": 0.24191057793017046,
+          "z_score_k3": 0.3279403852867803
         },
         "activities_breakdown": [
           {
             "activity_id": "G8_A1",
             "activity_name": "User views a slide in LM",
-            "count": 64,
+            "count": 75,
             "weight": 0.027777777777777776,
-            "contribution": 1.7777777777777777
+            "contribution": 2.083333333333333
           },
           {
             "activity_id": "G10_A1",
@@ -1012,7 +1012,7 @@
             "contribution": 0.027777777777777776
           }
         ],
-        "total_activity_count": 65,
+        "total_activity_count": 76,
         "course_id": "6a5a0aecd2fc97cf33b42175",
         "course_name": "Test"
       }
@@ -1241,12 +1241,12 @@
         ],
         "total_activity_count": 74,
         "course_ids": [
-          "6aa2e7cb9d29382d65706f01",
-          "6a5a0aecd2fc97cf33b42175"
+          "6a5a0aecd2fc97cf33b42175",
+          "6aa2e7cb9d29382d65706f01"
         ],
         "course_names": [
-          "The art of giving in",
-          "Test"
+          "Test",
+          "The art of giving in"
         ]
       },
       "Bubble tea": {
