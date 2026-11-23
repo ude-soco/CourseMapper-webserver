@@ -1792,11 +1792,12 @@
         },
         "soupsieve": {
             "hashes": [
-                "sha256:5663d5a7b3bfaeee0bc4372e7fc48f9cff4940b3eec54a6451cc5299f1097690",
-                "sha256:eaa337ff55a1579b6549dc679565eac1e3d000563bcb1c8ab0d0fefbc0c2cdc7"
+                "sha256:5e7494bfce90e06676cfb4c5c2cf22243e98e5cf24646bb1ecdda46d318550a0",
+                "sha256:ccd6470b256394ac44b08b86fd94b30a17d335a5335c8a3d15565f7b03d3c8cf"
             ],
-            "markers": "python_version >= '3.8'",
-            "version": "==2.5"
+            "index": "pypi",
+            "markers": "python_full_version >= '3.11.5'",
+            "version": "==4.0"
         },
         "sqlitedict": {
             "hashes": [
